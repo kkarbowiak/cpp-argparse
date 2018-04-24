@@ -20,8 +20,22 @@ namespace argparse
             {
             }
 
+            tokens parse_args(tokens args)
+            {
+                if (args.empty())
+                {
+                    // report error
+                }
+
+                m_value = args.front();
+                args.pop_front();
+
+                return args;
+            }
+
         private:
             std::string const m_name;
+            std::string m_value;
     };
 
     class ArgumentParser
