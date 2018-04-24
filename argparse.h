@@ -42,8 +42,9 @@ namespace argparse
     class ArgumentParser
     {
         public:
-            void add_argument()
+            void add_argument(std::string const & name)
             {
+                m_arguments.emplace_back(name);
             }
 
             void parse_args(int argc, char * argv[])

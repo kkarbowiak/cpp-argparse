@@ -12,7 +12,7 @@ TEST_CASE("Checking existence of ArgumentParser class")
 TEST_CASE("Checking existence of ArgumentParser::add_argument function")
 {
     auto parser = argparse::ArgumentParser();
-    parser.add_argument();
+    parser.add_argument("dummy");
 }
 
 TEST_CASE("Checking existence of ArgumentParser::parse_args function")
