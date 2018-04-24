@@ -6,6 +6,10 @@ namespace argparse
 {
     class ArgumentParser
     {
+        public:
+            void add_argument()
+            {
+            }
     };
 }
 
