@@ -10,6 +10,10 @@ namespace argparse
             void add_argument()
             {
             }
+
+            void parse_args(int /* argc */, char * /* argv */[])
+            {
+            }
     };
 }
 
