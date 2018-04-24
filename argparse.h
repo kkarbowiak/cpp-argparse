@@ -3,6 +3,7 @@
 
 #include <string>
 #include <list>
+#include <vector>
 
 
 namespace argparse
@@ -66,6 +67,12 @@ namespace argparse
 
                 return result;
             }
+
+        private:
+            using arguments = std::vector<Argument>;
+
+        private:
+            arguments m_arguments;
     };
 }
 
