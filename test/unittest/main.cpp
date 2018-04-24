@@ -14,3 +14,9 @@ TEST_CASE("Checking existence of ArgumentParser::add_argument function")
     auto parser = argparse::ArgumentParser();
     parser.add_argument();
 }
+
+TEST_CASE("Checking existence of ArgumentParser::parse_args function")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.parse_args(0, nullptr);
+}
