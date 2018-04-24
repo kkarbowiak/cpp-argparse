@@ -8,3 +8,9 @@ TEST_CASE("Checking existence of ArgumentParser class")
 {
     argparse::ArgumentParser();
 }
+
+TEST_CASE("Checking existence of ArgumentParser::add_argument function")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument();
+}
