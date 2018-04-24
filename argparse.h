@@ -2,12 +2,12 @@
 #define CPP_ARGPARSE_H__DDK
 
 #include <string>
-#include <vector>
+#include <list>
 
 
 namespace argparse
 {
-    using tokens = std::vector<std::string>;
+    using tokens = std::list<std::string>;
 }
 
 namespace argparse
