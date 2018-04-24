@@ -31,8 +31,9 @@ namespace argparse
             {
             }
 
-            void parse_args(int /* argc */, char * /* argv */[])
+            void parse_args(int argc, char * argv[])
             {
+                parse_args(get_tokens(argc, argv));
             }
 
             void parse_args(tokens const & /* args */)
