@@ -1,9 +1,23 @@
 #ifndef CPP_ARGPARSE_H__DDK
 #define CPP_ARGPARSE_H__DDK
 
+#include <string>
+
 
 namespace argparse
 {
+    class Argument
+    {
+        public:
+            explicit Argument(std::string const & name)
+              : m_name(name)
+            {
+            }
+
+        private:
+            std::string const m_name;
+    };
+
     class ArgumentParser
     {
         public:
