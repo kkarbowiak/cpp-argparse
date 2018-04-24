@@ -2,3 +2,9 @@
 #include <doctest.h>
 
 #include "argparse.h"
+
+
+TEST_CASE("Checking existence of ArgumentParser class")
+{
+    argparse::ArgumentParser();
+}
