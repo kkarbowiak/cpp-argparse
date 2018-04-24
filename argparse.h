@@ -51,8 +51,17 @@ namespace argparse
                 parse_args(get_tokens(argc, argv));
             }
 
-            void parse_args(tokens const & /* args */)
+            void parse_args(tokens args)
             {
+                for (auto & a : m_arguments)
+                {
+                    args = a.parse_args(args);
+                }
+
+                if (!args.empty())
+                {
+                    // report error
+                }
             }
 
         private:
