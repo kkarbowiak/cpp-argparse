@@ -38,6 +38,19 @@ namespace argparse
             void parse_args(tokens const & /* args */)
             {
             }
+
+        private:
+            tokens get_tokens(int argc, char * argv[])
+            {
+                tokens result;
+
+                for (int i = 1; i < argc; ++i)
+                {
+                    result.push_back(argv[i]);
+                }
+
+                return result;
+            }
     };
 }
 
