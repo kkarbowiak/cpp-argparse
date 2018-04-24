@@ -2,7 +2,13 @@
 #define CPP_ARGPARSE_H__DDK
 
 #include <string>
+#include <vector>
 
+
+namespace argparse
+{
+    using tokens = std::vector<std::string>;
+}
 
 namespace argparse
 {
@@ -26,6 +32,10 @@ namespace argparse
             }
 
             void parse_args(int /* argc */, char * /* argv */[])
+            {
+            }
+
+            void parse_args(tokens const & /* args */)
             {
             }
     };
