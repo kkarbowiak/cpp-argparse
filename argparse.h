@@ -18,6 +18,7 @@ namespace argparse
         public:
             explicit Argument(std::string const & name)
               : m_name(name)
+              , m_value()
             {
             }
 
