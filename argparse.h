@@ -35,6 +35,11 @@ namespace argparse
                 return args;
             }
 
+            std::string get_value() const
+            {
+                return m_value;
+            }
+
         private:
             std::string const m_name;
             std::string m_value;
