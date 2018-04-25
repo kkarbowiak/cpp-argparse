@@ -4,11 +4,13 @@
 #include <string>
 #include <list>
 #include <vector>
+#include <map>
 
 
 namespace argparse
 {
     using tokens = std::list<std::string>;
+    using parameters = std::map<std::string, std::string>;
 }
 
 namespace argparse
@@ -58,12 +60,12 @@ namespace argparse
                 m_arguments.emplace_back(name);
             }
 
-            void parse_args(int argc, char * argv[])
+            parameters parse_args(int argc, char * argv[])
             {
-                parse_args(get_tokens(argc, argv));
+                return parse_args(get_tokens(argc, argv));
             }
 
-            void parse_args(tokens args)
+            parameters parse_args(tokens args)
             {
                 for (auto & a : m_arguments)
                 {
@@ -74,6 +76,15 @@ namespace argparse
                 {
                     // report error
                 }
+
+                parameters result;
+
+                for (auto const & a : m_arguments)
+                {
+                    result[a.get_name()] = a.get_value();
+                }
+
+                return result;
             }
 
         private:
