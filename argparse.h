@@ -51,7 +51,7 @@ namespace argparse
             }
 
         private:
-            auto get_tokens(int argc, char * argv[]) -> tokens
+            auto get_tokens(int argc, char * argv[]) const -> tokens
             {
                 tokens result;
 
