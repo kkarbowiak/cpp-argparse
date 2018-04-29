@@ -18,17 +18,17 @@ namespace argparse
     class ArgumentParser
     {
         public:
-            void add_argument(std::string const & name)
+            auto add_argument(std::string const & name) -> void
             {
                 m_arguments.emplace_back(name);
             }
 
-            parameters parse_args(int argc, char * argv[])
+            auto parse_args(int argc, char * argv[]) -> parameters
             {
                 return parse_args(get_tokens(argc, argv));
             }
 
-            parameters parse_args(tokens args)
+            auto parse_args(tokens args) -> parameters
             {
                 for (auto & a : m_arguments)
                 {
@@ -51,7 +51,7 @@ namespace argparse
             }
 
         private:
-            tokens get_tokens(int argc, char * argv[])
+            auto get_tokens(int argc, char * argv[]) -> tokens
             {
                 tokens result;
 
@@ -73,7 +73,7 @@ namespace argparse
                     {
                     }
 
-                    tokens parse_args(tokens args)
+                    auto parse_args(tokens args) -> tokens
                     {
                         if (args.empty())
                         {
@@ -86,12 +86,12 @@ namespace argparse
                         return args;
                     }
 
-                    std::string get_name() const
+                    auto get_name() const -> std::string
                     {
                         return m_name;
                     }
 
-                    std::string get_value() const
+                    auto get_value() const -> std::string
                     {
                         return m_value;
                     }
