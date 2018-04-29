@@ -33,19 +33,50 @@ TEST_CASE("Checking parsing single positional argument")
     CHECK(parsed.at("pos1") == "value1");
 }
 
-TEST_CASE("Checking reporting unrecognised argument")
+TEST_CASE("Checking reporting unrecognised arguments")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("pos1");
     
-    REQUIRE_THROWS_AS(parser.parse_args({"value1", "value2"}), std::runtime_error);
+    SUBCASE("one unrecognised argument")
+    {
+        REQUIRE_THROWS_AS(parser.parse_args({"value1", "value2"}), std::runtime_error);
 
-    try
-    {
-        (void) parser.parse_args({"value1", "value2"});
+        try
+        {
+            (void) parser.parse_args({"value1", "value2"});
+        }
+        catch (std::exception const & e)
+        {
+            CHECK(e.what() == std::string("unrecognised arguments: value2"));
+        }
     }
-    catch (std::exception const & e)
+
+    SUBCASE("two unrecognised arguments")
     {
-        CHECK(e.what() == std::string("unrecognised argument: value2"));
+        REQUIRE_THROWS_AS(parser.parse_args({"value1", "value2", "value3"}), std::runtime_error);
+
+        try
+        {
+            (void) parser.parse_args({"value1", "value2", "value3"});
+        }
+        catch (std::exception const & e)
+        {
+            CHECK(e.what() == std::string("unrecognised arguments: value2 value3"));
+        }
+    }
+
+    SUBCASE("five unrecognised arguments")
+    {
+        REQUIRE_THROWS_AS(parser.parse_args({"value1", "value2", "value3", "value4", "value5", "value6"}), std::runtime_error);
+
+        try
+        {
+            (void) parser.parse_args({"value1", "value2", "value3", "value4", "value5", "value6"});
+        }
+        catch (std::exception const & e)
+        {
+            CHECK(e.what() == std::string("unrecognised arguments: value2 value3 value4 value5 value6"));
+        }
     }
 }
