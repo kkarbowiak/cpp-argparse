@@ -3,6 +3,8 @@
 
 #include "argparse.h"
 
+#include <string>
+
 
 TEST_CASE("Checking existence of ArgumentParser class")
 {
@@ -37,4 +39,13 @@ TEST_CASE("Checking reporting unrecognised argument")
     parser.add_argument("pos1");
     
     REQUIRE_THROWS_AS(parser.parse_args({"value1", "value2"}), std::runtime_error);
+
+    try
+    {
+        (void) parser.parse_args({"value1", "value2"});
+    }
+    catch (std::exception const & e)
+    {
+        CHECK(e.what() == std::string("unrecognised argument: value2"));
+    }
 }
