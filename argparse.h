@@ -38,7 +38,7 @@ namespace argparse
 
                 if (!args.empty())
                 {
-                    throw std::runtime_error("unrecognised argument");
+                    throw std::runtime_error("unrecognised argument: " + args.front());
                 }
 
                 parameters result;
