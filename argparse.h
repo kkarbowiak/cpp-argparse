@@ -15,43 +15,6 @@ namespace argparse
 
 namespace argparse
 {
-    class Argument
-    {
-        public:
-            explicit Argument(std::string const & name)
-              : m_name(name)
-              , m_value()
-            {
-            }
-
-            tokens parse_args(tokens args)
-            {
-                if (args.empty())
-                {
-                    // report error
-                }
-
-                m_value = args.front();
-                args.pop_front();
-
-                return args;
-            }
-
-            std::string get_name() const
-            {
-                return m_name;
-            }
-
-            std::string get_value() const
-            {
-                return m_value;
-            }
-
-        private:
-            std::string const m_name;
-            std::string m_value;
-    };
-
     class ArgumentParser
     {
         public:
@@ -99,6 +62,44 @@ namespace argparse
 
                 return result;
             }
+
+        private:
+            class Argument
+            {
+                public:
+                    explicit Argument(std::string const & name)
+                    : m_name(name)
+                    , m_value()
+                    {
+                    }
+
+                    tokens parse_args(tokens args)
+                    {
+                        if (args.empty())
+                        {
+                            // report error
+                        }
+
+                        m_value = args.front();
+                        args.pop_front();
+
+                        return args;
+                    }
+
+                    std::string get_name() const
+                    {
+                        return m_name;
+                    }
+
+                    std::string get_value() const
+                    {
+                        return m_value;
+                    }
+
+                private:
+                    std::string const m_name;
+                    std::string m_value;
+            };
 
         private:
             using arguments = std::vector<Argument>;
