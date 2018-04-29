@@ -38,7 +38,7 @@ namespace argparse
 
                 if (!args.empty())
                 {
-                    throw std::runtime_error("unrecognised argument: " + args.front());
+                    throw std::runtime_error("unrecognised arguments: " + get_string(args));
                 }
 
                 parameters result;
@@ -59,6 +59,22 @@ namespace argparse
                 for (int i = 1; i < argc; ++i)
                 {
                     result.push_back(argv[i]);
+                }
+
+                return result;
+            }
+
+            auto get_string(tokens args) const -> std::string
+            {
+                std::string result;
+
+                for (auto i = args.begin(); i != args.end(); ++i)
+                {
+                    if (i != args.begin())
+                    {
+                        result += " ";
+                    }
+                    result += *i;
                 }
 
                 return result;
