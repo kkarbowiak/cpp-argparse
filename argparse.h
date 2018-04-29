@@ -5,6 +5,7 @@
 #include <list>
 #include <vector>
 #include <map>
+#include <stdexcept>
 
 
 namespace argparse
@@ -37,7 +38,7 @@ namespace argparse
 
                 if (!args.empty())
                 {
-                    // report error
+                    throw std::runtime_error("unrecognised argument");
                 }
 
                 parameters result;
