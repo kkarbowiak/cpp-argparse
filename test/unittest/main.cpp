@@ -36,5 +36,5 @@ TEST_CASE("Checking reporting unrecognised argument")
     auto parser = argparse::ArgumentParser();
     parser.add_argument("pos1");
     
-    CHECK_THROWS(parser.parse_args({"value1", "value2"}));
+    REQUIRE_THROWS_AS(parser.parse_args({"value1", "value2"}), std::runtime_error);
 }
