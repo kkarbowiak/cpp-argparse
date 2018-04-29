@@ -92,13 +92,11 @@ namespace argparse
 
                     auto parse_args(tokens args) -> tokens
                     {
-                        if (args.empty())
+                        if (!args.empty())
                         {
-                            // report error
+                            m_value = args.front();
+                            args.pop_front();
                         }
-
-                        m_value = args.front();
-                        args.pop_front();
 
                         return args;
                     }
