@@ -33,6 +33,14 @@ TEST_CASE("Checking parsing single positional argument")
     CHECK(parsed.at("pos1") == "value1");
 }
 
+TEST_CASE("Checking reporting missing argument")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("pos1");
+
+    CHECK_THROWS(parser.parse_args({}));
+}
+
 TEST_CASE("Checking reporting unrecognised arguments")
 {
     auto parser = argparse::ArgumentParser();
