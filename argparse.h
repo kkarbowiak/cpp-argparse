@@ -43,15 +43,32 @@ namespace argparse
                     throw std::runtime_error("unrecognised arguments: " + get_string(args));
                 }
 
-                parameters result;
+                optstring error_message;
 
                 for (auto const & a : m_arguments)
                 {
                     if (!a.get_value())
                     {
-                        throw std::runtime_error("missing argument: " + a.get_name());
+                        if (!error_message)
+                        {
+                            error_message = "missing arguments: " + a.get_name();
+                        }
+                        else
+                        {
+                            *error_message += " " + a.get_name();
+                        }
                     }
+                }
 
+                if (error_message)
+                {
+                    throw std::runtime_error(*error_message);
+                }
+
+                parameters result;
+
+                for (auto const & a : m_arguments)
+                {
                     result[a.get_name()] = *a.get_value();
                 }
 
