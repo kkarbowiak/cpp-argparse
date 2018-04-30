@@ -45,14 +45,7 @@ namespace argparse
 
                 ensure_no_arguments_missing();
 
-                parameters result;
-
-                for (auto const & a : m_arguments)
-                {
-                    result[a.get_name()] = *a.get_value();
-                }
-
-                return result;
+                return get_parameters();
             }
 
         private:
@@ -107,6 +100,18 @@ namespace argparse
                 {
                     throw std::runtime_error(*error_message);
                 }
+            }
+
+            auto get_parameters() const -> parameters
+            {
+                parameters result;
+
+                for (auto const & a : m_arguments)
+                {
+                    result[a.get_name()] = *a.get_value();
+                }
+
+                return result;
             }
 
         private:
