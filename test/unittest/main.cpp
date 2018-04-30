@@ -33,20 +33,61 @@ TEST_CASE("Checking parsing single positional argument")
     CHECK(parsed.at("pos1") == "value1");
 }
 
-TEST_CASE("Checking reporting missing argument")
+TEST_CASE("Checking reporting missing arguments")
 {
     auto parser = argparse::ArgumentParser();
-    parser.add_argument("pos1");
 
-    REQUIRE_THROWS_AS(parser.parse_args({}), std::runtime_error);
-
-    try
+    SUBCASE("one missing argument")
     {
-        (void) parser.parse_args({});
+        parser.add_argument("pos1");
+
+        REQUIRE_THROWS_AS(parser.parse_args({}), std::runtime_error);
+
+        try
+        {
+            (void) parser.parse_args({});
+        }
+        catch (std::exception const & e)
+        {
+            CHECK(std::string(e.what()) == std::string("missing arguments: pos1"));
+        }
     }
-    catch (std::exception const & e)
+
+    SUBCASE("two missing arguments")
     {
-        CHECK(std::string(e.what()) == std::string("missing argument: pos1"));
+        parser.add_argument("pos1");
+        parser.add_argument("pos2");
+        
+        REQUIRE_THROWS_AS(parser.parse_args({}), std::runtime_error);
+
+        try
+        {
+            (void) parser.parse_args({});
+        }
+        catch (std::exception const & e)
+        {
+            CHECK(std::string(e.what()) == std::string("missing arguments: pos1 pos2"));
+        }
+    }
+
+    SUBCASE("five missing arguments")
+    {
+        parser.add_argument("pos1");
+        parser.add_argument("pos2");
+        parser.add_argument("pos3");
+        parser.add_argument("pos4");
+        parser.add_argument("pos5");
+        
+        REQUIRE_THROWS_AS(parser.parse_args({}), std::runtime_error);
+
+        try
+        {
+            (void) parser.parse_args({});
+        }
+        catch (std::exception const & e)
+        {
+            CHECK(std::string(e.what()) == std::string("missing arguments: pos1 pos2 pos3 pos4 pos5"));
+        }
     }
 }
 
