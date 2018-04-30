@@ -49,7 +49,7 @@ namespace argparse
                 {
                     if (!a.get_value())
                     {
-                        throw std::runtime_error("missing argument");
+                        throw std::runtime_error("missing argument: " + a.get_name());
                     }
 
                     result[a.get_name()] = *a.get_value();
