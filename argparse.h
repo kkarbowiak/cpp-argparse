@@ -125,7 +125,7 @@ namespace argparse
                     virtual auto get_value() const -> optstring = 0;
             };
 
-            class Argument
+            class Argument : public ArgumentBase
             {
                 public:
                     explicit Argument(std::string const & name)
@@ -134,7 +134,7 @@ namespace argparse
                     {
                     }
 
-                    auto parse_args(tokens args) -> tokens
+                    auto parse_args(tokens args) -> tokens override
                     {
                         if (!args.empty())
                         {
@@ -145,12 +145,12 @@ namespace argparse
                         return args;
                     }
 
-                    auto get_name() const -> std::string
+                    auto get_name() const -> std::string override
                     {
                         return m_name;
                     }
 
-                    auto get_value() const -> optstring
+                    auto get_value() const -> optstring override
                     {
                         return m_value;
                     }
