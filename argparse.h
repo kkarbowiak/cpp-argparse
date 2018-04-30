@@ -115,6 +115,16 @@ namespace argparse
             }
 
         private:
+            class ArgumentBase
+            {
+                public:
+                    virtual ~ArgumentBase() = default;
+
+                    virtual auto parse_args(tokens args) -> tokens = 0;
+                    virtual auto get_name() const -> std::string = 0;
+                    virtual auto get_value() const -> optstring = 0;
+            };
+
             class Argument
             {
                 public:
