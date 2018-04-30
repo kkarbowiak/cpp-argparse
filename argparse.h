@@ -6,6 +6,7 @@
 #include <vector>
 #include <map>
 #include <optional>
+#include <memory>
 #include <stdexcept>
 
 
@@ -23,7 +24,7 @@ namespace argparse
         public:
             auto add_argument(std::string const & name) -> void
             {
-                m_arguments.emplace_back(name);
+                m_arguments.emplace_back(std::make_unique<Argument>(name));
             }
 
             auto parse_args(int argc, char * argv[]) -> parameters
@@ -35,7 +36,7 @@ namespace argparse
             {
                 for (auto & a : m_arguments)
                 {
-                    args = a.parse_args(args);
+                    args = a->parse_args(args);
                 }
 
                 if (!args.empty())
@@ -83,15 +84,15 @@ namespace argparse
 
                 for (auto const & a : m_arguments)
                 {
-                    if (!a.get_value())
+                    if (!a->get_value())
                     {
                         if (!error_message)
                         {
-                            error_message = "missing arguments: " + a.get_name();
+                            error_message = "missing arguments: " + a->get_name();
                         }
                         else
                         {
-                            *error_message += " " + a.get_name();
+                            *error_message += " " + a->get_name();
                         }
                     }
                 }
@@ -108,7 +109,7 @@ namespace argparse
 
                 for (auto const & a : m_arguments)
                 {
-                    result[a.get_name()] = *a.get_value();
+                    result[a->get_name()] = *a->get_value();
                 }
 
                 return result;
@@ -161,10 +162,11 @@ namespace argparse
             };
 
         private:
-            using arguments = std::vector<Argument>;
+            using argument_uptr = std::unique_ptr<ArgumentBase>;
+            using argument_uptrs = std::vector<argument_uptr>;
 
         private:
-            arguments m_arguments;
+            argument_uptrs m_arguments;
     };
 }
 
