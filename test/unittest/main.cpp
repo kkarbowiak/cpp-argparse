@@ -38,7 +38,16 @@ TEST_CASE("Checking reporting missing argument")
     auto parser = argparse::ArgumentParser();
     parser.add_argument("pos1");
 
-    CHECK_THROWS_AS(parser.parse_args({}), std::runtime_error);
+    REQUIRE_THROWS_AS(parser.parse_args({}), std::runtime_error);
+
+    try
+    {
+        (void) parser.parse_args({});
+    }
+    catch (std::exception const & e)
+    {
+        CHECK(e.what() == std::string("missing argument: pos1"));
+    }
 }
 
 TEST_CASE("Checking reporting unrecognised arguments")
