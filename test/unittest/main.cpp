@@ -46,7 +46,7 @@ TEST_CASE("Checking reporting missing argument")
     }
     catch (std::exception const & e)
     {
-        CHECK(e.what() == std::string("missing argument: pos1"));
+        CHECK(std::string(e.what()) == std::string("missing argument: pos1"));
     }
 }
 
@@ -65,7 +65,7 @@ TEST_CASE("Checking reporting unrecognised arguments")
         }
         catch (std::exception const & e)
         {
-            CHECK(e.what() == std::string("unrecognised arguments: value2"));
+            CHECK(std::string(e.what()) == std::string("unrecognised arguments: value2"));
         }
     }
 
@@ -79,7 +79,7 @@ TEST_CASE("Checking reporting unrecognised arguments")
         }
         catch (std::exception const & e)
         {
-            CHECK(e.what() == std::string("unrecognised arguments: value2 value3"));
+            CHECK(std::string(e.what()) == std::string("unrecognised arguments: value2 value3"));
         }
     }
 
@@ -93,7 +93,7 @@ TEST_CASE("Checking reporting unrecognised arguments")
         }
         catch (std::exception const & e)
         {
-            CHECK(e.what() == std::string("unrecognised arguments: value2 value3 value4 value5 value6"));
+            CHECK(std::string(e.what()) == std::string("unrecognised arguments: value2 value3 value4 value5 value6"));
         }
     }
 }
