@@ -5,6 +5,7 @@
 #include <list>
 #include <vector>
 #include <map>
+#include <optional>
 #include <stdexcept>
 
 
@@ -12,6 +13,7 @@ namespace argparse
 {
     using tokens = std::list<std::string>;
     using parameters = std::map<std::string, std::string>;
+    using optstring = std::optional<std::string>;
 }
 
 namespace argparse
@@ -45,7 +47,12 @@ namespace argparse
 
                 for (auto const & a : m_arguments)
                 {
-                    result[a.get_name()] = a.get_value();
+                    if (!a.get_value())
+                    {
+                        throw std::runtime_error("missing argument");
+                    }
+
+                    result[a.get_name()] = *a.get_value();
                 }
 
                 return result;
@@ -106,14 +113,14 @@ namespace argparse
                         return m_name;
                     }
 
-                    auto get_value() const -> std::string
+                    auto get_value() const -> optstring
                     {
                         return m_value;
                     }
 
                 private:
                     std::string const m_name;
-                    std::string m_value;
+                    optstring m_value;
             };
 
         private:
