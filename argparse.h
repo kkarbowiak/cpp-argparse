@@ -195,7 +195,7 @@ namespace argparse
 
                     auto get_name() const -> std::string override
                     {
-                        return m_name;
+                        return m_name.substr(1);
                     }
 
                     auto get_value() const -> optstring override
