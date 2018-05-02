@@ -28,9 +28,9 @@ TEST_CASE("Checking parsing single positional argument")
     auto parser = argparse::ArgumentParser();
     parser.add_argument("p1");
     
-    auto const parsed = parser.parse_args({"value1"});
+    auto const parsed = parser.parse_args({"v1"});
 
-    CHECK(parsed.at("p1") == "value1");
+    CHECK(parsed.at("p1") == "v1");
 }
 
 TEST_CASE("Checking reporting missing arguments")
@@ -98,43 +98,43 @@ TEST_CASE("Checking reporting unrecognised arguments")
     
     SUBCASE("one unrecognised argument")
     {
-        REQUIRE_THROWS_AS(parser.parse_args({"value1", "value2"}), std::runtime_error);
+        REQUIRE_THROWS_AS(parser.parse_args({"v1", "v2"}), std::runtime_error);
 
         try
         {
-            (void) parser.parse_args({"value1", "value2"});
+            (void) parser.parse_args({"v1", "v2"});
         }
         catch (std::exception const & e)
         {
-            CHECK(std::string(e.what()) == std::string("unrecognised arguments: value2"));
+            CHECK(std::string(e.what()) == std::string("unrecognised arguments: v2"));
         }
     }
 
     SUBCASE("two unrecognised arguments")
     {
-        REQUIRE_THROWS_AS(parser.parse_args({"value1", "value2", "value3"}), std::runtime_error);
+        REQUIRE_THROWS_AS(parser.parse_args({"v1", "v2", "v3"}), std::runtime_error);
 
         try
         {
-            (void) parser.parse_args({"value1", "value2", "value3"});
+            (void) parser.parse_args({"v1", "v2", "v3"});
         }
         catch (std::exception const & e)
         {
-            CHECK(std::string(e.what()) == std::string("unrecognised arguments: value2 value3"));
+            CHECK(std::string(e.what()) == std::string("unrecognised arguments: v2 v3"));
         }
     }
 
     SUBCASE("five unrecognised arguments")
     {
-        REQUIRE_THROWS_AS(parser.parse_args({"value1", "value2", "value3", "value4", "value5", "value6"}), std::runtime_error);
+        REQUIRE_THROWS_AS(parser.parse_args({"v1", "v2", "v3", "v4", "v5", "v6"}), std::runtime_error);
 
         try
         {
-            (void) parser.parse_args({"value1", "value2", "value3", "value4", "value5", "value6"});
+            (void) parser.parse_args({"v1", "v2", "v3", "v4", "v5", "v6"});
         }
         catch (std::exception const & e)
         {
-            CHECK(std::string(e.what()) == std::string("unrecognised arguments: value2 value3 value4 value5 value6"));
+            CHECK(std::string(e.what()) == std::string("unrecognised arguments: v2 v3 v4 v5 v6"));
         }
     }
 }
