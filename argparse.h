@@ -179,6 +179,17 @@ namespace argparse
 
                     auto parse_args(tokens args) -> tokens override
                     {
+                        for (auto i = args.begin(); i != args.end(); ++i)
+                        {
+                            if (*i == m_name)
+                            {
+                                i = args.erase(i);
+                                m_value = *i;
+                                (void) args.erase(i);
+                                break;
+                            }
+                        }
+
                         return args;
                     }
 
