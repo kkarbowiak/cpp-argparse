@@ -161,6 +161,35 @@ namespace argparse
                     optstring m_value;
             };
 
+            class OptionalArgument : public ArgumentBase
+            {
+                public:
+                    explicit OptionalArgument(std::string const & name)
+                      : m_name(name)
+                      , m_value()
+                    {
+                    }
+
+                    auto parse_args(tokens args) -> tokens override
+                    {
+                        return args;
+                    }
+
+                    auto get_name() const -> std::string override
+                    {
+                        return m_name;
+                    }
+
+                    auto get_value() const -> optstring override
+                    {
+                        return m_value;
+                    }
+
+                private:
+                    std::string const m_name;
+                    optstring m_value;
+            };
+
         private:
             using argument_uptr = std::unique_ptr<ArgumentBase>;
             using argument_uptrs = std::vector<argument_uptr>;
