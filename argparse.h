@@ -24,7 +24,14 @@ namespace argparse
         public:
             auto add_argument(std::string const & name) -> void
             {
-                m_arguments.emplace_back(std::make_unique<PositionalArgument>(name));
+                if (name.front() != '-')
+                {
+                    m_arguments.emplace_back(std::make_unique<PositionalArgument>(name));
+                }
+                else
+                {
+                    m_arguments.emplace_back(std::make_unique<OptionalArgument>(name));
+                }
             }
 
             auto parse_args(int argc, char * argv[]) -> parameters
