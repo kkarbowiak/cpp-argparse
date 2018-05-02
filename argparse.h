@@ -130,8 +130,8 @@ namespace argparse
             {
                 public:
                     explicit PositionalArgument(std::string const & name)
-                    : m_name(name)
-                    , m_value()
+                      : m_name(name)
+                      , m_value()
                     {
                     }
 
