@@ -24,7 +24,7 @@ namespace argparse
         public:
             auto add_argument(std::string const & name) -> void
             {
-                m_arguments.emplace_back(std::make_unique<Argument>(name));
+                m_arguments.emplace_back(std::make_unique<PositionalArgument>(name));
             }
 
             auto parse_args(int argc, char * argv[]) -> parameters
@@ -126,10 +126,10 @@ namespace argparse
                     virtual auto get_value() const -> optstring = 0;
             };
 
-            class Argument : public ArgumentBase
+            class PositionalArgument : public ArgumentBase
             {
                 public:
-                    explicit Argument(std::string const & name)
+                    explicit PositionalArgument(std::string const & name)
                     : m_name(name)
                     , m_value()
                     {
