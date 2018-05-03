@@ -196,7 +196,7 @@ namespace argparse
                                 i = args.erase(i);
                                 if (i == args.end())
                                 {
-                                    throw std::runtime_error("missing argument");
+                                    throw std::runtime_error("argument " + m_name + ": expected one argument");
                                 }
                                 m_value = *i;
                                 (void) args.erase(i);
