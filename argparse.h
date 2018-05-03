@@ -13,8 +13,8 @@
 namespace argparse
 {
     using tokens = std::list<std::string>;
-    using parameters = std::map<std::string, std::string>;
     using optstring = std::optional<std::string>;
+    using parameters = std::map<std::string, optstring>;
 }
 
 namespace argparse
@@ -116,7 +116,7 @@ namespace argparse
 
                 for (auto const & a : m_arguments)
                 {
-                    result[a->get_name()] = *a->get_value();
+                    result[a->get_name()] = a->get_value();
                 }
 
                 return result;
