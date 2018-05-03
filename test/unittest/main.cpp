@@ -45,6 +45,11 @@ TEST_CASE("Checking parsing single optional argument")
         CHECK(parsed.at("o1") == std::nullopt);
     }
 
+    SUBCASE("missing argument")
+    {
+        REQUIRE_THROWS_AS(parser.parse_args({"-o1"}), std::runtime_error);
+    }
+
     SUBCASE("present")
     {
         auto const parsed = parser.parse_args({"-o1", "v1"});
