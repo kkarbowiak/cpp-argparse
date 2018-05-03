@@ -131,6 +131,7 @@ namespace argparse
                     virtual auto parse_args(tokens args) -> tokens = 0;
                     virtual auto get_name() const -> std::string = 0;
                     virtual auto get_value() const -> optstring = 0;
+                    virtual auto is_required() const -> bool = 0;
             };
 
             class PositionalArgument : public ArgumentBase
@@ -161,6 +162,11 @@ namespace argparse
                     auto get_value() const -> optstring override
                     {
                         return m_value;
+                    }
+
+                    auto is_required() const -> bool override
+                    {
+                        return true;
                     }
 
                 private:
@@ -201,6 +207,11 @@ namespace argparse
                     auto get_value() const -> optstring override
                     {
                         return m_value;
+                    }
+
+                    auto is_required() const -> bool override
+                    {
+                        return false;
                     }
 
                 private:
