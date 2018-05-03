@@ -1,3 +1,7 @@
+/*
+    Copyright 2018 Krzysztof Karbowiak
+*/
+
 #ifndef CPP_ARGPARSE_H__DDK
 #define CPP_ARGPARSE_H__DDK
 
