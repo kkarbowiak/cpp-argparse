@@ -194,6 +194,10 @@ namespace argparse
                             if (*i == m_name)
                             {
                                 i = args.erase(i);
+                                if (i == args.end())
+                                {
+                                    throw std::runtime_error("missing argument");
+                                }
                                 m_value = *i;
                                 (void) args.erase(i);
                                 break;
