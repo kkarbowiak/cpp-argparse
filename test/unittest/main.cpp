@@ -48,6 +48,15 @@ TEST_CASE("Checking parsing single optional argument")
     SUBCASE("missing argument")
     {
         REQUIRE_THROWS_AS(parser.parse_args({"-o1"}), std::runtime_error);
+
+        try
+        {
+            (void) parser.parse_args({"-o1"});
+        }
+        catch (std::exception const & e)
+        {
+            CHECK(std::string(e.what()) == std::string("argument -o1: expected one argument"));
+        }
     }
 
     SUBCASE("present")
