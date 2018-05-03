@@ -38,9 +38,19 @@ TEST_CASE("Checking parsing single optional argument")
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o1");
 
-    auto const parsed = parser.parse_args({"-o1", "v1"});
+    SUBCASE("missing")
+    {
+        auto const parsed = parser.parse_args({});
 
-    CHECK(parsed.at("o1") == "v1");
+        CHECK(parsed.at("o1") == std::nullopt);
+    }
+
+    SUBCASE("present")
+    {
+        auto const parsed = parser.parse_args({"-o1", "v1"});
+
+        CHECK(parsed.at("o1") == "v1");
+    }
 }
 
 TEST_CASE("Checking reporting missing arguments")
