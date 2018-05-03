@@ -91,7 +91,7 @@ namespace argparse
 
                 for (auto const & a : m_arguments)
                 {
-                    if (!a->get_value())
+                    if (a->is_required() && !a->get_value())
                     {
                         if (!error_message)
                         {
