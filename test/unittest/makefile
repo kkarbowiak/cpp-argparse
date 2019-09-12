@@ -1,5 +1,5 @@
 all:
-	g++ main.cpp -o unittest -I . -I ../.. -Wall -Wextra -pedantic -std=c++17
+	g++ main.cpp -o unittest -I . -I ../../include -Wall -Wextra -pedantic -std=c++17
 
 .PHONY: clean
 
