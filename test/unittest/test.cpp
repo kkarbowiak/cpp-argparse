@@ -5,7 +5,7 @@
 #include <string>
 
 
-TEST_CASE("Checking parsing single positional argument")
+TEST_CASE("Parsing single positional argument yields its value")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("p1");
