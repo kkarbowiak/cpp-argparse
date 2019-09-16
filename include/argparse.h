@@ -134,6 +134,7 @@ namespace argparse
 
                     virtual auto parse_args(tokens args) -> tokens = 0;
                     virtual auto get_name() const -> std::string = 0;
+                    virtual auto get_dest_name() const -> std::string = 0;
                     virtual auto get_value() const -> optstring = 0;
                     virtual auto is_required() const -> bool = 0;
             };
@@ -159,6 +160,11 @@ namespace argparse
                     }
 
                     auto get_name() const -> std::string override
+                    {
+                        return m_name;
+                    }
+
+                    auto get_dest_name() const -> std::string override
                     {
                         return m_name;
                     }
@@ -208,6 +214,11 @@ namespace argparse
                     }
 
                     auto get_name() const -> std::string override
+                    {
+                        return m_name.substr(1);
+                    }
+
+                    auto get_dest_name() const -> std::string override
                     {
                         return m_name.substr(1);
                     }
