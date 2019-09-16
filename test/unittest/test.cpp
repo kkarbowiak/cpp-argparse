@@ -49,11 +49,11 @@ TEST_CASE("Parsing single optional argument...")
     }
 }
 
-TEST_CASE("Checking reporting missing arguments")
+TEST_CASE("Parsing missing positional argument throws an exception...")
 {
     auto parser = argparse::ArgumentParser();
 
-    SUBCASE("one missing argument")
+    SUBCASE("...for one missing argument")
     {
         parser.add_argument("p1");
 
@@ -69,7 +69,7 @@ TEST_CASE("Checking reporting missing arguments")
         }
     }
 
-    SUBCASE("two missing arguments")
+    SUBCASE("...for two missing arguments")
     {
         parser.add_argument("p1");
         parser.add_argument("p2");
@@ -86,7 +86,7 @@ TEST_CASE("Checking reporting missing arguments")
         }
     }
 
-    SUBCASE("five missing arguments")
+    SUBCASE("...for five missing arguments")
     {
         parser.add_argument("p1");
         parser.add_argument("p2");
