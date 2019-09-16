@@ -107,12 +107,12 @@ TEST_CASE("Parsing missing positional argument throws an exception...")
     }
 }
 
-TEST_CASE("Checking reporting unrecognised arguments")
+TEST_CASE("Parsing unrecognised argument throws an exception...")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("p1");
     
-    SUBCASE("one unrecognised argument")
+    SUBCASE("..for one unrecognised argument")
     {
         REQUIRE_THROWS_AS(parser.parse_args({"v1", "v2"}), std::runtime_error);
 
@@ -126,7 +126,7 @@ TEST_CASE("Checking reporting unrecognised arguments")
         }
     }
 
-    SUBCASE("two unrecognised arguments")
+    SUBCASE("...for two unrecognised arguments")
     {
         REQUIRE_THROWS_AS(parser.parse_args({"v1", "v2", "v3"}), std::runtime_error);
 
@@ -140,7 +140,7 @@ TEST_CASE("Checking reporting unrecognised arguments")
         }
     }
 
-    SUBCASE("five unrecognised arguments")
+    SUBCASE("...for five unrecognised arguments")
     {
         REQUIRE_THROWS_AS(parser.parse_args({"v1", "v2", "v3", "v4", "v5", "v6"}), std::runtime_error);
 
