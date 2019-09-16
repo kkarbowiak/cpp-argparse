@@ -5,6 +5,8 @@
 #include <string>
 
 
+using namespace std::string_literals;
+
 TEST_CASE("Parsing single positional argument yields its value")
 {
     auto parser = argparse::ArgumentParser();
@@ -37,7 +39,7 @@ TEST_CASE("Parsing single optional argument...")
         }
         catch (std::exception const & e)
         {
-            CHECK(std::string(e.what()) == std::string("argument -o1: expected one argument"));
+            CHECK(std::string(e.what()) == "argument -o1: expected one argument"s);
         }
     }
 
@@ -65,7 +67,7 @@ TEST_CASE("Parsing missing positional argument throws an exception...")
         }
         catch (std::exception const & e)
         {
-            CHECK(std::string(e.what()) == std::string("missing arguments: p1"));
+            CHECK(std::string(e.what()) == "missing arguments: p1"s);
         }
     }
 
@@ -82,7 +84,7 @@ TEST_CASE("Parsing missing positional argument throws an exception...")
         }
         catch (std::exception const & e)
         {
-            CHECK(std::string(e.what()) == std::string("missing arguments: p1 p2"));
+            CHECK(std::string(e.what()) == "missing arguments: p1 p2"s);
         }
     }
 
@@ -102,7 +104,7 @@ TEST_CASE("Parsing missing positional argument throws an exception...")
         }
         catch (std::exception const & e)
         {
-            CHECK(std::string(e.what()) == std::string("missing arguments: p1 p2 p3 p4 p5"));
+            CHECK(std::string(e.what()) == "missing arguments: p1 p2 p3 p4 p5"s);
         }
     }
 }
@@ -122,7 +124,7 @@ TEST_CASE("Parsing unrecognised argument throws an exception...")
         }
         catch (std::exception const & e)
         {
-            CHECK(std::string(e.what()) == std::string("unrecognised arguments: v2"));
+            CHECK(std::string(e.what()) == "unrecognised arguments: v2"s);
         }
     }
 
@@ -136,7 +138,7 @@ TEST_CASE("Parsing unrecognised argument throws an exception...")
         }
         catch (std::exception const & e)
         {
-            CHECK(std::string(e.what()) == std::string("unrecognised arguments: v2 v3"));
+            CHECK(std::string(e.what()) == "unrecognised arguments: v2 v3"s);
         }
     }
 
@@ -150,7 +152,7 @@ TEST_CASE("Parsing unrecognised argument throws an exception...")
         }
         catch (std::exception const & e)
         {
-            CHECK(std::string(e.what()) == std::string("unrecognised arguments: v2 v3 v4 v5 v6"));
+            CHECK(std::string(e.what()) == "unrecognised arguments: v2 v3 v4 v5 v6");
         }
     }
 }
