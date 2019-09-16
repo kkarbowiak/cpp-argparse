@@ -5,23 +5,6 @@
 #include <string>
 
 
-TEST_CASE("Checking existence of ArgumentParser class")
-{
-    argparse::ArgumentParser();
-}
-
-TEST_CASE("Checking existence of ArgumentParser::add_argument function")
-{
-    auto parser = argparse::ArgumentParser();
-    parser.add_argument("dummy");
-}
-
-TEST_CASE("Checking existence of ArgumentParser::parse_args function")
-{
-    auto parser = argparse::ArgumentParser();
-    parser.parse_args(0, nullptr);
-}
-
 TEST_CASE("Checking parsing single positional argument")
 {
     auto parser = argparse::ArgumentParser();
