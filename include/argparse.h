@@ -120,7 +120,7 @@ namespace argparse
 
                 for (auto const & a : m_arguments)
                 {
-                    result[a->get_name()] = a->get_value();
+                    result[a->get_dest_name()] = a->get_value();
                 }
 
                 return result;
