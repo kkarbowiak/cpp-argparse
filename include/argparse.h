@@ -202,7 +202,7 @@ namespace argparse
                                 i = args.erase(i);
                                 if (i == args.end())
                                 {
-                                    throw std::runtime_error("argument " + m_name + ": expected one argument");
+                                    throw std::runtime_error("argument " + get_name() + ": expected one argument");
                                 }
                                 m_value = *i;
                                 (void) args.erase(i);
@@ -215,7 +215,7 @@ namespace argparse
 
                     auto get_name() const -> std::string override
                     {
-                        return m_name.substr(1);
+                        return m_name;
                     }
 
                     auto get_dest_name() const -> std::string override
