@@ -51,6 +51,16 @@ TEST_CASE("Parsing single optional argument...")
     }
 }
 
+TEST_CASE("Optional arguments support short names")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-s");
+
+    auto const parsed = parser.parse_args({"-s", "ess"});
+
+    CHECK(parsed.at("s"));
+}
+
 TEST_CASE("Parsing missing positional argument throws an exception...")
 {
     auto parser = argparse::ArgumentParser();
