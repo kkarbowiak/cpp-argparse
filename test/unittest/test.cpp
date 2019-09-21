@@ -166,3 +166,51 @@ TEST_CASE("Parsing unrecognised positional argument throws an exception...")
         }
     }
 }
+
+TEST_CASE("Parsing unrecognised optional argument throws an exception...")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-a");
+
+    SUBCASE("...for one unrecognised argument")
+    {
+        REQUIRE_THROWS_AS(parser.parse_args({"-a", "v1", "-b"}), std::runtime_error);
+
+        try
+        {
+            (void) parser.parse_args({"-a", "v1", "-b"});
+        }
+        catch (std::exception const & e)
+        {
+            CHECK(std::string(e.what()) == "unrecognised arguments: -b"s);
+        }
+    }
+
+    SUBCASE("...for two unrecognised arguments")
+    {
+        REQUIRE_THROWS_AS(parser.parse_args({"-a", "v1", "-b", "-c"}), std::runtime_error);
+
+        try
+        {
+            (void) parser.parse_args({"-a", "v1", "-b", "-c"});
+        }
+        catch (std::exception const & e)
+        {
+            CHECK(std::string(e.what()) == "unrecognised arguments: -b -c"s);
+        }
+    }
+
+    SUBCASE("...for five unrecognised arguments")
+    {
+        REQUIRE_THROWS_AS(parser.parse_args({"-a", "v1", "-b", "-c", "-d", "-e", "-f"}), std::runtime_error);
+
+        try
+        {
+            (void) parser.parse_args({"-a", "v1", "-b", "-c", "-d", "-e", "-f"});
+        }
+        catch (std::exception const & e)
+        {
+            CHECK(std::string(e.what()) == "unrecognised arguments: -b -c -d -e -f"s);
+        }
+    }
+}
