@@ -162,7 +162,7 @@ TEST_CASE("Parsing unrecognised positional argument throws an exception...")
         }
         catch (std::exception const & e)
         {
-            CHECK(std::string(e.what()) == "unrecognised arguments: v2 v3 v4 v5 v6");
+            CHECK(std::string(e.what()) == "unrecognised arguments: v2 v3 v4 v5 v6"s);
         }
     }
 }
