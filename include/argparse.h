@@ -12,6 +12,7 @@
 #include <optional>
 #include <memory>
 #include <stdexcept>
+#include <algorithm>
 
 
 namespace argparse
@@ -220,7 +221,14 @@ namespace argparse
 
                     auto get_dest_name() const -> std::string override
                     {
-                        return m_name.substr(1);
+                        auto dest = m_name.substr(1);
+                        if (dest.front() == '-')
+                        {
+                            dest = dest.substr(1);
+                        }
+                        std::replace(dest.begin(), dest.end(), '-', '_');
+
+                        return dest;
                     }
 
                     auto get_value() const -> optstring override

@@ -61,6 +61,16 @@ TEST_CASE("Optional arguments support short names")
     CHECK(parsed.at("s"));
 }
 
+TEST_CASE("Optional arguments support long names")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("--long-arg");
+
+    auto const parsed = parser.parse_args({"--long-arg", "value"});
+
+    CHECK(parsed.at("long_arg"));
+}
+
 TEST_CASE("Parsing missing positional argument throws an exception...")
 {
     auto parser = argparse::ArgumentParser();
