@@ -20,34 +20,34 @@ TEST_CASE("Parsing single positional argument yields its value")
 TEST_CASE("Parsing single optional argument...")
 {
     auto parser = argparse::ArgumentParser();
-    parser.add_argument("-o1");
+    parser.add_argument("-o");
 
     SUBCASE("...yields nullopt when it's missing")
     {
         auto const parsed = parser.parse_args({});
 
-        CHECK(parsed.at("o1") == std::nullopt);
+        CHECK(parsed.at("o") == std::nullopt);
     }
 
     SUBCASE("...throws an exception when it's missing argument")
     {
-        REQUIRE_THROWS_AS(parser.parse_args({"-o1"}), std::runtime_error);
+        REQUIRE_THROWS_AS(parser.parse_args({"-o"}), std::runtime_error);
 
         try
         {
-            (void) parser.parse_args({"-o1"});
+            (void) parser.parse_args({"-o"});
         }
         catch (std::exception const & e)
         {
-            CHECK(std::string(e.what()) == "argument -o1: expected one argument"s);
+            CHECK(std::string(e.what()) == "argument -o: expected one argument"s);
         }
     }
 
     SUBCASE("...yields its value")
     {
-        auto const parsed = parser.parse_args({"-o1", "v1"});
+        auto const parsed = parser.parse_args({"-o", "v1"});
 
-        CHECK(parsed.at("o1") == "v1");
+        CHECK(parsed.at("o") == "v1");
     }
 }
 
