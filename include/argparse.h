@@ -127,10 +127,10 @@ namespace argparse
             }
 
         private:
-            class ArgumentBase
+            class Argument
             {
                 public:
-                    virtual ~ArgumentBase() = default;
+                    virtual ~Argument() = default;
 
                     virtual auto parse_args(tokens args) -> tokens = 0;
                     virtual auto get_name() const -> std::string = 0;
@@ -139,7 +139,7 @@ namespace argparse
                     virtual auto is_required() const -> bool = 0;
             };
 
-            class PositionalArgument : public ArgumentBase
+            class PositionalArgument : public Argument
             {
                 public:
                     explicit PositionalArgument(std::string const & name)
@@ -184,7 +184,7 @@ namespace argparse
                     optstring m_value;
             };
 
-            class OptionalArgument : public ArgumentBase
+            class OptionalArgument : public Argument
             {
                 public:
                     explicit OptionalArgument(std::string const & name)
@@ -239,7 +239,7 @@ namespace argparse
             };
 
         private:
-            using argument_uptr = std::unique_ptr<ArgumentBase>;
+            using argument_uptr = std::unique_ptr<Argument>;
             using argument_uptrs = std::vector<argument_uptr>;
 
         private:
