@@ -124,7 +124,7 @@ TEST_CASE("Parsing unrecognised argument throws an exception...")
     auto parser = argparse::ArgumentParser();
     parser.add_argument("p1");
     
-    SUBCASE("..for one unrecognised argument")
+    SUBCASE("...for one unrecognised argument")
     {
         REQUIRE_THROWS_AS(parser.parse_args({"v1", "v2"}), std::runtime_error);
 
