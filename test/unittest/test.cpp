@@ -119,7 +119,7 @@ TEST_CASE("Parsing missing positional argument throws an exception...")
     }
 }
 
-TEST_CASE("Parsing unrecognised argument throws an exception...")
+TEST_CASE("Parsing unrecognised positional argument throws an exception...")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("p1");
