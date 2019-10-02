@@ -163,4 +163,25 @@ TEST_CASE("ArgumentParser provides usage message...")
         (void) parser.parse_args(2, args);
         CHECK(parser.format_usage() == "usage: prog p1"s);
     }
+
+    SUBCASE("...for two positional arguments")
+    {
+        parser.add_argument("p1");
+        parser.add_argument("p2");
+        char const * args[] = {"prog", "v1", "v2"};
+        (void) parser.parse_args(3, args);
+        CHECK(parser.format_usage() == "usage: prog p1 p2"s);
+    }
+
+    SUBCASE("...for five positional arguments")
+    {
+        parser.add_argument("p1");
+        parser.add_argument("p2");
+        parser.add_argument("p3");
+        parser.add_argument("p4");
+        parser.add_argument("p5");
+        char const * args[] = {"prog", "v1", "v2", "v3", "v4", "v5"};
+        (void) parser.parse_args(6, args);
+        CHECK(parser.format_usage() == "usage: prog p1 p2 p3 p4 p5"s);
+    }
 }
