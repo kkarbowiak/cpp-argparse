@@ -144,3 +144,15 @@ TEST_CASE("Parsing unrecognised optional argument throws an exception...")
         CHECK_THROWS_WITH(parser.parse_args({"-a", "v1", "-b", "-c", "-d", "-e", "-f"}), "unrecognised arguments: -b -c -d -e -f");
     }
 }
+
+TEST_CASE("ArgumentParser provides usage message...")
+{
+    auto parser = argparse::ArgumentParser();
+
+    SUBCASE("...for no arguments")
+    {
+        char const * args[] = {"prog"};
+        (void) parser.parse_args(1, args);
+        CHECK(parser.format_usage() == "usage: prog"s);
+    }
+}

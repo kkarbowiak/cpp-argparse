@@ -41,6 +41,8 @@ namespace argparse
 
             auto parse_args(int argc, char const * argv[]) -> parameters
             {
+                m_prog = argv[0];
+
                 return parse_args(get_tokens(argc, argv));
             }
 
@@ -59,6 +61,11 @@ namespace argparse
                 ensure_no_arguments_missing();
 
                 return get_parameters();
+            }
+
+            auto format_usage() const -> std::string
+            {
+                return "usage: " + m_prog;
             }
 
         private:
@@ -252,6 +259,7 @@ namespace argparse
 
         private:
             argument_uptrs m_arguments;
+            std::string m_prog;
     };
 }
 
