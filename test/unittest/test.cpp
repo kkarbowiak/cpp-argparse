@@ -184,4 +184,12 @@ TEST_CASE("ArgumentParser provides usage message...")
         (void) parser.parse_args(6, args);
         CHECK(parser.format_usage() == "usage: prog p1 p2 p3 p4 p5"s);
     }
+
+    SUBCASE("...for one optional argument")
+    {
+        parser.add_argument("-o");
+        char const * args[] = {"prog"};
+        (void) parser.parse_args(1, args);
+        CHECK(parser.format_usage() == "usage: prog [-o o]"s);
+    }
 }

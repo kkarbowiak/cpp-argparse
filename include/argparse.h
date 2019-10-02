@@ -75,6 +75,14 @@ namespace argparse
                     }
                 }
 
+                for (auto const & arg : m_arguments)
+                {
+                    if (!arg->is_required())
+                    {
+                        usage += " [" + arg->get_name() + " " + arg->get_dest_name() +"]";
+                    }
+                }
+
                 return usage;
             }
 
