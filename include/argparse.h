@@ -65,7 +65,17 @@ namespace argparse
 
             auto format_usage() const -> std::string
             {
-                return "usage: " + m_prog;
+                std::string usage = "usage: " + m_prog;
+
+                for (auto const & arg : m_arguments)
+                {
+                    if (arg->is_required())
+                    {
+                        usage += " " + arg->get_name();
+                    }
+                }
+
+                return usage;
             }
 
         private:
