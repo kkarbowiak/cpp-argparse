@@ -31,8 +31,7 @@ TEST_CASE("Parsing single optional argument...")
 
     SUBCASE("...throws an exception when it's missing argument")
     {
-        CHECK_THROWS_AS(parser.parse_args({"-o"}), std::runtime_error);
-        CHECK_THROWS_WITH(parser.parse_args({"-o"}), "argument -o: expected one argument");
+        CHECK_THROWS_WITH_AS(parser.parse_args({"-o"}), "argument -o: expected one argument", std::runtime_error);
     }
 
     SUBCASE("...yields its value")
@@ -71,8 +70,7 @@ TEST_CASE("Parsing missing positional argument throws an exception...")
     {
         parser.add_argument("p1");
 
-        CHECK_THROWS_AS(parser.parse_args({}), std::runtime_error);
-        CHECK_THROWS_WITH(parser.parse_args({}), "missing arguments: p1");
+        CHECK_THROWS_WITH_AS(parser.parse_args({}), "missing arguments: p1", std::runtime_error);
     }
 
     SUBCASE("...for two missing arguments")
@@ -80,8 +78,7 @@ TEST_CASE("Parsing missing positional argument throws an exception...")
         parser.add_argument("p1");
         parser.add_argument("p2");
         
-        CHECK_THROWS_AS(parser.parse_args({}), std::runtime_error);
-        CHECK_THROWS_WITH(parser.parse_args({}), "missing arguments: p1 p2");
+        CHECK_THROWS_WITH_AS(parser.parse_args({}), "missing arguments: p1 p2", std::runtime_error);
     }
 
     SUBCASE("...for five missing arguments")
@@ -92,8 +89,7 @@ TEST_CASE("Parsing missing positional argument throws an exception...")
         parser.add_argument("p4");
         parser.add_argument("p5");
         
-        CHECK_THROWS_AS(parser.parse_args({}), std::runtime_error);
-        CHECK_THROWS_WITH(parser.parse_args({}), "missing arguments: p1 p2 p3 p4 p5");
+        CHECK_THROWS_WITH_AS(parser.parse_args({}), "missing arguments: p1 p2 p3 p4 p5", std::runtime_error);
     }
 }
 
@@ -104,20 +100,17 @@ TEST_CASE("Parsing unrecognised positional argument throws an exception...")
     
     SUBCASE("...for one unrecognised argument")
     {
-        CHECK_THROWS_AS(parser.parse_args({"v1", "v2"}), std::runtime_error);
-        CHECK_THROWS_WITH(parser.parse_args({"v1", "v2"}), "unrecognised arguments: v2");
+        CHECK_THROWS_WITH_AS(parser.parse_args({"v1", "v2"}), "unrecognised arguments: v2", std::runtime_error);
     }
 
     SUBCASE("...for two unrecognised arguments")
     {
-        CHECK_THROWS_AS(parser.parse_args({"v1", "v2", "v3"}), std::runtime_error);
-        CHECK_THROWS_WITH(parser.parse_args({"v1", "v2", "v3"}), "unrecognised arguments: v2 v3");
+        CHECK_THROWS_WITH_AS(parser.parse_args({"v1", "v2", "v3"}), "unrecognised arguments: v2 v3", std::runtime_error);
     }
 
     SUBCASE("...for five unrecognised arguments")
     {
-        CHECK_THROWS_AS(parser.parse_args({"v1", "v2", "v3", "v4", "v5", "v6"}), std::runtime_error);
-        CHECK_THROWS_WITH(parser.parse_args({"v1", "v2", "v3", "v4", "v5", "v6"}), "unrecognised arguments: v2 v3 v4 v5 v6");
+        CHECK_THROWS_WITH_AS(parser.parse_args({"v1", "v2", "v3", "v4", "v5", "v6"}), "unrecognised arguments: v2 v3 v4 v5 v6", std::runtime_error);
     }
 }
 
@@ -128,20 +121,17 @@ TEST_CASE("Parsing unrecognised optional argument throws an exception...")
 
     SUBCASE("...for one unrecognised argument")
     {
-        CHECK_THROWS_AS(parser.parse_args({"-a", "v1", "-b"}), std::runtime_error);
-        CHECK_THROWS_WITH(parser.parse_args({"-a", "v1", "-b"}), "unrecognised arguments: -b");
+        CHECK_THROWS_WITH_AS(parser.parse_args({"-a", "v1", "-b"}), "unrecognised arguments: -b", std::runtime_error);
     }
 
     SUBCASE("...for two unrecognised arguments")
     {
-        CHECK_THROWS_AS(parser.parse_args({"-a", "v1", "-b", "-c"}), std::runtime_error);
-        CHECK_THROWS_WITH(parser.parse_args({"-a", "v1", "-b", "-c"}), "unrecognised arguments: -b -c");
+        CHECK_THROWS_WITH_AS(parser.parse_args({"-a", "v1", "-b", "-c"}), "unrecognised arguments: -b -c", std::runtime_error);
     }
 
     SUBCASE("...for five unrecognised arguments")
     {
-        CHECK_THROWS_AS(parser.parse_args({"-a", "v1", "-b", "-c", "-d", "-e", "-f"}), std::runtime_error);
-        CHECK_THROWS_WITH(parser.parse_args({"-a", "v1", "-b", "-c", "-d", "-e", "-f"}), "unrecognised arguments: -b -c -d -e -f");
+        CHECK_THROWS_WITH_AS(parser.parse_args({"-a", "v1", "-b", "-c", "-d", "-e", "-f"}), "unrecognised arguments: -b -c -d -e -f", std::runtime_error);
     }
 }
 
