@@ -143,14 +143,17 @@ TEST_CASE("ArgumentParser provides usage message...")
     {
         char const * args[] = {"prog"};
         (void) parser.parse_args(1, args);
+
         CHECK(parser.format_usage() == "usage: prog"s);
     }
 
     SUBCASE("...for one positional argument")
     {
         parser.add_argument("p1");
+
         char const * args[] = {"prog", "v1"};
         (void) parser.parse_args(2, args);
+
         CHECK(parser.format_usage() == "usage: prog p1"s);
     }
 
@@ -158,8 +161,10 @@ TEST_CASE("ArgumentParser provides usage message...")
     {
         parser.add_argument("p1");
         parser.add_argument("p2");
+
         char const * args[] = {"prog", "v1", "v2"};
         (void) parser.parse_args(3, args);
+
         CHECK(parser.format_usage() == "usage: prog p1 p2"s);
     }
 
@@ -170,16 +175,20 @@ TEST_CASE("ArgumentParser provides usage message...")
         parser.add_argument("p3");
         parser.add_argument("p4");
         parser.add_argument("p5");
+
         char const * args[] = {"prog", "v1", "v2", "v3", "v4", "v5"};
         (void) parser.parse_args(6, args);
+
         CHECK(parser.format_usage() == "usage: prog p1 p2 p3 p4 p5"s);
     }
 
     SUBCASE("...for one optional argument")
     {
         parser.add_argument("-o");
+
         char const * args[] = {"prog"};
         (void) parser.parse_args(1, args);
+
         CHECK(parser.format_usage() == "usage: prog [-o o]"s);
     }
 
@@ -187,8 +196,10 @@ TEST_CASE("ArgumentParser provides usage message...")
     {
         parser.add_argument("-o");
         parser.add_argument("--option");
+
         char const * args[] = {"prog"};
         (void) parser.parse_args(1, args);
+
         CHECK(parser.format_usage() == "usage: prog [-o o] [--option option]"s);
     }
 
@@ -199,8 +210,10 @@ TEST_CASE("ArgumentParser provides usage message...")
         parser.add_argument("-q");
         parser.add_argument("--long-name");
         parser.add_argument("--very-long-name");
+
         char const * args[] = {"prog"};
         (void) parser.parse_args(1, args);
+
         CHECK(parser.format_usage() == "usage: prog [-o o] [--option option] [-q q] [--long-name long_name] [--very-long-name very_long_name]"s);
     }
 }
