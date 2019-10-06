@@ -71,13 +71,13 @@ namespace argparse
 
                 for (auto const & arg : m_arguments)
                 {
-                    if (!arg->is_required())
+                    if (arg->is_required())
                     {
-                        optionals += " [" + arg->get_name() + " " + arg->get_metavar_name() +"]";
+                        positionals += " " + arg->get_name();
                     }
                     else
                     {
-                        positionals += " " + arg->get_name();
+                        optionals += " [" + arg->get_name() + " " + arg->get_metavar_name() +"]";
                     }
                 }
 
