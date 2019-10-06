@@ -189,7 +189,7 @@ TEST_CASE("ArgumentParser provides usage message...")
         char const * args[] = {"prog"};
         (void) parser.parse_args(1, args);
 
-        CHECK(parser.format_usage() == "usage: prog [-o o]"s);
+        CHECK(parser.format_usage() == "usage: prog [-o O]"s);
     }
 
     SUBCASE("...for two optional arguments")
@@ -200,7 +200,7 @@ TEST_CASE("ArgumentParser provides usage message...")
         char const * args[] = {"prog"};
         (void) parser.parse_args(1, args);
 
-        CHECK(parser.format_usage() == "usage: prog [-o o] [--option option]"s);
+        CHECK(parser.format_usage() == "usage: prog [-o O] [--option OPTION]"s);
     }
 
     SUBCASE("...for five optional arguments")
@@ -214,6 +214,6 @@ TEST_CASE("ArgumentParser provides usage message...")
         char const * args[] = {"prog"};
         (void) parser.parse_args(1, args);
 
-        CHECK(parser.format_usage() == "usage: prog [-o o] [--option option] [-q q] [--long-name long_name] [--very-long-name very_long_name]"s);
+        CHECK(parser.format_usage() == "usage: prog [-o O] [--option OPTION] [-q Q] [--long-name LONG_NAME] [--very-long-name VERY_LONG_NAME]"s);
     }
 }

@@ -79,7 +79,7 @@ namespace argparse
                 {
                     if (!arg->is_required())
                     {
-                        usage += " [" + arg->get_name() + " " + arg->get_dest_name() +"]";
+                        usage += " [" + arg->get_name() + " " + arg->get_metavar_name() +"]";
                     }
                 }
 
@@ -161,6 +161,7 @@ namespace argparse
                     virtual auto parse_args(tokens args) -> tokens = 0;
                     virtual auto get_name() const -> std::string = 0;
                     virtual auto get_dest_name() const -> std::string = 0;
+                    virtual auto get_metavar_name() const -> std::string = 0;
                     virtual auto get_value() const -> optstring = 0;
                     virtual auto is_required() const -> bool = 0;
             };
@@ -191,6 +192,11 @@ namespace argparse
                     }
 
                     auto get_dest_name() const -> std::string override
+                    {
+                        return m_name;
+                    }
+
+                    auto get_metavar_name() const -> std::string override
                     {
                         return m_name;
                     }
@@ -254,6 +260,18 @@ namespace argparse
                         std::replace(dest.begin(), dest.end(), '-', '_');
 
                         return dest;
+                    }
+
+                    auto get_metavar_name() const -> std::string override
+                    {
+                        auto metavar = get_dest_name();
+
+                        for (auto & ch : metavar)
+                        {
+                            ch = ::toupper(ch);
+                        }
+
+                        return metavar;
                     }
 
                     auto get_value() const -> optstring override
