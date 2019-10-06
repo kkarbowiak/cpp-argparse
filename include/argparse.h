@@ -69,17 +69,17 @@ namespace argparse
 
                 for (auto const & arg : m_arguments)
                 {
-                    if (arg->is_required())
+                    if (!arg->is_required())
                     {
-                        usage += " " + arg->get_name();
+                        usage += " [" + arg->get_name() + " " + arg->get_metavar_name() +"]";
                     }
                 }
 
                 for (auto const & arg : m_arguments)
                 {
-                    if (!arg->is_required())
+                    if (arg->is_required())
                     {
-                        usage += " [" + arg->get_name() + " " + arg->get_metavar_name() +"]";
+                        usage += " " + arg->get_name();
                     }
                 }
 
