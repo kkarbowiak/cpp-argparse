@@ -66,24 +66,22 @@ namespace argparse
             auto format_usage() const -> std::string
             {
                 std::string usage = "usage: " + m_prog;
+                std::string optionals;
+                std::string positionals;
 
                 for (auto const & arg : m_arguments)
                 {
                     if (!arg->is_required())
                     {
-                        usage += " [" + arg->get_name() + " " + arg->get_metavar_name() +"]";
+                        optionals += " [" + arg->get_name() + " " + arg->get_metavar_name() +"]";
                     }
-                }
-
-                for (auto const & arg : m_arguments)
-                {
-                    if (arg->is_required())
+                    else
                     {
-                        usage += " " + arg->get_name();
+                        positionals += " " + arg->get_name();
                     }
                 }
 
-                return usage;
+                return usage + optionals + positionals;
             }
 
         private:
