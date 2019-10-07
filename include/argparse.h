@@ -88,6 +88,7 @@ namespace argparse
             {
                 std::string help = format_usage();
                 std::string positionals;
+                std::string optionals;
 
                 for (auto const & arg : m_arguments)
                 {
@@ -95,21 +96,15 @@ namespace argparse
                     {
                         positionals += "\n  " + arg->get_name();
                     }
+                    else
+                    {
+                        optionals += "\n  " + arg->get_name() + " " + arg->get_metavar_name();
+                    }
                 }
 
                 if (!positionals.empty())
                 {
                     help += "\n\npositional arguments:" + positionals;
-                }
-
-                std::string optionals;
-
-                for (auto const & arg : m_arguments)
-                {
-                    if (!arg->is_required())
-                    {
-                        optionals += "\n  " + arg->get_name() + " " + arg->get_metavar_name();
-                    }
                 }
 
                 if (!optionals.empty())
