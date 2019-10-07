@@ -247,3 +247,16 @@ TEST_CASE("ArgumentParser provides usage message...")
         CHECK(parser.format_usage() == "usage: prog [-o O] [-a A] [-z Z] [-e E] [-f F] p1 p2 p3 p4 p5"s);
     }
 }
+
+TEST_CASE("ArgumentParser provides help message...")
+{
+    auto parser = argparse::ArgumentParser();
+
+    SUBCASE("...for no arguments")
+    {
+        char const * args[] = {"prog"};
+        (void) parser.parse_args(1, args);
+
+        CHECK(parser.format_help() == "usage: prog"s);
+    }
+}

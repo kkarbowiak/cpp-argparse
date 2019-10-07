@@ -84,6 +84,11 @@ namespace argparse
                 return usage + optionals + positionals;
             }
 
+            auto format_help() const -> std::string
+            {
+                return format_usage();
+            }
+
         private:
             auto get_tokens(int argc, char const * argv[]) const -> tokens
             {
