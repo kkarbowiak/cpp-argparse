@@ -86,7 +86,23 @@ namespace argparse
 
             auto format_help() const -> std::string
             {
-                return format_usage();
+                std::string help = format_usage();
+                std::string positionals;
+
+                for (auto const & arg : m_arguments)
+                {
+                    if (arg->is_required())
+                    {
+                        positionals += "\n  " + arg->get_name();
+                    }
+                }
+
+                if (!positionals.empty())
+                {
+                    help += "\n\npositional arguments:" + positionals;
+                }
+
+                return help;
             }
 
         private:

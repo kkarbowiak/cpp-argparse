@@ -259,4 +259,14 @@ TEST_CASE("ArgumentParser provides help message...")
 
         CHECK(parser.format_help() == "usage: prog"s);
     }
+
+    SUBCASE("...for one positional argument")
+    {
+        parser.add_argument("p1");
+
+        char const * args[] = {"prog", "v1"};
+        (void) parser.parse_args(2, args);
+
+        CHECK(parser.format_help() == "usage: prog p1\n\npositional arguments:\n  p1"s);
+    }
 }
