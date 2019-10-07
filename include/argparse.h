@@ -102,6 +102,21 @@ namespace argparse
                     help += "\n\npositional arguments:" + positionals;
                 }
 
+                std::string optionals;
+
+                for (auto const & arg : m_arguments)
+                {
+                    if (!arg->is_required())
+                    {
+                        optionals += "\n  " + arg->get_name();
+                    }
+                }
+
+                if (!optionals.empty())
+                {
+                    help += "\n\noptional arguments:" + optionals;
+                }
+
                 return help;
             }
 
