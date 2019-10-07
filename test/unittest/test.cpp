@@ -304,4 +304,29 @@ TEST_CASE("ArgumentParser provides help message...")
 
         CHECK(parser.format_help() == "usage: prog [-o O]\n\noptional arguments:\n  -o"s);
     }
+
+    SUBCASE("...for two optional arguments")
+    {
+        parser.add_argument("-o");
+        parser.add_argument("--option");
+
+        char const * args[] = {"prog"};
+        (void) parser.parse_args(1, args);
+
+        CHECK(parser.format_help() == "usage: prog [-o O] [--option OPTION]\n\noptional arguments:\n  -o\n  --option"s);
+    }
+
+    SUBCASE("...for five optional arguments")
+    {
+        parser.add_argument("-o");
+        parser.add_argument("--option");
+        parser.add_argument("-q");
+        parser.add_argument("--long-name");
+        parser.add_argument("--very-long-name");
+
+        char const * args[] = {"prog"};
+        (void) parser.parse_args(1, args);
+
+        CHECK(parser.format_help() == "usage: prog [-o O] [--option OPTION] [-q Q] [--long-name LONG_NAME] [--very-long-name VERY_LONG_NAME]\n\noptional arguments:\n  -o\n  --option\n  -q\n  --long-name\n  --very-long-name"s);
+    }
 }
