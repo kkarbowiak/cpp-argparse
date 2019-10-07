@@ -108,7 +108,7 @@ namespace argparse
                 {
                     if (!arg->is_required())
                     {
-                        optionals += "\n  " + arg->get_name();
+                        optionals += "\n  " + arg->get_name() + " " + arg->get_metavar_name();
                     }
                 }
 
