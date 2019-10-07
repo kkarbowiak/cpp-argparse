@@ -329,4 +329,34 @@ TEST_CASE("ArgumentParser provides help message...")
 
         CHECK(parser.format_help() == "usage: prog [-o O] [--option OPTION] [-q Q] [--long-name LONG_NAME] [--very-long-name VERY_LONG_NAME]\n\noptional arguments:\n  -o\n  --option\n  -q\n  --long-name\n  --very-long-name"s);
     }
+
+    SUBCASE("...for one positional and one optional argument")
+    {
+        parser.add_argument("p1");
+        parser.add_argument("-o");
+
+        char const * args[] = {"prog", "p1"};
+        (void) parser.parse_args(2, args);
+
+        CHECK(parser.format_help() == "usage: prog [-o O] p1\n\npositional arguments:\n  p1\n\noptional arguments:\n  -o"s);
+    }
+
+    SUBCASE("...for five positional and five optional arguments")
+    {
+        parser.add_argument("p1");
+        parser.add_argument("-o");
+        parser.add_argument("p2");
+        parser.add_argument("-a");
+        parser.add_argument("p3");
+        parser.add_argument("-z");
+        parser.add_argument("p4");
+        parser.add_argument("-e");
+        parser.add_argument("p5");
+        parser.add_argument("-f");
+
+        char const * args[] = {"prog", "p1", "p2", "p3", "p4", "p5"};
+        (void) parser.parse_args(6, args);
+
+        CHECK(parser.format_help() == "usage: prog [-o O] [-a A] [-z Z] [-e E] [-f F] p1 p2 p3 p4 p5\n\npositional arguments:\n  p1\n  p2\n  p3\n  p4\n  p5\n\noptional arguments:\n  -o\n  -a\n  -z\n  -e\n  -f"s);
+    }
 }
