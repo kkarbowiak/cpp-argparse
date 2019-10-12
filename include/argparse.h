@@ -111,6 +111,7 @@ namespace argparse
                     if (arg->is_required())
                     {
                         positionals += "\n  " + arg->get_name();
+
                         if (!arg->get_options().m_help.empty())
                         {
                             positionals += " " + arg->get_options().m_help;
@@ -119,6 +120,7 @@ namespace argparse
                     else
                     {
                         optionals += "\n  " + arg->get_name() + " " + arg->get_metavar_name();
+
                         if (!arg->get_options().m_help.empty())
                         {
                             optionals += " " + arg->get_options().m_help;
