@@ -360,3 +360,31 @@ TEST_CASE("ArgumentParser provides help message...")
         CHECK(parser.format_help() == "usage: prog [-o O] [-a A] [-z Z] [-e E] [-f F] p1 p2 p3 p4 p5\n\npositional arguments:\n  p1\n  p2\n  p3\n  p4\n  p5\n\noptional arguments:\n  -o O\n  -a A\n  -z Z\n  -e E\n  -f F"s);
     }
 }
+
+TEST_CASE("Help message contains...")
+{
+    auto parser = argparse::ArgumentParser();
+
+    SUBCASE("...for positional argument...")
+    {
+        SUBCASE("...name for argument without help string")
+        {
+            parser.add_argument("p1");
+
+            char const * args[] = {"prog", "p1"};
+            (void) parser.parse_args(2, args);
+
+            CHECK(parser.format_help() == "usage: prog p1\n\npositional arguments:\n  p1"s);
+        }
+
+        SUBCASE("...name and help for argument with help string")
+        {
+            parser.add_argument("p1").help("help1");
+
+            char const * args[] = {"prog", "p1"};
+            (void) parser.parse_args(2, args);
+
+            CHECK(parser.format_help() == "usage: prog p1\n\npositional arguments:\n  p1 help1"s);
+        }
+    }
+}
