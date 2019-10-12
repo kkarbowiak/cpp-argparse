@@ -387,4 +387,27 @@ TEST_CASE("Help message contains...")
             CHECK(parser.format_help() == "usage: prog p1\n\npositional arguments:\n  p1 help1"s);
         }
     }
+
+    SUBCASE("...for optional argument...")
+    {
+        SUBCASE("...name and metavar for argument without help string")
+        {
+            parser.add_argument("-o");
+
+            char const * args[] = {"prog"};
+            (void) parser.parse_args(1, args);
+
+            CHECK(parser.format_help() == "usage: prog [-o O]\n\noptional arguments:\n  -o O"s);
+        }
+
+        SUBCASE("name, metavar, and help for argument with help string")
+        {
+            parser.add_argument("-o").help("help1");
+
+            char const * args[] = {"prog"};
+            (void) parser.parse_args(1, args);
+
+            CHECK(parser.format_help() == "usage: prog [-o O]\n\noptional arguments:\n  -o O help1"s);
+        }
+    }
 }
