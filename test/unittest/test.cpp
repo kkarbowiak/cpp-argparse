@@ -135,6 +135,35 @@ TEST_CASE("Parsing unrecognised optional argument throws an exception...")
     }
 }
 
+TEST_CASE("Parsing mixed positional and optional arguments give same result no matter the order...")
+{
+    auto parser1 = argparse::ArgumentParser();
+    parser1.add_argument("pos1");
+    parser1.add_argument("-f");
+
+    auto parser2 = argparse::ArgumentParser();
+    parser2.add_argument("-f");
+    parser2.add_argument("pos1");
+
+    SUBCASE("...for positional and optional")
+    {
+        char const * argv[] = {"prog", "val1", "-f", "a"};
+        auto const parsed1 = parser1.parse_args(4, argv);
+        auto const parsed2 = parser2.parse_args(4, argv);
+
+        CHECK(parsed1 == parsed2);
+    }
+
+    SUBCASE("...for optional and positional")
+    {
+        char const * argv[] = {"prog", "-f", "a", "val1"};
+        auto const parsed1 = parser1.parse_args(4, argv);
+        auto const parsed2 = parser2.parse_args(4, argv);
+
+        CHECK(parsed1 == parsed2);
+    }
+}
+
 TEST_CASE("ArgumentParser provides usage message...")
 {
     auto parser = argparse::ArgumentParser();
