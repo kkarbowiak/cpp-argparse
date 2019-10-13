@@ -55,7 +55,7 @@ namespace argparse
                 return m_arguments.back()->get_options();
             }
 
-            auto parse_args(int argc, char const * argv[]) -> parameters
+            auto parse_args(int argc, char const * const argv[]) -> parameters
             {
                 m_prog = argv[0];
 
@@ -142,7 +142,7 @@ namespace argparse
             }
 
         private:
-            auto get_tokens(int argc, char const * argv[]) const -> tokens
+            auto get_tokens(int argc, char const * const argv[]) const -> tokens
             {
                 tokens result;
 
