@@ -10,3 +10,5 @@ target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_17)
 
 enable_testing()
 add_subdirectory(test/unittest)
+
+add_subdirectory(examples)
