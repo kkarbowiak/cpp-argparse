@@ -66,7 +66,7 @@ namespace argparse
             {
                 for (auto & a : m_arguments)
                 {
-                    if (!a->is_required())
+                    if (!a->is_positional())
                     {
                         args = a->parse_args(args);
                     }
@@ -74,7 +74,7 @@ namespace argparse
 
                 for (auto & a : m_arguments)
                 {
-                    if (a->is_required())
+                    if (a->is_positional())
                     {
                         args = a->parse_args(args);
                     }
@@ -98,7 +98,7 @@ namespace argparse
 
                 for (auto const & arg : m_arguments)
                 {
-                    if (arg->is_required())
+                    if (arg->is_positional())
                     {
                         positionals += " " + arg->get_name();
                     }
@@ -119,7 +119,7 @@ namespace argparse
 
                 for (auto const & arg : m_arguments)
                 {
-                    if (arg->is_required())
+                    if (arg->is_positional())
                     {
                         positionals += "\n  " + arg->get_name();
 
@@ -230,6 +230,7 @@ namespace argparse
                     virtual auto get_metavar_name() const -> std::string = 0;
                     virtual auto get_value() const -> optstring = 0;
                     virtual auto is_required() const -> bool = 0;
+                    virtual auto is_positional() const -> bool = 0;
 
                     virtual auto get_options() -> ArgumentOptions & = 0;
             };
@@ -275,6 +276,11 @@ namespace argparse
                     }
 
                     auto is_required() const -> bool override
+                    {
+                        return true;
+                    }
+
+                    auto is_positional() const -> bool override
                     {
                         return true;
                     }
@@ -354,6 +360,11 @@ namespace argparse
                     }
 
                     auto is_required() const -> bool override
+                    {
+                        return false;
+                    }
+
+                    auto is_positional() const -> bool override
                     {
                         return false;
                     }
