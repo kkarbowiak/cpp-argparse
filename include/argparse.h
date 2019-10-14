@@ -64,13 +64,20 @@ namespace argparse
 
             auto parse_args(tokens args) -> parameters
             {
-                std::vector<Argument *> arguments;
-                std::transform(m_arguments.begin(), m_arguments.end(), std::back_inserter(arguments), [](auto & a_ptr){ return a_ptr.get(); });
-                std::stable_sort(arguments.begin(), arguments.end(), [](auto l, auto r){ return !l->is_required() && r->is_required(); });
-
-                for (auto & a : arguments)
+                for (auto & a : m_arguments)
                 {
-                    args = a->parse_args(args);
+                    if (!a->is_required())
+                    {
+                        args = a->parse_args(args);
+                    }
+                }
+
+                for (auto & a : m_arguments)
+                {
+                    if (a->is_required())
+                    {
+                        args = a->parse_args(args);
+                    }
                 }
 
                 if (!args.empty())
