@@ -13,6 +13,10 @@ target_include_directories(unittest
     $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>)
 
 target_compile_features(unittest PRIVATE cxx_std_17)
-target_compile_options(unittest PRIVATE -Wall -Wextra -pedantic)
+target_compile_options(unittest PRIVATE
+                           $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
+                               -Wall -Wextra -pedantic>
+                           $<$<CXX_COMPILER_ID:MSVC>:
+                               /W4>)
 
 add_test(NAME unittest COMMAND unittest)

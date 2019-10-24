@@ -10,4 +10,8 @@ target_include_directories(example_01
     $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>)
 
 target_compile_features(example_01 PRIVATE cxx_std_17)
-target_compile_options(example_01 PRIVATE -Wall -Wextra -pedantic)
+target_compile_options(example_01 PRIVATE
+                           $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
+                               -Wall -Wextra -pedantic>
+                           $<$<CXX_COMPILER_ID:MSVC>:
+                               /W4>)
