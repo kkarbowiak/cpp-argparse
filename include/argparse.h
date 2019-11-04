@@ -26,21 +26,8 @@ namespace argparse
 {
     class ArgumentParser
     {
-        private:
-            class ArgumentOptions
-            {
-                public:
-                    auto help(std::string const & help) -> void
-                    {
-                        m_help = help;
-                    }
-
-                public:
-                    std::string m_help;
-            };
-
         public:
-            auto add_argument(std::string const & name) -> ArgumentOptions &
+            decltype(auto) add_argument(std::string const & name)
             {
                 if (name.front() != '-')
                 {
@@ -222,6 +209,17 @@ namespace argparse
             class Argument
             {
                 public:
+                    struct Options
+                    {
+                        auto help(std::string const & help) -> void
+                        {
+                            m_help = help;
+                        }
+
+                        std::string m_help;
+                    };
+
+                public:
                     virtual ~Argument() = default;
 
                     virtual auto parse_args(tokens args) -> tokens = 0;
@@ -232,7 +230,7 @@ namespace argparse
                     virtual auto is_required() const -> bool = 0;
                     virtual auto is_positional() const -> bool = 0;
 
-                    virtual auto get_options() -> ArgumentOptions & = 0;
+                    virtual auto get_options() -> Options & = 0;
             };
 
             class PositionalArgument : public Argument
@@ -285,7 +283,7 @@ namespace argparse
                         return true;
                     }
 
-                    auto get_options() -> ArgumentOptions & override
+                    auto get_options() -> Options & override
                     {
                         return m_options;
                     }
@@ -293,7 +291,7 @@ namespace argparse
                 private:
                     std::string const m_name;
                     optstring m_value;
-                    ArgumentOptions m_options;
+                    Options m_options;
             };
 
             class OptionalArgument : public Argument
@@ -369,7 +367,7 @@ namespace argparse
                         return false;
                     }
 
-                    auto get_options() -> ArgumentOptions & override
+                    auto get_options() -> Options & override
                     {
                         return m_options;
                     }
@@ -377,7 +375,7 @@ namespace argparse
                 private:
                     std::string const m_name;
                     optstring m_value;
-                    ArgumentOptions m_options;
+                    Options m_options;
             };
 
         private:
