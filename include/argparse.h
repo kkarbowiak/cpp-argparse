@@ -39,7 +39,7 @@ namespace argparse
                     m_arguments.emplace_back(std::make_unique<OptionalArgument>(name));
                 }
 
-                return m_arguments.back()->get_options();
+                return *m_arguments.back();
             }
 
             auto parse_args(int argc, char const * const argv[]) -> parameters
@@ -211,11 +211,6 @@ namespace argparse
                 public:
                     struct Options
                     {
-                        auto help(std::string const & help) -> void
-                        {
-                            m_help = help;
-                        }
-
                         std::string m_help;
                     };
 
@@ -229,6 +224,8 @@ namespace argparse
                     virtual auto get_value() const -> optstring = 0;
                     virtual auto is_required() const -> bool = 0;
                     virtual auto is_positional() const -> bool = 0;
+
+                    virtual auto help(std::string const & help) -> void = 0;
 
                     virtual auto get_options() -> Options & = 0;
             };
@@ -281,6 +278,11 @@ namespace argparse
                     auto is_positional() const -> bool override
                     {
                         return true;
+                    }
+
+                    auto help(std::string const & help) -> void override
+                    {
+                        m_options.m_help = help;
                     }
 
                     auto get_options() -> Options & override
@@ -365,6 +367,11 @@ namespace argparse
                     auto is_positional() const -> bool override
                     {
                         return false;
+                    }
+
+                    auto help(std::string const & help) -> void override
+                    {
+                        m_options.m_help = help;
                     }
 
                     auto get_options() -> Options & override
