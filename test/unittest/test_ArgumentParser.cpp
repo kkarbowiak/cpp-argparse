@@ -489,6 +489,26 @@ TEST_CASE("Help message contains...")
 
     SUBCASE("...for optional argument...")
     {
+        SUBCASE("...name for argument with store true action and without help string")
+        {
+            parser.add_argument("-o").store_true();
+
+            char const * args[] = {"prog"};
+            (void) parser.parse_args(1, args);
+
+            CHECK(parser.format_help() == "usage: prog [-o]\n\noptional arguments:\n  -o"s);
+        }
+
+        SUBCASE("...name and help for argument with store true action and help string")
+        {
+            parser.add_argument("-o").store_true().help("help1");
+
+            char const * args[] = {"prog"};
+            (void) parser.parse_args(1, args);
+
+            CHECK(parser.format_help() == "usage: prog [-o]\n\noptional arguments:\n  -o help1"s);
+        }
+
         SUBCASE("...name and metavar for argument without help string")
         {
             parser.add_argument("-o");
