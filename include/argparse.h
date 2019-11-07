@@ -17,15 +17,13 @@
 
 namespace argparse
 {
-    using tokens = std::list<std::string>;
-    using optstring = std::optional<std::string>;
-    using parameters = std::map<std::string, optstring>;
-}
-
-namespace argparse
-{
     class ArgumentParser
     {
+        public:
+            using tokens = std::list<std::string>;
+            using optstring = std::optional<std::string>;
+            using parameters = std::map<std::string, optstring>;
+
         public:
             decltype(auto) add_argument(std::string const & name)
             {
