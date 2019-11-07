@@ -122,7 +122,11 @@ namespace argparse
                     }
                     else
                     {
-                        optionals += "\n  " + arg->get_name() + " " + arg->get_metavar_name();
+                        optionals += "\n  " + arg->get_name();
+                        if (!arg->get_options().m_store_true)
+                        {
+                            optionals += " " + arg->get_metavar_name();
+                        }
 
                         if (!arg->get_options().m_help.empty())
                         {

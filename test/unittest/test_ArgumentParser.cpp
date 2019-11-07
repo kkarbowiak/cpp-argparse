@@ -408,6 +408,27 @@ TEST_CASE("ArgumentParser provides help message...")
         CHECK(parser.format_help() == "usage: prog [-o O] [--option OPTION] [-q Q] [--long-name LONG_NAME] [--very-long-name VERY_LONG_NAME]\n\noptional arguments:\n  -o O\n  --option OPTION\n  -q Q\n  --long-name LONG_NAME\n  --very-long-name VERY_LONG_NAME"s);
     }
 
+    SUBCASE("...for one optional argument with store true action")
+    {
+        parser.add_argument("-o").store_true();
+
+        char const * args[] = {"prog"};
+        (void) parser.parse_args(1, args);
+
+        CHECK(parser.format_help() == "usage: prog [-o]\n\noptional arguments:\n  -o"s);
+    }
+
+    SUBCASE("...for two optional arguments with store true action")
+    {
+        parser.add_argument("-o").store_true();
+        parser.add_argument("--option").store_true();
+
+        char const * args[] = {"prog"};
+        (void) parser.parse_args(1, args);
+
+        CHECK(parser.format_help() == "usage: prog [-o] [--option]\n\noptional arguments:\n  -o\n  --option"s);
+    }
+
     SUBCASE("...for one positional and one optional argument")
     {
         parser.add_argument("p1");
