@@ -212,6 +212,7 @@ namespace argparse
                     struct Options
                     {
                         std::string m_help;
+                        bool m_store_true = false;
                     };
 
                 public:
@@ -225,7 +226,8 @@ namespace argparse
                     virtual auto is_required() const -> bool = 0;
                     virtual auto is_positional() const -> bool = 0;
 
-                    virtual auto help(std::string const & help) -> void = 0;
+                    virtual auto help(std::string const & help) -> Argument & = 0;
+                    virtual auto store_true() -> Argument & = 0;
 
                     virtual auto get_options() -> Options & = 0;
             };
@@ -280,9 +282,15 @@ namespace argparse
                         return true;
                     }
 
-                    auto help(std::string const & help) -> void override
+                    auto help(std::string const & help) -> Argument & override
                     {
                         m_options.m_help = help;
+                        return *this;
+                    }
+
+                    auto store_true() -> Argument & override
+                    {
+                        return *this;
                     }
 
                     auto get_options() -> Options & override
@@ -312,12 +320,19 @@ namespace argparse
                             if (*i == m_name)
                             {
                                 i = args.erase(i);
-                                if (i == args.end())
+                                if (m_options.m_store_true)
                                 {
-                                    throw std::runtime_error("argument " + get_name() + ": expected one argument");
+                                    m_value = "true";
                                 }
-                                m_value = *i;
-                                (void) args.erase(i);
+                                else
+                                {
+                                    if (i == args.end())
+                                    {
+                                        throw std::runtime_error("argument " + get_name() + ": expected one argument");
+                                    }
+                                    m_value = *i;
+                                    (void) args.erase(i);
+                                }
                                 break;
                             }
                         }
@@ -369,9 +384,16 @@ namespace argparse
                         return false;
                     }
 
-                    auto help(std::string const & help) -> void override
+                    auto help(std::string const & help) -> Argument & override
                     {
                         m_options.m_help = help;
+                        return *this;
+                    }
+
+                    auto store_true() -> Argument & override
+                    {
+                        m_options.m_store_true = true;
+                        return *this;
                     }
 
                     auto get_options() -> Options & override
