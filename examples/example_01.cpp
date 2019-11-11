@@ -20,12 +20,12 @@ int main(int argc, char * argv[])
         auto args = parser.parse_args(argc, argv);
 
         std::cout << "args:\n";
-        for (auto & a : args)
+        for (auto & a : {"pos1", "pos2", "pos3", "f", "g", "h", "long_option", "very_long_option"})
         {
-            std::cout << a.first << ": ";
-            if (a.second)
+            std::cout << a << ": ";
+            if (auto v = args.get(a))
             {
-                std::cout << *a.second;
+                std::cout << *v;
             }
             else
             {

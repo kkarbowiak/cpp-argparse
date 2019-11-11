@@ -22,7 +22,24 @@ namespace argparse
         public:
             using tokens = std::list<std::string>;
             using optstring = std::optional<std::string>;
-            using parameters = std::map<std::string, optstring>;
+
+        public:
+            class Parameters
+            {
+                public:
+                    auto get(std::string const & name) const -> optstring
+                    {
+                        return m_parameters.at(name);
+                    }
+
+                    auto operator[](std::string const & name) -> optstring &
+                    {
+                        return m_parameters[name];
+                    }
+
+                private:
+                    std::map<std::string, optstring> m_parameters;
+            };
 
         public:
             decltype(auto) add_argument(std::string const & name)
@@ -40,14 +57,14 @@ namespace argparse
                 return *m_arguments.back();
             }
 
-            auto parse_args(int argc, char const * const argv[]) -> parameters
+            auto parse_args(int argc, char const * const argv[]) -> Parameters
             {
                 m_prog = argv[0];
 
                 return parse_args(get_tokens(argc, argv));
             }
 
-            auto parse_args(tokens args) -> parameters
+            auto parse_args(tokens args) -> Parameters
             {
                 for (auto & a : m_arguments)
                 {
@@ -200,9 +217,9 @@ namespace argparse
                 }
             }
 
-            auto get_parameters() const -> parameters
+            auto get_parameters() const -> Parameters
             {
-                parameters result;
+                Parameters result;
 
                 for (auto const & a : m_arguments)
                 {

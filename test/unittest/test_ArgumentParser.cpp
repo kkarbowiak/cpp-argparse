@@ -42,7 +42,7 @@ TEST_CASE("Parsing single positional argument yields its value")
     
     auto const parsed = parser.parse_args({"v1"});
 
-    CHECK(parsed.at("p1") == "v1");
+    CHECK(parsed.get("p1") == "v1");
 }
 
 TEST_CASE("Parsing single optional argument...")
@@ -54,7 +54,7 @@ TEST_CASE("Parsing single optional argument...")
     {
         auto const parsed = parser.parse_args({});
 
-        CHECK(parsed.at("o") == std::nullopt);
+        CHECK(parsed.get("o") == std::nullopt);
     }
 
     SUBCASE("...throws an exception when it's missing argument")
@@ -66,7 +66,7 @@ TEST_CASE("Parsing single optional argument...")
     {
         auto const parsed = parser.parse_args({"-o", "v1"});
 
-        CHECK(parsed.at("o") == "v1");
+        CHECK(parsed.get("o") == "v1");
     }
 }
 
@@ -77,7 +77,7 @@ TEST_CASE("Optional arguments support short names")
 
     auto const parsed = parser.parse_args({"-s", "ess"});
 
-    CHECK(parsed.at("s"));
+    CHECK(parsed.get("s"));
 }
 
 TEST_CASE("Optional arguments support long names")
@@ -87,7 +87,7 @@ TEST_CASE("Optional arguments support long names")
 
     auto const parsed = parser.parse_args({"--long-arg", "value"});
 
-    CHECK(parsed.at("long_arg"));
+    CHECK(parsed.get("long_arg"));
 }
 
 TEST_CASE("Parsing missing positional argument throws an exception...")
@@ -179,7 +179,8 @@ TEST_CASE("Parsing mixed positional and optional arguments give same result no m
         auto const parsed1 = parser1.parse_args(4, argv);
         auto const parsed2 = parser2.parse_args(4, argv);
 
-        CHECK(parsed1 == parsed2);
+        CHECK(parsed1.get("pos1") == parsed2.get("pos1"));
+        CHECK(parsed1.get("f") == parsed2.get("f"));
     }
 
     SUBCASE("...for optional and positional")
@@ -188,7 +189,8 @@ TEST_CASE("Parsing mixed positional and optional arguments give same result no m
         auto const parsed1 = parser1.parse_args(4, argv);
         auto const parsed2 = parser2.parse_args(4, argv);
 
-        CHECK(parsed1 == parsed2);
+        CHECK(parsed1.get("pos1") == parsed2.get("pos1"));
+        CHECK(parsed1.get("f") == parsed2.get("f"));
     }
 }
 
