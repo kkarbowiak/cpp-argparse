@@ -10,6 +10,7 @@
 #include <vector>
 #include <map>
 #include <optional>
+#include <any>
 #include <memory>
 #include <stdexcept>
 #include <algorithm>
@@ -24,21 +25,62 @@ namespace argparse
             using optstring = std::optional<std::string>;
 
         public:
+            class Value
+            {
+                public:
+                    Value()
+                      : m_value()
+                    {
+                    }
+
+                    template<typename T>
+                    Value(T const & t)
+                      : m_value(t)
+                    {
+                    }
+
+                    template<typename T>
+                    auto operator=(T const & t) -> Value &
+                    {
+                        m_value = t;
+                        return *this;
+                    }
+
+                    explicit operator bool() const
+                    {
+                        return m_value.has_value();
+                    }
+
+                    auto get() const -> std::string
+                    {
+                        return get<std::string>();
+                    }
+
+                    template<typename T>
+                    auto get() const -> T
+                    {
+                        return std::any_cast<T>(m_value);
+                    }
+
+                private:
+                    std::any m_value;
+            };
+
             class Parameters
             {
                 public:
-                    auto get(std::string const & name) const -> optstring
+                    auto get(std::string const & name) const -> Value
                     {
                         return m_parameters.at(name);
                     }
 
-                    auto operator[](std::string const & name) -> optstring &
+                    auto operator[](std::string const & name) -> Value &
                     {
                         return m_parameters[name];
                     }
 
                 private:
-                    std::map<std::string, optstring> m_parameters;
+                    std::map<std::string, Value> m_parameters;
             };
 
         public:
@@ -198,7 +240,7 @@ namespace argparse
 
                 for (auto const & a : m_arguments)
                 {
-                    if (a->is_required() && !a->get_value())
+                    if (a->is_required() && !a->get_value().has_value())
                     {
                         if (!error_message)
                         {
@@ -246,7 +288,7 @@ namespace argparse
                     virtual auto get_name() const -> std::string = 0;
                     virtual auto get_dest_name() const -> std::string = 0;
                     virtual auto get_metavar_name() const -> std::string = 0;
-                    virtual auto get_value() const -> optstring = 0;
+                    virtual auto get_value() const -> std::any = 0;
                     virtual auto is_required() const -> bool = 0;
                     virtual auto is_positional() const -> bool = 0;
 
@@ -291,7 +333,7 @@ namespace argparse
                         return m_name;
                     }
 
-                    auto get_value() const -> optstring override
+                    auto get_value() const -> std::any override
                     {
                         return m_value;
                     }
@@ -324,7 +366,7 @@ namespace argparse
 
                 private:
                     std::string const m_name;
-                    optstring m_value;
+                    std::any m_value;
                     Options m_options;
             };
 
@@ -346,7 +388,7 @@ namespace argparse
                                 i = args.erase(i);
                                 if (m_options.m_store_true)
                                 {
-                                    m_value = "true";
+                                    m_value = std::string("true");
                                 }
                                 else
                                 {
@@ -393,7 +435,7 @@ namespace argparse
                         return metavar;
                     }
 
-                    auto get_value() const -> optstring override
+                    auto get_value() const -> std::any override
                     {
                         return m_value;
                     }
@@ -427,7 +469,7 @@ namespace argparse
 
                 private:
                     std::string const m_name;
-                    optstring m_value;
+                    std::any m_value;
                     Options m_options;
             };
 

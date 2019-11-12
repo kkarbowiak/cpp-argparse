@@ -42,7 +42,7 @@ TEST_CASE("Parsing single positional argument yields its value")
     
     auto const parsed = parser.parse_args({"v1"});
 
-    CHECK(parsed.get("p1") == "v1");
+    CHECK(parsed.get("p1").get() == "v1");
 }
 
 TEST_CASE("Parsing single optional argument...")
@@ -50,11 +50,11 @@ TEST_CASE("Parsing single optional argument...")
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o");
 
-    SUBCASE("...yields nullopt when it's missing")
+    SUBCASE("...yields false when it's missing")
     {
         auto const parsed = parser.parse_args({});
 
-        CHECK(parsed.get("o") == std::nullopt);
+        CHECK(!parsed.get("o"));
     }
 
     SUBCASE("...throws an exception when it's missing argument")
@@ -66,7 +66,7 @@ TEST_CASE("Parsing single optional argument...")
     {
         auto const parsed = parser.parse_args({"-o", "v1"});
 
-        CHECK(parsed.get("o") == "v1");
+        CHECK(parsed.get("o").get() == "v1");
     }
 }
 
@@ -179,8 +179,8 @@ TEST_CASE("Parsing mixed positional and optional arguments give same result no m
         auto const parsed1 = parser1.parse_args(4, argv);
         auto const parsed2 = parser2.parse_args(4, argv);
 
-        CHECK(parsed1.get("pos1") == parsed2.get("pos1"));
-        CHECK(parsed1.get("f") == parsed2.get("f"));
+        CHECK(parsed1.get("pos1").get() == parsed2.get("pos1").get());
+        CHECK(parsed1.get("f").get() == parsed2.get("f").get());
     }
 
     SUBCASE("...for optional and positional")
@@ -189,8 +189,8 @@ TEST_CASE("Parsing mixed positional and optional arguments give same result no m
         auto const parsed1 = parser1.parse_args(4, argv);
         auto const parsed2 = parser2.parse_args(4, argv);
 
-        CHECK(parsed1.get("pos1") == parsed2.get("pos1"));
-        CHECK(parsed1.get("f") == parsed2.get("f"));
+        CHECK(parsed1.get("pos1").get() == parsed2.get("pos1").get());
+        CHECK(parsed1.get("f").get() == parsed2.get("f").get());
     }
 }
 

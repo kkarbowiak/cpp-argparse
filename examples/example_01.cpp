@@ -25,7 +25,7 @@ int main(int argc, char * argv[])
             std::cout << a << ": ";
             if (auto v = args.get(a))
             {
-                std::cout << *v;
+                std::cout << v.get();
             }
             else
             {
