@@ -240,7 +240,7 @@ namespace argparse
 
                 for (auto const & a : m_arguments)
                 {
-                    if (a->is_required() && !a->get_value().has_value())
+                    if (a->is_required() && !a->has_value())
                     {
                         if (!error_message)
                         {
@@ -288,6 +288,7 @@ namespace argparse
                     virtual auto get_name() const -> std::string = 0;
                     virtual auto get_dest_name() const -> std::string = 0;
                     virtual auto get_metavar_name() const -> std::string = 0;
+                    virtual auto has_value() const -> bool = 0;
                     virtual auto get_value() const -> std::any = 0;
                     virtual auto is_required() const -> bool = 0;
                     virtual auto is_positional() const -> bool = 0;
@@ -331,6 +332,11 @@ namespace argparse
                     auto get_metavar_name() const -> std::string override
                     {
                         return m_name;
+                    }
+
+                    auto has_value() const -> bool override
+                    {
+                        return m_value.has_value();
                     }
 
                     auto get_value() const -> std::any override
@@ -433,6 +439,11 @@ namespace argparse
                         }
 
                         return metavar;
+                    }
+
+                    auto has_value() const -> bool override
+                    {
+                        return m_value.has_value();
                     }
 
                     auto get_value() const -> std::any override
