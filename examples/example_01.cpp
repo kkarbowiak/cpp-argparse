@@ -1,5 +1,6 @@
 #include "argparse.h"
 
+#include <string>
 #include <iostream>
 
 
@@ -19,13 +20,20 @@ int main(int argc, char * argv[])
     {
         auto args = parser.parse_args(argc, argv);
 
-        std::cout << "args:\n";
-        for (auto & a : {"pos1", "pos2", "pos3", "f", "g", "h", "long_option", "very_long_option"})
+        std::cout << std::boolalpha << "args:\n";
+        for (std::string a : {"pos1", "pos2", "pos3", "f", "g", "h", "long_option", "very_long_option"})
         {
             std::cout << a << ": ";
             if (auto v = args.get(a))
             {
-                std::cout << v.get();
+                if (a == "g" || a == "very_long_option")
+                {
+                    std::cout << v.get<bool>();
+                }
+                else
+                {
+                    std::cout << v.get();
+                }
             }
             else
             {

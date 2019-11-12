@@ -388,7 +388,7 @@ namespace argparse
                                 i = args.erase(i);
                                 if (m_options.m_store_true)
                                 {
-                                    m_value = std::string("true");
+                                    m_value = true;
                                 }
                                 else
                                 {
@@ -459,6 +459,7 @@ namespace argparse
                     auto store_true() -> Argument & override
                     {
                         m_options.m_store_true = true;
+                        m_value = false;
                         return *this;
                     }
 
