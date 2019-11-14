@@ -13,3 +13,11 @@ TEST_CASE("Optional argument consumes only single command-line arg when its acti
 
     CHECK(optional.parse_args({"prog", "pos1", "-a", "pos2"}) == std::list<std::string>{"prog", "pos1", "pos2"});
 }
+
+TEST_CASE("Optional argument consumes only single command-line arg when its action is store_false")
+{
+    auto parser = argparse::ArgumentParser();
+    auto & optional = parser.add_argument("-a").store_false();
+
+    CHECK(optional.parse_args({"prog", "pos1", "-a", "pos2"}) == std::list<std::string>{"prog", "pos1", "pos2"});
+}
