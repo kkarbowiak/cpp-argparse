@@ -90,6 +90,26 @@ TEST_CASE("Parsing single optional argument with store true action...")
     }
 }
 
+TEST_CASE("Parsing single optional argument with store false action...")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-o").store_false();
+
+    SUBCASE("...yields true when it's missing")
+    {
+        auto const parsed = parser.parse_args({});
+
+        CHECK(parsed.get("o").get<bool>() == true);
+    }
+
+    SUBCASE("...yields true when it's present")
+    {
+        auto const parsed = parser.parse_args({"-o"});
+
+        CHECK(parsed.get("o").get<bool>() == false);
+    }
+}
+
 TEST_CASE("Optional arguments support short names")
 {
     auto parser = argparse::ArgumentParser();

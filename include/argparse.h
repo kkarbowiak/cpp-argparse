@@ -276,6 +276,7 @@ namespace argparse
                     {
                         std::string m_help;
                         bool m_store_true = false;
+                        bool m_store_false = false;
                     };
 
                 public:
@@ -292,6 +293,7 @@ namespace argparse
 
                     virtual auto help(std::string const & help) -> Argument & = 0;
                     virtual auto store_true() -> Argument & = 0;
+                    virtual auto store_false() -> Argument & = 0;
 
                     virtual auto get_options() -> Options & = 0;
             };
@@ -362,6 +364,11 @@ namespace argparse
                         return *this;
                     }
 
+                    auto store_false() -> Argument & override
+                    {
+                        return *this;
+                    }
+
                     auto get_options() -> Options & override
                     {
                         return m_options;
@@ -392,6 +399,10 @@ namespace argparse
                                 if (m_options.m_store_true)
                                 {
                                     m_value = true;
+                                }
+                                else if (m_options.m_store_false)
+                                {
+                                    m_value = false;
                                 }
                                 else
                                 {
@@ -468,6 +479,13 @@ namespace argparse
                     {
                         m_options.m_store_true = true;
                         m_value = false;
+                        return *this;
+                    }
+
+                    auto store_false() -> Argument & override
+                    {
+                        m_options.m_store_false = true;
+                        m_value = true;
                         return *this;
                     }
 
