@@ -71,6 +71,17 @@ namespace argparse
                         return m_parameters.at(name);
                     }
 
+                    auto get_value(std::string const & name) const -> std::string
+                    {
+                        return get(name).get();
+                    }
+
+                    template<typename T>
+                    auto get_value(std::string const & name) const -> T
+                    {
+                        return get(name).get<T>();
+                    }
+
                     auto operator[](std::string const & name) -> Value &
                     {
                         return m_parameters[name];

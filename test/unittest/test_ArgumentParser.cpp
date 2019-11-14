@@ -42,7 +42,7 @@ TEST_CASE("Parsing single positional argument yields its value")
     
     auto const parsed = parser.parse_args({"v1"});
 
-    CHECK(parsed.get("p1").get() == "v1");
+    CHECK(parsed.get_value("p1") == "v1");
 }
 
 TEST_CASE("Parsing single optional argument...")
@@ -66,7 +66,7 @@ TEST_CASE("Parsing single optional argument...")
     {
         auto const parsed = parser.parse_args({"-o", "v1"});
 
-        CHECK(parsed.get("o").get() == "v1");
+        CHECK(parsed.get_value("o") == "v1");
     }
 }
 
@@ -79,14 +79,14 @@ TEST_CASE("Parsing single optional argument with store true action...")
     {
         auto const parsed = parser.parse_args({});
 
-        CHECK(parsed.get("o").get<bool>() == false);
+        CHECK(parsed.get_value<bool>("o") == false);
     }
 
     SUBCASE("...yields true when it's present")
     {
         auto const parsed = parser.parse_args({"-o"});
 
-        CHECK(parsed.get("o").get<bool>() == true);
+        CHECK(parsed.get_value<bool>("o") == true);
     }
 }
 
@@ -99,14 +99,14 @@ TEST_CASE("Parsing single optional argument with store false action...")
     {
         auto const parsed = parser.parse_args({});
 
-        CHECK(parsed.get("o").get<bool>() == true);
+        CHECK(parsed.get_value<bool>("o") == true);
     }
 
     SUBCASE("...yields true when it's present")
     {
         auto const parsed = parser.parse_args({"-o"});
 
-        CHECK(parsed.get("o").get<bool>() == false);
+        CHECK(parsed.get_value<bool>("o") == false);
     }
 }
 
@@ -219,8 +219,8 @@ TEST_CASE("Parsing mixed positional and optional arguments give same result no m
         auto const parsed1 = parser1.parse_args(4, argv);
         auto const parsed2 = parser2.parse_args(4, argv);
 
-        CHECK(parsed1.get("pos1").get() == parsed2.get("pos1").get());
-        CHECK(parsed1.get("f").get() == parsed2.get("f").get());
+        CHECK(parsed1.get_value("pos1") == parsed2.get_value("pos1"));
+        CHECK(parsed1.get_value("f") == parsed2.get_value("f"));
     }
 
     SUBCASE("...for optional and positional")
@@ -229,8 +229,8 @@ TEST_CASE("Parsing mixed positional and optional arguments give same result no m
         auto const parsed1 = parser1.parse_args(4, argv);
         auto const parsed2 = parser2.parse_args(4, argv);
 
-        CHECK(parsed1.get("pos1").get() == parsed2.get("pos1").get());
-        CHECK(parsed1.get("f").get() == parsed2.get("f").get());
+        CHECK(parsed1.get_value("pos1") == parsed2.get_value("pos1"));
+        CHECK(parsed1.get_value("f") == parsed2.get_value("f"));
     }
 }
 
