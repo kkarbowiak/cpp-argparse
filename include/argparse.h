@@ -157,7 +157,7 @@ namespace argparse
                     else
                     {
                         optionals += " [" + arg->get_name();
-                        if (!arg->get_options().m_store_true)
+                        if (!arg->get_options().m_store_true && !arg->get_options().m_store_false)
                         {
                             optionals += " " + arg->get_metavar_name();
                         }
