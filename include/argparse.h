@@ -18,6 +18,13 @@
 
 namespace argparse
 {
+    enum Action
+    {
+        store,
+        store_true,
+        store_false
+    };
+
     class ArgumentParser
     {
         public:
@@ -157,7 +164,7 @@ namespace argparse
                     else
                     {
                         optionals += " [" + arg->get_name();
-                        if (!arg->get_options().m_store_true && !arg->get_options().m_store_false)
+                        if (arg->get_options().m_action != store_true && arg->get_options().m_action != store_false)
                         {
                             optionals += " " + arg->get_metavar_name();
                         }
@@ -188,7 +195,7 @@ namespace argparse
                     else
                     {
                         optionals += "\n  " + arg->get_name();
-                        if (!arg->get_options().m_store_true && !arg->get_options().m_store_false)
+                        if (arg->get_options().m_action != store_true && arg->get_options().m_action != store_false)
                         {
                             optionals += " " + arg->get_metavar_name();
                         }
@@ -286,8 +293,7 @@ namespace argparse
                     struct Options
                     {
                         std::string m_help;
-                        bool m_store_true = false;
-                        bool m_store_false = false;
+                        Action m_action = store;
                     };
 
                 public:
@@ -303,8 +309,7 @@ namespace argparse
                     virtual auto is_positional() const -> bool = 0;
 
                     virtual auto help(std::string const & help) -> Argument & = 0;
-                    virtual auto store_true() -> Argument & = 0;
-                    virtual auto store_false() -> Argument & = 0;
+                    virtual auto action(Action action) -> Argument & = 0;
 
                     virtual auto get_options() -> Options & = 0;
             };
@@ -370,12 +375,7 @@ namespace argparse
                         return *this;
                     }
 
-                    auto store_true() -> Argument & override
-                    {
-                        return *this;
-                    }
-
-                    auto store_false() -> Argument & override
+                    auto action(Action /* action */) -> Argument & override
                     {
                         return *this;
                     }
@@ -407,11 +407,11 @@ namespace argparse
                             if (*i == m_name)
                             {
                                 i = args.erase(i);
-                                if (m_options.m_store_true)
+                                if (m_options.m_action == store_true)
                                 {
                                     m_value = true;
                                 }
-                                else if (m_options.m_store_false)
+                                else if (m_options.m_action == store_false)
                                 {
                                     m_value = false;
                                 }
@@ -486,17 +486,22 @@ namespace argparse
                         return *this;
                     }
 
-                    auto store_true() -> Argument & override
+                    auto action(Action action) -> Argument & override
                     {
-                        m_options.m_store_true = true;
-                        m_value = false;
-                        return *this;
-                    }
+                        m_options.m_action = action;
+                        if (action == store_true)
+                        {
+                            m_value = false;
+                        }
+                        else if (action == store_false)
+                        {
+                            m_value = true;
+                        }
+                        else
+                        {
+                            // ignore
+                        }
 
-                    auto store_false() -> Argument & override
-                    {
-                        m_options.m_store_false = true;
-                        m_value = true;
                         return *this;
                     }
 

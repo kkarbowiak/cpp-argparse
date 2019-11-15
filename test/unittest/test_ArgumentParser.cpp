@@ -73,7 +73,7 @@ TEST_CASE("Parsing single optional argument...")
 TEST_CASE("Parsing single optional argument with store true action...")
 {
     auto parser = argparse::ArgumentParser();
-    parser.add_argument("-o").store_true();
+    parser.add_argument("-o").action(argparse::store_true);
 
     SUBCASE("...yields false when it's missing")
     {
@@ -93,7 +93,7 @@ TEST_CASE("Parsing single optional argument with store true action...")
 TEST_CASE("Parsing single optional argument with store false action...")
 {
     auto parser = argparse::ArgumentParser();
-    parser.add_argument("-o").store_false();
+    parser.add_argument("-o").action(argparse::store_false);
 
     SUBCASE("...yields true when it's missing")
     {
@@ -318,7 +318,7 @@ TEST_CASE("ArgumentParser provides usage message...")
 
     SUBCASE("... for one optional argument with store true action")
     {
-        parser.add_argument("-o").store_true();
+        parser.add_argument("-o").action(argparse::store_true);
 
         char const * args[] = {"prog"};
         (void) parser.parse_args(1, args);
@@ -328,8 +328,8 @@ TEST_CASE("ArgumentParser provides usage message...")
 
     SUBCASE("...for two optional arguments with store true action")
     {
-        parser.add_argument("-o").store_true();
-        parser.add_argument("--option").store_true();
+        parser.add_argument("-o").action(argparse::store_true);
+        parser.add_argument("--option").action(argparse::store_true);
 
         char const * args[] = {"prog"};
         (void) parser.parse_args(1, args);
@@ -339,7 +339,7 @@ TEST_CASE("ArgumentParser provides usage message...")
 
     SUBCASE("... for one optional argument with store false action")
     {
-        parser.add_argument("-o").store_false();
+        parser.add_argument("-o").action(argparse::store_false);
 
         char const * args[] = {"prog"};
         (void) parser.parse_args(1, args);
@@ -349,8 +349,8 @@ TEST_CASE("ArgumentParser provides usage message...")
 
     SUBCASE("...for two optional arguments with store false action")
     {
-        parser.add_argument("-o").store_false();
-        parser.add_argument("--option").store_false();
+        parser.add_argument("-o").action(argparse::store_false);
+        parser.add_argument("--option").action(argparse::store_false);
 
         char const * args[] = {"prog"};
         (void) parser.parse_args(1, args);
@@ -473,7 +473,7 @@ TEST_CASE("ArgumentParser provides help message...")
 
     SUBCASE("...for one optional argument with store true action")
     {
-        parser.add_argument("-o").store_true();
+        parser.add_argument("-o").action(argparse::store_true);
 
         char const * args[] = {"prog"};
         (void) parser.parse_args(1, args);
@@ -483,8 +483,8 @@ TEST_CASE("ArgumentParser provides help message...")
 
     SUBCASE("...for two optional arguments with store true action")
     {
-        parser.add_argument("-o").store_true();
-        parser.add_argument("--option").store_true();
+        parser.add_argument("-o").action(argparse::store_true);
+        parser.add_argument("--option").action(argparse::store_true);
 
         char const * args[] = {"prog"};
         (void) parser.parse_args(1, args);
@@ -494,7 +494,7 @@ TEST_CASE("ArgumentParser provides help message...")
 
     SUBCASE("...for one optional argument with store false action")
     {
-        parser.add_argument("-o").store_false();
+        parser.add_argument("-o").action(argparse::store_false);
 
         char const * args[] = {"prog"};
         (void) parser.parse_args(1, args);
@@ -504,8 +504,8 @@ TEST_CASE("ArgumentParser provides help message...")
 
     SUBCASE("...for two optional arguments with store false action")
     {
-        parser.add_argument("-o").store_false();
-        parser.add_argument("--option").store_false();
+        parser.add_argument("-o").action(argparse::store_false);
+        parser.add_argument("--option").action(argparse::store_false);
 
         char const * args[] = {"prog"};
         (void) parser.parse_args(1, args);
@@ -575,7 +575,7 @@ TEST_CASE("Help message contains...")
     {
         SUBCASE("...name for argument with store true action and without help string")
         {
-            parser.add_argument("-o").store_true();
+            parser.add_argument("-o").action(argparse::store_true);
 
             char const * args[] = {"prog"};
             (void) parser.parse_args(1, args);
@@ -585,7 +585,7 @@ TEST_CASE("Help message contains...")
 
         SUBCASE("...name and help for argument with store true action and help string")
         {
-            parser.add_argument("-o").store_true().help("help1");
+            parser.add_argument("-o").action(argparse::store_true).help("help1");
 
             char const * args[] = {"prog"};
             (void) parser.parse_args(1, args);
@@ -595,7 +595,7 @@ TEST_CASE("Help message contains...")
 
         SUBCASE("...name for argument with store false action and without help string")
         {
-            parser.add_argument("-o").store_false();
+            parser.add_argument("-o").action(argparse::store_false);
 
             char const * args[] = {"prog"};
             (void) parser.parse_args(1, args);
@@ -605,7 +605,7 @@ TEST_CASE("Help message contains...")
 
         SUBCASE("...name and help for argument with store false action and help string")
         {
-            parser.add_argument("-o").store_false().help("help1");
+            parser.add_argument("-o").action(argparse::store_false).help("help1");
 
             char const * args[] = {"prog"};
             (void) parser.parse_args(1, args);
