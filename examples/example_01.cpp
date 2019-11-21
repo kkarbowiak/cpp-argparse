@@ -12,7 +12,7 @@ int main(int argc, char * argv[])
     parser.add_argument("pos3").help("positional argument #3");
     parser.add_argument("-f").help("optional argument #1");
     parser.add_argument("-g").help("optional argument #2").action(argparse::store_true);
-    parser.add_argument("-h").help("optional argument #3");
+    parser.add_argument("-h").help("print help message and exit").action(argparse::help);
     parser.add_argument("--long-option").help("optional argument #4");
     parser.add_argument("--very-long-option").help("optional argument #5").action(argparse::store_true);
 
@@ -20,13 +20,19 @@ int main(int argc, char * argv[])
     {
         auto args = parser.parse_args(argc, argv);
 
+        if (args.get_value<bool>("h"))
+        {
+            std::cout << parser.format_help() << '\n';
+            return 0;
+        }
+
         std::cout << std::boolalpha << "args:\n";
         for (std::string a : {"pos1", "pos2", "pos3", "f", "g", "h", "long_option", "very_long_option"})
         {
             std::cout << a << ": ";
             if (auto v = args.get(a))
             {
-                if (a == "g" || a == "very_long_option")
+                if (a == "g" || a == "h" || a == "very_long_option")
                 {
                     std::cout << v.get<bool>();
                 }
