@@ -99,6 +99,9 @@ namespace argparse
                     std::map<std::string, Value> m_parameters;
             };
 
+        private:
+            class HelpRequested {};
+
         public:
             decltype(auto) add_argument(std::string const & name)
             {
@@ -124,20 +127,27 @@ namespace argparse
 
             auto parse_args(tokens args) -> Parameters
             {
-                for (auto & a : m_arguments)
+                try
                 {
-                    if (!a->is_positional())
+                    for (auto & a : m_arguments)
                     {
-                        args = a->parse_args(args);
+                        if (!a->is_positional())
+                        {
+                            args = a->parse_args(args);
+                        }
+                    }
+
+                    for (auto & a : m_arguments)
+                    {
+                        if (a->is_positional())
+                        {
+                            args = a->parse_args(args);
+                        }
                     }
                 }
-
-                for (auto & a : m_arguments)
+                catch (HelpRequested)
                 {
-                    if (a->is_positional())
-                    {
-                        args = a->parse_args(args);
-                    }
+                    return get_parameters();
                 }
 
                 if (!args.empty())
@@ -412,13 +422,18 @@ namespace argparse
                             if (*i == m_name)
                             {
                                 i = args.erase(i);
-                                if (m_options.m_action == store_true || m_options.m_action == argparse::help)
+                                if (m_options.m_action == store_true)
                                 {
                                     m_value = true;
                                 }
                                 else if (m_options.m_action == store_false)
                                 {
                                     m_value = false;
+                                }
+                                else if (m_options.m_action == argparse::help)
+                                {
+                                    m_value = true;
+                                    throw HelpRequested();
                                 }
                                 else
                                 {
