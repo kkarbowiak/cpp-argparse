@@ -543,6 +543,16 @@ TEST_CASE("ArgumentParser provides help message...")
         CHECK(parser.format_help() == "usage: prog [-o] [--option]\n\noptional arguments:\n  -o\n  --option"s);
     }
 
+    SUBCASE("...for one optional argument with help action")
+    {
+        parser.add_argument("-h").action(argparse::help);
+
+        char const * args[] = {"prog"};
+        (void) parser.parse_args(1, args);
+
+        CHECK(parser.format_help() == "usage: prog [-h]\n\noptional arguments:\n  -h"s);
+    }
+
     SUBCASE("...for one positional and one optional argument")
     {
         parser.add_argument("p1");
