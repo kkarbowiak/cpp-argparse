@@ -22,7 +22,8 @@ namespace argparse
     {
         store,
         store_true,
-        store_false
+        store_false,
+        help
     };
 
     class ArgumentParser
@@ -407,7 +408,7 @@ namespace argparse
                             if (*i == m_name)
                             {
                                 i = args.erase(i);
-                                if (m_options.m_action == store_true)
+                                if (m_options.m_action == store_true || m_options.m_action == argparse::help)
                                 {
                                     m_value = true;
                                 }
@@ -489,7 +490,7 @@ namespace argparse
                     auto action(Action action) -> Argument & override
                     {
                         m_options.m_action = action;
-                        if (action == store_true)
+                        if (action == store_true || action == argparse::help)
                         {
                             m_value = false;
                         }
