@@ -107,15 +107,13 @@ namespace argparse
             {
                 if (name.front() != '-')
                 {
-                    m_arguments.emplace_back(std::make_unique<PositionalArgument>(name));
+                    return *m_arguments.emplace_back(std::make_unique<PositionalArgument>(name));
 
                 }
                 else
                 {
-                    m_arguments.emplace_back(std::make_unique<OptionalArgument>(name));
+                    return *m_arguments.emplace_back(std::make_unique<OptionalArgument>(name));
                 }
-
-                return *m_arguments.back();
             }
 
             auto parse_args(int argc, char const * const argv[]) -> Parameters
