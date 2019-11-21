@@ -192,6 +192,16 @@ TEST_CASE("Parsing arguments with help requested disregards parsing errors...")
 
         CHECK_NOTHROW(parser.parse_args({"-h"}));
     }
+
+    SUBCASE("...for unrecognised positional argument")
+    {
+        CHECK_NOTHROW(parser.parse_args({"p1", "-h"}));
+    }
+
+    SUBCASE("...for unrecognised optional argument")
+    {
+        CHECK_NOTHROW(parser.parse_args({"-a", "-h"}));
+    }
 }
 
 TEST_CASE("Parsing unrecognised positional argument throws an exception...")
