@@ -6,8 +6,7 @@ add_executable(unittest)
 target_sources(unittest
     PRIVATE
     main.cpp
-    test_ArgumentParser.cpp
-    test_OptionalArgument.cpp)
+    test_ArgumentParser.cpp)
 
 target_include_directories(unittest
     PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>/include
