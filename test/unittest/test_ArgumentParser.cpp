@@ -277,6 +277,13 @@ TEST_CASE("Parsing mixed positional and optional arguments give same result no m
     }
 }
 
+TEST_CASE("ArgumentParser adds help argument when requested")
+{
+    auto parser = argparse::ArgumentParser().help(true);
+
+    CHECK_NOTHROW(parser.parse_args({"-h"}));
+}
+
 TEST_CASE("ArgumentParser provides usage message...")
 {
     auto parser = argparse::ArgumentParser();

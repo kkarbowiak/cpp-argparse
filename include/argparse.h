@@ -158,6 +158,16 @@ namespace argparse
                 return get_parameters();
             }
 
+            auto help(bool add) -> ArgumentParser &&
+            {
+                if (add)
+                {
+                    add_argument("-h").action(argparse::help);
+                }
+
+                return std::move(*this);
+            }
+
             auto format_usage() const -> std::string
             {
                 std::string usage = "usage: " + m_prog;
