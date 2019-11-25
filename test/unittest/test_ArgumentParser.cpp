@@ -697,6 +697,16 @@ TEST_CASE("Help message contains...")
             CHECK(parser.format_help() == "usage: prog [-o]\n\noptional arguments:\n  -o help1"s);
         }
 
+        SUBCASE("...name and help for automatically added help argument")
+        {
+            auto parser = argparse::ArgumentParser();
+
+            char const * args[] = {"prog"};
+            (void) parser.parse_args(1, args);
+
+            CHECK(parser.format_help() == "usage: prog [-h]\n\noptional arguments:\n  -h show this help message and exit"s);
+        }
+
         SUBCASE("...name and metavar for argument without help string")
         {
             parser.add_argument("-o");

@@ -245,7 +245,7 @@ namespace argparse
 
             ArgumentParser()
             {
-                add_argument("-h").action(argparse::help);
+                add_argument("-h").action(argparse::help).help("show this help message and exit");
             }
 
         private:
