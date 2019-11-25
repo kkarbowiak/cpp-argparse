@@ -112,7 +112,7 @@ TEST_CASE("Parsing single optional argument with store false action...")
 
 TEST_CASE("Parsing single optional argument with help action...")
 {
-    auto parser = argparse::ArgumentParser().help(false);
+    auto parser = argparse::ArgumentParser().add_help(false);
     parser.add_argument("-h").action(argparse::help);
 
     SUBCASE("...yields false when it's missing")
@@ -286,21 +286,21 @@ TEST_CASE("ArgumentParser adds help argument automatically")
 
 TEST_CASE("ArgumentParser adds help argument when requested")
 {
-    auto parser = argparse::ArgumentParser().help(true);
+    auto parser = argparse::ArgumentParser().add_help(true);
 
     CHECK_NOTHROW(parser.parse_args({"-h"}));
 }
 
 TEST_CASE("ArgumentParser does not add help argument when requested not to")
 {
-    auto parser = argparse::ArgumentParser().help(false);
+    auto parser = argparse::ArgumentParser().add_help(false);
 
     CHECK_THROWS(parser.parse_args({"-h"}));
 }
 
 TEST_CASE("ArgumentParser uses prog parameter as its name...")
 {
-    auto parser = argparse::ArgumentParser().prog("prog").help(false);
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
 
     SUBCASE("...in usage message")
     {
@@ -315,7 +315,7 @@ TEST_CASE("ArgumentParser uses prog parameter as its name...")
 
 TEST_CASE("ArgumentParser provides usage message...")
 {
-    auto parser = argparse::ArgumentParser().prog("prog").help(false);
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
 
     SUBCASE("...for no arguments")
     {
@@ -438,7 +438,7 @@ TEST_CASE("ArgumentParser provides usage message...")
 
 TEST_CASE("ArgumentParser provides help message...")
 {
-    auto parser = argparse::ArgumentParser().prog("prog").help(false);
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
 
     SUBCASE("...for no arguments")
     {
@@ -561,7 +561,7 @@ TEST_CASE("ArgumentParser provides help message...")
 
 TEST_CASE("Help message contains...")
 {
-    auto parser = argparse::ArgumentParser().prog("prog").help(false);
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
 
     SUBCASE("...for positional argument...")
     {

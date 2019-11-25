@@ -168,7 +168,7 @@ namespace argparse
                 return std::move(*this);
             }
 
-            auto help(bool add) -> ArgumentParser &&
+            auto add_help(bool add) -> ArgumentParser &&
             {
                 if (!add)
                 {
