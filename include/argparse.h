@@ -160,9 +160,9 @@ namespace argparse
 
             auto help(bool add) -> ArgumentParser &&
             {
-                if (add)
+                if (!add)
                 {
-                    add_argument("-h").action(argparse::help);
+                    (void) m_arguments.erase(m_arguments.begin());
                 }
 
                 return std::move(*this);
@@ -241,6 +241,11 @@ namespace argparse
                 }
 
                 return help;
+            }
+
+            ArgumentParser()
+            {
+                add_argument("-h").action(argparse::help);
             }
 
         private:
