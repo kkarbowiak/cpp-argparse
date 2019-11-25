@@ -284,6 +284,13 @@ TEST_CASE("ArgumentParser adds help argument when requested")
     CHECK_NOTHROW(parser.parse_args({"-h"}));
 }
 
+TEST_CASE("ArgumentParser does not add help argument when requested not to")
+{
+    auto parser = argparse::ArgumentParser().help(false);
+
+    CHECK_THROWS(parser.parse_args({"-h"}));
+}
+
 TEST_CASE("ArgumentParser provides usage message...")
 {
     auto parser = argparse::ArgumentParser();
