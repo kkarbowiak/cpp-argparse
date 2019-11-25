@@ -33,6 +33,13 @@ TEST_CASE("Parser creates a non-positional argument when adding an argument with
 
         CHECK(!argument.is_positional());
     }
+
+    SUBCASE("...short and long name")
+    {
+        auto const & argument = parser.add_argument("-l", "--long-name");
+
+        CHECK(!argument.is_positional());
+    }
 }
 
 TEST_CASE("Parsing single positional argument yields its value")

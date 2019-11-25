@@ -116,6 +116,19 @@ namespace argparse
                 }
             }
 
+            decltype(auto) add_argument(std::string const & name1, std::string const & name2)
+            {
+                if (name1.front() != '-')
+                {
+                    return *m_arguments.emplace_back(std::make_unique<PositionalArgument>(name1, name2));
+
+                }
+                else
+                {
+                    return *m_arguments.emplace_back(std::make_unique<OptionalArgument>(name1, name2));
+                }
+            }
+
             auto parse_args(int argc, char const * const argv[]) -> Parameters
             {
                 if (!m_prog)
@@ -356,7 +369,14 @@ namespace argparse
             {
                 public:
                     explicit PositionalArgument(std::string const & name)
-                      : m_name(name)
+                      : m_name1(name)
+                      , m_value()
+                    {
+                    }
+
+                    PositionalArgument(std::string const & name1, std::string const & name2)
+                      : m_name1(name1)
+                      , m_name2(name2)
                       , m_value()
                     {
                     }
@@ -374,17 +394,17 @@ namespace argparse
 
                     auto get_name() const -> std::string override
                     {
-                        return m_name;
+                        return m_name1;
                     }
 
                     auto get_dest_name() const -> std::string override
                     {
-                        return m_name;
+                        return m_name1;
                     }
 
                     auto get_metavar_name() const -> std::string override
                     {
-                        return m_name;
+                        return m_name1;
                     }
 
                     auto has_value() const -> bool override
@@ -424,7 +444,8 @@ namespace argparse
                     }
 
                 private:
-                    std::string const m_name;
+                    std::string const m_name1;
+                    std::string const m_name2;
                     std::any m_value;
                     Options m_options;
             };
@@ -433,7 +454,14 @@ namespace argparse
             {
                 public:
                     explicit OptionalArgument(std::string const & name)
-                      : m_name(name)
+                      : m_name1(name)
+                      , m_value()
+                    {
+                    }
+
+                    explicit OptionalArgument(std::string const & name1, std::string const & name2)
+                      : m_name1(name1)
+                      , m_name2(name2)
                       , m_value()
                     {
                     }
@@ -442,7 +470,7 @@ namespace argparse
                     {
                         for (auto i = args.begin(); i != args.end(); ++i)
                         {
-                            if (*i == m_name)
+                            if (*i == m_name1)
                             {
                                 i = args.erase(i);
                                 if (m_options.m_action == store_true)
@@ -476,12 +504,12 @@ namespace argparse
 
                     auto get_name() const -> std::string override
                     {
-                        return m_name;
+                        return m_name1;
                     }
 
                     auto get_dest_name() const -> std::string override
                     {
-                        auto dest = m_name.substr(1);
+                        auto dest = m_name1.substr(1);
                         if (dest.front() == '-')
                         {
                             dest = dest.substr(1);
@@ -554,7 +582,8 @@ namespace argparse
                     }
 
                 private:
-                    std::string const m_name;
+                    std::string const m_name1;
+                    std::string const m_name2;
                     std::any m_value;
                     Options m_options;
             };
