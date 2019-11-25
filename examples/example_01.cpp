@@ -6,13 +6,12 @@
 
 int main(int argc, char * argv[])
 {
-    auto parser = argparse::ArgumentParser();
+    auto parser = argparse::ArgumentParser().help(true);
     parser.add_argument("pos1").help("positional argument #1");
     parser.add_argument("pos2").help("positional argument #2");
     parser.add_argument("pos3").help("positional argument #3");
     parser.add_argument("-f").help("optional argument #1");
     parser.add_argument("-g").help("optional argument #2").action(argparse::store_true);
-    parser.add_argument("-h").help("show this help message and exit").action(argparse::help);
     parser.add_argument("--long-option").help("optional argument #4");
     parser.add_argument("--very-long-option").help("optional argument #5").action(argparse::store_true);
 
