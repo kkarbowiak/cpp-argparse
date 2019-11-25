@@ -298,6 +298,21 @@ TEST_CASE("ArgumentParser does not add help argument when requested not to")
     CHECK_THROWS(parser.parse_args({"-h"}));
 }
 
+TEST_CASE("ArgumentParser uses prog parameter as its name...")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").help(false);
+
+    SUBCASE("...in usage message")
+    {
+        CHECK(parser.format_usage() == "usage: prog"s);
+    }
+
+    SUBCASE("...in help message")
+    {
+        CHECK(parser.format_help() == "usage: prog"s);
+    }
+}
+
 TEST_CASE("ArgumentParser provides usage message...")
 {
     auto parser = argparse::ArgumentParser().help(false);

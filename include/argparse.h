@@ -118,7 +118,10 @@ namespace argparse
 
             auto parse_args(int argc, char const * const argv[]) -> Parameters
             {
-                m_prog = argv[0];
+                if (!m_prog)
+                {
+                    m_prog = argv[0];
+                }
 
                 return parse_args(get_tokens(argc, argv));
             }
@@ -158,6 +161,13 @@ namespace argparse
                 return get_parameters();
             }
 
+            auto prog(std::string const & prog) -> ArgumentParser &&
+            {
+                m_prog = prog;
+
+                return std::move(*this);
+            }
+
             auto help(bool add) -> ArgumentParser &&
             {
                 if (!add)
@@ -170,7 +180,7 @@ namespace argparse
 
             auto format_usage() const -> std::string
             {
-                std::string usage = "usage: " + m_prog;
+                std::string usage = "usage: " + *m_prog;
                 std::string optionals;
                 std::string positionals;
 
@@ -555,7 +565,7 @@ namespace argparse
 
         private:
             argument_uptrs m_arguments;
-            std::string m_prog;
+            optstring m_prog;
     };
 }
 
