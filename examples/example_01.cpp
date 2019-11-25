@@ -6,7 +6,7 @@
 
 int main(int argc, char * argv[])
 {
-    auto parser = argparse::ArgumentParser().help(true);
+    auto parser = argparse::ArgumentParser();
     parser.add_argument("pos1").help("positional argument #1");
     parser.add_argument("pos2").help("positional argument #2");
     parser.add_argument("pos3").help("positional argument #3");
