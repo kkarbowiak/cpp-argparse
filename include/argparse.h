@@ -103,20 +103,7 @@ namespace argparse
             class HelpRequested {};
 
         public:
-            decltype(auto) add_argument(std::string const & name)
-            {
-                if (name.front() != '-')
-                {
-                    return *m_arguments.emplace_back(std::make_unique<PositionalArgument>(name));
-
-                }
-                else
-                {
-                    return *m_arguments.emplace_back(std::make_unique<OptionalArgument>(name));
-                }
-            }
-
-            decltype(auto) add_argument(std::string const & name1, std::string const & name2)
+            decltype(auto) add_argument(std::string const & name1, std::string const & name2 = "")
             {
                 if (name1.front() != '-')
                 {
@@ -368,12 +355,6 @@ namespace argparse
             class PositionalArgument : public Argument
             {
                 public:
-                    explicit PositionalArgument(std::string const & name)
-                      : m_name1(name)
-                      , m_value()
-                    {
-                    }
-
                     PositionalArgument(std::string const & name1, std::string const & name2)
                       : m_name1(name1)
                       , m_name2(name2)
@@ -453,12 +434,6 @@ namespace argparse
             class OptionalArgument : public Argument
             {
                 public:
-                    explicit OptionalArgument(std::string const & name)
-                      : m_name1(name)
-                      , m_value()
-                    {
-                    }
-
                     explicit OptionalArgument(std::string const & name1, std::string const & name2)
                       : m_name1(name1)
                       , m_name2(name2)
