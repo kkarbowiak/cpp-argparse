@@ -484,11 +484,21 @@ namespace argparse
 
                     auto get_dest_name() const -> std::string override
                     {
-                        auto dest = m_name1.substr(1);
-                        if (dest.front() == '-')
+                        std::string dest;
+
+                        if (m_name1[0] == '-' && m_name1[1] == '-')
                         {
-                            dest = dest.substr(1);
+                            dest = m_name1.substr(2);
                         }
+                        else if (m_name2[0] == '-' && m_name2[1] == '-')
+                        {
+                            dest = m_name2.substr(2);
+                        }
+                        else
+                        {
+                            dest = m_name1.substr(1);
+                        }
+
                         std::replace(dest.begin(), dest.end(), '-', '_');
 
                         return dest;

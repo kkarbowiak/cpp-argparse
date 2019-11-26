@@ -381,6 +381,13 @@ TEST_CASE("ArgumentParser provides usage message...")
         CHECK(parser.format_usage() == "usage: prog [-o O] [--option OPTION] [-q Q] [--long-name LONG_NAME] [--very-long-name VERY_LONG_NAME]"s);
     }
 
+    SUBCASE("...for one optional argument with short and long name")
+    {
+        parser.add_argument("-f", "--foo");
+
+        CHECK(parser.format_usage() == "usage: prog [-f FOO]"s);
+    }
+
     SUBCASE("... for one optional argument with store true action")
     {
         parser.add_argument("-o").action(argparse::store_true);
