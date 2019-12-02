@@ -16,7 +16,7 @@ TEST_CASE("Parser creates a positional argument when adding an argument with unp
     CHECK(argument.is_positional());
 }
 
-TEST_CASE("Parser creates a non-positional argument when adding an argument with prefixed...")
+TEST_CASE("Parser creates an optional argument when adding an argument with prefixed...")
 {
     auto parser = argparse::ArgumentParser();
 
