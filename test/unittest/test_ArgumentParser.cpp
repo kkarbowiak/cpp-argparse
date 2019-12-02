@@ -1,6 +1,6 @@
-#include <doctest.h>
-
 #include "argparse.h"
+
+#include <doctest.h>
 
 #include <string>
 
