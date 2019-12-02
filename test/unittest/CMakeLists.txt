@@ -7,6 +7,7 @@ target_sources(unittest
     PRIVATE
     main.cpp
     test_ArgumentParser.cpp
+    test_ArgumentParser_Parsing.cpp
     test_ArgumentParser_UsageMessage.cpp
     test_ArgumentParser_HelpMessage.cpp)
 
