@@ -128,3 +128,46 @@ TEST_CASE("ArgumentParser provides usage message...")
         CHECK(parser.format_usage() == "usage: prog [-o O] [-a A] [-z Z] p1 p2 p3"s);
     }
 }
+
+TEST_CASE("Usage message contains...")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+
+    SUBCASE("...name for positional argument")
+    {
+        parser.add_argument("p1");
+
+        CHECK(parser.format_usage() == "usage: prog p1"s);
+    }
+
+    SUBCASE("...for optional argument...")
+    {
+        SUBCASE("...name for argument with store true action")
+        {
+            parser.add_argument("-o").action(argparse::store_true);
+
+            CHECK(parser.format_usage() == "usage: prog [-o]");
+        }
+
+        SUBCASE("...name for argument with store false action")
+        {
+            parser.add_argument("-o").action(argparse::store_false);
+
+            CHECK(parser.format_usage() == "usage: prog [-o]");
+        }
+
+        SUBCASE("...name for argument with help action")
+        {
+            parser.add_argument("-h").action(argparse::store_false);
+
+            CHECK(parser.format_usage() == "usage: prog [-h]");
+        }
+
+        SUBCASE("...name and metavar")
+        {
+            parser.add_argument("-o");
+
+            CHECK(parser.format_usage() == "usage: prog [-o O]"s);
+        }
+    }
+}
