@@ -359,6 +359,7 @@ namespace argparse
                       : m_name1(name1)
                       , m_name2(name2)
                       , m_value()
+                      , m_options()
                     {
                     }
 
@@ -438,6 +439,7 @@ namespace argparse
                       : m_name1(name1)
                       , m_name2(name2)
                       , m_value()
+                      , m_options()
                     {
                     }
 
