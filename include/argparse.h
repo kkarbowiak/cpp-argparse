@@ -26,6 +26,16 @@ namespace argparse
         help
     };
 
+    class parsing_error
+      : public std::runtime_error
+    {
+        public:
+            explicit parsing_error(std::string const & message)
+              : std::runtime_error(message)
+            {
+            }
+    };
+
     class ArgumentParser
     {
         public:
@@ -153,7 +163,7 @@ namespace argparse
 
                 if (!args.empty())
                 {
-                    throw std::runtime_error("unrecognised arguments: " + get_string(args));
+                    throw parsing_error("unrecognised arguments: " + get_string(args));
                 }
 
                 ensure_no_arguments_missing();
@@ -308,7 +318,7 @@ namespace argparse
 
                 if (error_message)
                 {
-                    throw std::runtime_error(*error_message);
+                    throw parsing_error(*error_message);
                 }
             }
 
@@ -467,7 +477,7 @@ namespace argparse
                                 {
                                     if (i == args.end())
                                     {
-                                        throw std::runtime_error("argument " + get_name() + ": expected one argument");
+                                        throw parsing_error("argument " + get_name() + ": expected one argument");
                                     }
                                     m_value = *i;
                                     (void) args.erase(i);
