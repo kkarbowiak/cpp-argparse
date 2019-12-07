@@ -68,7 +68,7 @@ TEST_CASE("ArgumentParser provides help message...")
         CHECK(parser.format_help() == "usage: prog [-o O] [--option OPTION] [-q Q] [--long-name LONG_NAME] [--very-long-name VERY_LONG_NAME]\n\noptional arguments:\n  -o O\n  --option OPTION\n  -q Q\n  --long-name LONG_NAME\n  --very-long-name VERY_LONG_NAME"s);
     }
 
-    SUBCASE("...for one positional and one optional argument")
+    SUBCASE("...with usage section, positional arguments section, and optional arguments section for one positional and one optional argument")
     {
         parser.add_argument("p1");
         parser.add_argument("-o");
@@ -76,7 +76,7 @@ TEST_CASE("ArgumentParser provides help message...")
         CHECK(parser.format_help() == "usage: prog [-o O] p1\n\npositional arguments:\n  p1\n\noptional arguments:\n  -o O"s);
     }
 
-    SUBCASE("...for five positional and five optional arguments")
+    SUBCASE("...with usage section, positional arguments section, and optional arguments section for five positional and five optional arguments")
     {
         parser.add_argument("p1");
         parser.add_argument("-o");
