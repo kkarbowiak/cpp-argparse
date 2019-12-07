@@ -47,10 +47,15 @@ int main(int argc, char * argv[])
             std::cout << '\n';
         }
     }
-    catch (std::exception const & e)
+    catch (argparse::parsing_error const & e)
     {
         std::cout << e.what() << '\n';
         std::cout << parser.format_help();
+        return 0;
+    }
+    catch (std::exception const & e)
+    {
+        std::cout << e.what() << '\n';
         return 0;
     }
 
