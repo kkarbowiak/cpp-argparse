@@ -136,6 +136,20 @@ TEST_CASE("Help message contains...")
             CHECK(parser.format_help() == "usage: prog [-o]\n\noptional arguments:\n  -o help1"s);
         }
 
+        SUBCASE("...name for argument with help action and without help string")
+        {
+            parser.add_argument("-h").action(argparse::help);
+
+            CHECK(parser.format_help() == "usage: prog [-h]\n\noptional arguments:\n  -h"s);
+        }
+
+        SUBCASE("...name and help for argument with help action and help string")
+        {
+            parser.add_argument("-h").action(argparse::help).help("help1");
+
+            CHECK(parser.format_help() == "usage: prog [-h]\n\noptional arguments:\n  -h help1"s);
+        }
+
         SUBCASE("...name and help for automatically added help argument")
         {
             auto parser = argparse::ArgumentParser().prog("prog");
