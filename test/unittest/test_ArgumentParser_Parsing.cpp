@@ -121,15 +121,13 @@ TEST_CASE("Parsing missing positional argument throws an exception...")
         CHECK_THROWS_WITH_AS(parser.parse_args({}), "missing arguments: p1 p2", argparse::parsing_error);
     }
 
-    SUBCASE("...for five missing arguments")
+    SUBCASE("...for three missing arguments")
     {
         parser.add_argument("p1");
         parser.add_argument("p2");
         parser.add_argument("p3");
-        parser.add_argument("p4");
-        parser.add_argument("p5");
 
-        CHECK_THROWS_WITH_AS(parser.parse_args({}), "missing arguments: p1 p2 p3 p4 p5", argparse::parsing_error);
+        CHECK_THROWS_WITH_AS(parser.parse_args({}), "missing arguments: p1 p2 p3", argparse::parsing_error);
     }
 }
 
@@ -171,9 +169,9 @@ TEST_CASE("Parsing unrecognised positional argument throws an exception...")
         CHECK_THROWS_WITH_AS(parser.parse_args({"v1", "v2", "v3"}), "unrecognised arguments: v2 v3", argparse::parsing_error);
     }
 
-    SUBCASE("...for five unrecognised arguments")
+    SUBCASE("...for three unrecognised arguments")
     {
-        CHECK_THROWS_WITH_AS(parser.parse_args({"v1", "v2", "v3", "v4", "v5", "v6"}), "unrecognised arguments: v2 v3 v4 v5 v6", argparse::parsing_error);
+        CHECK_THROWS_WITH_AS(parser.parse_args({"v1", "v2", "v3", "v4"}), "unrecognised arguments: v2 v3 v4", argparse::parsing_error);
     }
 }
 
@@ -192,9 +190,9 @@ TEST_CASE("Parsing unrecognised optional argument throws an exception...")
         CHECK_THROWS_WITH_AS(parser.parse_args({"-a", "v1", "-b", "-c"}), "unrecognised arguments: -b -c", argparse::parsing_error);
     }
 
-    SUBCASE("...for five unrecognised arguments")
+    SUBCASE("...for three unrecognised arguments")
     {
-        CHECK_THROWS_WITH_AS(parser.parse_args({"-a", "v1", "-b", "-c", "-d", "-e", "-f"}), "unrecognised arguments: -b -c -d -e -f", argparse::parsing_error);
+        CHECK_THROWS_WITH_AS(parser.parse_args({"-a", "v1", "-b", "-c", "-d"}), "unrecognised arguments: -b -c -d", argparse::parsing_error);
     }
 }
 
