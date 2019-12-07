@@ -11,19 +11,19 @@ TEST_CASE("ArgumentParser provides help message...")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
 
-    SUBCASE("...for no arguments")
+    SUBCASE("...with just usage section for no arguments")
     {
         CHECK(parser.format_help() == "usage: prog"s);
     }
 
-    SUBCASE("...for one positional argument")
+    SUBCASE("...with usage section and positional arguments section for one positional argument")
     {
         parser.add_argument("p1");
 
         CHECK(parser.format_help() == "usage: prog p1\n\npositional arguments:\n  p1"s);
     }
 
-    SUBCASE("...for two positional arguments")
+    SUBCASE("...with usage section and positional arguments section for two positional arguments")
     {
         parser.add_argument("p1");
         parser.add_argument("p2");
@@ -31,7 +31,7 @@ TEST_CASE("ArgumentParser provides help message...")
         CHECK(parser.format_help() == "usage: prog p1 p2\n\npositional arguments:\n  p1\n  p2"s);
     }
 
-    SUBCASE("...for five positional arguments")
+    SUBCASE("...with usage section and positional arguments section for five positional arguments")
     {
         parser.add_argument("p1");
         parser.add_argument("p2");
@@ -42,14 +42,14 @@ TEST_CASE("ArgumentParser provides help message...")
         CHECK(parser.format_help() == "usage: prog p1 p2 p3 p4 p5\n\npositional arguments:\n  p1\n  p2\n  p3\n  p4\n  p5"s);
     }
 
-    SUBCASE("...for one optional argument")
+    SUBCASE("...with usage section and optional arguments section for one optional argument")
     {
         parser.add_argument("-o");
 
         CHECK(parser.format_help() == "usage: prog [-o O]\n\noptional arguments:\n  -o O"s);
     }
 
-    SUBCASE("...for two optional arguments")
+    SUBCASE("...with usage section and optional arguments section for two optional arguments")
     {
         parser.add_argument("-o");
         parser.add_argument("--option");
@@ -57,7 +57,7 @@ TEST_CASE("ArgumentParser provides help message...")
         CHECK(parser.format_help() == "usage: prog [-o O] [--option OPTION]\n\noptional arguments:\n  -o O\n  --option OPTION"s);
     }
 
-    SUBCASE("...for five optional arguments")
+    SUBCASE("...with usage section and optional arguments section for five optional arguments")
     {
         parser.add_argument("-o");
         parser.add_argument("--option");
