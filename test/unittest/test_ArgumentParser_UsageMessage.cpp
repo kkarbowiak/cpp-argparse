@@ -31,15 +31,13 @@ TEST_CASE("ArgumentParser provides usage message...")
         CHECK(parser.format_usage() == "usage: prog p1 p2"s);
     }
 
-    SUBCASE("...with prog name and list of positional arguments for five positional arguments")
+    SUBCASE("...with prog name and list of positional arguments for three positional arguments")
     {
         parser.add_argument("p1");
         parser.add_argument("p2");
         parser.add_argument("p3");
-        parser.add_argument("p4");
-        parser.add_argument("p5");
 
-        CHECK(parser.format_usage() == "usage: prog p1 p2 p3 p4 p5"s);
+        CHECK(parser.format_usage() == "usage: prog p1 p2 p3"s);
     }
 
     SUBCASE("...with prog name and list of optional arguments for one optional argument")
@@ -57,15 +55,13 @@ TEST_CASE("ArgumentParser provides usage message...")
         CHECK(parser.format_usage() == "usage: prog [-o O] [--option OPTION]"s);
     }
 
-    SUBCASE("...with prog name and list of optional arguments for five optional arguments")
+    SUBCASE("...with prog name and list of optional arguments for three optional arguments")
     {
         parser.add_argument("-o");
         parser.add_argument("--option");
-        parser.add_argument("-q");
-        parser.add_argument("--long-name");
         parser.add_argument("--very-long-name");
 
-        CHECK(parser.format_usage() == "usage: prog [-o O] [--option OPTION] [-q Q] [--long-name LONG_NAME] [--very-long-name VERY_LONG_NAME]"s);
+        CHECK(parser.format_usage() == "usage: prog [-o O] [--option OPTION] [--very-long-name VERY_LONG_NAME]"s);
     }
 
     SUBCASE("...for one optional argument with short and long name")
@@ -120,7 +116,7 @@ TEST_CASE("ArgumentParser provides usage message...")
         CHECK(parser.format_usage() == "usage: prog [-o O] p1"s);
     }
 
-    SUBCASE("...for five positional and five optional arguments")
+    SUBCASE("...for three positional and three optional arguments")
     {
         parser.add_argument("p1");
         parser.add_argument("-o");
@@ -128,11 +124,7 @@ TEST_CASE("ArgumentParser provides usage message...")
         parser.add_argument("-a");
         parser.add_argument("p3");
         parser.add_argument("-z");
-        parser.add_argument("p4");
-        parser.add_argument("-e");
-        parser.add_argument("p5");
-        parser.add_argument("-f");
 
-        CHECK(parser.format_usage() == "usage: prog [-o O] [-a A] [-z Z] [-e E] [-f F] p1 p2 p3 p4 p5"s);
+        CHECK(parser.format_usage() == "usage: prog [-o O] [-a A] [-z Z] p1 p2 p3"s);
     }
 }
