@@ -31,15 +31,13 @@ TEST_CASE("ArgumentParser provides help message...")
         CHECK(parser.format_help() == "usage: prog p1 p2\n\npositional arguments:\n  p1\n  p2"s);
     }
 
-    SUBCASE("...with usage section and positional arguments section for five positional arguments")
+    SUBCASE("...with usage section and positional arguments section for three positional arguments")
     {
         parser.add_argument("p1");
         parser.add_argument("p2");
         parser.add_argument("p3");
-        parser.add_argument("p4");
-        parser.add_argument("p5");
 
-        CHECK(parser.format_help() == "usage: prog p1 p2 p3 p4 p5\n\npositional arguments:\n  p1\n  p2\n  p3\n  p4\n  p5"s);
+        CHECK(parser.format_help() == "usage: prog p1 p2 p3\n\npositional arguments:\n  p1\n  p2\n  p3"s);
     }
 
     SUBCASE("...with usage section and optional arguments section for one optional argument")
@@ -57,15 +55,13 @@ TEST_CASE("ArgumentParser provides help message...")
         CHECK(parser.format_help() == "usage: prog [-o O] [--option OPTION]\n\noptional arguments:\n  -o O\n  --option OPTION"s);
     }
 
-    SUBCASE("...with usage section and optional arguments section for five optional arguments")
+    SUBCASE("...with usage section and optional arguments section for three optional arguments")
     {
         parser.add_argument("-o");
         parser.add_argument("--option");
-        parser.add_argument("-q");
-        parser.add_argument("--long-name");
         parser.add_argument("--very-long-name");
 
-        CHECK(parser.format_help() == "usage: prog [-o O] [--option OPTION] [-q Q] [--long-name LONG_NAME] [--very-long-name VERY_LONG_NAME]\n\noptional arguments:\n  -o O\n  --option OPTION\n  -q Q\n  --long-name LONG_NAME\n  --very-long-name VERY_LONG_NAME"s);
+        CHECK(parser.format_help() == "usage: prog [-o O] [--option OPTION] [--very-long-name VERY_LONG_NAME]\n\noptional arguments:\n  -o O\n  --option OPTION\n  --very-long-name VERY_LONG_NAME"s);
     }
 
     SUBCASE("...with usage section, positional arguments section, and optional arguments section for one positional and one optional argument")
@@ -76,7 +72,7 @@ TEST_CASE("ArgumentParser provides help message...")
         CHECK(parser.format_help() == "usage: prog [-o O] p1\n\npositional arguments:\n  p1\n\noptional arguments:\n  -o O"s);
     }
 
-    SUBCASE("...with usage section, positional arguments section, and optional arguments section for five positional and five optional arguments")
+    SUBCASE("...with usage section, positional arguments section, and optional arguments section for three positional and three optional arguments")
     {
         parser.add_argument("p1");
         parser.add_argument("-o");
@@ -84,12 +80,8 @@ TEST_CASE("ArgumentParser provides help message...")
         parser.add_argument("-a");
         parser.add_argument("p3");
         parser.add_argument("-z");
-        parser.add_argument("p4");
-        parser.add_argument("-e");
-        parser.add_argument("p5");
-        parser.add_argument("-f");
 
-        CHECK(parser.format_help() == "usage: prog [-o O] [-a A] [-z Z] [-e E] [-f F] p1 p2 p3 p4 p5\n\npositional arguments:\n  p1\n  p2\n  p3\n  p4\n  p5\n\noptional arguments:\n  -o O\n  -a A\n  -z Z\n  -e E\n  -f F"s);
+        CHECK(parser.format_help() == "usage: prog [-o O] [-a A] [-z Z] p1 p2 p3\n\npositional arguments:\n  p1\n  p2\n  p3\n\noptional arguments:\n  -o O\n  -a A\n  -z Z"s);
     }
 }
 
