@@ -136,41 +136,6 @@ namespace argparse
                 return parse_args(get_tokens(argc, argv));
             }
 
-            auto parse_args(tokens args) -> Parameters
-            {
-                try
-                {
-                    for (auto & a : m_arguments)
-                    {
-                        if (!a->is_positional())
-                        {
-                            args = a->parse_args(args);
-                        }
-                    }
-
-                    for (auto & a : m_arguments)
-                    {
-                        if (a->is_positional())
-                        {
-                            args = a->parse_args(args);
-                        }
-                    }
-                }
-                catch (HelpRequested)
-                {
-                    return get_parameters();
-                }
-
-                if (!args.empty())
-                {
-                    throw parsing_error("unrecognised arguments: " + get_string(args));
-                }
-
-                ensure_no_arguments_missing();
-
-                return get_parameters();
-            }
-
             auto prog(std::string const & prog) -> ArgumentParser &&
             {
                 m_prog = prog;
@@ -269,6 +234,41 @@ namespace argparse
             }
 
         private:
+            auto parse_args(tokens args) -> Parameters
+            {
+                try
+                {
+                    for (auto & a : m_arguments)
+                    {
+                        if (!a->is_positional())
+                        {
+                            args = a->parse_args(args);
+                        }
+                    }
+
+                    for (auto & a : m_arguments)
+                    {
+                        if (a->is_positional())
+                        {
+                            args = a->parse_args(args);
+                        }
+                    }
+                }
+                catch (HelpRequested)
+                {
+                    return get_parameters();
+                }
+
+                if (!args.empty())
+                {
+                    throw parsing_error("unrecognised arguments: " + get_string(args));
+                }
+
+                ensure_no_arguments_missing();
+
+                return get_parameters();
+            }
+
             auto get_tokens(int argc, char const * const argv[]) const -> tokens
             {
                 tokens result;
