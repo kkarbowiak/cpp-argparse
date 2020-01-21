@@ -1,5 +1,5 @@
-#ifndef PARSE_ARGS_HELPER_H__DDK
-#define PARSE_ARGS_HELPER_H__DDK
+#ifndef CSTRING_ARRAY_H__DDK
+#define CSTRING_ARRAY_H__DDK
 
 #include <array>
 
@@ -23,4 +23,4 @@ struct c_str_arr
 template<class... Ts>
 c_str_arr(Ts...) -> c_str_arr<sizeof...(Ts), Ts...>;
 
-#endif /* PARSE_ARGS_HELPER_H__DDK */
+#endif /* CSTRING_ARRAY_H__DDK */
