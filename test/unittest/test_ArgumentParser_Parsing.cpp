@@ -14,7 +14,7 @@ TEST_CASE("Parsing single positional argument yields its value")
     auto parser = argparse::ArgumentParser();
     parser.add_argument("p1");
 
-    auto const parsed = parser.parse_args(2, c_str_arr{"prog", "v1"});
+    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "v1"});
 
     CHECK(parsed.get_value("p1") == "v1");
 }
@@ -26,19 +26,19 @@ TEST_CASE("Parsing single optional argument...")
 
     SUBCASE("...yields false when it's missing")
     {
-        auto const parsed = parser.parse_args(1, c_str_arr{"prog"});
+        auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
         CHECK(!parsed.get("o"));
     }
 
     SUBCASE("...throws an exception when it's missing argument")
     {
-        CHECK_THROWS_WITH_AS(parser.parse_args(2, c_str_arr{"prog", "-o"}), "argument -o: expected one argument", argparse::parsing_error);
+        CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o: expected one argument", argparse::parsing_error);
     }
 
     SUBCASE("...yields its value")
     {
-        auto const parsed = parser.parse_args(3, c_str_arr{"prog", "-o", "v1"});
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "v1"});
 
         CHECK(parsed.get_value("o") == "v1");
     }
@@ -51,14 +51,14 @@ TEST_CASE("Parsing single optional argument with store true action...")
 
     SUBCASE("...yields false when it's missing")
     {
-        auto const parsed = parser.parse_args(1, c_str_arr{"prog"});
+        auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
         CHECK(parsed.get_value<bool>("o") == false);
     }
 
     SUBCASE("...yields true when it's present")
     {
-        auto const parsed = parser.parse_args(2, c_str_arr{"prog", "-o"});
+        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
 
         CHECK(parsed.get_value<bool>("o") == true);
     }
@@ -71,14 +71,14 @@ TEST_CASE("Parsing single optional argument with store false action...")
 
     SUBCASE("...yields true when it's missing")
     {
-        auto const parsed = parser.parse_args(1, c_str_arr{"prog"});
+        auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
         CHECK(parsed.get_value<bool>("o") == true);
     }
 
     SUBCASE("...yields true when it's present")
     {
-        auto const parsed = parser.parse_args(2, c_str_arr{"prog", "-o"});
+        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
 
         CHECK(parsed.get_value<bool>("o") == false);
     }
@@ -91,14 +91,14 @@ TEST_CASE("Parsing single optional argument with help action...")
 
     SUBCASE("...yields false when it's missing")
     {
-        auto const parsed = parser.parse_args(1, c_str_arr{"prog"});
+        auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
         CHECK(parsed.get_value<bool>("h") == false);
     }
 
     SUBCASE("...yields true when it's present")
     {
-        auto const parsed = parser.parse_args(2, c_str_arr{"prog", "-h"});
+        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-h"});
 
         CHECK(parsed.get_value<bool>("h") == true);
     }
@@ -112,7 +112,7 @@ TEST_CASE("Parsing missing positional argument throws an exception...")
     {
         parser.add_argument("p1");
 
-        CHECK_THROWS_WITH_AS(parser.parse_args(1, c_str_arr{"prog"}), "missing arguments: p1", argparse::parsing_error);
+        CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "missing arguments: p1", argparse::parsing_error);
     }
 
     SUBCASE("...for two missing arguments")
@@ -120,7 +120,7 @@ TEST_CASE("Parsing missing positional argument throws an exception...")
         parser.add_argument("p1");
         parser.add_argument("p2");
 
-        CHECK_THROWS_WITH_AS(parser.parse_args(1, c_str_arr{"prog"}), "missing arguments: p1 p2", argparse::parsing_error);
+        CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "missing arguments: p1 p2", argparse::parsing_error);
     }
 
     SUBCASE("...for three missing arguments")
@@ -129,7 +129,7 @@ TEST_CASE("Parsing missing positional argument throws an exception...")
         parser.add_argument("p2");
         parser.add_argument("p3");
 
-        CHECK_THROWS_WITH_AS(parser.parse_args(1, c_str_arr{"prog"}), "missing arguments: p1 p2 p3", argparse::parsing_error);
+        CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "missing arguments: p1 p2 p3", argparse::parsing_error);
     }
 }
 
@@ -142,17 +142,17 @@ TEST_CASE("Parsing arguments with help requested disregards parsing errors...")
     {
         parser.add_argument("p1");
 
-        CHECK_NOTHROW(parser.parse_args(2, c_str_arr{"prog", "-h"}));
+        CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-h"}));
     }
 
     SUBCASE("...for unrecognised positional argument")
     {
-        CHECK_NOTHROW(parser.parse_args(3, c_str_arr{"prog", "p1", "-h"}));
+        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "p1", "-h"}));
     }
 
     SUBCASE("...for unrecognised optional argument")
     {
-        CHECK_NOTHROW(parser.parse_args(3, c_str_arr{"prog", "-a", "-h"}));
+        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-a", "-h"}));
     }
 }
 
@@ -163,17 +163,17 @@ TEST_CASE("Parsing unrecognised positional argument throws an exception...")
 
     SUBCASE("...for one unrecognised argument")
     {
-        CHECK_THROWS_WITH_AS(parser.parse_args(3, c_str_arr{"prog", "v1", "v2"}), "unrecognised arguments: v2", argparse::parsing_error);
+        CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "v1", "v2"}), "unrecognised arguments: v2", argparse::parsing_error);
     }
 
     SUBCASE("...for two unrecognised arguments")
     {
-        CHECK_THROWS_WITH_AS(parser.parse_args(4, c_str_arr{"prog", "v1", "v2", "v3"}), "unrecognised arguments: v2 v3", argparse::parsing_error);
+        CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "v1", "v2", "v3"}), "unrecognised arguments: v2 v3", argparse::parsing_error);
     }
 
     SUBCASE("...for three unrecognised arguments")
     {
-        CHECK_THROWS_WITH_AS(parser.parse_args(5, c_str_arr{"prog", "v1", "v2", "v3", "v4"}), "unrecognised arguments: v2 v3 v4", argparse::parsing_error);
+        CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "v1", "v2", "v3", "v4"}), "unrecognised arguments: v2 v3 v4", argparse::parsing_error);
     }
 }
 
@@ -184,17 +184,17 @@ TEST_CASE("Parsing unrecognised optional argument throws an exception...")
 
     SUBCASE("...for one unrecognised argument")
     {
-        CHECK_THROWS_WITH_AS(parser.parse_args(4, c_str_arr{"prog", "-a", "v1", "-b"}), "unrecognised arguments: -b", argparse::parsing_error);
+        CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-a", "v1", "-b"}), "unrecognised arguments: -b", argparse::parsing_error);
     }
 
     SUBCASE("...for two unrecognised arguments")
     {
-        CHECK_THROWS_WITH_AS(parser.parse_args(5, c_str_arr{"prog", "-a", "v1", "-b", "-c"}), "unrecognised arguments: -b -c", argparse::parsing_error);
+        CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-a", "v1", "-b", "-c"}), "unrecognised arguments: -b -c", argparse::parsing_error);
     }
 
     SUBCASE("...for three unrecognised arguments")
     {
-        CHECK_THROWS_WITH_AS(parser.parse_args(6, c_str_arr{"prog", "-a", "v1", "-b", "-c", "-d"}), "unrecognised arguments: -b -c -d", argparse::parsing_error);
+        CHECK_THROWS_WITH_AS(parser.parse_args(6, cstr_arr{"prog", "-a", "v1", "-b", "-c", "-d"}), "unrecognised arguments: -b -c -d", argparse::parsing_error);
     }
 }
 

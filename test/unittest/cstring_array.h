@@ -5,9 +5,9 @@
 
 
 template<int N, class... Ts>
-struct c_str_arr
+struct cstr_arr
 {
-    c_str_arr(Ts... args)
+    cstr_arr(Ts... args)
         : array{args...}
     {
     }
@@ -21,6 +21,6 @@ struct c_str_arr
 };
 
 template<class... Ts>
-c_str_arr(Ts...) -> c_str_arr<sizeof...(Ts), Ts...>;
+cstr_arr(Ts...) -> cstr_arr<sizeof...(Ts), Ts...>;
 
 #endif /* CSTRING_ARRAY_H__DDK */

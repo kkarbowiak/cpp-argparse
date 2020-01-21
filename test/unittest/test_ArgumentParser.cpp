@@ -49,7 +49,7 @@ TEST_CASE("Optional arguments support short names")
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-s");
 
-    auto const parsed = parser.parse_args(3, c_str_arr{"prog", "-s", "ess"});
+    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-s", "ess"});
 
     CHECK(parsed.get("s"));
 }
@@ -59,7 +59,7 @@ TEST_CASE("Optional arguments support long names")
     auto parser = argparse::ArgumentParser();
     parser.add_argument("--long-arg");
 
-    auto const parsed = parser.parse_args(3, c_str_arr{"prog", "--long-arg", "value"});
+    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "--long-arg", "value"});
 
     CHECK(parsed.get("long_arg"));
 }
@@ -68,21 +68,21 @@ TEST_CASE("ArgumentParser adds help argument automatically")
 {
     auto parser = argparse::ArgumentParser();
 
-    CHECK_NOTHROW(parser.parse_args(2, c_str_arr{"prog", "-h"}));
+    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-h"}));
 }
 
 TEST_CASE("ArgumentParser adds help argument when requested")
 {
     auto parser = argparse::ArgumentParser().add_help(true);
 
-    CHECK_NOTHROW(parser.parse_args(2, c_str_arr{"prog", "-h"}));
+    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-h"}));
 }
 
 TEST_CASE("ArgumentParser does not add help argument when requested not to")
 {
     auto parser = argparse::ArgumentParser().add_help(false);
 
-    CHECK_THROWS(parser.parse_args(2, c_str_arr{"prog", "-h"}));
+    CHECK_THROWS(parser.parse_args(2, cstr_arr{"prog", "-h"}));
 }
 
 TEST_CASE("ArgumentParser uses prog parameter as its name...")
