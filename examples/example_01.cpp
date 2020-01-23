@@ -19,19 +19,19 @@ int main(int argc, char * argv[])
     {
         auto args = parser.parse_args(argc, argv);
 
-        if (args.get_value<bool>("h"))
+        if (args.get_value<bool>("help"))
         {
             std::cout << parser.format_help() << '\n';
             return 0;
         }
 
         std::cout << std::boolalpha << "args:\n";
-        for (std::string a : {"pos1", "pos2", "pos3", "f", "g", "h", "long_option", "very_long_option"})
+        for (std::string a : {"pos1", "pos2", "pos3", "f", "g", "help", "long_option", "very_long_option"})
         {
             std::cout << a << ": ";
             if (auto v = args.get(a))
             {
-                if (a == "g" || a == "h" || a == "very_long_option")
+                if (a == "g" || a == "help" || a == "very_long_option")
                 {
                     std::cout << v.get<bool>();
                 }
