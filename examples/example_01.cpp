@@ -19,12 +19,6 @@ int main(int argc, char * argv[])
     {
         auto args = parser.parse_args(argc, argv);
 
-        if (args.get_value<bool>("help"))
-        {
-            std::cout << parser.format_help() << '\n';
-            return 0;
-        }
-
         std::cout << std::boolalpha << "args:\n";
         for (std::string a : {"pos1", "pos2", "pos3", "f", "g", "help", "long_option", "very_long_option"})
         {
