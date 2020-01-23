@@ -456,7 +456,7 @@ namespace argparse
                     {
                         for (auto i = args.begin(); i != args.end(); ++i)
                         {
-                            if (*i == m_name1)
+                            if (*i == m_name1 || *i == m_name2)
                             {
                                 i = args.erase(i);
                                 if (m_options.m_action == store_true)
