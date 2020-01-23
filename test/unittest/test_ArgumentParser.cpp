@@ -101,13 +101,25 @@ TEST_CASE("ArgumentParser does not add help argument when requested not to")
     CHECK_THROWS(parser.parse_args(2, cstr_arr{"prog", "-h"}));
 }
 
-TEST_CASE("ArgumentParser does not handle help when requested not to")
+TEST_CASE("ArgumentParser does not handle help when requested to...")
 {
-    auto parser = argparse::ArgumentParser().handle(argparse::none);
+    SUBCASE("...handle nothing")
+    {
+        auto parser = argparse::ArgumentParser().handle(argparse::none);
 
-    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-h"});
+        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-h"});
 
-    CHECK(parsed.get_value<bool>("help") == true);
+        CHECK(parsed.get_value<bool>("help") == true);
+    }
+
+    SUBCASE("...handle parsing errors")
+    {
+        auto parser = argparse::ArgumentParser().handle(argparse::errors);
+
+        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-h"});
+
+        CHECK(parsed.get_value<bool>("help") == true);
+    }
 }
 
 TEST_CASE("ArgumentParser does not handle parsing errors when requested not to")

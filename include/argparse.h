@@ -28,6 +28,7 @@ namespace argparse
 
     enum Handle
     {
+        errors,
         none
     };
 
