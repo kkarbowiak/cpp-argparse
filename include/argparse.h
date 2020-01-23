@@ -26,6 +26,11 @@ namespace argparse
         help
     };
 
+    enum Handle
+    {
+        none
+    };
+
     class parsing_error
       : public std::runtime_error
     {
@@ -152,6 +157,13 @@ namespace argparse
                 return std::move(*this);
             }
 
+            auto handle(Handle handle) -> ArgumentParser &&
+            {
+                m_handle = handle;
+
+                return std::move(*this);
+            }
+
             auto format_usage() const -> std::string
             {
                 std::string usage = "usage: " + *m_prog;
@@ -228,6 +240,7 @@ namespace argparse
             }
 
             ArgumentParser()
+              : m_handle(none)
             {
                 add_argument("-h", "--help").action(argparse::help).help("show this help message and exit");
             }
@@ -591,6 +604,7 @@ namespace argparse
         private:
             argument_uptrs m_arguments;
             optstring m_prog;
+            Handle m_handle;
     };
 }
 
