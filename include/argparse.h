@@ -30,6 +30,7 @@ namespace argparse
 
     enum class Handle
     {
+        errors_and_help,
         errors,
         help,
         none
@@ -147,7 +148,7 @@ namespace argparse
                 }
                 catch (HelpRequested const &)
                 {
-                    if (m_handle == Handle::help)
+                    if (m_handle == Handle::errors_and_help || m_handle == Handle::help)
                     {
                         std::cout << format_help() << std::endl;
                         std::exit(EXIT_SUCCESS);
@@ -157,7 +158,7 @@ namespace argparse
                 }
                 catch (parsing_error const & e)
                 {
-                    if (m_handle == Handle::errors)
+                    if (m_handle == Handle::errors_and_help || m_handle == Handle::errors)
                     {
                         std::cout << e.what() << '\n';
                         std::cout << format_help() << std::endl;
@@ -268,7 +269,7 @@ namespace argparse
             }
 
             ArgumentParser()
-              : m_handle(Handle::errors)
+              : m_handle(Handle::errors_and_help)
             {
                 add_argument("-h", "--help").action(argparse::help).help("show this help message and exit");
             }
