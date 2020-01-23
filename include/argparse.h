@@ -26,7 +26,7 @@ namespace argparse
         help
     };
 
-    enum Handle
+    enum class Handle
     {
         errors,
         none
@@ -241,7 +241,7 @@ namespace argparse
             }
 
             ArgumentParser()
-              : m_handle(none)
+              : m_handle(Handle::none)
             {
                 add_argument("-h", "--help").action(argparse::help).help("show this help message and exit");
             }

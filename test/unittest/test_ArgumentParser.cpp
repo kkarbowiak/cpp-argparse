@@ -105,7 +105,7 @@ TEST_CASE("ArgumentParser does not handle help when requested to...")
 {
     SUBCASE("...handle nothing")
     {
-        auto parser = argparse::ArgumentParser().handle(argparse::none);
+        auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
         auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-h"});
 
@@ -114,7 +114,7 @@ TEST_CASE("ArgumentParser does not handle help when requested to...")
 
     SUBCASE("...handle parsing errors")
     {
-        auto parser = argparse::ArgumentParser().handle(argparse::errors);
+        auto parser = argparse::ArgumentParser().handle(argparse::Handle::errors);
 
         auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-h"});
 
@@ -124,7 +124,7 @@ TEST_CASE("ArgumentParser does not handle help when requested to...")
 
 TEST_CASE("ArgumentParser does not handle parsing errors when requested not to")
 {
-    auto parser = argparse::ArgumentParser().handle(argparse::none);
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("pos");
 
     CHECK_THROWS_AS(parser.parse_args(1, cstr_arr{"prog"}), argparse::parsing_error);
