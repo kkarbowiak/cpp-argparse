@@ -155,6 +155,17 @@ namespace argparse
 
                     return get_parameters();
                 }
+                catch (parsing_error const & e)
+                {
+                    if (m_handle == Handle::errors)
+                    {
+                        std::cout << e.what() << '\n';
+                        std::cout << format_help() << std::endl;
+                        std::exit(EXIT_FAILURE);
+                    }
+
+                    throw;
+                }
             }
 
             auto prog(std::string const & prog) -> ArgumentParser &&
@@ -257,7 +268,7 @@ namespace argparse
             }
 
             ArgumentParser()
-              : m_handle(Handle::help)
+              : m_handle(Handle::errors)
             {
                 add_argument("-h", "--help").action(argparse::help).help("show this help message and exit");
             }

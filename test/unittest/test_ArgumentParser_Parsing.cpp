@@ -21,7 +21,7 @@ TEST_CASE("Parsing single positional argument yields its value")
 
 TEST_CASE("Parsing single optional argument...")
 {
-    auto parser = argparse::ArgumentParser();
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("-o");
 
     SUBCASE("...yields false when it's missing")
@@ -126,7 +126,7 @@ TEST_CASE("Optional argument can be used with either short or long name")
 
 TEST_CASE("Parsing missing positional argument throws an exception...")
 {
-    auto parser = argparse::ArgumentParser();
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
     SUBCASE("...for one missing argument")
     {
@@ -178,7 +178,7 @@ TEST_CASE("Parsing arguments with help requested disregards parsing errors...")
 
 TEST_CASE("Parsing unrecognised positional argument throws an exception...")
 {
-    auto parser = argparse::ArgumentParser();
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("p1");
 
     SUBCASE("...for one unrecognised argument")
@@ -199,7 +199,7 @@ TEST_CASE("Parsing unrecognised positional argument throws an exception...")
 
 TEST_CASE("Parsing unrecognised optional argument throws an exception...")
 {
-    auto parser = argparse::ArgumentParser();
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("-a");
 
     SUBCASE("...for one unrecognised argument")

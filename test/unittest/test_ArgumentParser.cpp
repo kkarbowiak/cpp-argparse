@@ -96,7 +96,7 @@ TEST_CASE("ArgumentParser adds help argument when requested...")
 
 TEST_CASE("ArgumentParser does not add help argument when requested not to")
 {
-    auto parser = argparse::ArgumentParser().add_help(false);
+    auto parser = argparse::ArgumentParser().add_help(false).handle(argparse::Handle::none);
 
     CHECK_THROWS(parser.parse_args(2, cstr_arr{"prog", "-h"}));
 }
