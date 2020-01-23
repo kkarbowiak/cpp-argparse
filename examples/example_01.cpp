@@ -50,7 +50,7 @@ int main(int argc, char * argv[])
     catch (argparse::parsing_error const & e)
     {
         std::cout << e.what() << '\n';
-        std::cout << parser.format_help();
+        std::cout << parser.format_help() << '\n';
         return 0;
     }
     catch (std::exception const & e)
