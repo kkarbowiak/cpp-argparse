@@ -110,6 +110,14 @@ TEST_CASE("ArgumentParser does not handle help when requested not to")
     CHECK(parsed.get_value<bool>("help") == true);
 }
 
+TEST_CASE("ArgumentParser does not handle parsing errors when requested not to")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::none).add_help(false);
+    parser.add_argument("pos");
+
+    CHECK_THROWS_AS(parser.parse_args(1, cstr_arr{"prog"}), argparse::parsing_error);
+}
+
 TEST_CASE("ArgumentParser uses prog parameter as its name...")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
