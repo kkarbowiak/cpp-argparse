@@ -124,7 +124,7 @@ TEST_CASE("ArgumentParser does not handle help when requested to...")
 
 TEST_CASE("ArgumentParser does not handle parsing errors when requested not to")
 {
-    auto parser = argparse::ArgumentParser().handle(argparse::none).add_help(false);
+    auto parser = argparse::ArgumentParser().handle(argparse::none);
     parser.add_argument("pos");
 
     CHECK_THROWS_AS(parser.parse_args(1, cstr_arr{"prog"}), argparse::parsing_error);
