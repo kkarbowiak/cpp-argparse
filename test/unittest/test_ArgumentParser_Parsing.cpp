@@ -155,7 +155,7 @@ TEST_CASE("Parsing missing positional argument throws an exception...")
 
 TEST_CASE("Parsing arguments with help requested disregards parsing errors...")
 {
-    auto parser = argparse::ArgumentParser();
+    auto parser = argparse::ArgumentParser().add_help(false);
     parser.add_argument("-h").action(argparse::help);
 
     SUBCASE("...for missing positional argument")
