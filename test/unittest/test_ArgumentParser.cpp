@@ -64,18 +64,34 @@ TEST_CASE("Optional arguments support long names")
     CHECK(parsed.get("long_arg"));
 }
 
-TEST_CASE("ArgumentParser adds help argument automatically")
+TEST_CASE("ArgumentParser adds help argument automatically...")
 {
     auto parser = argparse::ArgumentParser();
 
-    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-h"}));
+    SUBCASE("...with short name")
+    {
+        CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-h"}));
+    }
+
+    SUBCASE("...with long name")
+    {
+        CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "--help"}));
+    }
 }
 
-TEST_CASE("ArgumentParser adds help argument when requested")
+TEST_CASE("ArgumentParser adds help argument when requested...")
 {
     auto parser = argparse::ArgumentParser().add_help(true);
 
-    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-h"}));
+    SUBCASE("...with short name")
+    {
+        CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-h"}));
+    }
+
+    SUBCASE("...with long name")
+    {
+        CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "--help"}));
+    }
 }
 
 TEST_CASE("ArgumentParser does not add help argument when requested not to")

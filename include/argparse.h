@@ -229,7 +229,7 @@ namespace argparse
 
             ArgumentParser()
             {
-                add_argument("-h").action(argparse::help).help("show this help message and exit");
+                add_argument("-h", "--help").action(argparse::help).help("show this help message and exit");
             }
 
         private:
