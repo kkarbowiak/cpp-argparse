@@ -14,6 +14,8 @@
 #include <memory>
 #include <stdexcept>
 #include <algorithm>
+#include <iostream>
+#include <cstdlib>
 
 
 namespace argparse
@@ -139,7 +141,20 @@ namespace argparse
                     m_prog = argv[0];
                 }
 
-                return parse_args(get_tokens(argc, argv));
+                try
+                {
+                    return parse_args(get_tokens(argc, argv));
+                }
+                catch (HelpRequested const &)
+                {
+                    if (m_handle == Handle::help)
+                    {
+                        std::cout << format_help() << std::endl;
+                        std::exit(EXIT_SUCCESS);
+                    }
+
+                    return get_parameters();
+                }
             }
 
             auto prog(std::string const & prog) -> ArgumentParser &&
@@ -242,7 +257,7 @@ namespace argparse
             }
 
             ArgumentParser()
-              : m_handle(Handle::none)
+              : m_handle(Handle::help)
             {
                 add_argument("-h", "--help").action(argparse::help).help("show this help message and exit");
             }
@@ -250,27 +265,20 @@ namespace argparse
         private:
             auto parse_args(tokens args) -> Parameters
             {
-                try
+                for (auto & a : m_arguments)
                 {
-                    for (auto & a : m_arguments)
+                    if (!a->is_positional())
                     {
-                        if (!a->is_positional())
-                        {
-                            args = a->parse_args(args);
-                        }
-                    }
-
-                    for (auto & a : m_arguments)
-                    {
-                        if (a->is_positional())
-                        {
-                            args = a->parse_args(args);
-                        }
+                        args = a->parse_args(args);
                     }
                 }
-                catch (HelpRequested)
+
+                for (auto & a : m_arguments)
                 {
-                    return get_parameters();
+                    if (a->is_positional())
+                    {
+                        args = a->parse_args(args);
+                    }
                 }
 
                 if (!args.empty())

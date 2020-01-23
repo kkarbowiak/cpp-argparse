@@ -66,7 +66,7 @@ TEST_CASE("Optional arguments support long names")
 
 TEST_CASE("ArgumentParser adds help argument automatically...")
 {
-    auto parser = argparse::ArgumentParser();
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
     SUBCASE("...with short name")
     {
@@ -81,7 +81,7 @@ TEST_CASE("ArgumentParser adds help argument automatically...")
 
 TEST_CASE("ArgumentParser adds help argument when requested...")
 {
-    auto parser = argparse::ArgumentParser().add_help(true);
+    auto parser = argparse::ArgumentParser().add_help(true).handle(argparse::Handle::none);
 
     SUBCASE("...with short name")
     {

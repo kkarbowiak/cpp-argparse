@@ -86,7 +86,7 @@ TEST_CASE("Parsing single optional argument with store false action...")
 
 TEST_CASE("Parsing single optional argument with help action...")
 {
-    auto parser = argparse::ArgumentParser().add_help(false);
+    auto parser = argparse::ArgumentParser().add_help(false).handle(argparse::Handle::none);
     parser.add_argument("-h").action(argparse::help);
 
     SUBCASE("...yields false when it's missing")
@@ -155,7 +155,7 @@ TEST_CASE("Parsing missing positional argument throws an exception...")
 
 TEST_CASE("Parsing arguments with help requested disregards parsing errors...")
 {
-    auto parser = argparse::ArgumentParser().add_help(false);
+    auto parser = argparse::ArgumentParser().add_help(false).handle(argparse::Handle::none);
     parser.add_argument("-h").action(argparse::help);
 
     SUBCASE("...for missing positional argument")
