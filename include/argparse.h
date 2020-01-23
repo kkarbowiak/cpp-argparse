@@ -118,7 +118,6 @@ namespace argparse
                 if (name1.front() != '-')
                 {
                     return *m_arguments.emplace_back(std::make_unique<PositionalArgument>(name1, name2));
-
                 }
                 else
                 {
