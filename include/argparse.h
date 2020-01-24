@@ -195,7 +195,7 @@ namespace argparse
 
             auto format_usage() const -> std::string
             {
-                std::string usage = "usage: " + *m_prog;
+                std::string message = "usage: " + *m_prog;
                 std::string optionals;
                 std::string positionals;
 
@@ -218,12 +218,12 @@ namespace argparse
                     }
                 }
 
-                return usage + optionals + positionals;
+                return message + optionals + positionals;
             }
 
             auto format_help() const -> std::string
             {
-                std::string help = format_usage();
+                std::string message = format_usage();
                 std::string positionals;
                 std::string optionals;
 
@@ -257,15 +257,15 @@ namespace argparse
 
                 if (!positionals.empty())
                 {
-                    help += "\n\npositional arguments:" + positionals;
+                    message += "\n\npositional arguments:" + positionals;
                 }
 
                 if (!optionals.empty())
                 {
-                    help += "\n\noptional arguments:" + optionals;
+                    message += "\n\noptional arguments:" + optionals;
                 }
 
-                return help;
+                return message;
             }
 
             ArgumentParser()
