@@ -16,6 +16,13 @@ TEST_CASE("ArgumentParser provides help message...")
         CHECK(parser.format_help() == "usage: prog"s);
     }
 
+    SUBCASE("...with usage section and description for description and no arguments")
+    {
+        auto parser = argparse::ArgumentParser().prog("prog").description("A foo that bars").add_help(false);
+
+        CHECK(parser.format_help() == "usage: prog\n\nA foo that bars"s);
+    }
+
     SUBCASE("...with usage section and positional arguments section for one positional argument")
     {
         parser.add_argument("p1");

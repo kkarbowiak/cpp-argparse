@@ -176,6 +176,13 @@ namespace argparse
                 return std::move(*this);
             }
 
+            auto description(std::string const & description) -> ArgumentParser &&
+            {
+                m_description = description;
+
+                return std::move(*this);
+            }
+
             auto add_help(bool add) -> ArgumentParser &&
             {
                 if (!add)
@@ -253,6 +260,11 @@ namespace argparse
                             optionals += " " + arg->get_options().m_help;
                         }
                     }
+                }
+
+                if (m_description)
+                {
+                    message += "\n\n" + *m_description;
                 }
 
                 if (!positionals.empty())
@@ -626,6 +638,7 @@ namespace argparse
         private:
             argument_uptrs m_arguments;
             optstring m_prog;
+            optstring m_description;
             Handle m_handle;
     };
 }
