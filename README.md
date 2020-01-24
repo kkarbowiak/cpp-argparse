@@ -108,7 +108,32 @@ int main(int argc, char* argv[])
 
 ## Supported features
 
-The below list lists features of the `argparse` module that this implementation supports.
+The below lists features of the `argparse` module that this implementation supports:
+* `ArgumentParser` objects
+   * [x] `prog`
+   * [ ] `usage`
+   * [x] `description`
+   * [x] `epilog`
+   * [ ] `parents`
+   * [ ] `formatter_class`
+   * [ ] `prefix_chars`
+   * [ ] `fromfile_prefix_chars`
+   * [ ] `argument_default`
+   * [ ] `allow_abbrev`
+   * [ ] `conflict_handler`
+   * [x] `add_help`
+* The `add_argument()` method
+   * [x] name or flags
+   * [x] `action` (only store, store_true, store_false, and help)
+   * [ ] `nargs`
+   * [ ] `const`
+   * [ ] `default`
+   * [ ] `type`
+   * [ ] `choices`
+   * [ ] `required`
+   * [x] `help`
+   * [ ] `metavar`
+   * [ ] `dest`
 
 ## License
 
