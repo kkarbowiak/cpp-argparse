@@ -217,7 +217,7 @@ namespace argparse
                 {
                     if (arg->is_positional())
                     {
-                        positionals += " " + arg->get_name();
+                        positionals += " " + arg->get_metavar_name();
                     }
                     else
                     {
@@ -399,6 +399,7 @@ namespace argparse
                     struct Options
                     {
                         std::string m_help;
+                        std::string m_metavar;
                         Action m_action = store;
                     };
 
@@ -415,6 +416,7 @@ namespace argparse
                     virtual auto is_positional() const -> bool = 0;
 
                     virtual auto help(std::string const & help) -> Argument & = 0;
+                    virtual auto metavar(std::string const & metavar) -> Argument & = 0;
                     virtual auto action(Action action) -> Argument & = 0;
 
                     virtual auto get_options() -> Options & = 0;
@@ -454,7 +456,9 @@ namespace argparse
 
                     auto get_metavar_name() const -> std::string override
                     {
-                        return m_name1;
+                        return m_options.m_metavar.empty()
+                            ? m_name1
+                            : m_options.m_metavar;
                     }
 
                     auto has_value() const -> bool override
@@ -480,6 +484,12 @@ namespace argparse
                     auto help(std::string const & help) -> Argument & override
                     {
                         m_options.m_help = help;
+                        return *this;
+                    }
+
+                    auto metavar(std::string const & metavar) -> Argument & override
+                    {
+                        m_options.m_metavar = metavar;
                         return *this;
                     }
 
@@ -609,6 +619,11 @@ namespace argparse
                     auto help(std::string const & help) -> Argument & override
                     {
                         m_options.m_help = help;
+                        return *this;
+                    }
+
+                    auto metavar(std::string const & /*metavar*/) -> Argument & override
+                    {
                         return *this;
                     }
 

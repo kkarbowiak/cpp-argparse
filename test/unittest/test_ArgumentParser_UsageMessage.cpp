@@ -141,6 +141,13 @@ TEST_CASE("Usage message contains...")
 
             CHECK(parser.format_usage() == "usage: prog p1"s);
         }
+
+        SUBCASE("...metavar for argument with metavar set")
+        {
+            parser.add_argument("p1").metavar("metap1");
+
+            CHECK(parser.format_usage() == "usage: prog metap1"s);
+        }
     }
 
     SUBCASE("...for optional argument...")
