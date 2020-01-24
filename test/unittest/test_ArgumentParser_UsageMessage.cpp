@@ -133,11 +133,14 @@ TEST_CASE("Usage message contains...")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
 
-    SUBCASE("...name for positional argument")
+    SUBCASE("...for positional argument...")
     {
-        parser.add_argument("p1");
+        SUBCASE("...its name")
+        {
+            parser.add_argument("p1");
 
-        CHECK(parser.format_usage() == "usage: prog p1"s);
+            CHECK(parser.format_usage() == "usage: prog p1"s);
+        }
     }
 
     SUBCASE("...for optional argument...")
