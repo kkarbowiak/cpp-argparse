@@ -179,5 +179,12 @@ TEST_CASE("Usage message contains...")
 
             CHECK(parser.format_usage() == "usage: prog [-o O]"s);
         }
+
+        SUBCASE("...name and metavar for argument with metavar set")
+        {
+            parser.add_argument("-o").metavar("METAVARO");
+
+            CHECK(parser.format_usage() == "usage: prog [-o METAVARO]"s);
+        }
     }
 }

@@ -586,6 +586,11 @@ namespace argparse
 
                     auto get_metavar_name() const -> std::string override
                     {
+                        if (!m_options.m_metavar.empty())
+                        {
+                            return m_options.m_metavar;
+                        }
+
                         auto metavar = get_dest_name();
 
                         for (auto & ch : metavar)
@@ -622,8 +627,9 @@ namespace argparse
                         return *this;
                     }
 
-                    auto metavar(std::string const & /*metavar*/) -> Argument & override
+                    auto metavar(std::string const & metavar) -> Argument & override
                     {
+                        m_options.m_metavar = metavar;
                         return *this;
                     }
 
