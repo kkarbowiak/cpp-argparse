@@ -183,6 +183,13 @@ namespace argparse
                 return std::move(*this);
             }
 
+            auto epilog(std::string const & epilog) -> ArgumentParser &&
+            {
+                m_epilog = epilog;
+
+                return std::move(*this);
+            }
+
             auto add_help(bool add) -> ArgumentParser &&
             {
                 if (!add)
@@ -275,6 +282,11 @@ namespace argparse
                 if (!optionals.empty())
                 {
                     message += "\n\noptional arguments:" + optionals;
+                }
+
+                if (m_epilog)
+                {
+                    message += "\n\n" + *m_epilog;
                 }
 
                 return message;
@@ -639,6 +651,7 @@ namespace argparse
             argument_uptrs m_arguments;
             optstring m_prog;
             optstring m_description;
+            optstring m_epilog;
             Handle m_handle;
     };
 }
