@@ -173,7 +173,7 @@ TEST_CASE("Usage message contains...")
             CHECK(parser.format_usage() == "usage: prog [-h]");
         }
 
-        SUBCASE("...name and metavar")
+        SUBCASE("...name and automatic metavar")
         {
             parser.add_argument("-o");
 
