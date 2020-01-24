@@ -178,14 +178,14 @@ TEST_CASE("Help message contains...")
             CHECK(parser.format_help() == "usage: prog [-h]\n\noptional arguments:\n  -h show this help message and exit"s);
         }
 
-        SUBCASE("...name and metavar for argument without help string")
+        SUBCASE("...name and automatic metavar for argument without help string")
         {
             parser.add_argument("-o");
 
             CHECK(parser.format_help() == "usage: prog [-o O]\n\noptional arguments:\n  -o O"s);
         }
 
-        SUBCASE("name, metavar, and help for argument with help string")
+        SUBCASE("name, automatic metavar, and help for argument with help string")
         {
             parser.add_argument("-o").help("help1");
 
