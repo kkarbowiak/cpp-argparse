@@ -112,6 +112,13 @@ TEST_CASE("Help message contains...")
             CHECK(parser.format_help() == "usage: prog p1\n\npositional arguments:\n  p1"s);
         }
 
+        SUBCASE("...metavar for argument with metavar set and without help string")
+        {
+            parser.add_argument("p1").metavar("metap1");
+
+            CHECK(parser.format_help() == "usage: prog metap1\n\npositional arguments:\n  metap1"s);
+        }
+
         SUBCASE("...name and help for argument with help string")
         {
             parser.add_argument("p1").help("help1");

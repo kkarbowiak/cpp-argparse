@@ -245,7 +245,7 @@ namespace argparse
                 {
                     if (arg->is_positional())
                     {
-                        positionals += "\n  " + arg->get_name();
+                        positionals += "\n  " + arg->get_metavar_name();
 
                         if (!arg->get_options().m_help.empty())
                         {
