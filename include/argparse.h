@@ -400,6 +400,7 @@ namespace argparse
                     {
                         std::string m_help;
                         std::string m_metavar;
+                        std::string m_dest;
                         Action m_action = store;
                     };
 
@@ -417,6 +418,7 @@ namespace argparse
 
                     virtual auto help(std::string const & help) -> Argument & = 0;
                     virtual auto metavar(std::string const & metavar) -> Argument & = 0;
+                    virtual auto dest(std::string const & dest) -> Argument & = 0;
                     virtual auto action(Action action) -> Argument & = 0;
 
                     virtual auto get_options() -> Options & = 0;
@@ -451,7 +453,9 @@ namespace argparse
 
                     auto get_dest_name() const -> std::string override
                     {
-                        return m_name1;
+                        return m_options.m_dest.empty()
+                            ? m_name1
+                            : m_options.m_dest;
                     }
 
                     auto get_metavar_name() const -> std::string override
@@ -490,6 +494,12 @@ namespace argparse
                     auto metavar(std::string const & metavar) -> Argument & override
                     {
                         m_options.m_metavar = metavar;
+                        return *this;
+                    }
+
+                    auto dest(std::string const & dest) -> Argument & override
+                    {
+                        m_options.m_dest = dest;
                         return *this;
                     }
 
@@ -630,6 +640,11 @@ namespace argparse
                     auto metavar(std::string const & metavar) -> Argument & override
                     {
                         m_options.m_metavar = metavar;
+                        return *this;
+                    }
+
+                    auto dest(std::string const & /*dest*/) -> Argument & override
+                    {
                         return *this;
                     }
 

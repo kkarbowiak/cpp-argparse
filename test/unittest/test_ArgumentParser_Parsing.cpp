@@ -263,5 +263,14 @@ TEST_CASE("The resulting attribute name is based on...")
 
             CHECK(parsed.get("foo"));
         }
+
+        SUBCASE("...on dest parameter")
+        {
+            parser.add_argument("foo").dest("bar");
+
+            auto const parsed = parser.parse_args(2, cstr_arr{"prog", "val"});
+
+            CHECK(parsed.get("bar"));
+        }
     }
 }
