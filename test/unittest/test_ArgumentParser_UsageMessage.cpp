@@ -101,6 +101,13 @@ TEST_CASE("ArgumentParser provides usage message...")
         CHECK(parser.format_usage() == "usage: prog [-o] [--option]"s);
     }
 
+    SUBCASE("...for one optional argument with store const action")
+    {
+        parser.add_argument("-o").action(argparse::store_const);
+
+        CHECK(parser.format_usage() == "usage: prog [-o]"s);
+    }
+
     SUBCASE("...for one optional argument with help action")
     {
         parser.add_argument("-h").action(argparse::help);
