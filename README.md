@@ -126,7 +126,7 @@ The below lists features of the `argparse` module that this implementation suppo
    * [x] name or flags
    * [x] `action` (only store, store_true, store_false, store_const, and help)
    * [ ] `nargs`
-   * [ ] `const`
+   * [x] `const` (ranamed to `const_` due to keyword clash)
    * [ ] `default`
    * [ ] `type`
    * [ ] `choices`
