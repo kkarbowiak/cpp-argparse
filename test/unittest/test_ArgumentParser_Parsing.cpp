@@ -248,3 +248,20 @@ TEST_CASE("Parsing mixed positional and optional arguments give same result no m
         CHECK(parsed1.get_value("f") == parsed2.get_value("f"));
     }
 }
+
+TEST_CASE("The resulting attribute name is based on...")
+{
+    auto parser = argparse::ArgumentParser();
+
+    SUBCASE("...for positional argument...")
+    {
+        SUBCASE("...on its name")
+        {
+            parser.add_argument("foo");
+
+            auto const parsed = parser.parse_args(2, cstr_arr{"prog", "val"});
+
+            CHECK(parsed.get("foo"));
+        }
+    }
+}
