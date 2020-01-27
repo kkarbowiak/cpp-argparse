@@ -76,7 +76,7 @@ TEST_CASE("Parsing single optional argument with store false action...")
         CHECK(parsed.get_value<bool>("o") == true);
     }
 
-    SUBCASE("...yields true when it's present")
+    SUBCASE("...yields false when it's present")
     {
         auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
 
