@@ -405,6 +405,7 @@ namespace argparse
                         std::string m_metavar;
                         std::string m_dest;
                         Action m_action = store;
+                        std::any m_const_;
                     };
 
                 public:
@@ -423,6 +424,7 @@ namespace argparse
                     virtual auto metavar(std::string const & metavar) -> Argument & = 0;
                     virtual auto dest(std::string const & dest) -> Argument & = 0;
                     virtual auto action(Action action) -> Argument & = 0;
+                    virtual auto const_(std::any const & const_) -> Argument & = 0;
 
                     virtual auto get_options() -> Options & = 0;
             };
@@ -511,6 +513,11 @@ namespace argparse
                         return *this;
                     }
 
+                    auto const_(std::any const & /* const_ */) -> Argument & override
+                    {
+                        return *this;
+                    }
+
                     auto get_options() -> Options & override
                     {
                         return m_options;
@@ -548,6 +555,10 @@ namespace argparse
                                 else if (m_options.m_action == store_false)
                                 {
                                     m_value = false;
+                                }
+                                else if (m_options.m_action == store_const)
+                                {
+                                    m_value = m_options.m_const_;
                                 }
                                 else if (m_options.m_action == argparse::help)
                                 {
@@ -673,6 +684,12 @@ namespace argparse
                             // ignore
                         }
 
+                        return *this;
+                    }
+
+                    auto const_(std::any const & const_) -> Argument & override
+                    {
+                        m_options.m_const_ = const_;
                         return *this;
                     }
 

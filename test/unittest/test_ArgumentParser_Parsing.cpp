@@ -87,13 +87,20 @@ TEST_CASE("Parsing single optional argument with store false action...")
 TEST_CASE("Parsing single optional argument with store const action...")
 {
     auto parser = argparse::ArgumentParser();
-    parser.add_argument("-o").action(argparse::store_const);
+    parser.add_argument("-o").action(argparse::store_const).const_("v1"s);
 
     SUBCASE("...yields false when it's missing")
     {
         auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
         CHECK(!parsed.get("o"));
+    }
+
+    SUBCASE("...yields const value")
+    {
+        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
+
+        CHECK(parsed.get_value("o") == "v1");
     }
 }
 
