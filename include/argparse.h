@@ -296,7 +296,11 @@ namespace argparse
             }
 
             ArgumentParser()
-              : m_handle(Handle::errors_and_help)
+              : m_arguments()
+              , m_prog()
+              , m_description()
+              , m_epilog()
+              , m_handle(Handle::errors_and_help)
             {
                 add_argument("-h", "--help").action(argparse::help).help("show this help message and exit");
             }
