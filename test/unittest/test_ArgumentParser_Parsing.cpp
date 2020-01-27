@@ -284,5 +284,14 @@ TEST_CASE("The resulting attribute name is based on...")
 
             CHECK(parsed.get("foo"));
         }
+
+        SUBCASE("...on its short name")
+        {
+            parser.add_argument("-f");
+
+            auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-f", "val"});
+
+            CHECK(parsed.get("f"));
+        }
     }
 }
