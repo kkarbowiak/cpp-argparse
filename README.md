@@ -133,7 +133,7 @@ The below lists features of the `argparse` module that this implementation suppo
    * [ ] `required`
    * [x] `help`
    * [x] `metavar` (only for single nargs)
-   * [ ] `dest`
+   * [x] `dest`
 
 ## License
 
