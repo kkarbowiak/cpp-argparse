@@ -11,7 +11,7 @@ TEST_CASE("ArgumentParser provides usage message...")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
 
-    SUBCASE("...with just prog name for no arguments")
+    SUBCASE("...with prog name")
     {
         CHECK(parser.format_usage() == "usage: prog"s);
     }
