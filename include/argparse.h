@@ -574,6 +574,11 @@ namespace argparse
 
                     auto get_dest_name() const -> std::string override
                     {
+                        if (!m_options.m_dest.empty())
+                        {
+                            return m_options.m_dest;
+                        }
+
                         std::string dest;
 
                         if (m_name1[0] == '-' && m_name1[1] == '-')
@@ -643,8 +648,9 @@ namespace argparse
                         return *this;
                     }
 
-                    auto dest(std::string const & /*dest*/) -> Argument & override
+                    auto dest(std::string const & dest) -> Argument & override
                     {
+                        m_options.m_dest = dest;
                         return *this;
                     }
 
