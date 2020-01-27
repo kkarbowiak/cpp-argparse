@@ -11,7 +11,7 @@ TEST_CASE("ArgumentParser provides help message...")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
 
-    SUBCASE("...with just usage section for no arguments")
+    SUBCASE("...with usage section")
     {
         CHECK(parser.format_help() == "usage: prog"s);
     }
@@ -105,14 +105,14 @@ TEST_CASE("Help message contains...")
 
     SUBCASE("...for positional argument...")
     {
-        SUBCASE("...name for argument without help string")
+        SUBCASE("...name")
         {
             parser.add_argument("p1");
 
             CHECK(parser.format_help() == "usage: prog p1\n\npositional arguments:\n  p1"s);
         }
 
-        SUBCASE("...metavar for argument with metavar set and without help string")
+        SUBCASE("...metavar for argument with metavar set")
         {
             parser.add_argument("p1").metavar("metap1");
 
@@ -129,7 +129,7 @@ TEST_CASE("Help message contains...")
 
     SUBCASE("...for optional argument...")
     {
-        SUBCASE("...name for argument with store true action and without help string")
+        SUBCASE("...name for argument with store true action")
         {
             parser.add_argument("-o").action(argparse::store_true);
 
@@ -143,7 +143,7 @@ TEST_CASE("Help message contains...")
             CHECK(parser.format_help() == "usage: prog [-o]\n\noptional arguments:\n  -o help1"s);
         }
 
-        SUBCASE("...name for argument with store false action and without help string")
+        SUBCASE("...name for argument with store false action")
         {
             parser.add_argument("-o").action(argparse::store_false);
 
@@ -157,7 +157,7 @@ TEST_CASE("Help message contains...")
             CHECK(parser.format_help() == "usage: prog [-o]\n\noptional arguments:\n  -o help1"s);
         }
 
-        SUBCASE("...name for argument with help action and without help string")
+        SUBCASE("...name for argument with help action")
         {
             parser.add_argument("-h").action(argparse::help);
 
@@ -178,14 +178,14 @@ TEST_CASE("Help message contains...")
             CHECK(parser.format_help() == "usage: prog [-h]\n\noptional arguments:\n  -h show this help message and exit"s);
         }
 
-        SUBCASE("...name and automatic metavar for argument without help string")
+        SUBCASE("...name and automatic metavar")
         {
             parser.add_argument("-o");
 
             CHECK(parser.format_help() == "usage: prog [-o O]\n\noptional arguments:\n  -o O"s);
         }
 
-        SUBCASE("...name and metavar for argument with metavar set and without help string")
+        SUBCASE("...name and metavar for argument with metavar")
         {
             parser.add_argument("-o").metavar("METAVARO");
 
