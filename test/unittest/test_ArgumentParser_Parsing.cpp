@@ -104,19 +104,19 @@ TEST_CASE("Parsing single optional argument with help action...")
     }
 }
 
-TEST_CASE("Optional argument can be used with either short or long name")
+TEST_CASE("Optional argument can be used with either...")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o", "--option");
 
-    SUBCASE("short name")
+    SUBCASE("...short name")
     {
         auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "val"});
 
         CHECK(parsed.get_value("option") == "val");
     }
 
-    SUBCASE("long name")
+    SUBCASE("...long name")
     {
         auto const parsed = parser.parse_args(3, cstr_arr{"prog", "--option", "val"});
 
