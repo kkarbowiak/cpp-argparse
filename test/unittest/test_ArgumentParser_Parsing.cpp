@@ -273,4 +273,16 @@ TEST_CASE("The resulting attribute name is based on...")
             CHECK(parsed.get("bar"));
         }
     }
+
+    SUBCASE("...for optional argument...")
+    {
+        SUBCASE("...on its long name")
+        {
+            parser.add_argument("-f", "--foo");
+
+            auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-f", "val"});
+
+            CHECK(parsed.get("foo"));
+        }
+    }
 }
