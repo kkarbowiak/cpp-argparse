@@ -14,6 +14,7 @@
 #include <memory>
 #include <stdexcept>
 #include <algorithm>
+#include <functional>
 #include <iostream>
 #include <cstdlib>
 
@@ -46,6 +47,11 @@ namespace argparse
             {
             }
     };
+
+    inline void from_string(std::string const & s, int & i)
+    {
+        i = std::stoi(s);
+    }
 
     class ArgumentParser
     {
@@ -405,6 +411,7 @@ namespace argparse
                         std::string m_dest;
                         Action m_action = store;
                         std::any m_const_;
+                        std::function<void (std::string const &, std::any &)> m_converter;
                     };
 
                 public:
@@ -435,7 +442,14 @@ namespace argparse
                     {
                         if (!args.empty())
                         {
-                            m_value = args.front();
+                            if (m_options.m_converter)
+                            {
+                                m_options.m_converter(args.front(), m_value);
+                            }
+                            else
+                            {
+                                m_value = args.front();
+                            }
                             args.pop_front();
                         }
 
@@ -686,6 +700,18 @@ namespace argparse
                     auto const_(std::any const & const_) -> ArgumentBuilder &
                     {
                         m_options.m_const_ = const_;
+                        return *this;
+                    }
+
+                    template<typename T>
+                    auto type() -> ArgumentBuilder &
+                    {
+                        m_options.m_converter = [](std::string const & s, std::any & a)
+                        {
+                            T val;
+                            from_string(s, val);
+                            a = val;
+                        };
                         return *this;
                     }
 
