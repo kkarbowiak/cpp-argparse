@@ -126,14 +126,7 @@ namespace argparse
         public:
             decltype(auto) add_argument(std::string const & name1, std::string const & name2 = "")
             {
-                if (name1.front() != '-')
-                {
-                    return *m_arguments.emplace_back(std::make_unique<PositionalArgument>(name1, name2));
-                }
-                else
-                {
-                    return *m_arguments.emplace_back(std::make_unique<OptionalArgument>(name1, name2));
-                }
+                return ArgumentBuilder(m_arguments, name1, name2);
             }
 
             auto parse_args(int argc, char const * const argv[]) -> Parameters

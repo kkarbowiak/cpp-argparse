@@ -9,41 +9,6 @@
 
 using namespace std::string_literals;
 
-TEST_CASE("Parser creates a positional argument when adding an argument with unprefixed name")
-{
-    auto parser = argparse::ArgumentParser();
-
-    auto const & argument = parser.add_argument("p1");
-
-    CHECK(argument.is_positional());
-}
-
-TEST_CASE("Parser creates an optional argument when adding an argument with prefixed...")
-{
-    auto parser = argparse::ArgumentParser();
-
-    SUBCASE("...short name")
-    {
-        auto const & argument = parser.add_argument("-p");
-
-        CHECK(!argument.is_positional());
-    }
-
-    SUBCASE("...long name")
-    {
-        auto const & argument = parser.add_argument("--long-name");
-
-        CHECK(!argument.is_positional());
-    }
-
-    SUBCASE("...short and long name")
-    {
-        auto const & argument = parser.add_argument("-l", "--long-name");
-
-        CHECK(!argument.is_positional());
-    }
-}
-
 TEST_CASE("Optional arguments support short names")
 {
     auto parser = argparse::ArgumentParser();
