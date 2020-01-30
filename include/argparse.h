@@ -641,8 +641,6 @@ namespace argparse
                 public:
                     ArgumentBuilder(argument_uptrs & arguments, std::string const & name1, std::string const & name2)
                       : m_arguments(arguments)
-                      , m_name1(name1)
-                      , m_name2(name2)
                       , m_options()
                     {
                         m_options.m_name1 = name1;
@@ -651,7 +649,7 @@ namespace argparse
 
                     ~ArgumentBuilder()
                     {
-                        if (m_name1.front() != '-')
+                        if (m_options.m_name1.front() != '-')
                         {
                             m_arguments.push_back(std::make_unique<PositionalArgument>(m_options));
                         }
@@ -693,8 +691,6 @@ namespace argparse
 
                 private:
                     argument_uptrs & m_arguments;
-                    std::string const m_name1;
-                    std::string const m_name2;
                     Argument::Options m_options;
             };
 
