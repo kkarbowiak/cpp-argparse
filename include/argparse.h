@@ -649,6 +649,7 @@ namespace argparse
                       : m_arguments(arguments)
                       , m_name1(name1)
                       , m_name2(name2)
+                      , m_options()
                     {
                     }
 
