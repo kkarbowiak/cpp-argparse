@@ -398,6 +398,8 @@ namespace argparse
                 public:
                     struct Options
                     {
+                        std::string m_name1;
+                        std::string m_name2;
                         std::string m_help;
                         std::string m_metavar;
                         std::string m_dest;
@@ -423,10 +425,8 @@ namespace argparse
             class PositionalArgument : public Argument
             {
                 public:
-                    PositionalArgument(std::string const & name1, std::string const & name2, Options options)
-                      : m_name1(name1)
-                      , m_name2(name2)
-                      , m_value()
+                    explicit PositionalArgument(Options options)
+                      : m_value()
                       , m_options(options)
                     {
                     }
@@ -444,20 +444,20 @@ namespace argparse
 
                     auto get_name() const -> std::string override
                     {
-                        return m_name1;
+                        return m_options.m_name1;
                     }
 
                     auto get_dest_name() const -> std::string override
                     {
                         return m_options.m_dest.empty()
-                            ? m_name1
+                            ? m_options.m_name1
                             : m_options.m_dest;
                     }
 
                     auto get_metavar_name() const -> std::string override
                     {
                         return m_options.m_metavar.empty()
-                            ? m_name1
+                            ? m_options.m_name1
                             : m_options.m_metavar;
                     }
 
@@ -487,8 +487,6 @@ namespace argparse
                     }
 
                 private:
-                    std::string const m_name1;
-                    std::string const m_name2;
                     std::any m_value;
                     Options m_options;
             };
@@ -496,10 +494,8 @@ namespace argparse
             class OptionalArgument : public Argument
             {
                 public:
-                    explicit OptionalArgument(std::string const & name1, std::string const & name2, Options options)
-                      : m_name1(name1)
-                      , m_name2(name2)
-                      , m_value()
+                    explicit OptionalArgument(Options options)
+                      : m_value()
                       , m_options(options)
                     {
                         if (m_options.m_action == store_true || m_options.m_action == argparse::help)
@@ -520,7 +516,7 @@ namespace argparse
                     {
                         for (auto i = args.begin(); i != args.end(); ++i)
                         {
-                            if (*i == m_name1 || *i == m_name2)
+                            if (*i == m_options.m_name1 || *i == m_options.m_name2)
                             {
                                 i = args.erase(i);
                                 if (m_options.m_action == store_true)
@@ -558,7 +554,7 @@ namespace argparse
 
                     auto get_name() const -> std::string override
                     {
-                        return m_name1;
+                        return m_options.m_name1;
                     }
 
                     auto get_dest_name() const -> std::string override
@@ -570,17 +566,17 @@ namespace argparse
 
                         std::string dest;
 
-                        if (m_name1[0] == '-' && m_name1[1] == '-')
+                        if (m_options.m_name1[0] == '-' && m_options.m_name1[1] == '-')
                         {
-                            dest = m_name1.substr(2);
+                            dest = m_options.m_name1.substr(2);
                         }
-                        else if (m_name2[0] == '-' && m_name2[1] == '-')
+                        else if (m_options.m_name2[0] == '-' && m_options.m_name2[1] == '-')
                         {
-                            dest = m_name2.substr(2);
+                            dest = m_options.m_name2.substr(2);
                         }
                         else
                         {
-                            dest = m_name1.substr(1);
+                            dest = m_options.m_name1.substr(1);
                         }
 
                         std::replace(dest.begin(), dest.end(), '-', '_');
@@ -631,8 +627,6 @@ namespace argparse
                     }
 
                 private:
-                    std::string const m_name1;
-                    std::string const m_name2;
                     std::any m_value;
                     Options m_options;
             };
@@ -651,17 +645,19 @@ namespace argparse
                       , m_name2(name2)
                       , m_options()
                     {
+                        m_options.m_name1 = name1;
+                        m_options.m_name2 = name2;
                     }
 
                     ~ArgumentBuilder()
                     {
                         if (m_name1.front() != '-')
                         {
-                            m_arguments.push_back(std::make_unique<PositionalArgument>(m_name1, m_name2, m_options));
+                            m_arguments.push_back(std::make_unique<PositionalArgument>(m_options));
                         }
                         else
                         {
-                            m_arguments.push_back(std::make_unique<OptionalArgument>(m_name1, m_name2, m_options));
+                            m_arguments.push_back(std::make_unique<OptionalArgument>(m_options));
                         }
                     }
 
