@@ -712,49 +712,64 @@ namespace argparse
                 public:
                     ArgumentBuilder(argument_uptrs & arguments, std::string const & name1, std::string const & name2)
                       : m_arguments(arguments)
+                      , m_name1(name1)
+                      , m_name2(name2)
                     {
-                        if (name1.front() != '-')
+                    }
+
+                    ~ArgumentBuilder()
+                    {
+                        if (m_name1.front() != '-')
                         {
-                            m_arguments.push_back(std::make_unique<PositionalArgument>(name1, name2));
+                            m_arguments.push_back(std::make_unique<PositionalArgument>(m_name1, m_name2));
                         }
                         else
                         {
-                            m_arguments.push_back(std::make_unique<OptionalArgument>(name1, name2));
+                            m_arguments.push_back(std::make_unique<OptionalArgument>(m_name1, m_name2));
                         }
+
+                        m_arguments.back()->help(m_options.m_help);
+                        m_arguments.back()->metavar(m_options.m_metavar);
+                        m_arguments.back()->dest(m_options.m_dest);
+                        m_arguments.back()->action(m_options.m_action);
+                        m_arguments.back()->const_(m_options.m_const_);
                     }
 
                     auto help(std::string const & help) -> ArgumentBuilder &
                     {
-                        m_arguments.back()->help(help);
+                        m_options.m_help = help;
                         return *this;
                     }
 
                     auto metavar(std::string const & metavar) -> ArgumentBuilder &
                     {
-                        m_arguments.back()->metavar(metavar);
+                        m_options.m_metavar = metavar;
                         return *this;
                     }
 
                     auto dest(std::string const & dest) -> ArgumentBuilder &
                     {
-                        m_arguments.back()->dest(dest);
+                        m_options.m_dest = dest;
                         return *this;
                     }
 
                     auto action(Action action) -> ArgumentBuilder &
                     {
-                        m_arguments.back()->action(action);
+                        m_options.m_action = action;
                         return *this;
                     }
 
                     auto const_(std::any const & const_) -> ArgumentBuilder &
                     {
-                        m_arguments.back()->const_(const_);
+                        m_options.m_const_ = const_;
                         return *this;
                     }
 
                 private:
                     argument_uptrs & m_arguments;
+                    std::string const m_name1;
+                    std::string const m_name2;
+                    Argument::Options m_options;
             };
 
         private:
