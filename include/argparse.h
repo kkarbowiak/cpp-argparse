@@ -429,11 +429,11 @@ namespace argparse
             class PositionalArgument : public Argument
             {
                 public:
-                    PositionalArgument(std::string const & name1, std::string const & name2)
+                    PositionalArgument(std::string const & name1, std::string const & name2, Options options)
                       : m_name1(name1)
                       , m_name2(name2)
                       , m_value()
-                      , m_options()
+                      , m_options(options)
                     {
                     }
 
@@ -530,12 +530,24 @@ namespace argparse
             class OptionalArgument : public Argument
             {
                 public:
-                    explicit OptionalArgument(std::string const & name1, std::string const & name2)
+                    explicit OptionalArgument(std::string const & name1, std::string const & name2, Options options)
                       : m_name1(name1)
                       , m_name2(name2)
                       , m_value()
-                      , m_options()
+                      , m_options(options)
                     {
+                        if (m_options.m_action == store_true || m_options.m_action == argparse::help)
+                        {
+                            m_value = false;
+                        }
+                        else if (m_options.m_action == store_false)
+                        {
+                            m_value = true;
+                        }
+                        else
+                        {
+                            // ignore
+                        }
                     }
 
                     auto parse_args(tokens args) -> tokens override
@@ -721,18 +733,12 @@ namespace argparse
                     {
                         if (m_name1.front() != '-')
                         {
-                            m_arguments.push_back(std::make_unique<PositionalArgument>(m_name1, m_name2));
+                            m_arguments.push_back(std::make_unique<PositionalArgument>(m_name1, m_name2, m_options));
                         }
                         else
                         {
-                            m_arguments.push_back(std::make_unique<OptionalArgument>(m_name1, m_name2));
+                            m_arguments.push_back(std::make_unique<OptionalArgument>(m_name1, m_name2, m_options));
                         }
-
-                        m_arguments.back()->help(m_options.m_help);
-                        m_arguments.back()->metavar(m_options.m_metavar);
-                        m_arguments.back()->dest(m_options.m_dest);
-                        m_arguments.back()->action(m_options.m_action);
-                        m_arguments.back()->const_(m_options.m_const_);
                     }
 
                     auto help(std::string const & help) -> ArgumentBuilder &
