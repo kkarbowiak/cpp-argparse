@@ -417,12 +417,6 @@ namespace argparse
                     virtual auto is_required() const -> bool = 0;
                     virtual auto is_positional() const -> bool = 0;
 
-                    virtual auto help(std::string const & help) -> Argument & = 0;
-                    virtual auto metavar(std::string const & metavar) -> Argument & = 0;
-                    virtual auto dest(std::string const & dest) -> Argument & = 0;
-                    virtual auto action(Action action) -> Argument & = 0;
-                    virtual auto const_(std::any const & const_) -> Argument & = 0;
-
                     virtual auto get_options() -> Options & = 0;
             };
 
@@ -485,34 +479,6 @@ namespace argparse
                     auto is_positional() const -> bool override
                     {
                         return true;
-                    }
-
-                    auto help(std::string const & help) -> Argument & override
-                    {
-                        m_options.m_help = help;
-                        return *this;
-                    }
-
-                    auto metavar(std::string const & metavar) -> Argument & override
-                    {
-                        m_options.m_metavar = metavar;
-                        return *this;
-                    }
-
-                    auto dest(std::string const & dest) -> Argument & override
-                    {
-                        m_options.m_dest = dest;
-                        return *this;
-                    }
-
-                    auto action(Action /* action */) -> Argument & override
-                    {
-                        return *this;
-                    }
-
-                    auto const_(std::any const & /* const_ */) -> Argument & override
-                    {
-                        return *this;
                     }
 
                     auto get_options() -> Options & override
@@ -657,49 +623,6 @@ namespace argparse
                     auto is_positional() const -> bool override
                     {
                         return false;
-                    }
-
-                    auto help(std::string const & help) -> Argument & override
-                    {
-                        m_options.m_help = help;
-                        return *this;
-                    }
-
-                    auto metavar(std::string const & metavar) -> Argument & override
-                    {
-                        m_options.m_metavar = metavar;
-                        return *this;
-                    }
-
-                    auto dest(std::string const & dest) -> Argument & override
-                    {
-                        m_options.m_dest = dest;
-                        return *this;
-                    }
-
-                    auto action(Action action) -> Argument & override
-                    {
-                        m_options.m_action = action;
-                        if (action == store_true || action == argparse::help)
-                        {
-                            m_value = false;
-                        }
-                        else if (action == store_false)
-                        {
-                            m_value = true;
-                        }
-                        else
-                        {
-                            // ignore
-                        }
-
-                        return *this;
-                    }
-
-                    auto const_(std::any const & const_) -> Argument & override
-                    {
-                        m_options.m_const_ = const_;
-                        return *this;
                     }
 
                     auto get_options() -> Options & override
