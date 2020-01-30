@@ -714,6 +714,57 @@ namespace argparse
             using argument_uptrs = std::vector<argument_uptr>;
 
         private:
+            class ArgumentBuilder
+            {
+                public:
+                    ArgumentBuilder(argument_uptrs & arguments, std::string const & name1, std::string const & name2)
+                      : m_arguments(arguments)
+                    {
+                        if (name1.front() != '-')
+                        {
+                            m_arguments.push_back(std::make_unique<PositionalArgument>(name1, name2));
+                        }
+                        else
+                        {
+                            m_arguments.push_back(std::make_unique<OptionalArgument>(name1, name2));
+                        }
+                    }
+
+                    auto help(std::string const & help) -> ArgumentBuilder &
+                    {
+                        m_arguments.back()->help(help);
+                        return *this;
+                    }
+
+                    auto metavar(std::string const & metavar) -> ArgumentBuilder &
+                    {
+                        m_arguments.back()->metavar(metavar);
+                        return *this;
+                    }
+
+                    auto dest(std::string const & dest) -> ArgumentBuilder &
+                    {
+                        m_arguments.back()->dest(dest);
+                        return *this;
+                    }
+
+                    auto action(Action action) -> ArgumentBuilder &
+                    {
+                        m_arguments.back()->action(action);
+                        return *this;
+                    }
+
+                    auto const_(std::any const & const_) -> ArgumentBuilder &
+                    {
+                        m_arguments.back()->const_(const_);
+                        return *this;
+                    }
+
+                private:
+                    argument_uptrs & m_arguments;
+            };
+
+        private:
             argument_uptrs m_arguments;
             optstring m_prog;
             optstring m_description;
