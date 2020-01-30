@@ -427,7 +427,7 @@ namespace argparse
                 public:
                     explicit PositionalArgument(Options options)
                       : m_value()
-                      , m_options(options)
+                      , m_options(std::move(options))
                     {
                     }
 
@@ -496,7 +496,7 @@ namespace argparse
                 public:
                     explicit OptionalArgument(Options options)
                       : m_value()
-                      , m_options(options)
+                      , m_options(std::move(options))
                     {
                         if (m_options.m_action == store_true || m_options.m_action == argparse::help)
                         {
@@ -651,11 +651,11 @@ namespace argparse
                     {
                         if (m_options.m_name1.front() != '-')
                         {
-                            m_arguments.push_back(std::make_unique<PositionalArgument>(m_options));
+                            m_arguments.push_back(std::make_unique<PositionalArgument>(std::move(m_options)));
                         }
                         else
                         {
-                            m_arguments.push_back(std::make_unique<OptionalArgument>(m_options));
+                            m_arguments.push_back(std::make_unique<OptionalArgument>(std::move(m_options)));
                         }
                     }
 
