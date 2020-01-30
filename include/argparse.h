@@ -419,7 +419,7 @@ namespace argparse
                     virtual auto is_required() const -> bool = 0;
                     virtual auto is_positional() const -> bool = 0;
 
-                    virtual auto get_options() -> Options & = 0;
+                    virtual auto get_options() -> Options const & = 0;
             };
 
             class PositionalArgument : public Argument
@@ -481,14 +481,14 @@ namespace argparse
                         return true;
                     }
 
-                    auto get_options() -> Options & override
+                    auto get_options() -> Options const & override
                     {
                         return m_options;
                     }
 
                 private:
                     std::any m_value;
-                    Options m_options;
+                    Options const m_options;
             };
 
             class OptionalArgument : public Argument
@@ -621,14 +621,14 @@ namespace argparse
                         return false;
                     }
 
-                    auto get_options() -> Options & override
+                    auto get_options() -> Options const & override
                     {
                         return m_options;
                     }
 
                 private:
                     std::any m_value;
-                    Options m_options;
+                    Options const m_options;
             };
 
         private:
