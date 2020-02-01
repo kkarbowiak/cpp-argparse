@@ -446,7 +446,7 @@ namespace argparse
                         std::string m_dest;
                         Action m_action = store;
                         std::any m_const_;
-                        std::function<void (std::string const &, std::any &)> m_converter;
+                        std::function<void (std::string const &, std::any &)> m_converter = [](std::string const & s, std::any & a){ a = s; };
                     };
 
                 public:
@@ -477,14 +477,7 @@ namespace argparse
                     {
                         if (!args.empty())
                         {
-                            if (m_options.m_converter)
-                            {
-                                m_options.m_converter(args.front(), m_value);
-                            }
-                            else
-                            {
-                                m_value = args.front();
-                            }
+                            m_options.m_converter(args.front(), m_value);
                             args.pop_front();
                         }
 
@@ -591,14 +584,7 @@ namespace argparse
                                     {
                                         throw parsing_error("argument " + get_name() + ": expected one argument");
                                     }
-                                    if (m_options.m_converter)
-                                    {
-                                        m_options.m_converter(*i, m_value);
-                                    }
-                                    else
-                                    {
-                                        m_value = *i;
-                                    }
+                                    m_options.m_converter(*i, m_value);
                                     (void) args.erase(i);
                                 }
                                 break;
