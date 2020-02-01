@@ -53,6 +53,16 @@ namespace argparse
         i = std::stoi(s);
     }
 
+    inline void from_string(std::string const & s, long int & li)
+    {
+        li = std::stol(s);
+    }
+
+    inline void from_string(std::string const & s, long long int & lli)
+    {
+        lli = std::stoll(s);
+    }
+
     inline void from_string(std::string const & s, double & d)
     {
         d = std::stod(s);

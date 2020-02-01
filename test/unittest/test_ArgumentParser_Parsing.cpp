@@ -175,12 +175,16 @@ TEST_CASE("Parsing a positional argument yields its requested type")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("i").type<int>();
+    parser.add_argument("li").type<long int>();
+    parser.add_argument("lli").type<long long int>();
     parser.add_argument("d").type<double>();
     parser.add_argument("fc").type<foo::Custom>();
 
-    auto const parsed = parser.parse_args(4, cstr_arr{"pro", "123", "3.14", "bar"});
+    auto const parsed = parser.parse_args(6, cstr_arr{"pro", "123", "4000000000", "16000000000", "3.14", "bar"});
 
     CHECK(parsed.get_value<int>("i") == 123);
+    CHECK(parsed.get_value<long int>("li") == 4000000000l);
+    CHECK(parsed.get_value<long long int>("lli") == 16000000000ll);
     CHECK(parsed.get_value<double>("d") == 3.14);
     CHECK(parsed.get_value<foo::Custom>("fc") == foo::Custom("bar"));
 }
