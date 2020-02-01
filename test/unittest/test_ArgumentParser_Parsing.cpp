@@ -1,6 +1,7 @@
 #include "argparse.h"
 
 #include "cstring_array.h"
+#include "custom.h"
 
 #include <doctest.h>
 
@@ -153,22 +154,6 @@ TEST_CASE("Optional argument can be used with either...")
 
         CHECK(parsed.get_value("option") == "val");
     }
-}
-
-namespace foo
-{
-    class Custom
-    {
-        public:
-            Custom() = default;
-            explicit Custom(std::string const & text) : m_text(text) {}
-            auto operator==(Custom const & other) const -> bool { return m_text == other.m_text; }
-
-        private:
-            std::string m_text;
-    };
-
-    void from_string(std::string const & s, Custom & c) { c = Custom(s); }
 }
 
 TEST_CASE("Parsing a positional argument yields its requested type")

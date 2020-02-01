@@ -10,7 +10,8 @@ target_sources(unittest
     test_ArgumentParser_Parsing.cpp
     test_ArgumentParser_UsageMessage.cpp
     test_ArgumentParser_HelpMessage.cpp
-    cstring_array.h)
+    cstring_array.h
+    custom.h)
 
 target_include_directories(unittest
     PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>/include
