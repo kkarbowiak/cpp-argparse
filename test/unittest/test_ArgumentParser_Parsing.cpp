@@ -155,16 +155,34 @@ TEST_CASE("Optional argument can be used with either...")
     }
 }
 
+namespace foo
+{
+    class Custom
+    {
+        public:
+            Custom() = default;
+            explicit Custom(std::string const & text) : m_text(text) {}
+            auto operator==(Custom const & other) const -> bool { return m_text == other.m_text; }
+
+        private:
+            std::string m_text;
+    };
+
+    void from_string(std::string const & s, Custom & c) { c = Custom(s); }
+}
+
 TEST_CASE("Parsing a positional argument yields its requested type")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("pos1").type<int>();
     parser.add_argument("pos2").type<double>();
+    parser.add_argument("pos3").type<foo::Custom>();
 
-    auto const parsed = parser.parse_args(3, cstr_arr{"pro", "123", "3.14"});
+    auto const parsed = parser.parse_args(4, cstr_arr{"pro", "123", "3.14", "bar"});
 
     CHECK(parsed.get_value<int>("pos1") == 123);
     CHECK(parsed.get_value<double>("pos2") == 3.14);
+    CHECK(parsed.get_value<foo::Custom>("pos3") == foo::Custom("bar"));
 }
 
 TEST_CASE("Parsing missing positional argument throws an exception...")
