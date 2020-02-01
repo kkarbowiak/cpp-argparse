@@ -174,15 +174,15 @@ namespace foo
 TEST_CASE("Parsing a positional argument yields its requested type")
 {
     auto parser = argparse::ArgumentParser();
-    parser.add_argument("pos1").type<int>();
-    parser.add_argument("pos2").type<double>();
-    parser.add_argument("pos3").type<foo::Custom>();
+    parser.add_argument("i").type<int>();
+    parser.add_argument("d").type<double>();
+    parser.add_argument("fc").type<foo::Custom>();
 
     auto const parsed = parser.parse_args(4, cstr_arr{"pro", "123", "3.14", "bar"});
 
-    CHECK(parsed.get_value<int>("pos1") == 123);
-    CHECK(parsed.get_value<double>("pos2") == 3.14);
-    CHECK(parsed.get_value<foo::Custom>("pos3") == foo::Custom("bar"));
+    CHECK(parsed.get_value<int>("i") == 123);
+    CHECK(parsed.get_value<double>("d") == 3.14);
+    CHECK(parsed.get_value<foo::Custom>("fc") == foo::Custom("bar"));
 }
 
 TEST_CASE("Parsing missing positional argument throws an exception...")
