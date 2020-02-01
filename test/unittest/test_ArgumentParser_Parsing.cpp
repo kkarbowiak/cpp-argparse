@@ -197,6 +197,16 @@ TEST_CASE("Parsing a positional argument yields its requested type")
     CHECK(parsed.get_value<foo::Custom>("fc") == foo::Custom("bar"));
 }
 
+TEST_CASE("Parsing an optional argument yields its requested type")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-i").type<int>();
+
+    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-i", "123"});
+
+    CHECK(parsed.get_value<int>("i") == 123);
+}
+
 TEST_CASE("Parsing missing positional argument throws an exception...")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);

@@ -591,7 +591,14 @@ namespace argparse
                                     {
                                         throw parsing_error("argument " + get_name() + ": expected one argument");
                                     }
-                                    m_value = *i;
+                                    if (m_options.m_converter)
+                                    {
+                                        m_options.m_converter(*i, m_value);
+                                    }
+                                    else
+                                    {
+                                        m_value = *i;
+                                    }
                                     (void) args.erase(i);
                                 }
                                 break;
