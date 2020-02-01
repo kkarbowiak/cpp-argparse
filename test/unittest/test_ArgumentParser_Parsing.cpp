@@ -200,11 +200,27 @@ TEST_CASE("Parsing a positional argument yields its requested type")
 TEST_CASE("Parsing an optional argument yields its requested type")
 {
     auto parser = argparse::ArgumentParser();
-    parser.add_argument("-i").type<int>();
+    parser.add_argument("--i").type<int>();
+    parser.add_argument("--li").type<long int>();
+    parser.add_argument("--lli").type<long long int>();
+    parser.add_argument("--uli").type<unsigned long int>();
+    parser.add_argument("--ulli").type<unsigned long long int>();
+    parser.add_argument("--f").type<float>();
+    parser.add_argument("--d").type<double>();
+    parser.add_argument("--ld").type<long double>();
+    parser.add_argument("--fc").type<foo::Custom>();
 
-    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-i", "123"});
+    auto const parsed = parser.parse_args(19, cstr_arr{"prog", "--i", "123", "--li", "4000000000", "--lli", "16000000000", "--uli", "3000000000", "--ulli", "24000000000", "--f", "2.71", "--d", "3.14", "--ld", "0.111", "--fc", "bar"});
 
     CHECK(parsed.get_value<int>("i") == 123);
+    CHECK(parsed.get_value<long int>("li") == 4000000000l);
+    CHECK(parsed.get_value<long long int>("lli") == 16000000000ll);
+    CHECK(parsed.get_value<unsigned long int>("uli") == 3000000000l);
+    CHECK(parsed.get_value<unsigned long long int>("ulli") == 24000000000l);
+    CHECK(parsed.get_value<float>("f") == 2.71f);
+    CHECK(parsed.get_value<double>("d") == 3.14);
+    CHECK(parsed.get_value<long double>("ld") == 0.111l);
+    CHECK(parsed.get_value<foo::Custom>("fc") == foo::Custom("bar"));
 }
 
 TEST_CASE("Parsing missing positional argument throws an exception...")
