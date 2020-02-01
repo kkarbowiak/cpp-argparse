@@ -53,6 +53,11 @@ namespace argparse
         i = std::stoi(s);
     }
 
+    inline void from_string(std::string const & s, double & d)
+    {
+        d = std::stod(s);
+    }
+
     class ArgumentParser
     {
         public:

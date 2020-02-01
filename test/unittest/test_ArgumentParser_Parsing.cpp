@@ -155,14 +155,16 @@ TEST_CASE("Optional argument can be used with either...")
     }
 }
 
-TEST_CASE("Parsing single positional argument yields its requested type")
+TEST_CASE("Parsing a positional argument yields its requested type")
 {
     auto parser = argparse::ArgumentParser();
-    parser.add_argument("pos").type<int>();
+    parser.add_argument("pos1").type<int>();
+    parser.add_argument("pos2").type<double>();
 
-    auto const parsed = parser.parse_args(2, cstr_arr{"pro", "123"});
+    auto const parsed = parser.parse_args(3, cstr_arr{"pro", "123", "3.14"});
 
-    CHECK(parsed.get_value<int>("pos") == 123);
+    CHECK(parsed.get_value<int>("pos1") == 123);
+    CHECK(parsed.get_value<double>("pos2") == 3.14);
 }
 
 TEST_CASE("Parsing missing positional argument throws an exception...")
