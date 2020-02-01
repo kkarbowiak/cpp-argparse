@@ -63,9 +63,19 @@ namespace argparse
         lli = std::stoll(s);
     }
 
+    inline void from_string(std::string const & s, float & f)
+    {
+        f = std::stof(s);
+    }
+
     inline void from_string(std::string const & s, double & d)
     {
         d = std::stod(s);
+    }
+
+    inline void from_string(std::string const & s, long double & ld)
+    {
+        ld = std::stold(s);
     }
 
     class ArgumentParser
