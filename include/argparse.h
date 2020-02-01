@@ -63,6 +63,16 @@ namespace argparse
         lli = std::stoll(s);
     }
 
+    inline void from_string(std::string const & s, unsigned long int & uli)
+    {
+        uli = std::stoul(s);
+    }
+
+    inline void from_string(std::string const & s, unsigned long long int & ulli)
+    {
+        ulli = std::stoull(s);
+    }
+
     inline void from_string(std::string const & s, float & f)
     {
         f = std::stof(s);

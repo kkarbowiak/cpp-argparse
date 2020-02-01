@@ -177,16 +177,20 @@ TEST_CASE("Parsing a positional argument yields its requested type")
     parser.add_argument("i").type<int>();
     parser.add_argument("li").type<long int>();
     parser.add_argument("lli").type<long long int>();
+    parser.add_argument("uli").type<unsigned long int>();
+    parser.add_argument("ulli").type<unsigned long long int>();
     parser.add_argument("f").type<float>();
     parser.add_argument("d").type<double>();
     parser.add_argument("ld").type<long double>();
     parser.add_argument("fc").type<foo::Custom>();
 
-    auto const parsed = parser.parse_args(8, cstr_arr{"pro", "123", "4000000000", "16000000000", "2.71", "3.14", "0.111", "bar"});
+    auto const parsed = parser.parse_args(10, cstr_arr{"pro", "123", "4000000000", "16000000000", "3000000000", "24000000000", "2.71", "3.14", "0.111", "bar"});
 
     CHECK(parsed.get_value<int>("i") == 123);
     CHECK(parsed.get_value<long int>("li") == 4000000000l);
     CHECK(parsed.get_value<long long int>("lli") == 16000000000ll);
+    CHECK(parsed.get_value<unsigned long int>("uli") == 3000000000l);
+    CHECK(parsed.get_value<unsigned long long int>("ulli") == 24000000000l);
     CHECK(parsed.get_value<float>("f") == 2.71f);
     CHECK(parsed.get_value<double>("d") == 3.14);
     CHECK(parsed.get_value<long double>("ld") == 0.111l);
