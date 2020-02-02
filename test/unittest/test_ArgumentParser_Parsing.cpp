@@ -10,7 +10,7 @@
 
 using namespace std::string_literals;
 
-TEST_CASE("Parsing single positional argument yields its value")
+TEST_CASE("Parsing a positional argument yields its value")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("p1");
@@ -20,7 +20,7 @@ TEST_CASE("Parsing single positional argument yields its value")
     CHECK(parsed.get_value("p1") == "v1");
 }
 
-TEST_CASE("Parsing single optional argument...")
+TEST_CASE("Parsing an optional argument...")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("-o");
@@ -45,7 +45,7 @@ TEST_CASE("Parsing single optional argument...")
     }
 }
 
-TEST_CASE("Parsing single optional argument with store true action...")
+TEST_CASE("Parsing an optional argument with store true action...")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o").action(argparse::store_true);
@@ -65,7 +65,7 @@ TEST_CASE("Parsing single optional argument with store true action...")
     }
 }
 
-TEST_CASE("Parsing single optional argument with store false action...")
+TEST_CASE("Parsing an optional argument with store false action...")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o").action(argparse::store_false);
@@ -85,7 +85,7 @@ TEST_CASE("Parsing single optional argument with store false action...")
     }
 }
 
-TEST_CASE("Parsing single optional argument with store const action...")
+TEST_CASE("Parsing an optional argument with store const action...")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o").action(argparse::store_const).const_("v1"s);
@@ -116,7 +116,7 @@ TEST_CASE("Parsing single optional argument with store const action...")
     }
 }
 
-TEST_CASE("Parsing single optional argument with help action...")
+TEST_CASE("Parsing an optional argument with help action...")
 {
     auto parser = argparse::ArgumentParser().add_help(false).handle(argparse::Handle::none);
     parser.add_argument("-h").action(argparse::help);
