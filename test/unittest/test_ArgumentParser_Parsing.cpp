@@ -169,7 +169,18 @@ TEST_CASE("Parsing a positional argument yields its requested type")
     parser.add_argument("ld").type<long double>();
     parser.add_argument("fc").type<foo::Custom>();
 
-    auto const parsed = parser.parse_args(10, cstr_arr{"prog", "123", "4000000000", "16000000000", "3000000000", "24000000000", "2.71", "3.14", "0.111", "bar"});
+    auto const parsed = parser.parse_args(
+        10, cstr_arr{
+            "prog",
+            "123",
+            "4000000000",
+            "16000000000",
+            "3000000000",
+            "24000000000",
+            "2.71",
+            "3.14",
+            "0.111",
+            "bar"});
 
     CHECK(parsed.get_value<int>("i") == 123);
     CHECK(parsed.get_value<long int>("li") == 4000000000l);
@@ -195,7 +206,18 @@ TEST_CASE("Parsing an optional argument yields its requested type")
     parser.add_argument("--ld").type<long double>();
     parser.add_argument("--fc").type<foo::Custom>();
 
-    auto const parsed = parser.parse_args(19, cstr_arr{"prog", "--i", "123", "--li", "4000000000", "--lli", "16000000000", "--uli", "3000000000", "--ulli", "24000000000", "--f", "2.71", "--d", "3.14", "--ld", "0.111", "--fc", "bar"});
+    auto const parsed = parser.parse_args(
+        19, cstr_arr{
+            "prog",
+            "--i", "123",
+            "--li", "4000000000",
+            "--lli", "16000000000",
+            "--uli", "3000000000",
+            "--ulli", "24000000000",
+            "--f", "2.71",
+            "--d", "3.14",
+            "--ld", "0.111",
+            "--fc", "bar"});
 
     CHECK(parsed.get_value<int>("i") == 123);
     CHECK(parsed.get_value<long int>("li") == 4000000000l);
