@@ -49,67 +49,67 @@ namespace argparse
             }
     };
 
-    inline void from_string(std::string const & s, char & c)
+    inline auto from_string(std::string const & s, char & c) -> void
     {
         (void) std::from_chars(s.data(), s.data() + s.size(), c);
     }
 
-    inline void from_string(std::string const & s, signed char & sc)
+    inline auto from_string(std::string const & s, signed char & sc) -> void
     {
         (void) std::from_chars(s.data(), s.data() + s.size(), sc);
     }
 
-    inline void from_string(std::string const & s, unsigned char & uc)
+    inline auto from_string(std::string const & s, unsigned char & uc) -> void
     {
         (void) std::from_chars(s.data(), s.data() + s.size(), uc);
     }
 
-    inline void from_string(std::string const & s, short int & si)
+    inline auto from_string(std::string const & s, short int & si) -> void
     {
         (void) std::from_chars(s.data(), s.data() + s.size(), si);
     }
 
-    inline void from_string(std::string const & s, unsigned short int & usi)
+    inline auto from_string(std::string const & s, unsigned short int & usi) -> void
     {
         (void) std::from_chars(s.data(), s.data() + s.size(), usi);
     }
 
-    inline void from_string(std::string const & s, int & i)
+    inline auto from_string(std::string const & s, int & i) -> void
     {
         i = std::stoi(s);
     }
 
-    inline void from_string(std::string const & s, long int & li)
+    inline auto from_string(std::string const & s, long int & li) -> void
     {
         li = std::stol(s);
     }
 
-    inline void from_string(std::string const & s, long long int & lli)
+    inline auto from_string(std::string const & s, long long int & lli) -> void
     {
         lli = std::stoll(s);
     }
 
-    inline void from_string(std::string const & s, unsigned long int & uli)
+    inline auto from_string(std::string const & s, unsigned long int & uli) -> void
     {
         uli = std::stoul(s);
     }
 
-    inline void from_string(std::string const & s, unsigned long long int & ulli)
+    inline auto from_string(std::string const & s, unsigned long long int & ulli) -> void
     {
         ulli = std::stoull(s);
     }
 
-    inline void from_string(std::string const & s, float & f)
+    inline auto from_string(std::string const & s, float & f) -> void
     {
         f = std::stof(s);
     }
 
-    inline void from_string(std::string const & s, double & d)
+    inline auto from_string(std::string const & s, double & d) -> void
     {
         d = std::stod(s);
     }
 
-    inline void from_string(std::string const & s, long double & ld)
+    inline auto from_string(std::string const & s, long double & ld) -> void
     {
         ld = std::stold(s);
     }
