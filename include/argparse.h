@@ -15,6 +15,7 @@
 #include <stdexcept>
 #include <algorithm>
 #include <functional>
+#include <charconv>
 #include <iostream>
 #include <cstdlib>
 
@@ -47,6 +48,31 @@ namespace argparse
             {
             }
     };
+
+    inline void from_string(std::string const & s, char & c)
+    {
+        (void) std::from_chars(s.data(), s.data() + s.size(), c);
+    }
+
+    inline void from_string(std::string const & s, signed char & sc)
+    {
+        (void) std::from_chars(s.data(), s.data() + s.size(), sc);
+    }
+
+    inline void from_string(std::string const & s, unsigned char & uc)
+    {
+        (void) std::from_chars(s.data(), s.data() + s.size(), uc);
+    }
+
+    inline void from_string(std::string const & s, short int & si)
+    {
+        (void) std::from_chars(s.data(), s.data() + s.size(), si);
+    }
+
+    inline void from_string(std::string const & s, unsigned short int & usi)
+    {
+        (void) std::from_chars(s.data(), s.data() + s.size(), usi);
+    }
 
     inline void from_string(std::string const & s, int & i)
     {

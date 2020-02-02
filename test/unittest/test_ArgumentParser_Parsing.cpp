@@ -159,6 +159,11 @@ TEST_CASE("Optional argument can be used with either...")
 TEST_CASE("Parsing a positional argument yields its requested type")
 {
     auto parser = argparse::ArgumentParser();
+    parser.add_argument("c").type<char>();
+    parser.add_argument("sc").type<signed char>();
+    parser.add_argument("uc").type<unsigned char>();
+    parser.add_argument("si").type<short int>();
+    parser.add_argument("usi").type<unsigned short int>();
     parser.add_argument("i").type<int>();
     parser.add_argument("li").type<long int>();
     parser.add_argument("lli").type<long long int>();
@@ -170,8 +175,13 @@ TEST_CASE("Parsing a positional argument yields its requested type")
     parser.add_argument("fc").type<foo::Custom>();
 
     auto const parsed = parser.parse_args(
-        10, cstr_arr{
+        15, cstr_arr{
             "prog",
+            "65",
+            "-12",
+            "250",
+            "5000",
+            "64000",
             "123",
             "4000000000",
             "16000000000",
@@ -182,6 +192,11 @@ TEST_CASE("Parsing a positional argument yields its requested type")
             "0.111",
             "bar"});
 
+    CHECK(parsed.get_value<char>("c") == 65);
+    CHECK(parsed.get_value<signed char>("sc") == -12);
+    CHECK(parsed.get_value<unsigned char>("uc") == 250);
+    CHECK(parsed.get_value<short int>("si") == 5000);
+    CHECK(parsed.get_value<unsigned short int>("usi") == 64000);
     CHECK(parsed.get_value<int>("i") == 123);
     CHECK(parsed.get_value<long int>("li") == 4000000000l);
     CHECK(parsed.get_value<long long int>("lli") == 16000000000ll);
