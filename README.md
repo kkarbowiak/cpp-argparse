@@ -128,7 +128,7 @@ The below lists features of the `argparse` module that this implementation suppo
    * [ ] `nargs`
    * [x] `const` (ranamed to `const_` due to keyword clash)
    * [ ] `default`
-   * [x] `type` (`int`, `long int`, `long long int`, `unsigned long int`, `unsigned long long int`, `float`, `double`, `long double`, and user-defined types (via overloading `from_string` function))
+   * [x] `type` (built-in (except for `bool`) and user-defined types (via overloading `from_string` function))
    * [ ] `choices`
    * [ ] `required`
    * [x] `help`
