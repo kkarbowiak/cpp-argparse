@@ -260,6 +260,16 @@ TEST_CASE("Parsing an optional argument yields its requested type")
     CHECK(parsed.get_value<foo::Custom>("fc") == foo::Custom("bar"));
 }
 
+TEST_CASE("Parsing a missing optional argument yields its default value")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-o").default_("foo"s);
+
+    auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+
+    CHECK(parsed.get_value("o") == "foo");
+}
+
 TEST_CASE("Parsing missing positional argument throws an exception...")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);

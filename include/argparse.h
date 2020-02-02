@@ -466,6 +466,7 @@ namespace argparse
                         std::string m_dest;
                         Action m_action = store;
                         std::any m_const_;
+                        std::any m_default_;
                         std::function<void (std::string const &, std::any &)> m_converter = [](std::string const & s, std::any & a){ a = s; };
                     };
 
@@ -568,9 +569,9 @@ namespace argparse
                         {
                             m_value = true;
                         }
-                        else
+                        else if (m_options.m_default_.has_value())
                         {
-                            // ignore
+                            m_value = m_options.m_default_;
                         }
                     }
 
@@ -757,6 +758,12 @@ namespace argparse
                             from_string(s, val);
                             a = val;
                         };
+                        return *this;
+                    }
+
+                    auto default_(std::any const & default_) -> ArgumentBuilder &
+                    {
+                        m_options.m_default_ = default_;
                         return *this;
                     }
 
