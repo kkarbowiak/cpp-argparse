@@ -356,7 +356,7 @@ namespace argparse
               , m_epilog()
               , m_handle(Handle::errors_and_help)
             {
-                add_argument("-h", "--help").action(argparse::help).help("show this help message and exit");
+                add_argument("-h", "--help").action(help).help("show this help message and exit");
             }
 
         private:
@@ -560,7 +560,7 @@ namespace argparse
                       : m_value()
                       , m_options(std::move(options))
                     {
-                        if (m_options.m_action == store_true || m_options.m_action == argparse::help)
+                        if (m_options.m_action == store_true || m_options.m_action == help)
                         {
                             m_value = false;
                         }
