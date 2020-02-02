@@ -581,31 +581,28 @@ namespace argparse
                             if (*i == m_options.m_name1 || *i == m_options.m_name2)
                             {
                                 i = args.erase(i);
-                                if (m_options.m_action == store_true)
+                                switch (m_options.m_action)
                                 {
-                                    m_value = true;
-                                }
-                                else if (m_options.m_action == store_false)
-                                {
-                                    m_value = false;
-                                }
-                                else if (m_options.m_action == store_const)
-                                {
-                                    m_value = m_options.m_const_;
-                                }
-                                else if (m_options.m_action == argparse::help)
-                                {
-                                    m_value = true;
-                                    throw HelpRequested();
-                                }
-                                else
-                                {
-                                    if (i == args.end())
-                                    {
-                                        throw parsing_error("argument " + get_name() + ": expected one argument");
-                                    }
-                                    m_options.m_converter(*i, m_value);
-                                    (void) args.erase(i);
+                                    case store_true:
+                                        m_value = true;
+                                        break;
+                                    case store_false:
+                                        m_value = false;
+                                        break;
+                                    case store_const:
+                                        m_value = m_options.m_const_;
+                                        break;
+                                    case help:
+                                        m_value = true;
+                                        throw HelpRequested();
+                                    case store:
+                                        if (i == args.end())
+                                        {
+                                            throw parsing_error("argument " + get_name() + ": expected one argument");
+                                        }
+                                        m_options.m_converter(*i, m_value);
+                                        (void) args.erase(i);
+                                        break;
                                 }
                                 break;
                             }
