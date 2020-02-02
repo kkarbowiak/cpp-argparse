@@ -76,27 +76,27 @@ namespace argparse
 
     inline auto from_string(std::string const & s, int & i) -> void
     {
-        i = std::stoi(s);
+        (void) std::from_chars(s.data(), s.data() + s.size(), i);
     }
 
     inline auto from_string(std::string const & s, long int & li) -> void
     {
-        li = std::stol(s);
+        (void) std::from_chars(s.data(), s.data() + s.size(), li);
     }
 
     inline auto from_string(std::string const & s, long long int & lli) -> void
     {
-        lli = std::stoll(s);
+        (void) std::from_chars(s.data(), s.data() + s.size(), lli);
     }
 
     inline auto from_string(std::string const & s, unsigned long int & uli) -> void
     {
-        uli = std::stoul(s);
+        (void) std::from_chars(s.data(), s.data() + s.size(), uli);
     }
 
     inline auto from_string(std::string const & s, unsigned long long int & ulli) -> void
     {
-        ulli = std::stoull(s);
+        (void) std::from_chars(s.data(), s.data() + s.size(), ulli);
     }
 
     inline auto from_string(std::string const & s, float & f) -> void
