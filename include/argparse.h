@@ -73,10 +73,6 @@ namespace argparse
     class ArgumentParser
     {
         public:
-            using tokens = std::list<std::string>;
-            using optstring = std::optional<std::string>;
-
-        public:
             class Value
             {
                 public:
@@ -144,6 +140,9 @@ namespace argparse
             };
 
         private:
+            using tokens = std::list<std::string>;
+            using optstring = std::optional<std::string>;
+
             class HelpRequested {};
 
         public:
