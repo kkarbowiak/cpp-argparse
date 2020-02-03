@@ -264,10 +264,14 @@ TEST_CASE("Parsing a missing optional argument yields its default value")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o").default_("foo"s);
+    parser.add_argument("--i").default_(10);
+    parser.add_argument("--d").default_(3.14);
 
     auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
     CHECK(parsed.get_value("o") == "foo");
+    CHECK(parsed.get_value<int>("i") == 10);
+    CHECK(parsed.get_value<double>("d") == 3.14);
 }
 
 TEST_CASE("Parsing missing positional argument throws an exception...")
