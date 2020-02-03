@@ -183,7 +183,7 @@ TEST_CASE("Parsing a positional argument yields its requested type")
             "5000",
             "64000",
             "123",
-            "4000000000",
+            "2000000000",
             "16000000000",
             "3000000000",
             "24000000000",
@@ -198,7 +198,7 @@ TEST_CASE("Parsing a positional argument yields its requested type")
     CHECK(parsed.get_value<short int>("si") == 5000);
     CHECK(parsed.get_value<unsigned short int>("usi") == 64000);
     CHECK(parsed.get_value<int>("i") == 123);
-    CHECK(parsed.get_value<long int>("li") == 4000000000l);
+    CHECK(parsed.get_value<long int>("li") == 2000000000l);
     CHECK(parsed.get_value<long long int>("lli") == 16000000000ll);
     CHECK(parsed.get_value<unsigned long int>("uli") == 3000000000l);
     CHECK(parsed.get_value<unsigned long long int>("ulli") == 24000000000l);
@@ -235,7 +235,7 @@ TEST_CASE("Parsing an optional argument yields its requested type")
             "--si", "5000",
             "--usi", "64000",
             "--i", "123",
-            "--li", "4000000000",
+            "--li", "2000000000",
             "--lli", "16000000000",
             "--uli", "3000000000",
             "--ulli", "24000000000",
@@ -250,7 +250,7 @@ TEST_CASE("Parsing an optional argument yields its requested type")
     CHECK(parsed.get_value<short int>("si") == 5000);
     CHECK(parsed.get_value<unsigned short int>("usi") == 64000);
     CHECK(parsed.get_value<int>("i") == 123);
-    CHECK(parsed.get_value<long int>("li") == 4000000000l);
+    CHECK(parsed.get_value<long int>("li") == 2000000000l);
     CHECK(parsed.get_value<long long int>("lli") == 16000000000ll);
     CHECK(parsed.get_value<unsigned long int>("uli") == 3000000000l);
     CHECK(parsed.get_value<unsigned long long int>("ulli") == 24000000000l);
