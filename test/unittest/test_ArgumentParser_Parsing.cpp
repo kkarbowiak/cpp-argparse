@@ -99,18 +99,12 @@ TEST_CASE("Parsing an optional argument with store const action...")
 
     SUBCASE("...yields const value")
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
-
-        CHECK(parsed.get_value("o") == "v1");
-    }
-
-    SUBCASE("...yields const value")
-    {
         parser.add_argument("-i").action(argparse::store_const).const_(23);
         parser.add_argument("-d").action(argparse::store_const).const_(3.14);
 
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-i", "-d"});
+        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "-i", "-d"});
 
+        CHECK(parsed.get_value("o") == "v1");
         CHECK(parsed.get_value<int>("i") == 23);
         CHECK(parsed.get_value<double>("d") == 3.14);
     }
