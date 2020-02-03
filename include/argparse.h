@@ -49,54 +49,10 @@ namespace argparse
             }
     };
 
-    inline auto from_string(std::string const & s, char & c) -> void
+    template<typename T>
+    inline auto from_string(std::string const & s, T & t) -> void
     {
-        (void) std::from_chars(s.data(), s.data() + s.size(), c);
-    }
-
-    inline auto from_string(std::string const & s, signed char & sc) -> void
-    {
-        (void) std::from_chars(s.data(), s.data() + s.size(), sc);
-    }
-
-    inline auto from_string(std::string const & s, unsigned char & uc) -> void
-    {
-        (void) std::from_chars(s.data(), s.data() + s.size(), uc);
-    }
-
-    inline auto from_string(std::string const & s, short int & si) -> void
-    {
-        (void) std::from_chars(s.data(), s.data() + s.size(), si);
-    }
-
-    inline auto from_string(std::string const & s, unsigned short int & usi) -> void
-    {
-        (void) std::from_chars(s.data(), s.data() + s.size(), usi);
-    }
-
-    inline auto from_string(std::string const & s, int & i) -> void
-    {
-        (void) std::from_chars(s.data(), s.data() + s.size(), i);
-    }
-
-    inline auto from_string(std::string const & s, long int & li) -> void
-    {
-        (void) std::from_chars(s.data(), s.data() + s.size(), li);
-    }
-
-    inline auto from_string(std::string const & s, long long int & lli) -> void
-    {
-        (void) std::from_chars(s.data(), s.data() + s.size(), lli);
-    }
-
-    inline auto from_string(std::string const & s, unsigned long int & uli) -> void
-    {
-        (void) std::from_chars(s.data(), s.data() + s.size(), uli);
-    }
-
-    inline auto from_string(std::string const & s, unsigned long long int & ulli) -> void
-    {
-        (void) std::from_chars(s.data(), s.data() + s.size(), ulli);
+        (void) std::from_chars(s.data(), s.data() + s.size(), t);
     }
 
     inline auto from_string(std::string const & s, float & f) -> void
