@@ -72,7 +72,7 @@ namespace argparse
 
     class ArgumentParser
     {
-        public:
+        private:
             class Value
             {
                 public:
