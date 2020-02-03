@@ -653,7 +653,7 @@ namespace argparse
 
                         auto metavar = get_dest_name();
 
-                        std::transform(metavar.begin(), metavar.end(), metavar.begin(), ::toupper);
+                        std::transform(metavar.begin(), metavar.end(), metavar.begin(), [](char ch) { return static_cast<char>(::toupper(ch)); });
 
                         return metavar;
                     }
