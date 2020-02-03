@@ -409,22 +409,21 @@ namespace argparse
             }
 
         private:
+            struct Options
+            {
+                std::string m_name1;
+                std::string m_name2;
+                std::string m_help;
+                std::string m_metavar;
+                std::string m_dest;
+                Action m_action = store;
+                std::any m_const_;
+                std::any m_default_;
+                std::function<void (std::string const &, std::any &)> m_converter = [](std::string const & s, std::any & a){ a = s; };
+            };
+
             class Argument
             {
-                public:
-                    struct Options
-                    {
-                        std::string m_name1;
-                        std::string m_name2;
-                        std::string m_help;
-                        std::string m_metavar;
-                        std::string m_dest;
-                        Action m_action = store;
-                        std::any m_const_;
-                        std::any m_default_;
-                        std::function<void (std::string const &, std::any &)> m_converter = [](std::string const & s, std::any & a){ a = s; };
-                    };
-
                 public:
                     virtual ~Argument() = default;
 
@@ -721,7 +720,7 @@ namespace argparse
 
                 private:
                     argument_uptrs & m_arguments;
-                    Argument::Options m_options;
+                    Options m_options;
             };
 
         private:
