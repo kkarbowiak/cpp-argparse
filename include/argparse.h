@@ -720,7 +720,7 @@ namespace argparse
 
                     auto required(bool /* required */) -> ArgumentBuilder&
                     {
-                        throw 0;
+                        throw std::runtime_error("'required' is an invalid argument for positionals");
                     }
 
                 private:
