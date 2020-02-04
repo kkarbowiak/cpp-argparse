@@ -1,5 +1,7 @@
 # C++ argparse
 
+[![Build Status](https://travis-ci.com/kkarbowiak/cpp-argparse.svg?branch=master)](https://travis-ci.com/kkarbowiak/cpp-argparse)
+
 ## Overview
 
 This is a C++ implementation of Python's `argparse` module. The aim is to cover as much functionality as possible and retain `argparse`'s familiarity and ease of use. Everyone who already used Python should feel at home using this library. At the same time, the library is implemented using modern C++ features.
