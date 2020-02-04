@@ -126,4 +126,5 @@ TEST_CASE("Adding a positional argument with required option set results in erro
     auto parser = argparse::ArgumentParser();
 
     CHECK_THROWS(parser.add_argument("pos").required(true));
+    CHECK_THROWS(parser.add_argument("pos").required(false));
 }
