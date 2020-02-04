@@ -718,6 +718,11 @@ namespace argparse
                         return *this;
                     }
 
+                    auto required(bool /* required */) -> ArgumentBuilder&
+                    {
+                        throw 0;
+                    }
+
                 private:
                     argument_uptrs & m_arguments;
                     Options m_options;
