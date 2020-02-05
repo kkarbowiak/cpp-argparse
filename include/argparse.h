@@ -539,6 +539,14 @@ namespace argparse
                                 i = args.erase(i);
                                 switch (m_options.m_action)
                                 {
+                                    case store:
+                                        if (i == args.end())
+                                        {
+                                            throw parsing_error("argument " + get_name() + ": expected one argument");
+                                        }
+                                        m_options.m_converter(*i, m_value);
+                                        (void) args.erase(i);
+                                        break;
                                     case store_true:
                                         m_value = true;
                                         break;
@@ -551,14 +559,6 @@ namespace argparse
                                     case help:
                                         m_value = true;
                                         throw HelpRequested();
-                                    case store:
-                                        if (i == args.end())
-                                        {
-                                            throw parsing_error("argument " + get_name() + ": expected one argument");
-                                        }
-                                        m_options.m_converter(*i, m_value);
-                                        (void) args.erase(i);
-                                        break;
                                 }
                                 break;
                             }
