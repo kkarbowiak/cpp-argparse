@@ -128,3 +128,10 @@ TEST_CASE("Adding a positional argument with required option set results in erro
     CHECK_THROWS_WITH(parser.add_argument("pos").required(true), "'required' is an invalid argument for positionals");
     CHECK_THROWS_WITH(parser.add_argument("pos").required(false), "'required' is an invalid argument for positionals");
 }
+
+TEST_CASE("Adding an optional argument with required option does not result in error")
+{
+    auto parser = argparse::ArgumentParser();
+
+    CHECK_NOTHROW(parser.add_argument("-o").required(true));
+}
