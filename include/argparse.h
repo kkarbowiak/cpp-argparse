@@ -660,7 +660,7 @@ namespace argparse
 
                     ~ArgumentBuilder()
                     {
-                        if (m_options.m_name1.front() != '-')
+                        if (is_positional())
                         {
                             m_arguments.push_back(std::make_unique<PositionalArgument>(std::move(m_options)));
                         }
@@ -720,11 +720,17 @@ namespace argparse
 
                     auto required(bool /* required */) -> ArgumentBuilder&
                     {
-                        if (m_options.m_name1.front() != '-')
+                        if (is_positional())
                         {
                             throw std::runtime_error("'required' is an invalid argument for positionals");
                         }
                         return *this;
+                    }
+
+                private:
+                    auto is_positional() const -> bool
+                    {
+                        return m_options.m_name1.front() != '-';
                     }
 
                 private:
