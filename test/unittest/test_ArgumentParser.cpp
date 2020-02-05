@@ -134,4 +134,5 @@ TEST_CASE("Adding an optional argument with required option does not result in e
     auto parser = argparse::ArgumentParser();
 
     CHECK_NOTHROW(parser.add_argument("-o").required(true));
+    CHECK_NOTHROW(parser.add_argument("-o").required(false));
 }
