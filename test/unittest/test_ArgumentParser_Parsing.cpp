@@ -465,3 +465,11 @@ TEST_CASE("The resulting attribute name is based on...")
         }
     }
 }
+
+TEST_CASE("Parsing a missing optional argument with required true throws an exception")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").required(true);
+
+    CHECK_THROWS(parser.parse_args(1, cstr_arr{"prog"}));
+}

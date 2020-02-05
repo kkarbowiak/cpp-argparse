@@ -419,6 +419,7 @@ namespace argparse
                 Action m_action = store;
                 std::any m_const_;
                 std::any m_default_;
+                bool m_required;
                 std::function<void (std::string const &, std::any &)> m_converter = [](std::string const & s, std::any & a){ a = s; };
             };
 
@@ -624,7 +625,7 @@ namespace argparse
 
                     auto is_required() const -> bool override
                     {
-                        return false;
+                        return m_options.m_required;
                     }
 
                     auto is_positional() const -> bool override
@@ -718,12 +719,13 @@ namespace argparse
                         return *this;
                     }
 
-                    auto required(bool /* required */) -> ArgumentBuilder&
+                    auto required(bool required) -> ArgumentBuilder&
                     {
                         if (is_positional())
                         {
                             throw std::runtime_error("'required' is an invalid argument for positionals");
                         }
+                        m_options.m_required = required;
                         return *this;
                     }
 
