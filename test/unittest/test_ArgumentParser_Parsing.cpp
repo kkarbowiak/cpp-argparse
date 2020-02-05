@@ -293,7 +293,7 @@ TEST_CASE("Parsing missing positional argument throws an exception...")
     {
         parser.add_argument("p1");
 
-        CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "missing arguments: p1", argparse::parsing_error);
+        CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: p1", argparse::parsing_error);
     }
 
     SUBCASE("...for two missing arguments")
@@ -301,7 +301,7 @@ TEST_CASE("Parsing missing positional argument throws an exception...")
         parser.add_argument("p1");
         parser.add_argument("p2");
 
-        CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "missing arguments: p1 p2", argparse::parsing_error);
+        CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: p1 p2", argparse::parsing_error);
     }
 
     SUBCASE("...for three missing arguments")
@@ -310,7 +310,7 @@ TEST_CASE("Parsing missing positional argument throws an exception...")
         parser.add_argument("p2");
         parser.add_argument("p3");
 
-        CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "missing arguments: p1 p2 p3", argparse::parsing_error);
+        CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: p1 p2 p3", argparse::parsing_error);
     }
 }
 
@@ -474,7 +474,7 @@ TEST_CASE("Parsing a missing optional argument with required...")
     {
         parser.add_argument("-o").required(true);
 
-        CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "missing arguments: -o", argparse::parsing_error);
+        CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: -o", argparse::parsing_error);
     }
 
     SUBCASE("...false does not throw")

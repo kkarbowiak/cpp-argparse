@@ -381,7 +381,7 @@ namespace argparse
                     {
                         if (!error_message)
                         {
-                            error_message = "missing arguments: " + a->get_name();
+                            error_message = "the following arguments are required: " + a->get_name();
                         }
                         else
                         {
