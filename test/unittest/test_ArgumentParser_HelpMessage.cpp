@@ -219,5 +219,12 @@ TEST_CASE("Help message contains...")
 
             CHECK(parser.format_help() == "usage: prog -o O\n\noptional arguments:\n  -o O"s);
         }
+
+        SUBCASE("...brackets for argument with required false")
+        {
+            parser.add_argument("-o").required(false);
+
+            CHECK(parser.format_help() == "usage: prog [-o O]\n\noptional arguments:\n  -o O"s);
+        }
     }
 }
