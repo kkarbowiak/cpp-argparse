@@ -237,12 +237,17 @@ namespace argparse
                     }
                     else
                     {
-                        optionals += " [" + arg->get_name();
+                        optionals += arg->is_required()
+                            ? " "
+                            : " [";
+                        optionals += arg->get_name();
                         if (arg->get_options().m_action == store)
                         {
                             optionals += " " + arg->get_metavar_name();
                         }
-                        optionals += "]";
+                        optionals += arg->is_required()
+                            ? ""
+                            : "]";
                     }
                 }
 
