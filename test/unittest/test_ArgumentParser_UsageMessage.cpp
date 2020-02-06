@@ -207,5 +207,12 @@ TEST_CASE("Usage message contains...")
 
             CHECK(parser.format_usage() == "usage: prog -o O"s);
         }
+
+        SUBCASE("...brackets for argument with required false")
+        {
+            parser.add_argument("-o").required(false);
+
+            CHECK(parser.format_usage() == "usage: prog [-o O]"s);
+        }
     }
 }
