@@ -206,7 +206,7 @@ TEST_CASE("Help message contains...")
             CHECK(parser.format_help() == "usage: prog [-o METAVARO]\n\noptional arguments:\n  -o METAVARO"s);
         }
 
-        SUBCASE("name, automatic metavar, and help for argument with help string")
+        SUBCASE("...name, automatic metavar, and help for argument with help string")
         {
             parser.add_argument("-o").help("help1");
 
