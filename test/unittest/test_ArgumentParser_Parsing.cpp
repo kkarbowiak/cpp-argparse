@@ -489,7 +489,8 @@ TEST_CASE("Parsing a positional argument with choices set accepts one of the val
 {
     auto parser = argparse::ArgumentParser();
 
-    parser.add_argument("pos").choices({"foo"s, "bar"s, "baz"s});
+    parser.add_argument("pos").choices({"foo"s, "bar"s});
 
     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "foo"}));
+    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "bar"}));
 }
