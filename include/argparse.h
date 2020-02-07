@@ -734,6 +734,11 @@ namespace argparse
                         return *this;
                     }
 
+                    auto choices(std::vector<std::any> const & /* choices */) -> ArgumentBuilder&
+                    {
+                        return *this;
+                    }
+
                 private:
                     auto is_positional() const -> bool
                     {

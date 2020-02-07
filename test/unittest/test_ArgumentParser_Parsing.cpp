@@ -484,3 +484,12 @@ TEST_CASE("Parsing a missing optional argument with required...")
         CHECK_NOTHROW(parser.parse_args(1, cstr_arr{"prog"}));
     }
 }
+
+TEST_CASE("Parsing a positional argument with choices set accepts one of the values")
+{
+    auto parser = argparse::ArgumentParser();
+
+    parser.add_argument("pos").choices({"foo"s, "bar"s, "baz"s});
+
+    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "foo"}));
+}
