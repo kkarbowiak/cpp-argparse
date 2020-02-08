@@ -485,12 +485,20 @@ TEST_CASE("Parsing a missing optional argument with required...")
     }
 }
 
-TEST_CASE("Parsing a positional argument with choices set accepts one of the values")
+TEST_CASE("Parsing a positional argument with choices set...")
 {
     auto parser = argparse::ArgumentParser();
 
     parser.add_argument("pos").choices({"foo"s, "bar"s});
 
-    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "foo"}));
-    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "bar"}));
+    SUBCASE("...accepts one of the values")
+    {
+        CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "foo"}));
+        CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "bar"}));
+    }
+
+    SUBCASE("...throws an exception on incorrect value")
+    {
+        CHECK_THROWS(parser.parse_args(2, cstr_arr{"prog", "baz"}));
+    }
 }
