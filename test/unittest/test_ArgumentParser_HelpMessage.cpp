@@ -5,6 +5,9 @@
 #include <string>
 
 
+#pragma warning(disable: 4456)
+
+
 using namespace std::string_literals;
 
 TEST_CASE("ArgumentParser provides help message...")
