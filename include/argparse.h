@@ -476,7 +476,19 @@ namespace argparse
                                     m_options.m_choices.end(),
                                     [&](auto const& rhs){ return m_options.m_comparator(m_value, rhs); }))
                                 {
-                                    throw 0;
+                                    std::string message = "argument " + get_name() + ": invalid choice: ";
+                                    message += "\"" + std::any_cast<std::string>(m_value) + "\"";
+                                    message += " (choose from ";
+                                    for (auto i = m_options.m_choices.begin(); i != m_options.m_choices.end(); ++i)
+                                    {
+                                        if (i != m_options.m_choices.begin())
+                                        {
+                                            message += ", ";
+                                        }
+                                        message += "\"" + std::any_cast<std::string>(*i) + "\"";
+                                    }
+                                    message += ")";
+                                    throw parsing_error(message);
                                 }
                             }
                             args.pop_front();

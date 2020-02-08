@@ -487,7 +487,7 @@ TEST_CASE("Parsing a missing optional argument with required...")
 
 TEST_CASE("Parsing a positional argument with choices set...")
 {
-    auto parser = argparse::ArgumentParser();
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
     parser.add_argument("pos").choices({"foo"s, "bar"s});
 
@@ -499,6 +499,6 @@ TEST_CASE("Parsing a positional argument with choices set...")
 
     SUBCASE("...throws an exception on incorrect value")
     {
-        CHECK_THROWS(parser.parse_args(2, cstr_arr{"prog", "baz"}));
+        CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "baz"}), "argument pos: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
     }
 }
