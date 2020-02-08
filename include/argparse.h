@@ -241,7 +241,7 @@ namespace argparse
                             ? " "
                             : " [";
                         optionals += arg->get_name();
-                        if (arg->get_options().m_action == store)
+                        if (arg->get_options().action == store)
                         {
                             optionals += " " + arg->get_metavar_name();
                         }
@@ -266,22 +266,22 @@ namespace argparse
                     {
                         positionals += "\n  " + arg->get_metavar_name();
 
-                        if (!arg->get_options().m_help.empty())
+                        if (!arg->get_options().help.empty())
                         {
-                            positionals += " " + arg->get_options().m_help;
+                            positionals += " " + arg->get_options().help;
                         }
                     }
                     else
                     {
                         optionals += "\n  " + arg->get_name();
-                        if (arg->get_options().m_action == store)
+                        if (arg->get_options().action == store)
                         {
                             optionals += " " + arg->get_metavar_name();
                         }
 
-                        if (!arg->get_options().m_help.empty())
+                        if (!arg->get_options().help.empty())
                         {
-                            optionals += " " + arg->get_options().m_help;
+                            optionals += " " + arg->get_options().help;
                         }
                     }
                 }
@@ -416,22 +416,22 @@ namespace argparse
         private:
             struct Options
             {
-                std::string m_name1;
-                std::string m_name2;
-                std::string m_help;
-                std::string m_metavar;
-                std::string m_dest;
-                Action m_action = store;
-                std::any m_const_;
-                std::any m_default_;
-                bool m_required;
-                std::vector<std::any> m_choices;
-                std::function<void (std::string const &, std::any &)> m_converter =
+                std::string name1;
+                std::string name2;
+                std::string help;
+                std::string metavar;
+                std::string dest;
+                Action action = store;
+                std::any const_;
+                std::any default_;
+                bool required;
+                std::vector<std::any> choices;
+                std::function<void (std::string const &, std::any &)> converter =
                     [](std::string const & s, std::any & a)
                     {
                         a = s;
                     };
-                std::function<bool (std::any const &, std::any const &)> m_comparator =
+                std::function<bool (std::any const &, std::any const &)> comparator =
                     [](std::any const & lhs, std::any const & rhs)
                     {
                         return std::any_cast<std::string>(lhs) == std::any_cast<std::string>(rhs);
@@ -468,20 +468,20 @@ namespace argparse
                     {
                         if (!args.empty())
                         {
-                            m_options.m_converter(args.front(), m_value);
-                            if (!m_options.m_choices.empty())
+                            m_options.converter(args.front(), m_value);
+                            if (!m_options.choices.empty())
                             {
                                 if (!std::any_of(
-                                    m_options.m_choices.begin(),
-                                    m_options.m_choices.end(),
-                                    [&](auto const& rhs){ return m_options.m_comparator(m_value, rhs); }))
+                                    m_options.choices.begin(),
+                                    m_options.choices.end(),
+                                    [&](auto const& rhs){ return m_options.comparator(m_value, rhs); }))
                                 {
                                     std::string message = "argument " + get_name() + ": invalid choice: ";
                                     message += "\"" + std::any_cast<std::string>(m_value) + "\"";
                                     message += " (choose from ";
-                                    for (auto i = m_options.m_choices.begin(); i != m_options.m_choices.end(); ++i)
+                                    for (auto i = m_options.choices.begin(); i != m_options.choices.end(); ++i)
                                     {
-                                        if (i != m_options.m_choices.begin())
+                                        if (i != m_options.choices.begin())
                                         {
                                             message += ", ";
                                         }
@@ -499,21 +499,21 @@ namespace argparse
 
                     auto get_name() const -> std::string override
                     {
-                        return m_options.m_name1;
+                        return m_options.name1;
                     }
 
                     auto get_dest_name() const -> std::string override
                     {
-                        return m_options.m_dest.empty()
-                            ? m_options.m_name1
-                            : m_options.m_dest;
+                        return m_options.dest.empty()
+                            ? m_options.name1
+                            : m_options.dest;
                     }
 
                     auto get_metavar_name() const -> std::string override
                     {
-                        return m_options.m_metavar.empty()
-                            ? m_options.m_name1
-                            : m_options.m_metavar;
+                        return m_options.metavar.empty()
+                            ? m_options.name1
+                            : m_options.metavar;
                     }
 
                     auto has_value() const -> bool override
@@ -553,17 +553,17 @@ namespace argparse
                       : m_value()
                       , m_options(std::move(options))
                     {
-                        if (m_options.m_action == store_true || m_options.m_action == help)
+                        if (m_options.action == store_true || m_options.action == help)
                         {
                             m_value = false;
                         }
-                        else if (m_options.m_action == store_false)
+                        else if (m_options.action == store_false)
                         {
                             m_value = true;
                         }
-                        else if (m_options.m_default_.has_value())
+                        else if (m_options.default_.has_value())
                         {
-                            m_value = m_options.m_default_;
+                            m_value = m_options.default_;
                         }
                     }
 
@@ -571,17 +571,17 @@ namespace argparse
                     {
                         for (auto i = args.begin(); i != args.end(); ++i)
                         {
-                            if (*i == m_options.m_name1 || *i == m_options.m_name2)
+                            if (*i == m_options.name1 || *i == m_options.name2)
                             {
                                 i = args.erase(i);
-                                switch (m_options.m_action)
+                                switch (m_options.action)
                                 {
                                     case store:
                                         if (i == args.end())
                                         {
                                             throw parsing_error("argument " + get_name() + ": expected one argument");
                                         }
-                                        m_options.m_converter(*i, m_value);
+                                        m_options.converter(*i, m_value);
                                         (void) args.erase(i);
                                         break;
                                     case store_true:
@@ -591,7 +591,7 @@ namespace argparse
                                         m_value = false;
                                         break;
                                     case store_const:
-                                        m_value = m_options.m_const_;
+                                        m_value = m_options.const_;
                                         break;
                                     case help:
                                         m_value = true;
@@ -606,29 +606,29 @@ namespace argparse
 
                     auto get_name() const -> std::string override
                     {
-                        return m_options.m_name1;
+                        return m_options.name1;
                     }
 
                     auto get_dest_name() const -> std::string override
                     {
-                        if (!m_options.m_dest.empty())
+                        if (!m_options.dest.empty())
                         {
-                            return m_options.m_dest;
+                            return m_options.dest;
                         }
 
                         std::string dest;
 
-                        if (m_options.m_name1[0] == '-' && m_options.m_name1[1] == '-')
+                        if (m_options.name1[0] == '-' && m_options.name1[1] == '-')
                         {
-                            dest = m_options.m_name1.substr(2);
+                            dest = m_options.name1.substr(2);
                         }
-                        else if (m_options.m_name2[0] == '-' && m_options.m_name2[1] == '-')
+                        else if (m_options.name2[0] == '-' && m_options.name2[1] == '-')
                         {
-                            dest = m_options.m_name2.substr(2);
+                            dest = m_options.name2.substr(2);
                         }
                         else
                         {
-                            dest = m_options.m_name1.substr(1);
+                            dest = m_options.name1.substr(1);
                         }
 
                         std::replace(dest.begin(), dest.end(), '-', '_');
@@ -638,9 +638,9 @@ namespace argparse
 
                     auto get_metavar_name() const -> std::string override
                     {
-                        if (!m_options.m_metavar.empty())
+                        if (!m_options.metavar.empty())
                         {
-                            return m_options.m_metavar;
+                            return m_options.metavar;
                         }
 
                         auto metavar = get_dest_name();
@@ -662,7 +662,7 @@ namespace argparse
 
                     auto is_required() const -> bool override
                     {
-                        return m_options.m_required;
+                        return m_options.required;
                     }
 
                     auto is_positional() const -> bool override
@@ -692,8 +692,8 @@ namespace argparse
                       : m_arguments(arguments)
                       , m_options()
                     {
-                        m_options.m_name1 = name1;
-                        m_options.m_name2 = name2;
+                        m_options.name1 = name1;
+                        m_options.name2 = name2;
                     }
 
                     ~ArgumentBuilder()
@@ -710,38 +710,38 @@ namespace argparse
 
                     auto help(std::string const & help) -> ArgumentBuilder &
                     {
-                        m_options.m_help = help;
+                        m_options.help = help;
                         return *this;
                     }
 
                     auto metavar(std::string const & metavar) -> ArgumentBuilder &
                     {
-                        m_options.m_metavar = metavar;
+                        m_options.metavar = metavar;
                         return *this;
                     }
 
                     auto dest(std::string const & dest) -> ArgumentBuilder &
                     {
-                        m_options.m_dest = dest;
+                        m_options.dest = dest;
                         return *this;
                     }
 
                     auto action(Action action) -> ArgumentBuilder &
                     {
-                        m_options.m_action = action;
+                        m_options.action = action;
                         return *this;
                     }
 
                     auto const_(std::any const & const_) -> ArgumentBuilder &
                     {
-                        m_options.m_const_ = const_;
+                        m_options.const_ = const_;
                         return *this;
                     }
 
                     template<typename T>
                     auto type() -> ArgumentBuilder &
                     {
-                        m_options.m_converter = [](std::string const & s, std::any & a)
+                        m_options.converter = [](std::string const & s, std::any & a)
                         {
                             T val;
                             from_string(s, val);
@@ -752,7 +752,7 @@ namespace argparse
 
                     auto default_(std::any const & default_) -> ArgumentBuilder &
                     {
-                        m_options.m_default_ = default_;
+                        m_options.default_ = default_;
                         return *this;
                     }
 
@@ -762,20 +762,20 @@ namespace argparse
                         {
                             throw std::runtime_error("'required' is an invalid argument for positionals");
                         }
-                        m_options.m_required = required;
+                        m_options.required = required;
                         return *this;
                     }
 
                     auto choices(std::vector<std::any> const & choices) -> ArgumentBuilder&
                     {
-                        m_options.m_choices = choices;
+                        m_options.choices = choices;
                         return *this;
                     }
 
                 private:
                     auto is_positional() const -> bool
                     {
-                        return m_options.m_name1.front() != '-';
+                        return m_options.name1.front() != '-';
                     }
 
                 private:
