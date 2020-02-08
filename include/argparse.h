@@ -426,8 +426,16 @@ namespace argparse
                 std::any m_default_;
                 bool m_required;
                 std::vector<std::any> m_choices;
-                std::function<void (std::string const &, std::any &)> m_converter = [](std::string const & s, std::any & a){ a = s; };
-                std::function<bool (std::any const &, std::any const &)> m_comparator = [](std::any const & lhs, std::any const & rhs){ return std::any_cast<std::string>(lhs) == std::any_cast<std::string>(rhs); };
+                std::function<void (std::string const &, std::any &)> m_converter =
+                    [](std::string const & s, std::any & a)
+                    {
+                        a = s;
+                    };
+                std::function<bool (std::any const &, std::any const &)> m_comparator =
+                    [](std::any const & lhs, std::any const & rhs)
+                    {
+                        return std::any_cast<std::string>(lhs) == std::any_cast<std::string>(rhs);
+                    };
             };
 
             class Argument
