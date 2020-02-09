@@ -426,7 +426,7 @@ namespace argparse
                 std::any default_;
                 bool required;
                 std::vector<std::any> choices;
-                std::function<void (std::string const &, std::any &)> converter =
+                std::function<void (std::string const &, std::any &)> from_string =
                     [](std::string const & s, std::any & a)
                     {
                         a = s;
@@ -468,7 +468,7 @@ namespace argparse
                     {
                         if (!args.empty())
                         {
-                            m_options.converter(args.front(), m_value);
+                            m_options.from_string(args.front(), m_value);
                             if (!m_options.choices.empty())
                             {
                                 if (!std::any_of(
@@ -581,7 +581,7 @@ namespace argparse
                                         {
                                             throw parsing_error("argument " + get_name() + ": expected one argument");
                                         }
-                                        m_options.converter(*i, m_value);
+                                        m_options.from_string(*i, m_value);
                                         (void) args.erase(i);
                                         break;
                                     case store_true:
@@ -741,7 +741,7 @@ namespace argparse
                     template<typename T>
                     auto type() -> ArgumentBuilder &
                     {
-                        m_options.converter = [](std::string const & s, std::any & a)
+                        m_options.from_string = [](std::string const & s, std::any & a)
                         {
                             T val;
                             from_string(s, val);
