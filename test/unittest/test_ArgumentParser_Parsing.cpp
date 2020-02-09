@@ -504,6 +504,7 @@ TEST_CASE("Parsing a positional argument with choices set...")
             parser.add_argument("pos").choices({1, 2}).type<int>();
 
             CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "1"}));
+            CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "2"}));
         }
     }
 
