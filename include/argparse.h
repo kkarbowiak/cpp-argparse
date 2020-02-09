@@ -747,6 +747,10 @@ namespace argparse
                             from_string(s, val);
                             a = val;
                         };
+                        m_options.comparator = [](std::any const& l, std::any const& r)
+                        {
+                            return std::any_cast<T>(l) == std::any_cast<T>(r);
+                        };
                         return *this;
                     }
 

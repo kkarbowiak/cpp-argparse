@@ -489,16 +489,31 @@ TEST_CASE("Parsing a positional argument with choices set...")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
-    parser.add_argument("pos").choices({"foo"s, "bar"s});
-
-    SUBCASE("...accepts one of the values")
+    SUBCASE("...accepts one of the values...")
     {
-        CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "foo"}));
-        CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "bar"}));
+        SUBCASE("...for std::string")
+        {
+            parser.add_argument("pos").choices({"foo"s, "bar"s});
+
+            CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "foo"}));
+            CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "bar"}));
+        }
+
+        SUBCASE("...for int")
+        {
+            parser.add_argument("pos").choices({1, 2}).type<int>();
+
+            CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "1"}));
+        }
     }
 
-    SUBCASE("...throws an exception on incorrect value")
+    SUBCASE("...throws an exception on incorrect value...")
     {
-        CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "baz"}), "argument pos: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+        SUBCASE("...for std::string")
+        {
+            parser.add_argument("pos").choices({ "foo"s, "bar"s });
+
+            CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "baz"}), "argument pos: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+        }
     }
 }
