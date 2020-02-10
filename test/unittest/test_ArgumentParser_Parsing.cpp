@@ -564,10 +564,20 @@ TEST_CASE("Parsing an optional argument with choices set...")
         }
     }
 
-    SUBCASE("...throws an exception on incorrect value")
+    SUBCASE("...throws an exception on incorrect value...")
     {
-        parser.add_argument("-o").choices({"foo"s, "bar"s});
+        SUBCASE("...for std::string")
+        {
+            parser.add_argument("-o").choices({"foo"s, "bar"s});
 
-        CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+            CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+        }
+
+        SUBCASE("...for int")
+        {
+            parser.add_argument("-o").choices({1, 2}).type<int>();
+
+            CHECK_THROWS(parser.parse_args(3, cstr_arr{"prog", "-o", "3"}));
+        }
     }
 }
