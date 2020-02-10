@@ -540,3 +540,16 @@ TEST_CASE("Parsing a positional argument with choices set...")
         }
     }
 }
+
+TEST_CASE("Parsing an optional argument with choices set...")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
+    SUBCASE("...accepts one of the values")
+    {
+        parser.add_argument("-o").choices({"foo"s, "bar"s});
+
+        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
+        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "bar"}));
+    }
+}
