@@ -506,6 +506,14 @@ TEST_CASE("Parsing a positional argument with choices set...")
             CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "1"}));
             CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "2"}));
         }
+
+        SUBCASE("...for double")
+        {
+            parser.add_argument("pos").choices({3.14, 2.71}).type<double>();
+
+            CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "3.14"}));
+            CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "2.71"}));
+        }
     }
 
     SUBCASE("...throws an exception on incorrect value...")
