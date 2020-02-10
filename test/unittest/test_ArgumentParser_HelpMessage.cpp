@@ -5,7 +5,9 @@
 #include <string>
 
 
+#ifdef _MSC_VER
 #pragma warning(disable: 4456)
+#endif
 
 
 using namespace std::string_literals;
