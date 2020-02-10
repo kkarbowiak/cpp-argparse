@@ -562,6 +562,14 @@ TEST_CASE("Parsing an optional argument with choices set...")
             CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "1"}));
             CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "2"}));
         }
+
+        SUBCASE("...for double")
+        {
+            parser.add_argument("-o").choices({3.14, 2.71}).type<double>();
+
+            CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "3.14"}));
+            CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "2.71"}));
+        }
     }
 
     SUBCASE("...throws an exception on incorrect value...")
