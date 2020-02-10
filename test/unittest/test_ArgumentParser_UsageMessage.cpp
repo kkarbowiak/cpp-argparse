@@ -163,28 +163,28 @@ TEST_CASE("Usage message contains...")
         {
             parser.add_argument("-o").action(argparse::store_true);
 
-            CHECK(parser.format_usage() == "usage: prog [-o]");
+            CHECK(parser.format_usage() == "usage: prog [-o]"s);
         }
 
         SUBCASE("...name for argument with store false action")
         {
             parser.add_argument("-o").action(argparse::store_false);
 
-            CHECK(parser.format_usage() == "usage: prog [-o]");
+            CHECK(parser.format_usage() == "usage: prog [-o]"s);
         }
 
         SUBCASE("...name for argument with store const action")
         {
             parser.add_argument("-o").action(argparse::store_const);
 
-            CHECK(parser.format_usage() == "usage: prog [-o]");
+            CHECK(parser.format_usage() == "usage: prog [-o]"s);
         }
 
         SUBCASE("...name for argument with help action")
         {
             parser.add_argument("-h").action(argparse::store_false);
 
-            CHECK(parser.format_usage() == "usage: prog [-h]");
+            CHECK(parser.format_usage() == "usage: prog [-h]"s);
         }
 
         SUBCASE("...name and automatic metavar")
