@@ -545,12 +545,23 @@ TEST_CASE("Parsing an optional argument with choices set...")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
-    SUBCASE("...accepts one of the values")
+    SUBCASE("...accepts one of the values...")
     {
-        parser.add_argument("-o").choices({"foo"s, "bar"s});
+        SUBCASE("...for std::string")
+        {
+            parser.add_argument("-o").choices({"foo"s, "bar"s});
 
-        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
-        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "bar"}));
+            CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
+            CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "bar"}));
+        }
+
+        SUBCASE("...for int")
+        {
+            parser.add_argument("-o").choices({1, 2}).type<int>();
+
+            CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "1"}));
+            CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "2"}));
+        }
     }
 
     SUBCASE("...throws an exception on incorrect value")
