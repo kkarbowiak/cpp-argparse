@@ -155,6 +155,13 @@ TEST_CASE("Usage message contains...")
 
             CHECK(parser.format_usage() == "usage: prog metap1"s);
         }
+
+        SUBCASE("...choices for argument with choices set")
+        {
+            parser.add_argument("p1").choices({"foo"s, "bar"s});
+
+            CHECK(parser.format_usage() == "usage: prog {\"foo\",\"bar\"}"s);
+        }
     }
 
     SUBCASE("...for optional argument...")
