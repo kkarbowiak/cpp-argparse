@@ -618,6 +618,28 @@ namespace argparse
                                             throw parsing_error("argument " + get_name() + ": expected one argument");
                                         }
                                         m_options.from_string(*i, m_value);
+                                        if (!m_options.choices.empty())
+                                        {
+                                            if (!std::any_of(
+                                                m_options.choices.begin(),
+                                                m_options.choices.end(),
+                                                [&](auto const & rhs){ return m_options.comparator(m_value, rhs); }))
+                                            {
+                                                std::string message = "argument " + get_name() + ": invalid choice: ";
+                                                message += m_options.to_string(m_value);
+                                                message += " (choose from ";
+                                                for (auto i = m_options.choices.begin(); i != m_options.choices.end(); ++i)
+                                                {
+                                                    if (i != m_options.choices.begin())
+                                                    {
+                                                        message += ", ";
+                                                    }
+                                                    message += m_options.to_string(*i);
+                                                }
+                                                message += ")";
+                                                throw parsing_error(message);
+                                            }
+                                        }
                                         (void) args.erase(i);
                                         break;
                                     case store_true:

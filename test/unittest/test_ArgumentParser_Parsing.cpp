@@ -552,4 +552,11 @@ TEST_CASE("Parsing an optional argument with choices set...")
         CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
         CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "bar"}));
     }
+
+    SUBCASE("...throws an exception on incorrect value")
+    {
+        parser.add_argument("-o").choices({"foo"s, "bar"s});
+
+        CHECK_THROWS(parser.parse_args(3, cstr_arr{"prog", "-o", "baz"}));
+    }
 }
