@@ -577,7 +577,7 @@ TEST_CASE("Parsing an optional argument with choices set...")
         {
             parser.add_argument("-o").choices({1, 2}).type<int>();
 
-            CHECK_THROWS(parser.parse_args(3, cstr_arr{"prog", "-o", "3"}));
+            CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "3"}), "argument -o: invalid choice: 3 (choose from 1, 2)", argparse::parsing_error);
         }
     }
 }
