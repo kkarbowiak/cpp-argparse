@@ -221,5 +221,12 @@ TEST_CASE("Usage message contains...")
 
             CHECK(parser.format_usage() == "usage: prog [-o O]"s);
         }
+
+        SUBCASE("...name and choices for argument with choices set")
+        {
+            parser.add_argument("-o").choices({"foo"s, "bar"s});
+
+            CHECK(parser.format_usage() == "usage: prog [-o {\"foo\",\"bar\"}]"s);
+        }
     }
 }

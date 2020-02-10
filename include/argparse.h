@@ -291,7 +291,24 @@ namespace argparse
                         optionals += arg->get_name();
                         if (arg->get_options().action == store)
                         {
-                            optionals += " " + arg->get_metavar_name();
+                            optionals += " ";
+                            if (arg->get_options().choices.empty())
+                            {
+                                optionals += arg->get_metavar_name();
+                            }
+                            else
+                            {
+                                optionals += "{";
+                                for (auto i = arg->get_options().choices.begin(); i != arg->get_options().choices.end(); ++i)
+                                {
+                                    if (i != arg->get_options().choices.begin())
+                                    {
+                                        optionals += ",";
+                                    }
+                                    optionals += arg->get_options().to_string(*i);
+                                }
+                                optionals += "}";
+                            }
                         }
                         optionals += arg->is_required()
                             ? ""
