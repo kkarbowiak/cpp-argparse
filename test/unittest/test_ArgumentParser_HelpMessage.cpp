@@ -238,5 +238,12 @@ TEST_CASE("Help message contains...")
 
             CHECK(parser.format_help() == "usage: prog [-o O]\n\noptional arguments:\n  -o O"s);
         }
+
+        SUBCASE("...name and choices for argument with choices set")
+        {
+            parser.add_argument("-o").choices({"foo"s, "bar"s});
+
+            CHECK(parser.format_help() == "usage: prog [-o {\"foo\",\"bar\"}]\n\noptional arguments:\n  -o {\"foo\",\"bar\"}"s);
+        }
     }
 }
