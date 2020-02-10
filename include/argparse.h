@@ -329,7 +329,24 @@ namespace argparse
                 {
                     if (arg->is_positional())
                     {
-                        positionals += "\n  " + arg->get_metavar_name();
+                        positionals += "\n  ";
+                        if (arg->get_options().choices.empty())
+                        {
+                            positionals += arg->get_metavar_name();
+                        }
+                        else
+                        {
+                            positionals += "{";
+                            for (auto i = arg->get_options().choices.begin(); i != arg->get_options().choices.end(); ++i)
+                            {
+                                if (i != arg->get_options().choices.begin())
+                                {
+                                    positionals += ",";
+                                }
+                                positionals += arg->get_options().to_string(*i);
+                            }
+                            positionals += "}";
+                        }
 
                         if (!arg->get_options().help.empty())
                         {

@@ -130,6 +130,13 @@ TEST_CASE("Help message contains...")
 
             CHECK(parser.format_help() == "usage: prog p1\n\npositional arguments:\n  p1 help1"s);
         }
+
+        SUBCASE("...choices for argument with choices set")
+        {
+            parser.add_argument("p1").choices({"foo"s, "bar"s});
+
+            CHECK(parser.format_help() == "usage: prog {\"foo\",\"bar\"}\n\npositional arguments:\n  {\"foo\",\"bar\"}"s);
+        }
     }
 
     SUBCASE("...for optional argument...")
