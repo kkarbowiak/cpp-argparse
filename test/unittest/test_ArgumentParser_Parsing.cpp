@@ -587,5 +587,12 @@ TEST_CASE("Parsing an optional argument with choices set...")
 
             CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "3"}), "argument -o: invalid choice: 3 (choose from 1, 2)", argparse::parsing_error);
         }
+
+        SUBCASE("...for double")
+        {
+            parser.add_argument("-o").choices({3.14, 2.71}).type<double>();
+
+            CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "1.1"}), "argument -o: invalid choice: 1.1 (choose from 3.14, 2.71)", argparse::parsing_error);
+        }
     }
 }
