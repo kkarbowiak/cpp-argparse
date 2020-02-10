@@ -522,7 +522,7 @@ namespace argparse
                     virtual auto is_required() const -> bool = 0;
                     virtual auto is_positional() const -> bool = 0;
 
-                    virtual auto get_options() -> Options const & = 0;
+                    virtual auto get_options() const -> Options const & = 0;
             };
 
             class PositionalArgument : public Argument
@@ -606,7 +606,7 @@ namespace argparse
                         return true;
                     }
 
-                    auto get_options() -> Options const & override
+                    auto get_options() const -> Options const & override
                     {
                         return m_options;
                     }
@@ -762,7 +762,7 @@ namespace argparse
                         return false;
                     }
 
-                    auto get_options() -> Options const & override
+                    auto get_options() const -> Options const & override
                     {
                         return m_options;
                     }
