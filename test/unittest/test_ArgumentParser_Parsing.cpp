@@ -516,5 +516,12 @@ TEST_CASE("Parsing a positional argument with choices set...")
 
             CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "baz"}), "argument pos: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
         }
+
+        SUBCASE("...for int")
+        {
+            parser.add_argument("pos").choices({1, 2}).type<int>();
+
+            CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "3"}), "argument pos: invalid choice: 3 (choose from 1, 2)", argparse::parsing_error);
+        }
     }
 }

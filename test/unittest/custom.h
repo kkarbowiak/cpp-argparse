@@ -20,7 +20,7 @@ namespace foo
                 return m_text == other.m_text;
             }
 
-        private:
+        public:
             std::string m_text;
     };
 }
@@ -30,6 +30,11 @@ namespace foo
 inline auto from_string(std::string const & s, Custom & c) -> void
 {
     c = Custom(s);
+}
+
+inline auto to_string(Custom const& c) -> std::string
+{
+    return "<Custom: " + c.m_text + ">";
 }
 }
 

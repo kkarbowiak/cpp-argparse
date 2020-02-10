@@ -11,6 +11,7 @@
 #include <map>
 #include <optional>
 #include <any>
+#include <array>
 #include <memory>
 #include <stdexcept>
 #include <algorithm>
@@ -68,6 +69,14 @@ namespace argparse
     inline auto from_string(std::string const & s, long double & ld) -> void
     {
         ld = std::stold(s);
+    }
+
+    template<typename T>
+    inline auto to_string(T const& t) -> std::string
+    {
+        std::array<char, 256> chars;
+        auto [ptr, ec] = std::to_chars(chars.data(), chars.data() + chars.size(), t);
+        return std::string(chars.data(), ptr);
     }
 
     class ArgumentParser
@@ -431,6 +440,11 @@ namespace argparse
                     {
                         a = s;
                     };
+                std::function<std::string(std::any const&)> to_string =
+                    [](std::any const& a)
+                    {
+                        return "\"" + std::any_cast<std::string>(a) + "\"";
+                    };
                 std::function<bool (std::any const &, std::any const &)> comparator =
                     [](std::any const & lhs, std::any const & rhs)
                     {
@@ -477,7 +491,7 @@ namespace argparse
                                     [&](auto const& rhs){ return m_options.comparator(m_value, rhs); }))
                                 {
                                     std::string message = "argument " + get_name() + ": invalid choice: ";
-                                    message += "\"" + std::any_cast<std::string>(m_value) + "\"";
+                                    message += m_options.to_string(m_value);
                                     message += " (choose from ";
                                     for (auto i = m_options.choices.begin(); i != m_options.choices.end(); ++i)
                                     {
@@ -485,7 +499,7 @@ namespace argparse
                                         {
                                             message += ", ";
                                         }
-                                        message += "\"" + std::any_cast<std::string>(*i) + "\"";
+                                        message += m_options.to_string(*i);
                                     }
                                     message += ")";
                                     throw parsing_error(message);
@@ -746,6 +760,10 @@ namespace argparse
                             T val;
                             from_string(s, val);
                             a = val;
+                        };
+                        m_options.to_string = [](std::any const& a)
+                        {
+                            return to_string(std::any_cast<T>(a));
                         };
                         m_options.comparator = [](std::any const& l, std::any const& r)
                         {
