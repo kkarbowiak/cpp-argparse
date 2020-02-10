@@ -531,5 +531,12 @@ TEST_CASE("Parsing a positional argument with choices set...")
 
             CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "3"}), "argument pos: invalid choice: 3 (choose from 1, 2)", argparse::parsing_error);
         }
+
+        SUBCASE("...for double")
+        {
+            parser.add_argument("pos").choices({3.14, 2.71}).type<double>();
+
+            CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "1.1"}), "argument pos: invalid choice: 1.1 (choose from 3.14, 2.71)", argparse::parsing_error);
+        }
     }
 }
