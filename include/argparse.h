@@ -497,7 +497,7 @@ namespace argparse
                 std::any default_;
                 bool required;
                 std::vector<std::any> choices;
-                std::optional<int> nargs;
+                std::optional<unsigned int> nargs;
                 std::function<void (std::string const &, std::any &)> from_string =
                     [](std::string const & s, std::any & a)
                     {
@@ -565,7 +565,7 @@ namespace argparse
                             }
 
                             std::vector<std::string> values;
-                            for (auto i = 0; i < *m_options.nargs; ++i)
+                            for (auto i = 0u; i < *m_options.nargs; ++i)
                             {
                                 if (!args.empty())
                                 {
