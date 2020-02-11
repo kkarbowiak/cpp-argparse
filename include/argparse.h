@@ -881,6 +881,11 @@ namespace argparse
                         return *this;
                     }
 
+                    auto nargs(int /* nargs */) -> ArgumentBuilder&
+                    {
+                        return *this;
+                    }
+
                 private:
                     auto is_positional() const -> bool
                     {
