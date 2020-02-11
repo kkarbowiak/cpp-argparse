@@ -663,5 +663,12 @@ TEST_CASE("Parsing a positional argument with nargs set...")
 
             CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: pos", argparse::parsing_error);
         }
+
+        SUBCASE("...for two arguments and one provided")
+        {
+            parser.add_argument("pos").nargs(2);
+
+            CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "foo"}), "the following arguments are required: pos", argparse::parsing_error);
+        }
     }
 }
