@@ -561,7 +561,7 @@ namespace argparse
                         {
                             if (args.size() < *m_options.nargs)
                             {
-                                throw 0;
+                                throw parsing_error("the following arguments are required: " + get_name());
                             }
 
                             std::vector<std::string> values;

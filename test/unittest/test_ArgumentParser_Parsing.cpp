@@ -599,7 +599,7 @@ TEST_CASE("Parsing an optional argument with choices set...")
 
 TEST_CASE("Parsing a positional argument with nargs set...")
 {
-    auto parser = argparse::ArgumentParser();
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
     SUBCASE("...consumes the number of arguments...")
     {
@@ -661,7 +661,7 @@ TEST_CASE("Parsing a positional argument with nargs set...")
         {
             parser.add_argument("pos").nargs(1);
 
-            CHECK_THROWS(parser.parse_args(1, cstr_arr{"prog"}));
+            CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: pos", argparse::parsing_error);
         }
     }
 }
