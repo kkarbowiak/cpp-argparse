@@ -497,7 +497,7 @@ namespace argparse
                 std::any default_;
                 bool required;
                 std::vector<std::any> choices;
-                int nargs = 1;
+                std::optional<int> nargs;
                 std::function<void (std::string const &, std::any &)> from_string =
                     [](std::string const & s, std::any & a)
                     {
@@ -557,7 +557,38 @@ namespace argparse
 
                     auto parse_args(tokens args) -> tokens override
                     {
-                        for (auto i = 0; i < m_options.nargs; ++i)
+                        if (m_options.nargs)
+                        {
+                            std::vector<std::string> values;
+                            for (auto i = 0; i < *m_options.nargs; ++i)
+                            {
+                                if (!args.empty())
+                                {
+                                    std::any value;
+                                    m_options.from_string(args.front(), value);
+                                    if (!m_options.choices.empty())
+                                    {
+                                        if (!std::any_of(
+                                            m_options.choices.begin(),
+                                            m_options.choices.end(),
+                                            [&](auto const& rhs) { return m_options.comparator(value, rhs); }))
+                                        {
+                                            std::string message = "argument " + get_name() + ": invalid choice: ";
+                                            message += m_options.to_string(value);
+                                            message += " (choose from ";
+                                            message += m_options.join_choices(", ");
+                                            message += ")";
+                                            throw parsing_error(message);
+                                        }
+                                    }
+                                    args.pop_front();
+                                    values.push_back(std::any_cast<std::string>(value));
+                                }
+                            }
+
+                            m_value = values;
+                        }
+                        else
                         {
                             if (!args.empty())
                             {
