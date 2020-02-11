@@ -597,11 +597,21 @@ TEST_CASE("Parsing an optional argument with choices set...")
     }
 }
 
-TEST_CASE("Parsing a positional argument with nargs set consumes the number of arguments")
+TEST_CASE("Parsing a positional argument with nargs set consumes the number of arguments...")
 {
     auto parser = argparse::ArgumentParser();
 
-    parser.add_argument("pos").nargs(1);
+    SUBCASE("...for one argument")
+    {
+        parser.add_argument("pos").nargs(1);
 
-    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "foo"}));
+        CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "foo"}));
+    }
+
+    SUBCASE("...for two arguments")
+    {
+        parser.add_argument("pos").nargs(2);
+
+        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "foo", "bar"}));
+    }
 }

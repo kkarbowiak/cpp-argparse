@@ -497,6 +497,7 @@ namespace argparse
                 std::any default_;
                 bool required;
                 std::vector<std::any> choices;
+                int nargs = 1;
                 std::function<void (std::string const &, std::any &)> from_string =
                     [](std::string const & s, std::any & a)
                     {
@@ -556,25 +557,28 @@ namespace argparse
 
                     auto parse_args(tokens args) -> tokens override
                     {
-                        if (!args.empty())
+                        for (auto i = 0; i < m_options.nargs; ++i)
                         {
-                            m_options.from_string(args.front(), m_value);
-                            if (!m_options.choices.empty())
+                            if (!args.empty())
                             {
-                                if (!std::any_of(
-                                    m_options.choices.begin(),
-                                    m_options.choices.end(),
-                                    [&](auto const& rhs){ return m_options.comparator(m_value, rhs); }))
+                                m_options.from_string(args.front(), m_value);
+                                if (!m_options.choices.empty())
                                 {
-                                    std::string message = "argument " + get_name() + ": invalid choice: ";
-                                    message += m_options.to_string(m_value);
-                                    message += " (choose from ";
-                                    message += m_options.join_choices(", ");
-                                    message += ")";
-                                    throw parsing_error(message);
+                                    if (!std::any_of(
+                                        m_options.choices.begin(),
+                                        m_options.choices.end(),
+                                        [&](auto const& rhs) { return m_options.comparator(m_value, rhs); }))
+                                    {
+                                        std::string message = "argument " + get_name() + ": invalid choice: ";
+                                        message += m_options.to_string(m_value);
+                                        message += " (choose from ";
+                                        message += m_options.join_choices(", ");
+                                        message += ")";
+                                        throw parsing_error(message);
+                                    }
                                 }
+                                args.pop_front();
                             }
-                            args.pop_front();
                         }
 
                         return args;
@@ -881,8 +885,9 @@ namespace argparse
                         return *this;
                     }
 
-                    auto nargs(int /* nargs */) -> ArgumentBuilder&
+                    auto nargs(int nargs) -> ArgumentBuilder&
                     {
+                        m_options.nargs = nargs;
                         return *this;
                     }
 
