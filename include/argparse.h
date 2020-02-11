@@ -272,14 +272,7 @@ namespace argparse
                         else
                         {
                             positionals += "{";
-                            for (auto i = arg->get_options().choices.begin(); i != arg->get_options().choices.end(); ++i)
-                            {
-                                if (i != arg->get_options().choices.begin())
-                                {
-                                    positionals += ",";
-                                }
-                                positionals += arg->get_options().to_string(*i);
-                            }
+                            positionals += arg->get_options().join_choices(",");
                             positionals += "}";
                         }
                     }
@@ -299,14 +292,7 @@ namespace argparse
                             else
                             {
                                 optionals += "{";
-                                for (auto i = arg->get_options().choices.begin(); i != arg->get_options().choices.end(); ++i)
-                                {
-                                    if (i != arg->get_options().choices.begin())
-                                    {
-                                        optionals += ",";
-                                    }
-                                    optionals += arg->get_options().to_string(*i);
-                                }
+                                optionals += arg->get_options().join_choices(",");
                                 optionals += "}";
                             }
                         }
@@ -337,14 +323,7 @@ namespace argparse
                         else
                         {
                             positionals += "{";
-                            for (auto i = arg->get_options().choices.begin(); i != arg->get_options().choices.end(); ++i)
-                            {
-                                if (i != arg->get_options().choices.begin())
-                                {
-                                    positionals += ",";
-                                }
-                                positionals += arg->get_options().to_string(*i);
-                            }
+                            positionals += arg->get_options().join_choices(",");
                             positionals += "}";
                         }
 
@@ -366,14 +345,7 @@ namespace argparse
                             else
                             {
                                 optionals += "{";
-                                for (auto i = arg->get_options().choices.begin(); i != arg->get_options().choices.end(); ++i)
-                                {
-                                    if (i != arg->get_options().choices.begin())
-                                    {
-                                        optionals += ",";
-                                    }
-                                    optionals += arg->get_options().to_string(*i);
-                                }
+                                optionals += arg->get_options().join_choices(",");
                                 optionals += "}";
                             }
                         }
@@ -540,6 +512,20 @@ namespace argparse
                     {
                         return std::any_cast<std::string>(lhs) == std::any_cast<std::string>(rhs);
                     };
+
+                auto join_choices(std::string separator) const -> std::string
+                {
+                    std::string result;
+                    for (auto i = choices.begin(); i != choices.end(); ++i)
+                    {
+                        if (i != choices.begin())
+                        {
+                            result += separator;
+                        }
+                        result += to_string(*i);
+                    }
+                    return result;
+                }
             };
 
             class Argument
@@ -583,14 +569,7 @@ namespace argparse
                                     std::string message = "argument " + get_name() + ": invalid choice: ";
                                     message += m_options.to_string(m_value);
                                     message += " (choose from ";
-                                    for (auto i = m_options.choices.begin(); i != m_options.choices.end(); ++i)
-                                    {
-                                        if (i != m_options.choices.begin())
-                                        {
-                                            message += ", ";
-                                        }
-                                        message += m_options.to_string(*i);
-                                    }
+                                    message += m_options.join_choices(", ");
                                     message += ")";
                                     throw parsing_error(message);
                                 }
@@ -696,14 +675,7 @@ namespace argparse
                                                 std::string message = "argument " + get_name() + ": invalid choice: ";
                                                 message += m_options.to_string(m_value);
                                                 message += " (choose from ";
-                                                for (auto i = m_options.choices.begin(); i != m_options.choices.end(); ++i)
-                                                {
-                                                    if (i != m_options.choices.begin())
-                                                    {
-                                                        message += ", ";
-                                                    }
-                                                    message += m_options.to_string(*i);
-                                                }
+                                                message += m_options.join_choices(", ");
                                                 message += ")";
                                                 throw parsing_error(message);
                                             }
