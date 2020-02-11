@@ -559,6 +559,11 @@ namespace argparse
                     {
                         if (m_options.nargs)
                         {
+                            if (args.size() < *m_options.nargs)
+                            {
+                                throw 0;
+                            }
+
                             std::vector<std::string> values;
                             for (auto i = 0; i < *m_options.nargs; ++i)
                             {

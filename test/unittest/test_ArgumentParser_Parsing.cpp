@@ -654,4 +654,14 @@ TEST_CASE("Parsing a positional argument with nargs set...")
             CHECK(parsed.get_value<std::vector<std::string>>("pos") == std::vector<std::string>{"foo", "bar", "baz"});
         }
     }
+
+    SUBCASE("...throws an exception for incorrect arguments number...")
+    {
+        SUBCASE("...for one argument and no provided")
+        {
+            parser.add_argument("pos").nargs(1);
+
+            CHECK_THROWS(parser.parse_args(1, cstr_arr{"prog"}));
+        }
+    }
 }
