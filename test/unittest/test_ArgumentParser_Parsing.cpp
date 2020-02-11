@@ -679,3 +679,12 @@ TEST_CASE("Parsing a positional argument with nargs set...")
         }
     }
 }
+
+TEST_CASE("Parsing an optional argument with nargs set consumes the number of arguments")
+{
+    auto parser = argparse::ArgumentParser();
+
+    parser.add_argument("-o").nargs(1);
+
+    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
+}
