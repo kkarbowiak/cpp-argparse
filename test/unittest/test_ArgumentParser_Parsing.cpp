@@ -614,4 +614,11 @@ TEST_CASE("Parsing a positional argument with nargs set consumes the number of a
 
         CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "foo", "bar"}));
     }
+
+    SUBCASE("...for three arguments")
+    {
+        parser.add_argument("pos").nargs(3);
+
+        CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"}));
+    }
 }
