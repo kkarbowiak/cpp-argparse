@@ -697,4 +697,11 @@ TEST_CASE("Parsing an optional argument with nargs set consumes the number of ar
 
         CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"}));
     }
+
+    SUBCASE("...for three arguments")
+    {
+        parser.add_argument("-o").nargs(3);
+
+        CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"}));
+    }
 }
