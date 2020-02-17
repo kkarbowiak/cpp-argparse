@@ -682,7 +682,7 @@ TEST_CASE("Parsing a positional argument with nargs set...")
 
 TEST_CASE("Parsing an optional argument with nargs set...")
 {
-    auto parser = argparse::ArgumentParser();
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
     SUBCASE("...consumes the number of arguments...")
     {
@@ -735,6 +735,16 @@ TEST_CASE("Parsing an optional argument with nargs set...")
             auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"});
 
             CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>{"foo", "bar", "baz"});
+        }
+    }
+
+    SUBCASE("...throws an exception for incorrect arguments number...")
+    {
+        SUBCASE("...for one argument and no provided")
+        {
+            parser.add_argument("-o").nargs(1);
+
+            CHECK_THROWS(parser.parse_args(2, cstr_arr{"prog", "-o"}));
         }
     }
 }
