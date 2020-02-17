@@ -718,5 +718,14 @@ TEST_CASE("Parsing an optional argument with nargs set...")
 
             CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>{"foo"});
         }
+
+        SUBCASE("...for two arguments")
+        {
+            parser.add_argument("-o").nargs(2);
+
+            auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"});
+
+            CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>{"foo", "bar"});
+        }
     }
 }
