@@ -707,7 +707,7 @@ namespace argparse
                                             {
                                                 if (i == args.end())
                                                 {
-                                                    throw parsing_error("argument " + get_name() + ": expected one argument");
+                                                    throw parsing_error("argument " + get_name() + ": expected 1 argument");
                                                 }
                                                 std::any value;
                                                 m_options.from_string(*i, value);
