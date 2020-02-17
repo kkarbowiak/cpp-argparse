@@ -680,28 +680,43 @@ TEST_CASE("Parsing a positional argument with nargs set...")
     }
 }
 
-TEST_CASE("Parsing an optional argument with nargs set consumes the number of arguments...")
+TEST_CASE("Parsing an optional argument with nargs set...")
 {
     auto parser = argparse::ArgumentParser();
 
-    SUBCASE("...for one argument")
+    SUBCASE("...consumes the number of arguments...")
     {
-        parser.add_argument("-o").nargs(1);
+        SUBCASE("...for one argument")
+        {
+            parser.add_argument("-o").nargs(1);
 
-        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
+            CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
+        }
+
+        SUBCASE("...for two arguments")
+        {
+            parser.add_argument("-o").nargs(2);
+
+            CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"}));
+        }
+
+        SUBCASE("...for three arguments")
+        {
+            parser.add_argument("-o").nargs(3);
+
+            CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"}));
+        }
     }
 
-    SUBCASE("...for two arguments")
+    SUBCASE("...yields a list of arguments...")
     {
-        parser.add_argument("-o").nargs(2);
+        SUBCASE("...for one argument")
+        {
+            parser.add_argument("-o").nargs(1);
 
-        CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"}));
-    }
+            auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
 
-    SUBCASE("...for three arguments")
-    {
-        parser.add_argument("-o").nargs(3);
-
-        CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"}));
+            CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>{"foo"});
+        }
     }
 }

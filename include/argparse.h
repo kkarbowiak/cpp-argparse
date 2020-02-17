@@ -729,6 +729,8 @@ namespace argparse
                                                 i = args.erase(i);
                                                 values.push_back(std::any_cast<std::string>(value));
                                             }
+
+                                            m_value = values;
                                         }
                                         else
                                         {
