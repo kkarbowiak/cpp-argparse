@@ -746,5 +746,12 @@ TEST_CASE("Parsing an optional argument with nargs set...")
 
             CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o: expected 1 argument", argparse::parsing_error);
         }
+
+        SUBCASE("...for two arguments and one provided")
+        {
+            parser.add_argument("-o").nargs(2);
+
+            CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}), "argument -o: expected 2 arguments", argparse::parsing_error);
+        }
     }
 }
