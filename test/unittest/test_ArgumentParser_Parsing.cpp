@@ -781,4 +781,13 @@ TEST_CASE("Parsing missing positional argument with nargs set throws an exceptio
 
         CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: p1 p2", argparse::parsing_error);
     }
+
+    SUBCASE("...for three missing arguments")
+    {
+        parser.add_argument("p1").nargs(2);
+        parser.add_argument("p2").nargs(2);
+        parser.add_argument("p3").nargs(2);
+
+        CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: p1 p2 p3", argparse::parsing_error);
+    }
 }
