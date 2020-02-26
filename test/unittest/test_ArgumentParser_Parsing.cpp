@@ -6,6 +6,7 @@
 #include <doctest.h>
 
 #include <string>
+#include <type_traits>
 
 
 using namespace std::string_literals;
@@ -150,24 +151,23 @@ TEST_CASE("Optional argument can be used with either...")
     }
 }
 
-TEST_CASE_TEMPLATE("Parsing a positional argument yields its requested type", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int)
+TEST_CASE_TEMPLATE("Parsing a positional argument yields its requested type", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double)
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("pos").type<T>();
 
-    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "65"});
+    if constexpr (std::is_integral_v<T>)
+    {
+        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "65"});
 
-    CHECK(parsed.get_value<T>("pos") == T(65));
-}
+        CHECK(parsed.get_value<T>("pos") == T(65));
+    }
+    if constexpr (std::is_floating_point_v<T>)
+    {
+        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "3.14"});
 
-TEST_CASE_TEMPLATE("Parsing a positional argument yields its requested type", T, float, double, long double)
-{
-    auto parser = argparse::ArgumentParser();
-    parser.add_argument("pos").type<T>();
-
-    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "3.14"});
-
-    CHECK(parsed.get_value<T>("pos") == T(3.14));
+        CHECK(parsed.get_value<T>("pos") == T(3.14));
+    }
 }
 
 TEST_CASE("Parsing a positional argument yields its requested type")
