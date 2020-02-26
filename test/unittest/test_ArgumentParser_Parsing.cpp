@@ -601,81 +601,96 @@ TEST_CASE("Parsing a positional argument with nargs set...")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
-    SUBCASE("...consumes the number of arguments...")
+    SUBCASE("...as a number...")
     {
-        SUBCASE("...for one argument")
+        SUBCASE("...consumes the number of arguments...")
         {
-            parser.add_argument("pos").nargs(1);
+            SUBCASE("...for one argument")
+            {
+                parser.add_argument("pos").nargs(1);
 
-            CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "foo"}));
+                CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "foo"}));
+            }
+
+            SUBCASE("...for two arguments")
+            {
+                parser.add_argument("pos").nargs(2);
+
+                CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "foo", "bar"}));
+            }
+
+            SUBCASE("...for three arguments")
+            {
+                parser.add_argument("pos").nargs(3);
+
+                CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"}));
+            }
         }
 
-        SUBCASE("...for two arguments")
+        SUBCASE("...yields a list of arguments...")
         {
-            parser.add_argument("pos").nargs(2);
+            SUBCASE("...for one argument")
+            {
+                parser.add_argument("pos").nargs(1);
 
-            CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "foo", "bar"}));
+                auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
+
+                CHECK(parsed.get_value<std::vector<std::string>>("pos") == std::vector<std::string>{"foo"});
+            }
+
+            SUBCASE("...for two arguments")
+            {
+                parser.add_argument("pos").nargs(2);
+
+                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "foo", "bar"});
+
+                CHECK(parsed.get_value<std::vector<std::string>>("pos") == std::vector<std::string>{"foo", "bar"});
+            }
+
+            SUBCASE("...for three arguments")
+            {
+                parser.add_argument("pos").nargs(3);
+
+                auto const parsed = parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"});
+
+                CHECK(parsed.get_value<std::vector<std::string>>("pos") == std::vector<std::string>{"foo", "bar", "baz"});
+            }
         }
 
-        SUBCASE("...for three arguments")
+        SUBCASE("...throws an exception for incorrect arguments number...")
         {
-            parser.add_argument("pos").nargs(3);
+            SUBCASE("...for one argument and no provided")
+            {
+                parser.add_argument("pos").nargs(1);
 
-            CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"}));
+                CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: pos", argparse::parsing_error);
+            }
+
+            SUBCASE("...for two arguments and one provided")
+            {
+                parser.add_argument("pos").nargs(2);
+
+                CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "foo"}), "the following arguments are required: pos", argparse::parsing_error);
+            }
+
+            SUBCASE("...for three arguments and two provided")
+            {
+                parser.add_argument("pos").nargs(3);
+
+                CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "foo", "bar"}), "the following arguments are required: pos", argparse::parsing_error);
+            }
         }
     }
 
-    SUBCASE("...yields a list of arguments...")
+    SUBCASE("...as ?...")
     {
-        SUBCASE("...for one argument")
+        SUBCASE("...consumes single argument and yields it as a single item")
         {
-            parser.add_argument("pos").nargs(1);
+            parser.add_argument("pos").nargs('?');
 
             auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
 
-            CHECK(parsed.get_value<std::vector<std::string>>("pos") == std::vector<std::string>{"foo"});
-        }
-
-        SUBCASE("...for two arguments")
-        {
-            parser.add_argument("pos").nargs(2);
-
-            auto const parsed = parser.parse_args(3, cstr_arr{"prog", "foo", "bar"});
-
-            CHECK(parsed.get_value<std::vector<std::string>>("pos") == std::vector<std::string>{"foo", "bar"});
-        }
-
-        SUBCASE("...for three arguments")
-        {
-            parser.add_argument("pos").nargs(3);
-
-            auto const parsed = parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"});
-
-            CHECK(parsed.get_value<std::vector<std::string>>("pos") == std::vector<std::string>{"foo", "bar", "baz"});
-        }
-    }
-
-    SUBCASE("...throws an exception for incorrect arguments number...")
-    {
-        SUBCASE("...for one argument and no provided")
-        {
-            parser.add_argument("pos").nargs(1);
-
-            CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: pos", argparse::parsing_error);
-        }
-
-        SUBCASE("...for two arguments and one provided")
-        {
-            parser.add_argument("pos").nargs(2);
-
-            CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "foo"}), "the following arguments are required: pos", argparse::parsing_error);
-        }
-
-        SUBCASE("...for three arguments and two provided")
-        {
-            parser.add_argument("pos").nargs(3);
-
-            CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "foo", "bar"}), "the following arguments are required: pos", argparse::parsing_error);
+            CHECK(parsed.get_value("pos") == "foo");
         }
     }
 }

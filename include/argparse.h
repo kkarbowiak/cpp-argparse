@@ -12,6 +12,7 @@
 #include <optional>
 #include <any>
 #include <array>
+#include <variant>
 #include <memory>
 #include <stdexcept>
 #include <algorithm>
@@ -497,7 +498,7 @@ namespace argparse
                 std::any default_;
                 bool required;
                 std::vector<std::any> choices;
-                std::optional<unsigned int> nargs;
+                std::optional<std::variant<unsigned int, char>> nargs;
                 std::function<void (std::string const &, std::any &)> from_string =
                     [](std::string const & s, std::any & a)
                     {
@@ -559,34 +560,42 @@ namespace argparse
                     {
                         if (m_options.nargs)
                         {
-                            std::vector<std::string> values;
-                            for (auto i = 0u; i < *m_options.nargs; ++i)
+                            if (std::holds_alternative<unsigned int>(*m_options.nargs))
                             {
-                                if (!args.empty())
+                                std::vector<std::string> values;
+                                for (auto i = 0u; i < std::get<unsigned int>(*m_options.nargs); ++i)
                                 {
-                                    std::any value;
-                                    m_options.from_string(args.front(), value);
-                                    if (!m_options.choices.empty())
+                                    if (!args.empty())
                                     {
-                                        if (!std::any_of(
-                                            m_options.choices.begin(),
-                                            m_options.choices.end(),
-                                            [&](auto const& rhs) { return m_options.comparator(value, rhs); }))
+                                        std::any value;
+                                        m_options.from_string(args.front(), value);
+                                        if (!m_options.choices.empty())
                                         {
-                                            std::string message = "argument " + get_name() + ": invalid choice: ";
-                                            message += m_options.to_string(value);
-                                            message += " (choose from ";
-                                            message += m_options.join_choices(", ");
-                                            message += ")";
-                                            throw parsing_error(message);
+                                            if (!std::any_of(
+                                                m_options.choices.begin(),
+                                                m_options.choices.end(),
+                                                [&](auto const& rhs) { return m_options.comparator(value, rhs); }))
+                                            {
+                                                std::string message = "argument " + get_name() + ": invalid choice: ";
+                                                message += m_options.to_string(value);
+                                                message += " (choose from ";
+                                                message += m_options.join_choices(", ");
+                                                message += ")";
+                                                throw parsing_error(message);
+                                            }
                                         }
+                                        args.pop_front();
+                                        values.push_back(std::any_cast<std::string>(value));
                                     }
-                                    args.pop_front();
-                                    values.push_back(std::any_cast<std::string>(value));
                                 }
-                            }
 
-                            m_value = values;
+                                m_value = values;
+                            }
+                            else
+                            {
+                                m_options.from_string(args.front(), m_value);
+                                args.pop_front();
+                            }
                         }
                         else
                         {
@@ -636,8 +645,8 @@ namespace argparse
 
                     auto has_value() const -> bool override
                     {
-                        return m_options.nargs
-                            ? std::any_cast<std::vector<std::string>>(m_value).size() == *m_options.nargs
+                        return m_options.nargs && std::holds_alternative<unsigned int>(*m_options.nargs)
+                            ? std::any_cast<std::vector<std::string>>(m_value).size() == std::get<unsigned int>(*m_options.nargs)
                             : m_value.has_value();
                     }
 
@@ -699,35 +708,38 @@ namespace argparse
                                     case store:
                                         if (m_options.nargs)
                                         {
-                                            std::vector<std::string> values;
-                                            for (auto j = 0u; j < *m_options.nargs; ++j)
+                                            if (std::holds_alternative<unsigned int>(*m_options.nargs))
                                             {
-                                                if (i == args.end())
+                                                std::vector<std::string> values;
+                                                for (auto j = 0u; j < std::get<unsigned int>(*m_options.nargs); ++j)
                                                 {
-                                                    throw parsing_error("argument " + get_name() + ": expected " + std::to_string(*m_options.nargs) + " argument" + (*m_options.nargs > 1 ? "s" : ""));
-                                                }
-                                                std::any value;
-                                                m_options.from_string(*i, value);
-                                                if (!m_options.choices.empty())
-                                                {
-                                                    if (!std::any_of(
-                                                        m_options.choices.begin(),
-                                                        m_options.choices.end(),
-                                                        [&](auto const & rhs){ return m_options.comparator(value, rhs); }))
+                                                    if (i == args.end())
                                                     {
-                                                        std::string message = "argument " + get_name() + ": invalid choice: ";
-                                                        message += m_options.to_string(value);
-                                                        message += " (choose from ";
-                                                        message += m_options.join_choices(", ");
-                                                        message += ")";
-                                                        throw parsing_error(message);
+                                                        throw parsing_error("argument " + get_name() + ": expected " + std::to_string(std::get<unsigned int>(*m_options.nargs)) + " argument" + (std::get<unsigned int>(*m_options.nargs) > 1 ? "s" : ""));
                                                     }
+                                                    std::any value;
+                                                    m_options.from_string(*i, value);
+                                                    if (!m_options.choices.empty())
+                                                    {
+                                                        if (!std::any_of(
+                                                            m_options.choices.begin(),
+                                                            m_options.choices.end(),
+                                                            [&](auto const & rhs){ return m_options.comparator(value, rhs); }))
+                                                        {
+                                                            std::string message = "argument " + get_name() + ": invalid choice: ";
+                                                            message += m_options.to_string(value);
+                                                            message += " (choose from ";
+                                                            message += m_options.join_choices(", ");
+                                                            message += ")";
+                                                            throw parsing_error(message);
+                                                        }
+                                                    }
+                                                    i = args.erase(i);
+                                                    values.push_back(std::any_cast<std::string>(value));
                                                 }
-                                                i = args.erase(i);
-                                                values.push_back(std::any_cast<std::string>(value));
-                                            }
 
-                                            m_value = values;
+                                                m_value = values;
+                                            }
                                         }
                                         else
                                         {
@@ -954,7 +966,19 @@ namespace argparse
                         return *this;
                     }
 
+                    auto nargs(unsigned int nargs) -> ArgumentBuilder&
+                    {
+                        m_options.nargs = nargs;
+                        return *this;
+                    }
+
                     auto nargs(int nargs) -> ArgumentBuilder&
+                    {
+                        m_options.nargs = static_cast<unsigned int>(nargs);
+                        return *this;
+                    }
+
+                    auto nargs(char nargs) -> ArgumentBuilder&
                     {
                         m_options.nargs = nargs;
                         return *this;
