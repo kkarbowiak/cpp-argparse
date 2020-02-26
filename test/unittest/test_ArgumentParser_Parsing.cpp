@@ -151,7 +151,7 @@ TEST_CASE("Optional argument can be used with either...")
     }
 }
 
-TEST_CASE_TEMPLATE("Parsing a positional argument yields its requested type", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double)
+TEST_CASE_TEMPLATE("Parsing a positional argument yields its requested type", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom)
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("pos").type<T>();
@@ -162,25 +162,18 @@ TEST_CASE_TEMPLATE("Parsing a positional argument yields its requested type", T,
 
         CHECK(parsed.get_value<T>("pos") == T(65));
     }
-    if constexpr (std::is_floating_point_v<T>)
+    else if constexpr (std::is_floating_point_v<T>)
     {
         auto const parsed = parser.parse_args(2, cstr_arr{"prog", "3.14"});
 
         CHECK(parsed.get_value<T>("pos") == T(3.14));
     }
-}
+    else
+    {
+        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "bar"});
 
-TEST_CASE("Parsing a positional argument yields its requested type")
-{
-    auto parser = argparse::ArgumentParser();
-    parser.add_argument("fc").type<foo::Custom>();
-
-    auto const parsed = parser.parse_args(
-        2, cstr_arr{
-            "prog",
-            "bar"});
-
-    CHECK(parsed.get_value<foo::Custom>("fc") == foo::Custom("bar"));
+        CHECK(parsed.get_value<foo::Custom>("pos") == foo::Custom("bar"));
+    }
 }
 
 TEST_CASE("Parsing an optional argument yields its requested type")
