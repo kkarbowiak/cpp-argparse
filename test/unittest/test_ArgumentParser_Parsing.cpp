@@ -160,25 +160,26 @@ TEST_CASE_TEMPLATE("Parsing a positional argument yields its requested type", T,
     CHECK(parsed.get_value<T>("pos") == T(65));
 }
 
+TEST_CASE_TEMPLATE("Parsing a positional argument yields its requested type", T, float, double, long double)
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("pos").type<T>();
+
+    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "3.14"});
+
+    CHECK(parsed.get_value<T>("pos") == T(3.14));
+}
+
 TEST_CASE("Parsing a positional argument yields its requested type")
 {
     auto parser = argparse::ArgumentParser();
-    parser.add_argument("f").type<float>();
-    parser.add_argument("d").type<double>();
-    parser.add_argument("ld").type<long double>();
     parser.add_argument("fc").type<foo::Custom>();
 
     auto const parsed = parser.parse_args(
-        5, cstr_arr{
+        2, cstr_arr{
             "prog",
-            "2.71",
-            "3.14",
-            "0.111",
             "bar"});
 
-    CHECK(parsed.get_value<float>("f") == 2.71f);
-    CHECK(parsed.get_value<double>("d") == 3.14);
-    CHECK(parsed.get_value<long double>("ld") == 0.111l);
     CHECK(parsed.get_value<foo::Custom>("fc") == foo::Custom("bar"));
 }
 
