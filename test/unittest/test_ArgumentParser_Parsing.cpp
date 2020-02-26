@@ -176,56 +176,29 @@ TEST_CASE_TEMPLATE("Parsing a positional argument yields its requested type", T,
     }
 }
 
-TEST_CASE("Parsing an optional argument yields its requested type")
+TEST_CASE_TEMPLATE("Parsing an optional argument yields its requested type", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom)
 {
     auto parser = argparse::ArgumentParser();
-    parser.add_argument("--c").type<char>();
-    parser.add_argument("--sc").type<signed char>();
-    parser.add_argument("--uc").type<unsigned char>();
-    parser.add_argument("--si").type<short int>();
-    parser.add_argument("--usi").type<unsigned short int>();
-    parser.add_argument("--i").type<int>();
-    parser.add_argument("--li").type<long int>();
-    parser.add_argument("--lli").type<long long int>();
-    parser.add_argument("--uli").type<unsigned long int>();
-    parser.add_argument("--ulli").type<unsigned long long int>();
-    parser.add_argument("--f").type<float>();
-    parser.add_argument("--d").type<double>();
-    parser.add_argument("--ld").type<long double>();
-    parser.add_argument("--fc").type<foo::Custom>();
+    parser.add_argument("-o").type<T>();
 
-    auto const parsed = parser.parse_args(
-        29, cstr_arr{
-            "prog",
-            "--c", "65",
-            "--sc", "-12",
-            "--uc", "250",
-            "--si", "5000",
-            "--usi", "64000",
-            "--i", "123",
-            "--li", "2000000000",
-            "--lli", "16000000000",
-            "--uli", "3000000000",
-            "--ulli", "24000000000",
-            "--f", "2.71",
-            "--d", "3.14",
-            "--ld", "0.111",
-            "--fc", "bar"});
+    if constexpr (std::is_integral_v<T>)
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "65"});
 
-    CHECK(parsed.get_value<char>("c") == 65);
-    CHECK(parsed.get_value<signed char>("sc") == -12);
-    CHECK(parsed.get_value<unsigned char>("uc") == 250);
-    CHECK(parsed.get_value<short int>("si") == 5000);
-    CHECK(parsed.get_value<unsigned short int>("usi") == 64000);
-    CHECK(parsed.get_value<int>("i") == 123);
-    CHECK(parsed.get_value<long int>("li") == 2000000000l);
-    CHECK(parsed.get_value<long long int>("lli") == 16000000000ll);
-    CHECK(parsed.get_value<unsigned long int>("uli") == 3000000000l);
-    CHECK(parsed.get_value<unsigned long long int>("ulli") == 24000000000l);
-    CHECK(parsed.get_value<float>("f") == 2.71f);
-    CHECK(parsed.get_value<double>("d") == 3.14);
-    CHECK(parsed.get_value<long double>("ld") == 0.111l);
-    CHECK(parsed.get_value<foo::Custom>("fc") == foo::Custom("bar"));
+        CHECK(parsed.get_value<T>("o") == T(65));
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "3.14"});
+
+        CHECK(parsed.get_value<T>("o") == T(3.14));
+    }
+    else
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "bar"});
+
+        CHECK(parsed.get_value<foo::Custom>("o") == foo::Custom("bar"));
+    }
 }
 
 TEST_CASE("Parsing an optional argument with default value...")
