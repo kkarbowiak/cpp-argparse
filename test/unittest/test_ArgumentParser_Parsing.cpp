@@ -172,7 +172,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument yields its requested type", T,
     {
         auto const parsed = parser.parse_args(2, cstr_arr{"prog", "bar"});
 
-        CHECK(parsed.get_value<foo::Custom>("pos") == foo::Custom("bar"));
+        CHECK(parsed.get_value<T>("pos") == T("bar"));
     }
 }
 
@@ -197,7 +197,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument yields its requested type", T, 
     {
         auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "bar"});
 
-        CHECK(parsed.get_value<foo::Custom>("o") == foo::Custom("bar"));
+        CHECK(parsed.get_value<T>("o") == T("bar"));
     }
 }
 
