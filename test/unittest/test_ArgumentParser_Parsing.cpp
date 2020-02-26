@@ -692,6 +692,15 @@ TEST_CASE("Parsing a positional argument with nargs set...")
 
             CHECK(parsed.get_value("pos") == "foo");
         }
+
+        SUBCASE("...yields default value if no argument is provided")
+        {
+            parser.add_argument("pos").nargs('?').default_("foo"s);
+
+            auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+
+            CHECK(parsed.get_value("pos") == "foo");
+        }
     }
 }
 

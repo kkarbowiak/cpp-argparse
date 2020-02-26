@@ -593,8 +593,15 @@ namespace argparse
                             }
                             else
                             {
-                                m_options.from_string(args.front(), m_value);
-                                args.pop_front();
+                                if (!args.empty())
+                                {
+                                    m_options.from_string(args.front(), m_value);
+                                    args.pop_front();
+                                }
+                                else
+                                {
+                                    m_value = m_options.default_;
+                                }
                             }
                         }
                         else
