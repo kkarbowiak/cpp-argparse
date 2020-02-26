@@ -799,6 +799,15 @@ TEST_CASE("Parsing an optional argument with nargs set...")
 
             CHECK(parsed.get_value("o") == "foo");
         }
+
+        SUBCASE("...yields default value if no argument is provided")
+        {
+            parser.add_argument("-o").nargs('?').default_("foo"s);
+
+            auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+
+            CHECK(parsed.get_value("o") == "foo");
+        }
     }
 }
 
