@@ -749,8 +749,15 @@ namespace argparse
                                             }
                                             else
                                             {
-                                                m_options.from_string(*i, m_value);
-                                                i = args.erase(i);
+                                                if (i == args.end())
+                                                {
+                                                    m_value = m_options.const_;
+                                                }
+                                                else
+                                                {
+                                                    m_options.from_string(*i, m_value);
+                                                    i = args.erase(i);
+                                                }
                                             }
                                         }
                                         else

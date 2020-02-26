@@ -808,6 +808,15 @@ TEST_CASE("Parsing an optional argument with nargs set...")
 
             CHECK(parsed.get_value("o") == "foo");
         }
+
+        SUBCASE("...yields const value if option string is present and no argument is provided")
+        {
+            parser.add_argument("-o").nargs('?').const_("foo"s);
+
+            auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
+
+            CHECK(parsed.get_value("o") == "foo");
+        }
     }
 }
 
