@@ -747,6 +747,11 @@ namespace argparse
 
                                                 m_value = values;
                                             }
+                                            else
+                                            {
+                                                m_options.from_string(*i, m_value);
+                                                i = args.erase(i);
+                                            }
                                         }
                                         else
                                         {
