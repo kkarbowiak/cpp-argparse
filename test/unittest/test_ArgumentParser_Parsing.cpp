@@ -763,11 +763,22 @@ TEST_CASE("Parsing an optional argument with nargs set...")
     }
 }
 
-TEST_CASE("Parsing missing positional argument with nargs set throws an exception")
+TEST_CASE("Parsing missing positional argument with nargs set throws an exception...")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
-    parser.add_argument("p1").nargs(2);
+    SUBCASE("...for one missing argument")
+    {
+        parser.add_argument("p1").nargs(2);
 
-    CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: p1", argparse::parsing_error);
+        CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: p1", argparse::parsing_error);
+    }
+
+    SUBCASE("...for two missing arguments")
+    {
+        parser.add_argument("p1").nargs(2);
+        parser.add_argument("p2").nargs(2);
+
+        CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: p1 p2", argparse::parsing_error);
+    }
 }

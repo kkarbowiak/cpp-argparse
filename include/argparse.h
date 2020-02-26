@@ -559,11 +559,6 @@ namespace argparse
                     {
                         if (m_options.nargs)
                         {
-                            if (args.size() < *m_options.nargs)
-                            {
-                                throw parsing_error("the following arguments are required: " + get_name());
-                            }
-
                             std::vector<std::string> values;
                             for (auto i = 0u; i < *m_options.nargs; ++i)
                             {
@@ -641,7 +636,9 @@ namespace argparse
 
                     auto has_value() const -> bool override
                     {
-                        return m_value.has_value();
+                        return m_options.nargs
+                            ? std::any_cast<std::vector<std::string>>(m_value).size() == *m_options.nargs
+                            : m_value.has_value();
                     }
 
                     auto get_value() const -> std::any override
