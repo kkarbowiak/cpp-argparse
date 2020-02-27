@@ -661,7 +661,7 @@ TEST_CASE("Parsing a positional argument with nargs set...")
             CHECK(parsed.get_value<std::vector<std::string>>("pos") == std::vector<std::string>());
         }
 
-        SUBCASE("...consumes single argument and yields it as a single-element list")
+        SUBCASE("...consumes single argument and yields it as a list")
         {
             parser.add_argument("pos").nargs('*');
 
