@@ -1,6 +1,6 @@
 # C++ argparse
 
-[![Build Status](https://travis-ci.com/kkarbowiak/cpp-argparse.svg?branch=master)](https://travis-ci.com/kkarbowiak/cpp-argparse)
+[![Build Status](https://travis-ci.org/kkarbowiak/cpp-argparse.svg?branch=master)](https://travis-ci.org/kkarbowiak/cpp-argparse)
 
 ## Overview
 
