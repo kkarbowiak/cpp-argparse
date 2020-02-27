@@ -777,7 +777,13 @@ namespace argparse
                                                         }
                                                         break;
                                                     case '*':
-                                                        m_value = std::vector<std::string>();
+                                                        std::vector<std::string> values;
+                                                        while (i != args.end())
+                                                        {
+                                                            values.push_back(*i);
+                                                            i = args.erase(i);
+                                                        }
+                                                        m_value = values;
                                                         break;
                                                 }
                                             }
