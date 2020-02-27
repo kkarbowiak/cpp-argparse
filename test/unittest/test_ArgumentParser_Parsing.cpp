@@ -795,6 +795,18 @@ TEST_CASE("Parsing an optional argument with nargs set...")
             CHECK(parsed.get_value("o") == "foo");
         }
     }
+
+    SUBCASE("...as *...")
+    {
+        SUBCASE("...yields an empty list if no arguments provided")
+        {
+            parser.add_argument("-o").nargs('*');
+
+            auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
+
+            CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>());
+        }
+    }
 }
 
 TEST_CASE("Parsing missing positional argument with nargs set throws an exception...")
