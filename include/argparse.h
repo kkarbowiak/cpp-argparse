@@ -593,14 +593,22 @@ namespace argparse
                             }
                             else
                             {
-                                if (!args.empty())
+                                switch (std::get<char>(*m_options.nargs))
                                 {
-                                    m_options.from_string(args.front(), m_value);
-                                    args.pop_front();
-                                }
-                                else
-                                {
-                                    m_value = m_options.default_;
+                                    case '?':
+                                        if (!args.empty())
+                                        {
+                                            m_options.from_string(args.front(), m_value);
+                                            args.pop_front();
+                                        }
+                                        else
+                                        {
+                                            m_value = m_options.default_;
+                                        }
+                                        break;
+                                    case '*':
+                                        m_value = std::vector<std::string>();
+                                        break;
                                 }
                             }
                         }
