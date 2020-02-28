@@ -784,6 +784,7 @@ namespace argparse
                                                 switch (std::get<char>(*m_options.nargs))
                                                 {
                                                     case '?':
+                                                    {
                                                         if (i == args.end())
                                                         {
                                                             m_value = m_options.const_;
@@ -794,7 +795,9 @@ namespace argparse
                                                             i = args.erase(i);
                                                         }
                                                         break;
+                                                    }
                                                     case '*':
+                                                    {
                                                         std::vector<std::string> values;
                                                         while (i != args.end())
                                                         {
@@ -803,6 +806,11 @@ namespace argparse
                                                         }
                                                         m_value = values;
                                                         break;
+                                                    }
+                                                    case '+':
+                                                    {
+                                                        throw 0;
+                                                    }
                                                 }
                                             }
                                         }
