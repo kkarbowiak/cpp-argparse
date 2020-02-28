@@ -686,7 +686,7 @@ TEST_CASE("Parsing a positional argument with nargs set...")
         {
             parser.add_argument("pos").nargs('+');
 
-            CHECK_THROWS(parser.parse_args(1, cstr_arr{"prog"}));
+            CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: pos", argparse::parsing_error);
         }
 
         SUBCASE("...consumes single argument and yields it as a list")
