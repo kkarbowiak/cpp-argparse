@@ -697,6 +697,15 @@ TEST_CASE("Parsing a positional argument with nargs set...")
 
             CHECK(parsed.get_value<std::vector<std::string>>("pos") == std::vector<std::string>{"foo"});
         }
+
+        SUBCASE("...consumes all available arguments and yields them as a list")
+        {
+            parser.add_argument("pos").nargs('+');
+
+            auto const parsed = parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"});
+
+            CHECK(parsed.get_value<std::vector<std::string>>("pos") == std::vector<std::string>{"foo", "bar", "baz"});
+        }
     }
 }
 
