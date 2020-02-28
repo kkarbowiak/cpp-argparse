@@ -596,6 +596,7 @@ namespace argparse
                                 switch (std::get<char>(*m_options.nargs))
                                 {
                                     case '?':
+                                    {
                                         if (!args.empty())
                                         {
                                             m_options.from_string(args.front(), m_value);
@@ -606,7 +607,9 @@ namespace argparse
                                             m_value = m_options.default_;
                                         }
                                         break;
+                                    }
                                     case '*':
+                                    {
                                         std::vector<std::string> values;
                                         while (!args.empty())
                                         {
@@ -615,6 +618,21 @@ namespace argparse
                                         }
                                         m_value = values;
                                         break;
+                                    }
+                                    case '+':
+                                    {
+                                        std::vector<std::string> values;
+                                        while (!args.empty())
+                                        {
+                                            values.push_back(args.front());
+                                            args.pop_front();
+                                        }
+                                        if (!values.empty())
+                                        {
+                                            m_value = values;
+                                        }
+                                        break;
+                                    }
                                 }
                             }
                         }
