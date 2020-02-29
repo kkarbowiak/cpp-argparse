@@ -163,11 +163,21 @@ TEST_CASE("Usage message contains...")
             CHECK(parser.format_usage() == "usage: prog {\"foo\",\"bar\"}"s);
         }
 
-        SUBCASE("...its name repeated N times for argument with nargs set as number")
+        SUBCASE("...its name repeated N times for argument with nargs set as number...")
         {
-            parser.add_argument("p1").nargs(1);
+            SUBCASE("...1")
+            {
+                parser.add_argument("p1").nargs(1);
 
-            CHECK(parser.format_usage() == "usage: prog p1"s);
+                CHECK(parser.format_usage() == "usage: prog p1"s);
+            }
+
+            SUBCASE("...2")
+            {
+                parser.add_argument("p1").nargs(2);
+
+                CHECK(parser.format_usage() == "usage: prog p1 p1"s);
+            }
         }
     }
 

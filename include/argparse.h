@@ -265,16 +265,26 @@ namespace argparse
                 {
                     if (arg->is_positional())
                     {
-                        positionals += " ";
-                        if (arg->get_options().choices.empty())
+                        if (arg->get_options().nargs)
                         {
-                            positionals += arg->get_metavar_name();
+                            for (auto n = 0u; n < std::get<unsigned int>(*arg->get_options().nargs); n++)
+                            {
+                                positionals += " " + arg->get_metavar_name();
+                            }
                         }
                         else
                         {
-                            positionals += "{";
-                            positionals += arg->get_options().join_choices(",");
-                            positionals += "}";
+                            positionals += " ";
+                            if (arg->get_options().choices.empty())
+                            {
+                                positionals += arg->get_metavar_name();
+                            }
+                            else
+                            {
+                                positionals += "{";
+                                positionals += arg->get_options().join_choices(",");
+                                positionals += "}";
+                            }
                         }
                     }
                     else
