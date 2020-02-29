@@ -178,6 +178,13 @@ TEST_CASE("Usage message contains...")
 
                 CHECK(parser.format_usage() == "usage: prog p1 p1"s);
             }
+
+            SUBCASE("...3")
+            {
+                parser.add_argument("p1").nargs(3);
+
+                CHECK(parser.format_usage() == "usage: prog p1 p1 p1"s);
+            }
         }
     }
 
