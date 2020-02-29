@@ -164,9 +164,9 @@ TEST_CASE_TEMPLATE("Parsing a positional argument yields its requested type", T,
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "3.14"});
+        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "1.125"});
 
-        CHECK(parsed.get_value<T>("pos") == T(3.14));
+        CHECK(parsed.get_value<T>("pos") == T(1.125));
     }
     else
     {
@@ -189,9 +189,9 @@ TEST_CASE_TEMPLATE("Parsing an optional argument yields its requested type", T, 
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "3.14"});
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "1.125"});
 
-        CHECK(parsed.get_value<T>("o") == T(3.14));
+        CHECK(parsed.get_value<T>("o") == T(1.125));
     }
     else
     {
