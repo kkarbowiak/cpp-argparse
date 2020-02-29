@@ -809,7 +809,18 @@ namespace argparse
                                                     }
                                                     case '+':
                                                     {
-                                                        throw 0;
+                                                        if (i == args.end())
+                                                        {
+                                                            throw 0;
+                                                        }
+                                                        else
+                                                        {
+                                                            std::vector<std::string> values;
+                                                            values.push_back(*i);
+                                                            i = args.erase(i);
+                                                            m_value = values;
+                                                        }
+                                                        break;
                                                     }
                                                 }
                                             }
