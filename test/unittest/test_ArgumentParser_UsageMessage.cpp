@@ -187,11 +187,21 @@ TEST_CASE("Usage message contains...")
             }
         }
 
-        SUBCASE("...choices repeated N times for argument with choices set and nargs set as number")
+        SUBCASE("...choices repeated N times for argument with choices set and nargs set as number...")
         {
-            parser.add_argument("p1").choices({"foo"s, "bar"s}).nargs(1);
+            SUBCASE("...1")
+            {
+                parser.add_argument("p1").choices({"foo"s, "bar"s}).nargs(1);
 
-            CHECK(parser.format_usage() == "usage: prog {\"foo\",\"bar\"}"s);
+                CHECK(parser.format_usage() == "usage: prog {\"foo\",\"bar\"}"s);
+            }
+
+            SUBCASE("...2")
+            {
+                parser.add_argument("p1").choices({"foo"s, "bar"s}).nargs(2);
+
+                CHECK(parser.format_usage() == "usage: prog {\"foo\",\"bar\"} {\"foo\",\"bar\"}"s);
+            }
         }
     }
 
