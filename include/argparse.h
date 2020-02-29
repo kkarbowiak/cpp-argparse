@@ -811,7 +811,7 @@ namespace argparse
                                                     {
                                                         if (i == args.end())
                                                         {
-                                                            throw 0;
+                                                            throw parsing_error("argument " + get_name() + ": expected at least one argument");
                                                         }
                                                         else
                                                         {

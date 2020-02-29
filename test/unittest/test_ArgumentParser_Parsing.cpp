@@ -860,7 +860,7 @@ TEST_CASE("Parsing an optional argument with nargs set...")
         {
             parser.add_argument("-o").nargs('+');
 
-            CHECK_THROWS(parser.parse_args(2, cstr_arr{"prog", "-o"}));
+            CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o: expected at least one argument", argparse::parsing_error);
         }
 
         SUBCASE("...consumes single argument and yields it as a list")
