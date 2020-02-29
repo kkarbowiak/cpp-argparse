@@ -816,8 +816,11 @@ namespace argparse
                                                         else
                                                         {
                                                             std::vector<std::string> values;
-                                                            values.push_back(*i);
-                                                            i = args.erase(i);
+                                                            while (i != args.end())
+                                                            {
+                                                                values.push_back(*i);
+                                                                i = args.erase(i);
+                                                            }
                                                             m_value = values;
                                                         }
                                                         break;

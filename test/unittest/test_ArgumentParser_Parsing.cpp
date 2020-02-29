@@ -871,6 +871,15 @@ TEST_CASE("Parsing an optional argument with nargs set...")
 
             CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>{"foo"});
         }
+
+        SUBCASE("...consumes all available arguments and yields them as a list")
+        {
+            parser.add_argument("-o").nargs('+');
+
+            auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"});
+
+            CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>{"foo", "bar", "baz"});
+        }
     }
 }
 
