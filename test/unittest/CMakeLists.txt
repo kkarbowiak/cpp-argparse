@@ -27,3 +27,6 @@ target_compile_options(unittest PRIVATE
                                /W4>)
 
 add_test(NAME unittest COMMAND unittest)
+add_custom_target(run_unit_test ALL
+    COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+    DEPENDS unittest)
