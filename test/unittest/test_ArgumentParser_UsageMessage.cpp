@@ -186,6 +186,13 @@ TEST_CASE("Usage message contains...")
                 CHECK(parser.format_usage() == "usage: prog p1 p1 p1"s);
             }
         }
+
+        SUBCASE("...choices repeated N times for argument with choices set and nargs set as number")
+        {
+            parser.add_argument("p1").choices({"foo"s, "bar"s}).nargs(1);
+
+            CHECK(parser.format_usage() == "usage: prog {\"foo\",\"bar\"}"s);
+        }
     }
 
     SUBCASE("...for optional argument...")

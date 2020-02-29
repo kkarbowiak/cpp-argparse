@@ -269,7 +269,17 @@ namespace argparse
                         {
                             for (auto n = 0u; n < std::get<unsigned int>(*arg->get_options().nargs); n++)
                             {
-                                positionals += " " + arg->get_metavar_name();
+                                positionals += " ";
+                                if (arg->get_options().choices.empty())
+                                {
+                                    positionals += arg->get_metavar_name();
+                                }
+                                else
+                                {
+                                    positionals += "{";
+                                    positionals += arg->get_options().join_choices(",");
+                                    positionals += "}";
+                                }
                             }
                         }
                         else
