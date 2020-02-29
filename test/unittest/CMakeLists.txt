@@ -28,5 +28,5 @@ target_compile_options(unittest PRIVATE
 
 add_test(NAME unittest COMMAND unittest)
 add_custom_target(run_unit_test ALL
-    COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+    COMMAND ${CMAKE_CTEST_COMMAND} -C debug --output-on-failure
     DEPENDS unittest)
