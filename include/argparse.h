@@ -286,7 +286,17 @@ namespace argparse
                             }
                             else
                             {
-                                positionals += " [" + arg->get_metavar_name() + "]";
+                                positionals += " ";
+                                if (arg->get_options().choices.empty())
+                                {
+                                    positionals += "[" + arg->get_metavar_name() + "]";
+                                }
+                                else
+                                {
+                                    positionals += "[{";
+                                    positionals += arg->get_options().join_choices(",");
+                                    positionals += "}]";
+                                }
                             }
                         }
                         else
