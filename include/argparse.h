@@ -287,15 +287,23 @@ namespace argparse
                             else
                             {
                                 positionals += " ";
-                                if (arg->get_options().choices.empty())
+                                switch (std::get<char>(*arg->get_options().nargs))
                                 {
-                                    positionals += "[" + arg->get_metavar_name() + "]";
-                                }
-                                else
-                                {
-                                    positionals += "[{";
-                                    positionals += arg->get_options().join_choices(",");
-                                    positionals += "}]";
+                                    case '?':
+                                        if (arg->get_options().choices.empty())
+                                        {
+                                            positionals += "[" + arg->get_metavar_name() + "]";
+                                        }
+                                        else
+                                        {
+                                            positionals += "[{";
+                                            positionals += arg->get_options().join_choices(",");
+                                            positionals += "}]";
+                                        }
+                                        break;
+                                    case '*':
+                                        positionals += "[" + arg->get_metavar_name() + " [" + arg->get_metavar_name() + " ...]]";
+                                        break;
                                 }
                             }
                         }
