@@ -302,7 +302,14 @@ namespace argparse
                                         }
                                         break;
                                     case '*':
-                                        positionals += "[" + arg->get_metavar_name() + " [" + arg->get_metavar_name() + " ...]]";
+                                        if (arg->get_options().choices.empty())
+                                        {
+                                            positionals += "[" + arg->get_metavar_name() + " [" + arg->get_metavar_name() + " ...]]";
+                                        }
+                                        else
+                                        {
+                                            positionals += "[{" + arg->get_options().join_choices(",") + "} [{" + arg->get_options().join_choices(",") + "} ...]]";
+                                        }
                                         break;
                                 }
                             }
