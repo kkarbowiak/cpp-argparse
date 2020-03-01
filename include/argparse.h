@@ -311,6 +311,9 @@ namespace argparse
                                             positionals += "[{" + arg->get_options().join_choices(",") + "} [{" + arg->get_options().join_choices(",") + "} ...]]";
                                         }
                                         break;
+                                    case '+':
+                                        positionals += arg->get_metavar_name() + " [" + arg->get_metavar_name() + " ...]";
+                                        break;
                                 }
                             }
                         }

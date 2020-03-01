@@ -238,6 +238,13 @@ TEST_CASE("Usage message contains...")
 
             CHECK(parser.format_usage() == "usage: prog [{\"foo\",\"bar\"} [{\"foo\",\"bar\"} ...]]"s);
         }
+
+        SUBCASE("...its name followed by its name and ellipsis in brackets for argument with nargs set as +")
+        {
+            parser.add_argument("p1").nargs('+');
+
+            CHECK(parser.format_usage() == "usage: prog p1 [p1 ...]"s);
+        }
     }
 
     SUBCASE("...for optional argument...")
