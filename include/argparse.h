@@ -532,9 +532,9 @@ namespace argparse
             {
                 Parameters result;
 
-                for (auto const & a : m_arguments)
+                for (auto const & arg : m_arguments)
                 {
-                    result[a->get_dest_name()] = a->get_value();
+                    result[arg->get_dest_name()] = arg->get_value();
                 }
 
                 return result;
