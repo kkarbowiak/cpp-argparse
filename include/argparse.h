@@ -792,11 +792,11 @@ namespace argparse
 
                     auto parse_args(tokens args) -> tokens override
                     {
-                        for (auto i = args.begin(); i != args.end(); ++i)
+                        for (auto it = args.begin(); it != args.end(); ++it)
                         {
-                            if (*i == m_options.name1 || *i == m_options.name2)
+                            if (*it == m_options.name1 || *it == m_options.name2)
                             {
-                                i = args.erase(i);
+                                it = args.erase(it);
                                 switch (m_options.action)
                                 {
                                     case store:
@@ -807,12 +807,12 @@ namespace argparse
                                                 std::vector<std::string> values;
                                                 for (auto j = 0u; j < std::get<unsigned int>(*m_options.nargs); ++j)
                                                 {
-                                                    if (i == args.end())
+                                                    if (it == args.end())
                                                     {
                                                         throw parsing_error("argument " + get_name() + ": expected " + std::to_string(std::get<unsigned int>(*m_options.nargs)) + " argument" + (std::get<unsigned int>(*m_options.nargs) > 1 ? "s" : ""));
                                                     }
                                                     std::any value;
-                                                    m_options.from_string(*i, value);
+                                                    m_options.from_string(*it, value);
                                                     if (!m_options.choices.empty())
                                                     {
                                                         if (!std::any_of(
@@ -828,7 +828,7 @@ namespace argparse
                                                             throw parsing_error(message);
                                                         }
                                                     }
-                                                    i = args.erase(i);
+                                                    it = args.erase(it);
                                                     values.push_back(std::any_cast<std::string>(value));
                                                 }
 
@@ -840,41 +840,41 @@ namespace argparse
                                                 {
                                                     case '?':
                                                     {
-                                                        if (i == args.end())
+                                                        if (it == args.end())
                                                         {
                                                             m_value = m_options.const_;
                                                         }
                                                         else
                                                         {
-                                                            m_options.from_string(*i, m_value);
-                                                            i = args.erase(i);
+                                                            m_options.from_string(*it, m_value);
+                                                            it = args.erase(it);
                                                         }
                                                         break;
                                                     }
                                                     case '*':
                                                     {
                                                         std::vector<std::string> values;
-                                                        while (i != args.end())
+                                                        while (it != args.end())
                                                         {
-                                                            values.push_back(*i);
-                                                            i = args.erase(i);
+                                                            values.push_back(*it);
+                                                            it = args.erase(it);
                                                         }
                                                         m_value = values;
                                                         break;
                                                     }
                                                     case '+':
                                                     {
-                                                        if (i == args.end())
+                                                        if (it == args.end())
                                                         {
                                                             throw parsing_error("argument " + get_name() + ": expected at least one argument");
                                                         }
                                                         else
                                                         {
                                                             std::vector<std::string> values;
-                                                            while (i != args.end())
+                                                            while (it != args.end())
                                                             {
-                                                                values.push_back(*i);
-                                                                i = args.erase(i);
+                                                                values.push_back(*it);
+                                                                it = args.erase(it);
                                                             }
                                                             m_value = values;
                                                         }
@@ -885,12 +885,12 @@ namespace argparse
                                         }
                                         else
                                         {
-                                            if (i == args.end())
+                                            if (it == args.end())
                                             {
                                                 throw parsing_error("argument " + get_name() + ": expected one argument");
                                             }
                                             std::any value;
-                                            m_options.from_string(*i, m_value);
+                                            m_options.from_string(*it, m_value);
                                             if (!m_options.choices.empty())
                                             {
                                                 if (!std::any_of(
@@ -906,7 +906,7 @@ namespace argparse
                                                     throw parsing_error(message);
                                                 }
                                             }
-                                            (void) args.erase(i);
+                                            (void) args.erase(it);
                                         }
                                         break;
                                     case store_true:
