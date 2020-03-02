@@ -201,6 +201,13 @@ TEST_CASE("Help message contains...")
 
                 CHECK(parser.format_help() == "usage: prog {\"foo\",\"bar\"} {\"foo\",\"bar\"}\n\npositional arguments:\n  {\"foo\",\"bar\"}"s);
             }
+
+            SUBCASE("...3")
+            {
+                parser.add_argument("p1").choices({"foo"s, "bar"s}).nargs(3);
+
+                CHECK(parser.format_help() == "usage: prog {\"foo\",\"bar\"} {\"foo\",\"bar\"} {\"foo\",\"bar\"}\n\npositional arguments:\n  {\"foo\",\"bar\"}"s);
+            }
         }
     }
 
