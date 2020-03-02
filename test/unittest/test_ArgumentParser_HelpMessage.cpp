@@ -137,6 +137,13 @@ TEST_CASE("Help message contains...")
 
             CHECK(parser.format_help() == "usage: prog {\"foo\",\"bar\"}\n\npositional arguments:\n  {\"foo\",\"bar\"}"s);
         }
+
+        SUBCASE("...name for argument with nargs set as number")
+        {
+            parser.add_argument("p1").nargs(1);
+
+            CHECK(parser.format_help() == "usage: prog p1\n\npositional arguments:\n  p1"s);
+        }
     }
 
     SUBCASE("...for optional argument...")
