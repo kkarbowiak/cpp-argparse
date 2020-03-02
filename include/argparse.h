@@ -456,19 +456,19 @@ namespace argparse
         private:
             auto parse_args(tokens args) -> Parameters
             {
-                for (auto & a : m_arguments)
+                for (auto & arg : m_arguments)
                 {
-                    if (!a->is_positional())
+                    if (!arg->is_positional())
                     {
-                        args = a->parse_args(args);
+                        args = arg->parse_args(args);
                     }
                 }
 
-                for (auto & a : m_arguments)
+                for (auto & arg : m_arguments)
                 {
-                    if (a->is_positional())
+                    if (arg->is_positional())
                     {
-                        args = a->parse_args(args);
+                        args = arg->parse_args(args);
                     }
                 }
 
