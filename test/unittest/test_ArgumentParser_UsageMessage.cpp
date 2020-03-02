@@ -342,5 +342,12 @@ TEST_CASE("Usage message contains...")
                 CHECK(parser.format_usage() == "usage: prog [-o O O O]"s);
             }
         }
+
+        SUBCASE("...its name and metavar repeated N times for argument with metavar set and nargs set as number")
+        {
+            parser.add_argument("-o").metavar("METAVARO").nargs(1);
+
+            CHECK(parser.format_usage() == "usage: prog [-o METAVARO]"s);
+        }
     }
 }
