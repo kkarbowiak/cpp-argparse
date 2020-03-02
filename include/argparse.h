@@ -1092,7 +1092,7 @@ namespace argparse
                         return *this;
                     }
 
-                    auto required(bool required) -> ArgumentBuilder&
+                    auto required(bool required) -> ArgumentBuilder &
                     {
                         if (is_positional())
                         {
@@ -1102,25 +1102,25 @@ namespace argparse
                         return *this;
                     }
 
-                    auto choices(std::vector<std::any> const & choices) -> ArgumentBuilder&
+                    auto choices(std::vector<std::any> const & choices) -> ArgumentBuilder &
                     {
                         m_options.choices = choices;
                         return *this;
                     }
 
-                    auto nargs(unsigned int nargs) -> ArgumentBuilder&
+                    auto nargs(unsigned int nargs) -> ArgumentBuilder &
                     {
                         m_options.nargs = nargs;
                         return *this;
                     }
 
-                    auto nargs(int nargs) -> ArgumentBuilder&
+                    auto nargs(int nargs) -> ArgumentBuilder &
                     {
                         m_options.nargs = static_cast<unsigned int>(nargs);
                         return *this;
                     }
 
-                    auto nargs(char nargs) -> ArgumentBuilder&
+                    auto nargs(char nargs) -> ArgumentBuilder &
                     {
                         m_options.nargs = nargs;
                         return *this;
