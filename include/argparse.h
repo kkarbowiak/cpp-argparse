@@ -491,13 +491,13 @@ namespace argparse
             {
                 std::string result;
 
-                for (auto i = args.begin(); i != args.end(); ++i)
+                for (auto it = args.begin(); it != args.end(); ++it)
                 {
-                    if (i != args.begin())
+                    if (it != args.begin())
                     {
                         result += " ";
                     }
-                    result += *i;
+                    result += *it;
                 }
 
                 return result;
