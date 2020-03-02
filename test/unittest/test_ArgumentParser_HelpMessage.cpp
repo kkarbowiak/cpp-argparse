@@ -185,6 +185,13 @@ TEST_CASE("Help message contains...")
                 CHECK(parser.format_help() == "usage: prog metap1 metap1 metap1\n\npositional arguments:\n  metap1"s);
             }
         }
+
+        SUBCASE("...choices for argument with choices set and nargs set as number")
+        {
+            parser.add_argument("p1").choices({"foo"s, "bar"s}).nargs(1);
+
+            CHECK(parser.format_help() == "usage: prog {\"foo\",\"bar\"}\n\npositional arguments:\n  {\"foo\",\"bar\"}"s);
+        }
     }
 
     SUBCASE("...for optional argument...")
