@@ -432,5 +432,12 @@ TEST_CASE("Usage message contains...")
 
             CHECK(parser.format_usage() == "usage: prog [-o [{\"foo\",\"bar\"} [{\"foo\",\"bar\"} ...]]]"s);
         }
+
+        SUBCASE("...its name followed by automatic metavar and automatic metavar and ellipsis in brackets for arguments with nargs set as +")
+        {
+            parser.add_argument("-o").nargs('+');
+
+            CHECK(parser.format_usage() == "usage: prog [-o O [O ...]]"s);
+        }
     }
 }

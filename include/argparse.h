@@ -408,6 +408,13 @@ namespace argparse
                                         }
                                         optionals += " ...]]";
                                         break;
+                                    case '+':
+                                        optionals += " ";
+                                        optionals += arg->get_metavar_name();
+                                        optionals += " [";
+                                        optionals += arg->get_metavar_name();
+                                        optionals += " ...]";
+                                        break;
                                 }
                                 optionals += "]";
                             }
