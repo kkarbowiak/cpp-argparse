@@ -484,14 +484,7 @@ namespace argparse
 
             auto get_tokens(int argc, char const * const argv[]) const -> tokens
             {
-                tokens result;
-
-                for (int i = 1; i < argc; ++i)
-                {
-                    result.push_back(argv[i]);
-                }
-
-                return result;
+                return tokens(&argv[1], &argv[argc]);
             }
 
             auto get_string(tokens args) const -> std::string
