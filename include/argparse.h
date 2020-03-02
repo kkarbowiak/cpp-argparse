@@ -343,23 +343,34 @@ namespace argparse
                     {
                         if (arg->get_options().nargs)
                         {
-                            optionals += " [";
-                            optionals += arg->get_name();
-                            for (auto n = 0u; n < std::get<unsigned int>(*arg->get_options().nargs); n++)
+                            if (std::holds_alternative<unsigned int>(*arg->get_options().nargs))
                             {
-                                optionals += " ";
-                                if (arg->get_options().choices.empty())
+                                optionals += " [";
+                                optionals += arg->get_name();
+                                for (auto n = 0u; n < std::get<unsigned int>(*arg->get_options().nargs); n++)
                                 {
-                                    optionals += arg->get_metavar_name();
+                                    optionals += " ";
+                                    if (arg->get_options().choices.empty())
+                                    {
+                                        optionals += arg->get_metavar_name();
+                                    }
+                                    else
+                                    {
+                                        optionals += "{";
+                                        optionals += arg->get_options().join_choices(",");
+                                        optionals += "}";
+                                    }
                                 }
-                                else
-                                {
-                                    optionals += "{";
-                                    optionals += arg->get_options().join_choices(",");
-                                    optionals += "}";
-                                }
+                                optionals += "]";
                             }
-                            optionals += "]";
+                            else
+                            {
+                                optionals += " [";
+                                optionals += arg->get_name();
+                                optionals += " [";
+                                optionals += arg->get_metavar_name();
+                                optionals += "]]";
+                            }
                         }
                         else
                         {
