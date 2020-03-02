@@ -334,6 +334,13 @@ TEST_CASE("Usage message contains...")
 
                 CHECK(parser.format_usage() == "usage: prog [-o O O]"s);
             }
+
+            SUBCASE("...2")
+            {
+                parser.add_argument("-o").nargs(3);
+
+                CHECK(parser.format_usage() == "usage: prog [-o O O O]"s);
+            }
         }
     }
 }
