@@ -404,5 +404,12 @@ TEST_CASE("Usage message contains...")
 
             CHECK(parser.format_usage() == "usage: prog [-o [METAVARO]]"s);
         }
+
+        SUBCASE("...is name and choices in brackets for argument with choices set and nargs set as ?")
+        {
+            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('?');
+
+            CHECK(parser.format_usage() == "usage: prog [-o [{\"foo\",\"bar\"}]]"s);
+        }
     }
 }
