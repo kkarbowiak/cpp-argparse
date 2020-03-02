@@ -366,5 +366,12 @@ TEST_CASE("Usage message contains...")
                 CHECK(parser.format_usage() == "usage: prog [-o METAVARO METAVARO METAVARO]"s);
             }
         }
+
+        SUBCASE("...its name and choices repeated N times for argument with choices set and nargs set as number")
+        {
+            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(1);
+
+            CHECK(parser.format_usage() == "usage: prog [-o {\"foo\",\"bar\"}]"s);
+        }
     }
 }
