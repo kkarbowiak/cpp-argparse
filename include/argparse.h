@@ -507,17 +507,17 @@ namespace argparse
             {
                 optstring error_message;
 
-                for (auto const & a : m_arguments)
+                for (auto const & arg : m_arguments)
                 {
-                    if (a->is_required() && !a->has_value())
+                    if (arg->is_required() && !arg->has_value())
                     {
                         if (!error_message)
                         {
-                            error_message = "the following arguments are required: " + a->get_name();
+                            error_message = "the following arguments are required: " + arg->get_name();
                         }
                         else
                         {
-                            *error_message += " " + a->get_name();
+                            *error_message += " " + arg->get_name();
                         }
                     }
                 }
