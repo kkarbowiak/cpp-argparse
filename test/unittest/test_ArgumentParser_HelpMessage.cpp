@@ -405,11 +405,21 @@ TEST_CASE("Help message contains...")
             }
         }
 
-        SUBCASE("...name and metavar repeated N times for argument with metavar and nargs set as number")
+        SUBCASE("...name and metavar repeated N times for argument with metavar and nargs set as number...")
         {
-            parser.add_argument("-o").metavar("METAVARO").nargs(1);
+            SUBCASE("...1")
+            {
+                parser.add_argument("-o").metavar("METAVARO").nargs(1);
 
-            CHECK(parser.format_help() == "usage: prog [-o METAVARO]\n\noptional arguments:\n  -o METAVARO"s);
+                CHECK(parser.format_help() == "usage: prog [-o METAVARO]\n\noptional arguments:\n  -o METAVARO"s);
+            }
+
+            SUBCASE("...2")
+            {
+                parser.add_argument("-o").metavar("METAVARO").nargs(2);
+
+                CHECK(parser.format_help() == "usage: prog [-o METAVARO METAVARO]\n\noptional arguments:\n  -o METAVARO METAVARO"s);
+            }
         }
     }
 }
