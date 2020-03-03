@@ -420,6 +420,13 @@ TEST_CASE("Help message contains...")
 
                 CHECK(parser.format_help() == "usage: prog [-o METAVARO METAVARO]\n\noptional arguments:\n  -o METAVARO METAVARO"s);
             }
+
+            SUBCASE("...3")
+            {
+                parser.add_argument("-o").metavar("METAVARO").nargs(3);
+
+                CHECK(parser.format_help() == "usage: prog [-o METAVARO METAVARO METAVARO]\n\noptional arguments:\n  -o METAVARO METAVARO METAVARO"s);
+            }
         }
     }
 }
