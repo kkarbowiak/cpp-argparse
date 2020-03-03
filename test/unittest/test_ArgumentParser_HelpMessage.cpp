@@ -429,11 +429,21 @@ TEST_CASE("Help message contains...")
             }
         }
 
-        SUBCASE("...name and choices repeated N times for argument with choices set and nargs set as number")
+        SUBCASE("...name and choices repeated N times for argument with choices set and nargs set as number...")
         {
-            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(1);
+            SUBCASE("...1")
+            {
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(1);
 
-            CHECK(parser.format_help() == "usage: prog [-o {\"foo\",\"bar\"}]\n\noptional arguments:\n  -o {\"foo\",\"bar\"}"s);
+                CHECK(parser.format_help() == "usage: prog [-o {\"foo\",\"bar\"}]\n\noptional arguments:\n  -o {\"foo\",\"bar\"}"s);
+            }
+
+            SUBCASE("...2")
+            {
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(2);
+
+                CHECK(parser.format_help() == "usage: prog [-o {\"foo\",\"bar\"} {\"foo\",\"bar\"}]\n\noptional arguments:\n  -o {\"foo\",\"bar\"} {\"foo\",\"bar\"}"s);
+            }
         }
     }
 }
