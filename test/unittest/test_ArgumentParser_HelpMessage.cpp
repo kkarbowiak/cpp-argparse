@@ -428,5 +428,12 @@ TEST_CASE("Help message contains...")
                 CHECK(parser.format_help() == "usage: prog [-o METAVARO METAVARO METAVARO]\n\noptional arguments:\n  -o METAVARO METAVARO METAVARO"s);
             }
         }
+
+        SUBCASE("...name and choices repeated N times for argument with choices set and nargs set as number")
+        {
+            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(1);
+
+            CHECK(parser.format_help() == "usage: prog [-o {\"foo\",\"bar\"}]\n\noptional arguments:\n  -o {\"foo\",\"bar\"}"s);
+        }
     }
 }
