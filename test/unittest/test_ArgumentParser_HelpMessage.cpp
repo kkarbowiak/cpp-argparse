@@ -466,5 +466,12 @@ TEST_CASE("Help message contains...")
 
             CHECK(parser.format_help() == "usage: prog [-o [METAVARO]]\n\noptional arguments:\n  -o [METAVARO]"s);
         }
+
+        SUBCASE("...name followed by choices in brackets for argument with choices set and nargs set as ?")
+        {
+            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('?');
+
+            CHECK(parser.format_help() == "usage: prog [-o [{\"foo\",\"bar\"}]]\n\noptional arguments:\n  -o [{\"foo\",\"bar\"}]"s);
+        }
     }
 }
