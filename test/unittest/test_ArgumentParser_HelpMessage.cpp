@@ -381,11 +381,21 @@ TEST_CASE("Help message contains...")
             CHECK(parser.format_help() == "usage: prog [-o {\"foo\",\"bar\"}]\n\noptional arguments:\n  -o {\"foo\",\"bar\"}"s);
         }
 
-        SUBCASE("...name and automatic metavar repeated N times for argument with nargs set as number")
+        SUBCASE("...name and automatic metavar repeated N times for argument with nargs set as number...")
         {
-            parser.add_argument("-o").nargs(1);
+            SUBCASE("...1")
+            {
+                parser.add_argument("-o").nargs(1);
 
-            CHECK(parser.format_help() == "usage: prog [-o O]\n\noptional arguments:\n  -o O"s);
+                CHECK(parser.format_help() == "usage: prog [-o O]\n\noptional arguments:\n  -o O"s);
+            }
+
+            SUBCASE("...2")
+            {
+                parser.add_argument("-o").nargs(2);
+
+                CHECK(parser.format_help() == "usage: prog [-o O O]\n\noptional arguments:\n  -o O O"s);
+            }
         }
     }
 }
