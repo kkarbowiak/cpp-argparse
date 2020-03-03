@@ -396,6 +396,13 @@ TEST_CASE("Help message contains...")
 
                 CHECK(parser.format_help() == "usage: prog [-o O O]\n\noptional arguments:\n  -o O O"s);
             }
+
+            SUBCASE("...3")
+            {
+                parser.add_argument("-o").nargs(3);
+
+                CHECK(parser.format_help() == "usage: prog [-o O O O]\n\noptional arguments:\n  -o O O O"s);
+            }
         }
     }
 }
