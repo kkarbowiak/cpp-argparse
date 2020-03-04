@@ -494,5 +494,12 @@ TEST_CASE("Help message contains...")
 
             CHECK(parser.format_help() == "usage: prog [-o [{\"foo\",\"bar\"} [{\"foo\",\"bar\"} ...]]]\n\noptional arguments:\n  -o [{\"foo\",\"bar\"} [{\"foo\",\"bar\"} ...]]"s);
         }
+
+        SUBCASE("...name followed by automatic metavar followed by automatic metavar and ellipsis in brackets for argument with nargs set as +")
+        {
+            parser.add_argument("-o").nargs('+');
+
+            CHECK(parser.format_help() == "usage: prog [-o O [O ...]]\n\noptional arguments:\n  -o O [O ...]"s);
+        }
     }
 }
