@@ -563,9 +563,27 @@ namespace argparse
                                             break;
                                         case '+':
                                             optionals += " ";
-                                            optionals += arg->get_metavar_name();
+                                            if (arg->get_options().choices.empty())
+                                            {
+                                                optionals += arg->get_metavar_name();
+                                            }
+                                            else
+                                            {
+                                                optionals += "{";
+                                                optionals += arg->get_options().join_choices(",");
+                                                optionals += "}";
+                                            }
                                             optionals += " [";
-                                            optionals += arg->get_metavar_name();
+                                            if (arg->get_options().choices.empty())
+                                            {
+                                                optionals += arg->get_metavar_name();
+                                            }
+                                            else
+                                            {
+                                                optionals += "{";
+                                                optionals += arg->get_options().join_choices(",");
+                                                optionals += "}";
+                                            }
                                             optionals += " ...]";
                                             break;
                                     }
