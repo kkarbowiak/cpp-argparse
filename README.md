@@ -127,7 +127,7 @@ The below lists features of the `argparse` module that this implementation suppo
 * The `add_argument()` method
    * [x] name or flags
    * [x] `action` (only `store`, `store_true`, `store_false`, `store_const`, and `help`)
-   * [ ] `nargs`
+   * [x] `nargs` (except for `REMAINDER`)
    * [x] `const` (ranamed to `const_` due to keyword clash)
    * [x] `default` (renamed to `default_` due to keyword clash; only for optional arguments and with no string parsing)
    * [x] `type` (built-in (except for `bool`) and user-defined types (via overloading `from_string` function))
