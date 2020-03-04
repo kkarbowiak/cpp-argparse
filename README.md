@@ -1,6 +1,7 @@
 # C++ argparse
 
 [![Build Status](https://travis-ci.org/kkarbowiak/cpp-argparse.svg?branch=master)](https://travis-ci.org/kkarbowiak/cpp-argparse)
+[![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/kkarbowiak/cpp-argparse?sort=semver)](https://github.com/kkarbowiak/cpp-argparse/releases)
 
 ## Overview
 
