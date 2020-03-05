@@ -1056,20 +1056,17 @@ namespace argparse
                                                     }
                                                     case '+':
                                                     {
-                                                        if (it == args.end() || it->front() == '-')
+                                                        std::vector<std::string> values;
+                                                        while (it != args.end() && it->front() != '-')
+                                                        {
+                                                            values.push_back(*it);
+                                                            it = args.erase(it);
+                                                        }
+                                                        if (values.empty())
                                                         {
                                                             throw parsing_error("argument " + get_name() + ": expected at least one argument");
                                                         }
-                                                        else
-                                                        {
-                                                            std::vector<std::string> values;
-                                                            while (it != args.end())
-                                                            {
-                                                                values.push_back(*it);
-                                                                it = args.erase(it);
-                                                            }
-                                                            m_value = values;
-                                                        }
+                                                        m_value = values;
                                                         break;
                                                     }
                                                 }
