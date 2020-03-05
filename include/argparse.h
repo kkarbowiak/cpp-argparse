@@ -1032,7 +1032,7 @@ namespace argparse
                                                 {
                                                     case '?':
                                                     {
-                                                        if (it == args.end())
+                                                        if (it == args.end() || it->front() == '-')
                                                         {
                                                             m_value = m_options.const_;
                                                         }
