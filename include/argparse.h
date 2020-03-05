@@ -1046,7 +1046,7 @@ namespace argparse
                                                     case '*':
                                                     {
                                                         std::vector<std::string> values;
-                                                        while (it != args.end())
+                                                        while (it != args.end() && it->front() != '-')
                                                         {
                                                             values.push_back(*it);
                                                             it = args.erase(it);

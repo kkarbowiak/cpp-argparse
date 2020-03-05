@@ -958,4 +958,12 @@ TEST_CASE("An optional argument does not consume another optional argument...")
 
         CHECK_THROWS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}));
     }
+
+    SUBCASE("...for argument with nargs set as *")
+    {
+        parser.add_argument("-o").nargs('*');
+        parser.add_argument("-p");
+
+        CHECK_THROWS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}));
+    }
 }
