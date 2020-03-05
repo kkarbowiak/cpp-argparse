@@ -1077,7 +1077,7 @@ namespace argparse
                                         }
                                         else
                                         {
-                                            if (it == args.end())
+                                            if (it == args.end() || it->front() == '-')
                                             {
                                                 throw parsing_error("argument " + get_name() + ": expected one argument");
                                             }

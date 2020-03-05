@@ -911,3 +911,13 @@ TEST_CASE("Parsing missing positional argument with nargs set throws an exceptio
         CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: p1 p2 p3", argparse::parsing_error);
     }
 }
+
+TEST_CASE("An optional argument does not consume another optional argument")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
+    parser.add_argument("-o");
+    parser.add_argument("-p");
+
+    CHECK_THROWS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}));
+}
