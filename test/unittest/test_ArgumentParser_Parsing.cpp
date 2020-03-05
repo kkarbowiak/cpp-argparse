@@ -964,7 +964,7 @@ TEST_CASE("An optional argument does not consume another optional argument...")
         parser.add_argument("-o").nargs('*');
         parser.add_argument("-p");
 
-        CHECK_THROWS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}));
+        CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}), "argument -p: expected one argument", argparse::parsing_error);
     }
 
     SUBCASE("...for argument with nargs set as +")
