@@ -939,7 +939,7 @@ TEST_CASE("An optional argument does not consume another optional argument...")
             parser.add_argument("-o").nargs(2);
             parser.add_argument("-p");
 
-            CHECK_THROWS(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "-p"}));
+            CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "-p"}), "argument -o: expected 2 arguments", argparse::parsing_error);
         }
 
         SUBCASE("...3")
