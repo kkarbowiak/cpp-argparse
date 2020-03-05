@@ -924,11 +924,22 @@ TEST_CASE("An optional argument does not consume another optional argument...")
         CHECK_THROWS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}));
     }
 
-    SUBCASE("...for argument with nargs set as number")
+    SUBCASE("...for argument with nargs set as number...")
     {
-        parser.add_argument("-o").nargs(1);
-        parser.add_argument("-p");
+        SUBCASE("...1")
+        {
+            parser.add_argument("-o").nargs(1);
+            parser.add_argument("-p");
 
-        CHECK_THROWS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}));
+            CHECK_THROWS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}));
+        }
+
+        SUBCASE("...2")
+        {
+            parser.add_argument("-o").nargs(2);
+            parser.add_argument("-p");
+
+            CHECK_THROWS(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "-p"}));
+        }
     }
 }
