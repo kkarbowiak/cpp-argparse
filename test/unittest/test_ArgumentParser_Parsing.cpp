@@ -912,12 +912,23 @@ TEST_CASE("Parsing missing positional argument with nargs set throws an exceptio
     }
 }
 
-TEST_CASE("An optional argument does not consume another optional argument")
+TEST_CASE("An optional argument does not consume another optional argument...")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
-    parser.add_argument("-o");
-    parser.add_argument("-p");
+    SUBCASE("...for simple argument")
+    {
+        parser.add_argument("-o");
+        parser.add_argument("-p");
 
-    CHECK_THROWS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}));
+        CHECK_THROWS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}));
+    }
+
+    SUBCASE("...for argument with nargs set as number")
+    {
+        parser.add_argument("-o").nargs(1);
+        parser.add_argument("-p");
+
+        CHECK_THROWS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}));
+    }
 }

@@ -999,7 +999,7 @@ namespace argparse
                                                 std::vector<std::string> values;
                                                 for (auto j = 0u; j < std::get<unsigned int>(*m_options.nargs); ++j)
                                                 {
-                                                    if (it == args.end())
+                                                    if (it == args.end() || it->front() == '-')
                                                     {
                                                         throw parsing_error("argument " + get_name() + ": expected " + std::to_string(std::get<unsigned int>(*m_options.nargs)) + " argument" + (std::get<unsigned int>(*m_options.nargs) > 1 ? "s" : ""));
                                                     }
