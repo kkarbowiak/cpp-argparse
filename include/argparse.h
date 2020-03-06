@@ -292,7 +292,9 @@ namespace argparse
                                     case '?':
                                         if (arg->get_options().choices.empty())
                                         {
-                                            positionals += "[" + arg->get_metavar_name() + "]";
+                                            positionals += "[";
+                                            positionals += arg->get_metavar_name();
+                                            positionals += "]";
                                         }
                                         else
                                         {
@@ -304,21 +306,36 @@ namespace argparse
                                     case '*':
                                         if (arg->get_options().choices.empty())
                                         {
-                                            positionals += "[" + arg->get_metavar_name() + " [" + arg->get_metavar_name() + " ...]]";
+                                            positionals +="[";
+                                            positionals += arg->get_metavar_name();
+                                            positionals += " [";
+                                            positionals += arg->get_metavar_name();
+                                            positionals += " ...]]";
                                         }
                                         else
                                         {
-                                            positionals += "[{" + arg->get_options().join_choices(",") + "} [{" + arg->get_options().join_choices(",") + "} ...]]";
+                                            positionals += "[{";
+                                            positionals += arg->get_options().join_choices(",");
+                                            positionals += "} [{";
+                                            positionals += arg->get_options().join_choices(",");
+                                            positionals += "} ...]]";
                                         }
                                         break;
                                     case '+':
                                         if (arg->get_options().choices.empty())
                                         {
-                                            positionals += arg->get_metavar_name() + " [" + arg->get_metavar_name() + " ...]";
+                                            positionals += arg->get_metavar_name();
+                                            positionals += " [";
+                                            positionals += arg->get_metavar_name();
+                                            positionals += " ...]";
                                         }
                                         else
                                         {
-                                            positionals += "{" + arg->get_options().join_choices(",") + "} [{" + arg->get_options().join_choices(",") + "} ...]";
+                                            positionals += "{";
+                                            positionals += arg->get_options().join_choices(",");
+                                            positionals += "} [{";
+                                            positionals += arg->get_options().join_choices(",");
+                                            positionals += "} ...]";
                                         }
                                         break;
                                 }
