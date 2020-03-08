@@ -261,6 +261,18 @@ namespace argparse
                 std::string optionals;
                 std::string positionals;
 
+                auto const arg_string = [](Argument const & arg)
+                {
+                    if (arg.get_options().choices.empty())
+                    {
+                        return arg.get_metavar_name();
+                    }
+                    else
+                    {
+                        return "{" + arg.get_options().join_choices(",") + "}";
+                    }
+                };
+
                 for (auto const & arg : m_arguments)
                 {
                     if (arg->is_positional())
@@ -272,16 +284,7 @@ namespace argparse
                                 for (auto n = 0u; n < std::get<unsigned int>(*arg->get_options().nargs); n++)
                                 {
                                     positionals += " ";
-                                    if (arg->get_options().choices.empty())
-                                    {
-                                        positionals += arg->get_metavar_name();
-                                    }
-                                    else
-                                    {
-                                        positionals += "{";
-                                        positionals += arg->get_options().join_choices(",");
-                                        positionals += "}";
-                                    }
+                                    positionals += arg_string(*arg);
                                 }
                             }
                             else
@@ -290,53 +293,22 @@ namespace argparse
                                 switch (std::get<char>(*arg->get_options().nargs))
                                 {
                                     case '?':
-                                        if (arg->get_options().choices.empty())
-                                        {
-                                            positionals += "[";
-                                            positionals += arg->get_metavar_name();
-                                            positionals += "]";
-                                        }
-                                        else
-                                        {
-                                            positionals += "[{";
-                                            positionals += arg->get_options().join_choices(",");
-                                            positionals += "}]";
-                                        }
+                                        positionals += "[";
+                                        positionals += arg_string(*arg);
+                                        positionals += "]";
                                         break;
                                     case '*':
-                                        if (arg->get_options().choices.empty())
-                                        {
-                                            positionals +="[";
-                                            positionals += arg->get_metavar_name();
-                                            positionals += " [";
-                                            positionals += arg->get_metavar_name();
-                                            positionals += " ...]]";
-                                        }
-                                        else
-                                        {
-                                            positionals += "[{";
-                                            positionals += arg->get_options().join_choices(",");
-                                            positionals += "} [{";
-                                            positionals += arg->get_options().join_choices(",");
-                                            positionals += "} ...]]";
-                                        }
+                                        positionals += "[";
+                                        positionals += arg_string(*arg);
+                                        positionals += " [";
+                                        positionals += arg_string(*arg);
+                                        positionals += " ...]]";
                                         break;
                                     case '+':
-                                        if (arg->get_options().choices.empty())
-                                        {
-                                            positionals += arg->get_metavar_name();
-                                            positionals += " [";
-                                            positionals += arg->get_metavar_name();
-                                            positionals += " ...]";
-                                        }
-                                        else
-                                        {
-                                            positionals += "{";
-                                            positionals += arg->get_options().join_choices(",");
-                                            positionals += "} [{";
-                                            positionals += arg->get_options().join_choices(",");
-                                            positionals += "} ...]";
-                                        }
+                                        positionals += arg_string(*arg);
+                                        positionals += " [";
+                                        positionals += arg_string(*arg);
+                                        positionals += " ...]";
                                         break;
                                 }
                             }
@@ -344,16 +316,7 @@ namespace argparse
                         else
                         {
                             positionals += " ";
-                            if (arg->get_options().choices.empty())
-                            {
-                                positionals += arg->get_metavar_name();
-                            }
-                            else
-                            {
-                                positionals += "{";
-                                positionals += arg->get_options().join_choices(",");
-                                positionals += "}";
-                            }
+                            positionals += arg_string(*arg);
                         }
                     }
                     else
@@ -367,16 +330,7 @@ namespace argparse
                                 for (auto n = 0u; n < std::get<unsigned int>(*arg->get_options().nargs); n++)
                                 {
                                     optionals += " ";
-                                    if (arg->get_options().choices.empty())
-                                    {
-                                        optionals += arg->get_metavar_name();
-                                    }
-                                    else
-                                    {
-                                        optionals += "{";
-                                        optionals += arg->get_options().join_choices(",");
-                                        optionals += "}";
-                                    }
+                                    optionals += arg_string(*arg);
                                 }
                                 optionals += "]";
                             }
@@ -388,66 +342,21 @@ namespace argparse
                                 {
                                     case '?':
                                         optionals += " [";
-                                        if (arg->get_options().choices.empty())
-                                        {
-                                            optionals += arg->get_metavar_name();
-                                        }
-                                        else
-                                        {
-                                            optionals += "{";
-                                            optionals += arg->get_options().join_choices(",");
-                                            optionals += "}";
-                                        }
+                                        optionals += arg_string(*arg);
                                         optionals += "]";
                                         break;
                                     case '*':
                                         optionals += " [";
-                                        if (arg->get_options().choices.empty())
-                                        {
-                                            optionals += arg->get_metavar_name();
-                                        }
-                                        else
-                                        {
-                                            optionals += "{";
-                                            optionals += arg->get_options().join_choices(",");
-                                            optionals += "}";
-                                        }
+                                        optionals += arg_string(*arg);
                                         optionals += " [";
-                                        if (arg->get_options().choices.empty())
-                                        {
-                                            optionals += arg->get_metavar_name();
-                                        }
-                                        else
-                                        {
-                                            optionals += "{";
-                                            optionals += arg->get_options().join_choices(",");
-                                            optionals += "}";
-                                        }
+                                        optionals += arg_string(*arg);
                                         optionals += " ...]]";
                                         break;
                                     case '+':
                                         optionals += " ";
-                                        if (arg->get_options().choices.empty())
-                                        {
-                                            optionals += arg->get_metavar_name();
-                                        }
-                                        else
-                                        {
-                                            optionals += "{";
-                                            optionals += arg->get_options().join_choices(",");
-                                            optionals += "}";
-                                        }
+                                        optionals += arg_string(*arg);
                                         optionals += " [";
-                                        if (arg->get_options().choices.empty())
-                                        {
-                                            optionals += arg->get_metavar_name();
-                                        }
-                                        else
-                                        {
-                                            optionals += "{";
-                                            optionals += arg->get_options().join_choices(",");
-                                            optionals += "}";
-                                        }
+                                        optionals += arg_string(*arg);
                                         optionals += " ...]";
                                         break;
                                 }
@@ -463,16 +372,7 @@ namespace argparse
                             if (arg->get_options().action == store)
                             {
                                 optionals += " ";
-                                if (arg->get_options().choices.empty())
-                                {
-                                    optionals += arg->get_metavar_name();
-                                }
-                                else
-                                {
-                                    optionals += "{";
-                                    optionals += arg->get_options().join_choices(",");
-                                    optionals += "}";
-                                }
+                                optionals += arg_string(*arg);
                             }
                             optionals += arg->is_required()
                                 ? ""
