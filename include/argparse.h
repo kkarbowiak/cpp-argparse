@@ -263,14 +263,9 @@ namespace argparse
 
                 auto const arg_string = [](Argument const & arg)
                 {
-                    if (arg.get_options().choices.empty())
-                    {
-                        return arg.get_metavar_name();
-                    }
-                    else
-                    {
-                        return "{" + arg.get_options().join_choices(",") + "}";
-                    }
+                    return arg.get_options().choices.empty()
+                        ? arg.get_metavar_name()
+                        : "{" + arg.get_options().join_choices(",") + "}";
                 };
 
                 for (auto const & arg : m_arguments)
@@ -392,14 +387,9 @@ namespace argparse
 
                 auto const arg_string = [](Argument const & arg)
                 {
-                    if (arg.get_options().choices.empty())
-                    {
-                        return arg.get_metavar_name();
-                    }
-                    else
-                    {
-                        return "{" + arg.get_options().join_choices(",") + "}";
-                    }
+                    return arg.get_options().choices.empty()
+                        ? arg.get_metavar_name()
+                        : "{" + arg.get_options().join_choices(",") + "}";
                 };
 
                 for (auto const & arg : m_arguments)
