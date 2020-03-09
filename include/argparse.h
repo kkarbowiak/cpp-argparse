@@ -257,229 +257,14 @@ namespace argparse
 
             auto format_usage() const -> std::string
             {
-                std::string message = "usage: " + *m_prog;
-                std::string optionals;
-                std::string positionals;
-
-                auto const arg_string = [](Argument const & arg)
-                {
-                    return arg.get_options().choices.empty()
-                        ? arg.get_metavar_name()
-                        : "{" + arg.get_options().join_choices(",") + "}";
-                };
-
-                for (auto const & arg : m_arguments)
-                {
-                    if (arg->is_positional())
-                    {
-                        if (arg->get_options().nargs)
-                        {
-                            if (std::holds_alternative<unsigned int>(*arg->get_options().nargs))
-                            {
-                                for (auto n = 0u; n < std::get<unsigned int>(*arg->get_options().nargs); n++)
-                                {
-                                    positionals += " ";
-                                    positionals += arg_string(*arg);
-                                }
-                            }
-                            else
-                            {
-                                positionals += " ";
-                                switch (std::get<char>(*arg->get_options().nargs))
-                                {
-                                    case '?':
-                                        positionals += "[";
-                                        positionals += arg_string(*arg);
-                                        positionals += "]";
-                                        break;
-                                    case '*':
-                                        positionals += "[";
-                                        positionals += arg_string(*arg);
-                                        positionals += " [";
-                                        positionals += arg_string(*arg);
-                                        positionals += " ...]]";
-                                        break;
-                                    case '+':
-                                        positionals += arg_string(*arg);
-                                        positionals += " [";
-                                        positionals += arg_string(*arg);
-                                        positionals += " ...]";
-                                        break;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            positionals += " ";
-                            positionals += arg_string(*arg);
-                        }
-                    }
-                    else
-                    {
-                        if (arg->get_options().nargs)
-                        {
-                            if (std::holds_alternative<unsigned int>(*arg->get_options().nargs))
-                            {
-                                optionals += " [";
-                                optionals += arg->get_name();
-                                for (auto n = 0u; n < std::get<unsigned int>(*arg->get_options().nargs); n++)
-                                {
-                                    optionals += " ";
-                                    optionals += arg_string(*arg);
-                                }
-                                optionals += "]";
-                            }
-                            else
-                            {
-                                optionals += " [";
-                                optionals += arg->get_name();
-                                switch (std::get<char>(*arg->get_options().nargs))
-                                {
-                                    case '?':
-                                        optionals += " [";
-                                        optionals += arg_string(*arg);
-                                        optionals += "]";
-                                        break;
-                                    case '*':
-                                        optionals += " [";
-                                        optionals += arg_string(*arg);
-                                        optionals += " [";
-                                        optionals += arg_string(*arg);
-                                        optionals += " ...]]";
-                                        break;
-                                    case '+':
-                                        optionals += " ";
-                                        optionals += arg_string(*arg);
-                                        optionals += " [";
-                                        optionals += arg_string(*arg);
-                                        optionals += " ...]";
-                                        break;
-                                }
-                                optionals += "]";
-                            }
-                        }
-                        else
-                        {
-                            optionals += arg->is_required()
-                                ? " "
-                                : " [";
-                            optionals += arg->get_name();
-                            if (arg->get_options().action == store)
-                            {
-                                optionals += " ";
-                                optionals += arg_string(*arg);
-                            }
-                            optionals += arg->is_required()
-                                ? ""
-                                : "]";
-                        }
-                    }
-                }
-
-                return message + optionals + positionals;
+                auto const formatter = Formatter(m_arguments, m_prog, m_description, m_epilog);
+                return formatter.format_usage();
             }
 
             auto format_help() const -> std::string
             {
-                std::string message = format_usage();
-                std::string positionals;
-                std::string optionals;
-
-                auto const arg_string = [](Argument const & arg)
-                {
-                    return arg.get_options().choices.empty()
-                        ? arg.get_metavar_name()
-                        : "{" + arg.get_options().join_choices(",") + "}";
-                };
-
-                for (auto const & arg : m_arguments)
-                {
-                    if (arg->is_positional())
-                    {
-                        positionals += "\n  ";
-                        positionals += arg_string(*arg);
-
-                        if (!arg->get_options().help.empty())
-                        {
-                            positionals += " " + arg->get_options().help;
-                        }
-                    }
-                    else
-                    {
-                        optionals += "\n  " + arg->get_name();
-                        if (arg->get_options().action == store)
-                        {
-                            if (arg->get_options().nargs)
-                            {
-                                if (std::holds_alternative<unsigned int>(*arg->get_options().nargs))
-                                {
-                                    for (auto n = 0u; n < std::get<unsigned int>(*arg->get_options().nargs); n++)
-                                    {
-                                        optionals += " ";
-                                        optionals += arg_string(*arg);
-                                    }
-                                }
-                                else
-                                {
-                                    switch (std::get<char>(*arg->get_options().nargs))
-                                    {
-                                        case '?':
-                                            optionals += " [";
-                                            optionals += arg_string(*arg);
-                                            optionals += "]";
-                                            break;
-                                        case '*':
-                                            optionals += " [";
-                                            optionals += arg_string(*arg);
-                                            optionals += " [";
-                                            optionals += arg_string(*arg);
-                                            optionals += " ...]]";
-                                            break;
-                                        case '+':
-                                            optionals += " ";
-                                            optionals += arg_string(*arg);
-                                            optionals += " [";
-                                            optionals += arg_string(*arg);
-                                            optionals += " ...]";
-                                            break;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                optionals += " ";
-                                optionals += arg_string(*arg);
-                            }
-                        }
-
-                        if (!arg->get_options().help.empty())
-                        {
-                            optionals += " " + arg->get_options().help;
-                        }
-                    }
-                }
-
-                if (m_description)
-                {
-                    message += "\n\n" + *m_description;
-                }
-
-                if (!positionals.empty())
-                {
-                    message += "\n\npositional arguments:" + positionals;
-                }
-
-                if (!optionals.empty())
-                {
-                    message += "\n\noptional arguments:" + optionals;
-                }
-
-                if (m_epilog)
-                {
-                    message += "\n\n" + *m_epilog;
-                }
-
-                return message;
+                auto const formatter = Formatter(m_arguments, m_prog, m_description, m_epilog);
+                return formatter.format_help();
             }
 
             ArgumentParser()
@@ -1033,6 +818,251 @@ namespace argparse
             using argument_uptrs = std::vector<argument_uptr>;
 
         private:
+            class Formatter
+            {
+                public:
+                    Formatter(argument_uptrs const & arguments, optstring const & prog, optstring const & description, optstring const & epilog)
+                      : m_arguments(arguments)
+                      , m_prog(prog)
+                      , m_description(description)
+                      , m_epilog(epilog)
+                    {
+                    }
+
+                    auto format_usage() const -> std::string
+                    {
+                        std::string message = "usage: " + *m_prog;
+                        std::string optionals;
+                        std::string positionals;
+
+                        auto const arg_string = [](Argument const & arg)
+                        {
+                            return arg.get_options().choices.empty()
+                                ? arg.get_metavar_name()
+                                : "{" + arg.get_options().join_choices(",") + "}";
+                        };
+
+                        for (auto const & arg : m_arguments)
+                        {
+                            if (arg->is_positional())
+                            {
+                                if (arg->get_options().nargs)
+                                {
+                                    if (std::holds_alternative<unsigned int>(*arg->get_options().nargs))
+                                    {
+                                        for (auto n = 0u; n < std::get<unsigned int>(*arg->get_options().nargs); n++)
+                                        {
+                                            positionals += " ";
+                                            positionals += arg_string(*arg);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        positionals += " ";
+                                        switch (std::get<char>(*arg->get_options().nargs))
+                                        {
+                                            case '?':
+                                                positionals += "[";
+                                                positionals += arg_string(*arg);
+                                                positionals += "]";
+                                                break;
+                                            case '*':
+                                                positionals += "[";
+                                                positionals += arg_string(*arg);
+                                                positionals += " [";
+                                                positionals += arg_string(*arg);
+                                                positionals += " ...]]";
+                                                break;
+                                            case '+':
+                                                positionals += arg_string(*arg);
+                                                positionals += " [";
+                                                positionals += arg_string(*arg);
+                                                positionals += " ...]";
+                                                break;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    positionals += " ";
+                                    positionals += arg_string(*arg);
+                                }
+                            }
+                            else
+                            {
+                                if (arg->get_options().nargs)
+                                {
+                                    if (std::holds_alternative<unsigned int>(*arg->get_options().nargs))
+                                    {
+                                        optionals += " [";
+                                        optionals += arg->get_name();
+                                        for (auto n = 0u; n < std::get<unsigned int>(*arg->get_options().nargs); n++)
+                                        {
+                                            optionals += " ";
+                                            optionals += arg_string(*arg);
+                                        }
+                                        optionals += "]";
+                                    }
+                                    else
+                                    {
+                                        optionals += " [";
+                                        optionals += arg->get_name();
+                                        switch (std::get<char>(*arg->get_options().nargs))
+                                        {
+                                            case '?':
+                                                optionals += " [";
+                                                optionals += arg_string(*arg);
+                                                optionals += "]";
+                                                break;
+                                            case '*':
+                                                optionals += " [";
+                                                optionals += arg_string(*arg);
+                                                optionals += " [";
+                                                optionals += arg_string(*arg);
+                                                optionals += " ...]]";
+                                                break;
+                                            case '+':
+                                                optionals += " ";
+                                                optionals += arg_string(*arg);
+                                                optionals += " [";
+                                                optionals += arg_string(*arg);
+                                                optionals += " ...]";
+                                                break;
+                                        }
+                                        optionals += "]";
+                                    }
+                                }
+                                else
+                                {
+                                    optionals += arg->is_required()
+                                        ? " "
+                                        : " [";
+                                    optionals += arg->get_name();
+                                    if (arg->get_options().action == store)
+                                    {
+                                        optionals += " ";
+                                        optionals += arg_string(*arg);
+                                    }
+                                    optionals += arg->is_required()
+                                        ? ""
+                                        : "]";
+                                }
+                            }
+                        }
+
+                        return message + optionals + positionals;
+                    }
+
+                    auto format_help() const -> std::string
+                    {
+                        std::string message = format_usage();
+                        std::string positionals;
+                        std::string optionals;
+
+                        auto const arg_string = [](Argument const & arg)
+                        {
+                            return arg.get_options().choices.empty()
+                                ? arg.get_metavar_name()
+                                : "{" + arg.get_options().join_choices(",") + "}";
+                        };
+
+                        for (auto const & arg : m_arguments)
+                        {
+                            if (arg->is_positional())
+                            {
+                                positionals += "\n  ";
+                                positionals += arg_string(*arg);
+
+                                if (!arg->get_options().help.empty())
+                                {
+                                    positionals += " " + arg->get_options().help;
+                                }
+                            }
+                            else
+                            {
+                                optionals += "\n  " + arg->get_name();
+                                if (arg->get_options().action == store)
+                                {
+                                    if (arg->get_options().nargs)
+                                    {
+                                        if (std::holds_alternative<unsigned int>(*arg->get_options().nargs))
+                                        {
+                                            for (auto n = 0u; n < std::get<unsigned int>(*arg->get_options().nargs); n++)
+                                            {
+                                                optionals += " ";
+                                                optionals += arg_string(*arg);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            switch (std::get<char>(*arg->get_options().nargs))
+                                            {
+                                                case '?':
+                                                    optionals += " [";
+                                                    optionals += arg_string(*arg);
+                                                    optionals += "]";
+                                                    break;
+                                                case '*':
+                                                    optionals += " [";
+                                                    optionals += arg_string(*arg);
+                                                    optionals += " [";
+                                                    optionals += arg_string(*arg);
+                                                    optionals += " ...]]";
+                                                    break;
+                                                case '+':
+                                                    optionals += " ";
+                                                    optionals += arg_string(*arg);
+                                                    optionals += " [";
+                                                    optionals += arg_string(*arg);
+                                                    optionals += " ...]";
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        optionals += " ";
+                                        optionals += arg_string(*arg);
+                                    }
+                                }
+
+                                if (!arg->get_options().help.empty())
+                                {
+                                    optionals += " " + arg->get_options().help;
+                                }
+                            }
+                        }
+
+                        if (m_description)
+                        {
+                            message += "\n\n" + *m_description;
+                        }
+
+                        if (!positionals.empty())
+                        {
+                            message += "\n\npositional arguments:" + positionals;
+                        }
+
+                        if (!optionals.empty())
+                        {
+                            message += "\n\noptional arguments:" + optionals;
+                        }
+
+                        if (m_epilog)
+                        {
+                            message += "\n\n" + *m_epilog;
+                        }
+
+                        return message;
+                    }
+
+                private:
+                    argument_uptrs const & m_arguments;
+                    optstring const & m_prog;
+                    optstring const & m_description;
+                    optstring const & m_epilog;
+            };
+
             class ArgumentBuilder
             {
                 public:
