@@ -12,7 +12,7 @@ target_compile_options(argparse-compilation PRIVATE
                                -Wcast-align -Wunused -Woverloaded-virtual -Wconversion -Wsign-conversion
                                -pedantic>
                            $<$<CXX_COMPILER_ID:MSVC>:
-                               /W4>)
+                               /W4 /permissive->)
 
 target_include_directories(${PROJECT_NAME} INTERFACE include/)
 
