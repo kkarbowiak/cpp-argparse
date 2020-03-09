@@ -148,6 +148,8 @@ The below lists features of the `argparse` module that this implementation suppo
       * [ ] double-dash pseudo-argument (`--`)
       * [ ] argument abbreviations (prefix matching)
 
+**Note:** while it may seem that the full functionality of `add_argument()` method is fully supported, it most certainly isn't. All the individual options are supported separately, but not in combinations. As an example, I am quite sure setting `nargs`, `choices`, and `type` will not produce expected results. I plan on fixing that.
+
 ## License
 
 This project is released under **MIT** license, so feel free to do anything you like with it.
