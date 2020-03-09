@@ -924,7 +924,6 @@ namespace argparse
                                             {
                                                 throw parsing_error("argument " + get_name() + ": expected one argument");
                                             }
-                                            std::any value;
                                             m_options.from_string(*it, m_value);
                                             if (!m_options.choices.empty())
                                             {
