@@ -52,7 +52,7 @@ parser.add_argument('--option', action='store_true')
 In C++ we can ask the compiler to help us detect bugs at compile-time, and this is what C++ argparse does. Instead of passing actions as strings, we use `enum`s here:
 
 ```c++
-parser.add_argument("--option).action(argparse::store_true);
+parser.add_argument("--option").action(argparse::store_true);
 ```
 
 If you make a typo, your compiler will let you know.
