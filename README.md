@@ -127,6 +127,7 @@ The below lists features of the `argparse` module that this implementation suppo
    * [ ] `allow_abbrev`
    * [ ] `conflict_handler`
    * [x] `add_help`
+
 * The `add_argument()` method
    * [x] name or flags
    * [x] `action` (only `store`, `store_true`, `store_false`, `store_const`, and `help`)
@@ -139,6 +140,7 @@ The below lists features of the `argparse` module that this implementation suppo
    * [x] `help`
    * [x] `metavar` (only for single nargs)
    * [x] `dest`
+
 * The `parse_args()` method
    * no defaults, you need to pass `argc` and `argv` explicitly (normally, forward what you got in `main`)
    * option value syntax
