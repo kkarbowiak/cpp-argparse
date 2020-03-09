@@ -8,7 +8,9 @@ add_library(argparse-compilation OBJECT include/argparse.h)
 target_compile_features(argparse-compilation PRIVATE cxx_std_17)
 target_compile_options(argparse-compilation PRIVATE
                            $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
-                               -Wall -Wextra -Wshadow -pedantic>
+                               -Wall -Wextra -Wshadow -Wshadow -Wnon-virtual-dtor -Wold-style-cast
+                               -Wcast-align -Wunused -Woverloaded-virtual -Wconversion -Wsign-conversion
+                               -pedantic>
                            $<$<CXX_COMPILER_ID:MSVC>:
                                /W4>)
 
