@@ -835,13 +835,6 @@ namespace argparse
                         std::string optionals;
                         std::string positionals;
 
-                        auto const arg_string = [](Argument const & arg)
-                        {
-                            return arg.get_options().choices.empty()
-                                ? arg.get_metavar_name()
-                                : "{" + arg.get_options().join_choices(",") + "}";
-                        };
-
                         for (auto const & arg : m_arguments)
                         {
                             if (arg->is_positional())
@@ -959,13 +952,6 @@ namespace argparse
                         std::string positionals;
                         std::string optionals;
 
-                        auto const arg_string = [](Argument const & arg)
-                        {
-                            return arg.get_options().choices.empty()
-                                ? arg.get_metavar_name()
-                                : "{" + arg.get_options().join_choices(",") + "}";
-                        };
-
                         for (auto const & arg : m_arguments)
                         {
                             if (arg->is_positional())
@@ -1054,6 +1040,13 @@ namespace argparse
                         }
 
                         return message;
+                    }
+
+                    auto arg_string(Argument const & argument) const -> std::string
+                    {
+                        return argument.get_options().choices.empty()
+                            ? argument.get_metavar_name()
+                            : "{" + argument.get_options().join_choices(",") + "}";
                     }
 
                 private:
