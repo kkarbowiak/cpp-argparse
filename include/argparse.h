@@ -825,6 +825,22 @@ namespace argparse
 
                     auto parse_args(tokens args) -> tokens override
                     {
+                        auto const check_choices = [&](std::any const & value)
+                        {
+                            if (!std::any_of(
+                                m_options.choices.begin(),
+                                m_options.choices.end(),
+                                [&](auto const& rhs) { return m_options.comparator(value, rhs); }))
+                            {
+                                std::string message = "argument " + get_name() + ": invalid choice: ";
+                                message += m_options.to_string(value);
+                                message += " (choose from ";
+                                message += m_options.join_choices(", ");
+                                message += ")";
+                                throw parsing_error(message);
+                            }
+                        };
+
                         for (auto it = args.begin(); it != args.end(); ++it)
                         {
                             if (*it == m_options.name1 || *it == m_options.name2)
@@ -848,18 +864,7 @@ namespace argparse
                                                     m_options.from_string(*it, value);
                                                     if (!m_options.choices.empty())
                                                     {
-                                                        if (!std::any_of(
-                                                            m_options.choices.begin(),
-                                                            m_options.choices.end(),
-                                                            [&](auto const & rhs){ return m_options.comparator(value, rhs); }))
-                                                        {
-                                                            std::string message = "argument " + get_name() + ": invalid choice: ";
-                                                            message += m_options.to_string(value);
-                                                            message += " (choose from ";
-                                                            message += m_options.join_choices(", ");
-                                                            message += ")";
-                                                            throw parsing_error(message);
-                                                        }
+                                                        check_choices(value);
                                                     }
                                                     it = args.erase(it);
                                                     values.push_back(std::any_cast<std::string>(value));
@@ -923,18 +928,7 @@ namespace argparse
                                             m_options.from_string(*it, m_value);
                                             if (!m_options.choices.empty())
                                             {
-                                                if (!std::any_of(
-                                                    m_options.choices.begin(),
-                                                    m_options.choices.end(),
-                                                    [&](auto const & rhs){ return m_options.comparator(m_value, rhs); }))
-                                                {
-                                                    std::string message = "argument " + get_name() + ": invalid choice: ";
-                                                    message += m_options.to_string(m_value);
-                                                    message += " (choose from ";
-                                                    message += m_options.join_choices(", ");
-                                                    message += ")";
-                                                    throw parsing_error(message);
-                                                }
+                                                check_choices(m_value);
                                             }
                                             (void) args.erase(it);
                                         }
