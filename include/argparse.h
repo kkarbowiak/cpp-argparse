@@ -846,7 +846,7 @@ namespace argparse
                                 else
                                 {
                                     positionals += " ";
-                                    positionals += arg_string(*arg);
+                                    positionals += format_arg(*arg);
                                 }
                             }
                             else
@@ -867,7 +867,7 @@ namespace argparse
                                     if (arg->get_options().action == store)
                                     {
                                         optionals += " ";
-                                        optionals += arg_string(*arg);
+                                        optionals += format_arg(*arg);
                                     }
                                     optionals += arg->is_required()
                                         ? ""
@@ -890,7 +890,7 @@ namespace argparse
                             if (arg->is_positional())
                             {
                                 positionals += "\n  ";
-                                positionals += arg_string(*arg);
+                                positionals += format_arg(*arg);
 
                                 if (!arg->get_options().help.empty())
                                 {
@@ -909,7 +909,7 @@ namespace argparse
                                     else
                                     {
                                         optionals += " ";
-                                        optionals += arg_string(*arg);
+                                        optionals += format_arg(*arg);
                                     }
                                 }
 
@@ -943,7 +943,7 @@ namespace argparse
                         return message;
                     }
 
-                    auto arg_string(Argument const & argument) const -> std::string
+                    auto format_arg(Argument const & argument) const -> std::string
                     {
                         return argument.get_options().choices.empty()
                             ? argument.get_metavar_name()
@@ -959,7 +959,7 @@ namespace argparse
                             for (auto n = 0u; n < std::get<unsigned int>(*argument.get_options().nargs); n++)
                             {
                                 result += " ";
-                                result += arg_string(argument);
+                                result += format_arg(argument);
                             }
                         }
                         else
@@ -968,21 +968,21 @@ namespace argparse
                             {
                                 case '?':
                                     result += " [";
-                                    result += arg_string(argument);
+                                    result += format_arg(argument);
                                     result += "]";
                                     break;
                                 case '*':
                                     result += " [";
-                                    result += arg_string(argument);
+                                    result += format_arg(argument);
                                     result += " [";
-                                    result += arg_string(argument);
+                                    result += format_arg(argument);
                                     result += " ...]]";
                                     break;
                                 case '+':
                                     result += " ";
-                                    result += arg_string(argument);
+                                    result += format_arg(argument);
                                     result += " [";
-                                    result += arg_string(argument);
+                                    result += format_arg(argument);
                                     result += " ...]";
                                     break;
                             }
