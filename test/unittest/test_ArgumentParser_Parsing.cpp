@@ -86,10 +86,22 @@ TEST_CASE("Parsing an optional argument with store false action...")
     }
 }
 
-TEST_CASE("Parsing an optional argument with store const action...")
+TEST_CASE_TEMPLATE("Parsing an optional argument with store const action...", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom)
 {
     auto parser = argparse::ArgumentParser();
-    parser.add_argument("-o").action(argparse::store_const).const_("v1"s);
+
+    if constexpr (std::is_integral_v<T>)
+    {
+        parser.add_argument("-o").action(argparse::store_const).const_(T(65));
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        parser.add_argument("-o").action(argparse::store_const).const_(T(1.125));
+    }
+    else
+    {
+        parser.add_argument("-o").action(argparse::store_const).const_(T("bar"));
+    }
 
     SUBCASE("...yields false when it's missing")
     {
@@ -100,14 +112,20 @@ TEST_CASE("Parsing an optional argument with store const action...")
 
     SUBCASE("...yields const value")
     {
-        parser.add_argument("-i").action(argparse::store_const).const_(23);
-        parser.add_argument("-d").action(argparse::store_const).const_(3.14);
+        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
 
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "-i", "-d"});
-
-        CHECK(parsed.get_value("o") == "v1");
-        CHECK(parsed.get_value<int>("i") == 23);
-        CHECK(parsed.get_value<double>("d") == 3.14);
+        if constexpr (std::is_integral_v<T>)
+        {
+            CHECK(parsed.get_value<T>("o") == T(65));
+        }
+        else if constexpr (std::is_floating_point_v<T>)
+        {
+            CHECK(parsed.get_value<T>("o") == T(1.125));
+        }
+        else
+        {
+            CHECK(parsed.get_value<T>("o") == T("bar"));
+        }
     }
 }
 
