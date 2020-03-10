@@ -298,11 +298,21 @@ TEST_CASE("Usage message contains...")
             CHECK(parser.format_usage() == "usage: prog [-o METAVARO]"s);
         }
 
-        SUBCASE("...no brackets for argument with required true")
+        SUBCASE("...no brackets for argument with required true...")
         {
-            parser.add_argument("-o").required(true);
+            SUBCASE("...and automatic metavar")
+            {
+                parser.add_argument("-o").required(true);
 
-            CHECK(parser.format_usage() == "usage: prog -o O"s);
+                CHECK(parser.format_usage() == "usage: prog -o O"s);
+            }
+
+            SUBCASE("...and metavar")
+            {
+                parser.add_argument("-o").metavar("METAVARO").required(true);
+
+                CHECK(parser.format_usage() == "usage: prog -o METAVARO"s);
+            }
         }
 
         SUBCASE("...brackets for argument with required false")
