@@ -841,39 +841,7 @@ namespace argparse
                             {
                                 if (arg->get_options().nargs)
                                 {
-                                    if (std::holds_alternative<unsigned int>(*arg->get_options().nargs))
-                                    {
-                                        for (auto n = 0u; n < std::get<unsigned int>(*arg->get_options().nargs); n++)
-                                        {
-                                            positionals += " ";
-                                            positionals += arg_string(*arg);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        positionals += " ";
-                                        switch (std::get<char>(*arg->get_options().nargs))
-                                        {
-                                            case '?':
-                                                positionals += "[";
-                                                positionals += arg_string(*arg);
-                                                positionals += "]";
-                                                break;
-                                            case '*':
-                                                positionals += "[";
-                                                positionals += arg_string(*arg);
-                                                positionals += " [";
-                                                positionals += arg_string(*arg);
-                                                positionals += " ...]]";
-                                                break;
-                                            case '+':
-                                                positionals += arg_string(*arg);
-                                                positionals += " [";
-                                                positionals += arg_string(*arg);
-                                                positionals += " ...]";
-                                                break;
-                                        }
-                                    }
+                                    positionals += format_nargs(*arg);
                                 }
                                 else
                                 {
@@ -887,39 +855,7 @@ namespace argparse
                                 {
                                     optionals += " [";
                                     optionals += arg->get_name();
-                                    if (std::holds_alternative<unsigned int>(*arg->get_options().nargs))
-                                    {
-                                        for (auto n = 0u; n < std::get<unsigned int>(*arg->get_options().nargs); n++)
-                                        {
-                                            optionals += " ";
-                                            optionals += arg_string(*arg);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        switch (std::get<char>(*arg->get_options().nargs))
-                                        {
-                                            case '?':
-                                                optionals += " [";
-                                                optionals += arg_string(*arg);
-                                                optionals += "]";
-                                                break;
-                                            case '*':
-                                                optionals += " [";
-                                                optionals += arg_string(*arg);
-                                                optionals += " [";
-                                                optionals += arg_string(*arg);
-                                                optionals += " ...]]";
-                                                break;
-                                            case '+':
-                                                optionals += " ";
-                                                optionals += arg_string(*arg);
-                                                optionals += " [";
-                                                optionals += arg_string(*arg);
-                                                optionals += " ...]";
-                                                break;
-                                        }
-                                    }
+                                    optionals += format_nargs(*arg);
                                     optionals += "]";
                                 }
                                 else
@@ -968,39 +904,7 @@ namespace argparse
                                 {
                                     if (arg->get_options().nargs)
                                     {
-                                        if (std::holds_alternative<unsigned int>(*arg->get_options().nargs))
-                                        {
-                                            for (auto n = 0u; n < std::get<unsigned int>(*arg->get_options().nargs); n++)
-                                            {
-                                                optionals += " ";
-                                                optionals += arg_string(*arg);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            switch (std::get<char>(*arg->get_options().nargs))
-                                            {
-                                                case '?':
-                                                    optionals += " [";
-                                                    optionals += arg_string(*arg);
-                                                    optionals += "]";
-                                                    break;
-                                                case '*':
-                                                    optionals += " [";
-                                                    optionals += arg_string(*arg);
-                                                    optionals += " [";
-                                                    optionals += arg_string(*arg);
-                                                    optionals += " ...]]";
-                                                    break;
-                                                case '+':
-                                                    optionals += " ";
-                                                    optionals += arg_string(*arg);
-                                                    optionals += " [";
-                                                    optionals += arg_string(*arg);
-                                                    optionals += " ...]";
-                                                    break;
-                                            }
-                                        }
+                                        optionals += format_nargs(*arg);
                                     }
                                     else
                                     {
@@ -1044,6 +948,47 @@ namespace argparse
                         return argument.get_options().choices.empty()
                             ? argument.get_metavar_name()
                             : "{" + argument.get_options().join_choices(",") + "}";
+                    }
+
+                    auto format_nargs(Argument const & argument) const -> std::string
+                    {
+                        std::string result;
+
+                        if (std::holds_alternative<unsigned int>(*argument.get_options().nargs))
+                        {
+                            for (auto n = 0u; n < std::get<unsigned int>(*argument.get_options().nargs); n++)
+                            {
+                                result += " ";
+                                result += arg_string(argument);
+                            }
+                        }
+                        else
+                        {
+                            switch (std::get<char>(*argument.get_options().nargs))
+                            {
+                                case '?':
+                                    result += " [";
+                                    result += arg_string(argument);
+                                    result += "]";
+                                    break;
+                                case '*':
+                                    result += " [";
+                                    result += arg_string(argument);
+                                    result += " [";
+                                    result += arg_string(argument);
+                                    result += " ...]]";
+                                    break;
+                                case '+':
+                                    result += " ";
+                                    result += arg_string(argument);
+                                    result += " [";
+                                    result += arg_string(argument);
+                                    result += " ...]";
+                                    break;
+                            }
+                        }
+
+                        return result;
                     }
 
                 private:
