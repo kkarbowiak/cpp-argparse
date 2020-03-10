@@ -836,10 +836,14 @@ namespace argparse
                             {
                                 if (arg->get_options().nargs)
                                 {
-                                    optionals += " [";
+                                    optionals += arg->is_required()
+                                        ? " "
+                                        : " [";
                                     optionals += arg->get_name();
                                     optionals += format_nargs(*arg);
-                                    optionals += "]";
+                                    optionals += arg->is_required()
+                                        ? ""
+                                        : "]";
                                 }
                                 else
                                 {

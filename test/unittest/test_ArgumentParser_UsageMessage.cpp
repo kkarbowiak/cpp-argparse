@@ -320,6 +320,13 @@ TEST_CASE("Usage message contains...")
 
                 CHECK(parser.format_usage() == "usage: prog -o {\"foo\",\"bar\"}"s);
             }
+
+            SUBCASE("...and nargs")
+            {
+                parser.add_argument("-o").nargs(1).required(true);
+
+                CHECK(parser.format_usage() == "usage: prog -o O"s);
+            }
         }
 
         SUBCASE("...brackets for argument with required false")
