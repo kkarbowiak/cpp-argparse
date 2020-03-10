@@ -885,20 +885,18 @@ namespace argparse
                             {
                                 if (arg->get_options().nargs)
                                 {
+                                    optionals += " [";
                                     if (std::holds_alternative<unsigned int>(*arg->get_options().nargs))
                                     {
-                                        optionals += " [";
                                         optionals += arg->get_name();
                                         for (auto n = 0u; n < std::get<unsigned int>(*arg->get_options().nargs); n++)
                                         {
                                             optionals += " ";
                                             optionals += arg_string(*arg);
                                         }
-                                        optionals += "]";
                                     }
                                     else
                                     {
-                                        optionals += " [";
                                         optionals += arg->get_name();
                                         switch (std::get<char>(*arg->get_options().nargs))
                                         {
@@ -922,8 +920,8 @@ namespace argparse
                                                 optionals += " ...]";
                                                 break;
                                         }
-                                        optionals += "]";
                                     }
+                                    optionals += "]";
                                 }
                                 else
                                 {
