@@ -430,6 +430,23 @@ namespace argparse
                     virtual auto get_options() const -> Options const & = 0;
 
                 protected:
+                    auto check_choices(std::any const & value) const -> void
+                    {
+                        if (!std::any_of(
+                            m_options.choices.begin(),
+                            m_options.choices.end(),
+                            [&](auto const& rhs) { return m_options.comparator(value, rhs); }))
+                        {
+                            std::string message = "argument " + get_name() + ": invalid choice: ";
+                            message += m_options.to_string(value);
+                            message += " (choose from ";
+                            message += m_options.join_choices(", ");
+                            message += ")";
+                            throw parsing_error(message);
+                        }
+                    }
+
+                protected:
                     Options const m_options;
             };
 
@@ -444,22 +461,6 @@ namespace argparse
 
                     auto parse_args(tokens args) -> tokens override
                     {
-                        auto const check_choices = [&](std::any const & value)
-                        {
-                            if (!std::any_of(
-                                m_options.choices.begin(),
-                                m_options.choices.end(),
-                                [&](auto const& rhs) { return m_options.comparator(value, rhs); }))
-                            {
-                                std::string message = "argument " + get_name() + ": invalid choice: ";
-                                message += m_options.to_string(value);
-                                message += " (choose from ";
-                                message += m_options.join_choices(", ");
-                                message += ")";
-                                throw parsing_error(message);
-                            }
-                        };
-
                         if (m_options.nargs)
                         {
                             if (std::holds_alternative<unsigned int>(*m_options.nargs))
@@ -616,22 +617,6 @@ namespace argparse
 
                     auto parse_args(tokens args) -> tokens override
                     {
-                        auto const check_choices = [&](std::any const & value)
-                        {
-                            if (!std::any_of(
-                                m_options.choices.begin(),
-                                m_options.choices.end(),
-                                [&](auto const& rhs) { return m_options.comparator(value, rhs); }))
-                            {
-                                std::string message = "argument " + get_name() + ": invalid choice: ";
-                                message += m_options.to_string(value);
-                                message += " (choose from ";
-                                message += m_options.join_choices(", ");
-                                message += ")";
-                                throw parsing_error(message);
-                            }
-                        };
-
                         for (auto it = args.begin(); it != args.end(); ++it)
                         {
                             if (*it == m_options.name1 || *it == m_options.name2)
