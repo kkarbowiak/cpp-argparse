@@ -313,6 +313,13 @@ TEST_CASE("Usage message contains...")
 
                 CHECK(parser.format_usage() == "usage: prog -o METAVARO"s);
             }
+
+            SUBCASE("...and choices")
+            {
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).required(true);
+
+                CHECK(parser.format_usage() == "usage: prog -o {\"foo\",\"bar\"}"s);
+            }
         }
 
         SUBCASE("...brackets for argument with required false")
