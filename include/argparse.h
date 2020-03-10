@@ -886,9 +886,9 @@ namespace argparse
                                 if (arg->get_options().nargs)
                                 {
                                     optionals += " [";
+                                    optionals += arg->get_name();
                                     if (std::holds_alternative<unsigned int>(*arg->get_options().nargs))
                                     {
-                                        optionals += arg->get_name();
                                         for (auto n = 0u; n < std::get<unsigned int>(*arg->get_options().nargs); n++)
                                         {
                                             optionals += " ";
@@ -897,7 +897,6 @@ namespace argparse
                                     }
                                     else
                                     {
-                                        optionals += arg->get_name();
                                         switch (std::get<char>(*arg->get_options().nargs))
                                         {
                                             case '?':
