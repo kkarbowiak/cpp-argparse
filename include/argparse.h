@@ -412,6 +412,10 @@ namespace argparse
             class Argument
             {
                 public:
+                    Argument(Options options)
+                      : m_options(std::move(options))
+                    {
+                    }
                     virtual ~Argument() = default;
 
                     virtual auto parse_args(tokens args) -> tokens = 0;
@@ -424,14 +428,17 @@ namespace argparse
                     virtual auto is_positional() const -> bool = 0;
 
                     virtual auto get_options() const -> Options const & = 0;
+
+                protected:
+                    Options const m_options;
             };
 
             class PositionalArgument : public Argument
             {
                 public:
                     explicit PositionalArgument(Options options)
-                      : m_value()
-                      , m_options(std::move(options))
+                      : Argument(std::move(options))
+                      , m_value()
                     {
                     }
 
@@ -584,15 +591,14 @@ namespace argparse
 
                 private:
                     std::any m_value;
-                    Options const m_options;
             };
 
             class OptionalArgument : public Argument
             {
                 public:
                     explicit OptionalArgument(Options options)
-                      : m_value()
-                      , m_options(std::move(options))
+                      : Argument(std::move(options))
+                      , m_value()
                     {
                         if (m_options.action == store_true || m_options.action == help)
                         {
@@ -810,7 +816,6 @@ namespace argparse
 
                 private:
                     std::any m_value;
-                    Options const m_options;
             };
 
         private:
