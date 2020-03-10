@@ -834,32 +834,26 @@ namespace argparse
                             }
                             else
                             {
+                                optionals += arg->is_required()
+                                    ? " "
+                                    : " [";
                                 if (arg->get_options().nargs)
                                 {
-                                    optionals += arg->is_required()
-                                        ? " "
-                                        : " [";
                                     optionals += arg->get_name();
                                     optionals += format_nargs(*arg);
-                                    optionals += arg->is_required()
-                                        ? ""
-                                        : "]";
                                 }
                                 else
                                 {
-                                    optionals += arg->is_required()
-                                        ? " "
-                                        : " [";
                                     optionals += arg->get_name();
                                     if (arg->get_options().action == store)
                                     {
                                         optionals += " ";
                                         optionals += format_arg(*arg);
                                     }
-                                    optionals += arg->is_required()
-                                        ? ""
-                                        : "]";
                                 }
+                                optionals += arg->is_required()
+                                    ? ""
+                                    : "]";
                             }
                         }
 
