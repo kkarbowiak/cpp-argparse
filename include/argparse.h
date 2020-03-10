@@ -427,7 +427,10 @@ namespace argparse
                     virtual auto is_required() const -> bool = 0;
                     virtual auto is_positional() const -> bool = 0;
 
-                    virtual auto get_options() const -> Options const & = 0;
+                    auto get_options() const -> Options const &
+                    {
+                        return m_options;
+                    }
 
                 protected:
                     auto check_choices(std::any const & value) const -> void
@@ -583,11 +586,6 @@ namespace argparse
                     auto is_positional() const -> bool override
                     {
                         return true;
-                    }
-
-                    auto get_options() const -> Options const & override
-                    {
-                        return m_options;
                     }
 
                 private:
@@ -792,11 +790,6 @@ namespace argparse
                     auto is_positional() const -> bool override
                     {
                         return false;
-                    }
-
-                    auto get_options() const -> Options const & override
-                    {
-                        return m_options;
                     }
 
                 private:
