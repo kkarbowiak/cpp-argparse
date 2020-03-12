@@ -627,12 +627,13 @@ namespace argparse
                                         {
                                             if (std::holds_alternative<unsigned int>(*m_options.nargs))
                                             {
+                                                auto const args_number = std::get<unsigned int>(*m_options.nargs);
                                                 std::vector<std::string> values;
-                                                for (auto j = 0u; j < std::get<unsigned int>(*m_options.nargs); ++j)
+                                                for (auto j = 0u; j < args_number; ++j)
                                                 {
                                                     if (it == args.end() || it->front() == '-')
                                                     {
-                                                        throw parsing_error("argument " + get_name() + ": expected " + std::to_string(std::get<unsigned int>(*m_options.nargs)) + " argument" + (std::get<unsigned int>(*m_options.nargs) > 1 ? "s" : ""));
+                                                        throw parsing_error("argument " + get_name() + ": expected " + std::to_string(args_number) + " argument" + (args_number > 1 ? "s" : ""));
                                                     }
                                                     std::any value;
                                                     m_options.from_string(*it, value);
