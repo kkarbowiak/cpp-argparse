@@ -834,7 +834,7 @@ TEST_CASE("Parsing an optional argument with nargs set...")
             {
                 parser.add_argument("-o").nargs(3);
 
-                CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{ "prog", "-o", "foo", "bar" }), "argument -o: expected 3 arguments", argparse::parsing_error);
+                CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "foo", "bar"}), "argument -o: expected 3 arguments", argparse::parsing_error);
             }
         }
     }
