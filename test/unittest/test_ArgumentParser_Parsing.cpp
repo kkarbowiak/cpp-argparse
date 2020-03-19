@@ -928,6 +928,15 @@ TEST_CASE("Parsing an optional argument with nargs set...")
     }
 }
 
+TEST_CASE("Parsing a positional argument with choices set and nargs set accepts one of the values once")
+{
+    auto parser = argparse::ArgumentParser();
+
+    parser.add_argument("pos").choices({"foo"s, "bar"s}).nargs(1);
+
+    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "foo"}));
+}
+
 TEST_CASE("Parsing missing positional argument with nargs set throws an exception...")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
