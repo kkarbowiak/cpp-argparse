@@ -949,6 +949,14 @@ TEST_CASE("Parsing a positional argument with choices set accepts one of the val
             CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "foo", "foo"}));
             CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "bar", "bar"}));
         }
+
+        SUBCASE("...for three arguments")
+        {
+            parser.add_argument("pos").choices({"foo"s, "bar"s}).nargs(3);
+
+            CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "foo", "foo", "foo"}));
+            CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "bar", "bar", "bar"}));
+        }
     }
 }
 
