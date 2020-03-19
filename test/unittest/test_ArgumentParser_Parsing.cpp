@@ -928,34 +928,37 @@ TEST_CASE("Parsing an optional argument with nargs set...")
     }
 }
 
-TEST_CASE("Parsing a positional argument with choices set accepts one of the values for nargs set...")
+TEST_CASE("Parsing a positional argument with choices set...")
 {
     auto parser = argparse::ArgumentParser();
 
-    SUBCASE("...as a number...")
+    SUBCASE("...consumes the number of arguments for nargs set...")
     {
-        SUBCASE("...for one argument")
+        SUBCASE("...as a number...")
         {
-            parser.add_argument("pos").choices({"foo"s, "bar"s}).nargs(1);
+            SUBCASE("...for one argument")
+            {
+                parser.add_argument("pos").choices({"foo"s, "bar"s}).nargs(1);
 
-            CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "foo"}));
-            CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "bar"}));
-        }
+                CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "foo"}));
+                CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "bar"}));
+            }
 
-        SUBCASE("...for two arguments")
-        {
-            parser.add_argument("pos").choices({"foo"s, "bar"s}).nargs(2);
+            SUBCASE("...for two arguments")
+            {
+                parser.add_argument("pos").choices({"foo"s, "bar"s}).nargs(2);
 
-            CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "foo", "foo"}));
-            CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "bar", "bar"}));
-        }
+                CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "foo", "foo"}));
+                CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "bar", "bar"}));
+            }
 
-        SUBCASE("...for three arguments")
-        {
-            parser.add_argument("pos").choices({"foo"s, "bar"s}).nargs(3);
+            SUBCASE("...for three arguments")
+            {
+                parser.add_argument("pos").choices({"foo"s, "bar"s}).nargs(3);
 
-            CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "foo", "foo", "foo"}));
-            CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "bar", "bar", "bar"}));
+                CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "foo", "foo", "foo"}));
+                CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "bar", "bar", "bar"}));
+            }
         }
     }
 }
