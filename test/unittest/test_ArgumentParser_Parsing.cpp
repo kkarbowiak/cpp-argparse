@@ -1018,6 +1018,21 @@ TEST_CASE("Parsing a positional argument with choices set...")
             }
         }
     }
+
+    SUBCASE("...yields the arguments for nargs set...")
+    {
+        SUBCASE("...as a number...")
+        {
+            SUBCASE("...for one argument")
+            {
+                parser.add_argument("pos").choices({"foo"s, "bar"s}).nargs(1);
+
+                auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
+
+                CHECK(parsed.get_value<std::vector<std::string>>("pos") == std::vector<std::string>{"foo"});
+            }
+        }
+    }
 }
 
 TEST_CASE("Parsing missing positional argument with nargs set throws an exception...")
