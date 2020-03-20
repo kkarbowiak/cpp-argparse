@@ -925,6 +925,7 @@ namespace argparse
                         return message;
                     }
 
+                private:
                     auto format_arg(Argument const & argument) const -> std::string
                     {
                         return argument.get_options().choices.empty()
