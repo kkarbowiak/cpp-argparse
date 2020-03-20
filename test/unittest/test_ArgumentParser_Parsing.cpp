@@ -971,6 +971,17 @@ TEST_CASE("Parsing a positional argument with choices set...")
                 CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "bar"}));
             }
         }
+
+        SUBCASE("...as *...")
+        {
+            SUBCASE("...for one argument")
+            {
+                parser.add_argument("pos").choices({"foo"s, "bar"s}).nargs('*');
+
+                CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "foo"}));
+                CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "bar"}));
+            }
+        }
     }
 }
 
