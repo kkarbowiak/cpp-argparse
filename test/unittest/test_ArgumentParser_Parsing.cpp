@@ -1106,6 +1106,13 @@ TEST_CASE("Parsing a positional argument with choices set...")
 
                 CHECK(parsed.get_value<std::vector<std::string>>("pos") == std::vector<std::string>{"foo", "foo"});
             }
+
+            SUBCASE("...for three arguments")
+            {
+                auto const parsed = parser.parse_args(4, cstr_arr{"prog", "foo", "foo", "foo"});
+
+                CHECK(parsed.get_value<std::vector<std::string>>("pos") == std::vector<std::string>{"foo", "foo", "foo"});
+            }
         }
     }
 }
