@@ -1091,13 +1091,20 @@ TEST_CASE("Parsing a positional argument with choices set...")
 
         SUBCASE("...as +...")
         {
+            parser.add_argument("pos").choices({"foo"s, "bar"s}).nargs('+');
+
             SUBCASE("...for one argument")
             {
-                parser.add_argument("pos").choices({"foo"s, "bar"s}).nargs('+');
-
                 auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
 
                 CHECK(parsed.get_value<std::vector<std::string>>("pos") == std::vector<std::string>{"foo"});
+            }
+
+            SUBCASE("...for two arguments")
+            {
+                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "foo", "foo"});
+
+                CHECK(parsed.get_value<std::vector<std::string>>("pos") == std::vector<std::string>{"foo", "foo"});
             }
         }
     }
