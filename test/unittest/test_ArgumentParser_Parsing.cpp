@@ -477,58 +477,54 @@ TEST_CASE("Parsing a missing optional argument with required...")
     }
 }
 
-TEST_CASE("Parsing a positional argument with choices set...")
+TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
     SUBCASE("...accepts one of the values...")
     {
-        SUBCASE("...for std::string")
+        if constexpr (std::is_integral_v<T>)
         {
-            parser.add_argument("pos").choices({"foo"s, "bar"s});
+            parser.add_argument("pos").choices({T(23), T(34)}).type<T>();
+
+            CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "23"}));
+            CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "34"}));
+        }
+        else if constexpr (std::is_floating_point_v<T>)
+        {
+            parser.add_argument("pos").choices({T(0.125), T(1.5)}).type<T>();
+
+            CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "0.125"}));
+            CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "1.5"}));
+        }
+        else
+        {
+            parser.add_argument("pos").choices({T("foo"), T("bar")}).type<T>();
 
             CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "foo"}));
             CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "bar"}));
-        }
-
-        SUBCASE("...for int")
-        {
-            parser.add_argument("pos").choices({1, 2}).type<int>();
-
-            CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "1"}));
-            CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "2"}));
-        }
-
-        SUBCASE("...for double")
-        {
-            parser.add_argument("pos").choices({3.14, 2.71}).type<double>();
-
-            CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "3.14"}));
-            CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "2.71"}));
         }
     }
 
     SUBCASE("...throws an exception on incorrect value...")
     {
-        SUBCASE("...for std::string")
+        if constexpr (std::is_integral_v<T>)
         {
-            parser.add_argument("pos").choices({ "foo"s, "bar"s });
+            parser.add_argument("pos").choices({T(23), T(34)}).type<T>();
 
-            CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "baz"}), "argument pos: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+            CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "3"}), "argument pos: invalid choice: 3 (choose from 23, 34)", argparse::parsing_error);
         }
-
-        SUBCASE("...for int")
+        else if constexpr (std::is_floating_point_v<T>)
         {
-            parser.add_argument("pos").choices({1, 2}).type<int>();
+            parser.add_argument("pos").choices({T(0.125), T(1.5)}).type<T>();
 
-            CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "3"}), "argument pos: invalid choice: 3 (choose from 1, 2)", argparse::parsing_error);
+            CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "0.5"}), "argument pos: invalid choice: 0.5 (choose from 0.125, 1.5)", argparse::parsing_error);
         }
-
-        SUBCASE("...for double")
+        else
         {
-            parser.add_argument("pos").choices({3.14, 2.71}).type<double>();
+            parser.add_argument("pos").choices({T("foo"), T("bar")}).type<T>();
 
-            CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "1.1"}), "argument pos: invalid choice: 1.1 (choose from 3.14, 2.71)", argparse::parsing_error);
+            CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "baz"}), "argument pos: invalid choice: <Custom: baz> (choose from <Custom: foo>, <Custom: bar>)", argparse::parsing_error);
         }
     }
 }
