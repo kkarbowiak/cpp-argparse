@@ -1159,6 +1159,13 @@ TEST_CASE("Parsing a positional argument with choices set...")
 
                 CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "foo", "baz"}), "argument pos: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
             }
+
+            SUBCASE("...for three arguments")
+            {
+                parser.add_argument("pos").choices({"foo"s, "bar"s}).nargs('*');
+
+                CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"}), "argument pos: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+            }
         }
     }
 }
