@@ -495,6 +495,10 @@ namespace argparse
                                         if (!args.empty())
                                         {
                                             m_options.from_string(args.front(), m_value);
+                                            if (!m_options.choices.empty())
+                                            {
+                                                check_choices(m_value);
+                                            }
                                             args.pop_front();
                                         }
                                         else
