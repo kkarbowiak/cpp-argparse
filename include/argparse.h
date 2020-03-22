@@ -529,8 +529,14 @@ namespace argparse
                                         std::vector<std::string> values;
                                         while (!args.empty())
                                         {
-                                            values.push_back(args.front());
+                                            std::any value;
+                                            m_options.from_string(args.front(), value);
+                                            if (!m_options.choices.empty())
+                                            {
+                                                check_choices(value);
+                                            }
                                             args.pop_front();
+                                            values.push_back(std::any_cast<std::string>(value));
                                         }
                                         if (!values.empty())
                                         {
