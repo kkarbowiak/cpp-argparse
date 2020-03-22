@@ -922,7 +922,7 @@ TEST_CASE("Parsing an optional argument with nargs set...")
 
 TEST_CASE("Parsing a positional argument with choices set...")
 {
-    auto parser = argparse::ArgumentParser();
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
     SUBCASE("...consumes the number of arguments for nargs set...")
     {
@@ -1104,6 +1104,19 @@ TEST_CASE("Parsing a positional argument with choices set...")
                 auto const parsed = parser.parse_args(4, cstr_arr{"prog", "foo", "foo", "foo"});
 
                 CHECK(parsed.get_value<std::vector<std::string>>("pos") == std::vector<std::string>{"foo", "foo", "foo"});
+            }
+        }
+    }
+
+    SUBCASE("...throws an exception on incorrect value for nargs set...")
+    {
+        SUBCASE("...as a number...")
+        {
+            SUBCASE("...for one argument")
+            {
+                parser.add_argument("pos").choices({"foo"s, "bar"s}).nargs(1);
+
+                CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "baz"}), "argument pos: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
             }
         }
     }
