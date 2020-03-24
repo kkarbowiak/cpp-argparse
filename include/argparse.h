@@ -689,8 +689,14 @@ namespace argparse
                                                         std::vector<std::string> values;
                                                         while (it != args.end() && it->front() != '-')
                                                         {
-                                                            values.push_back(*it);
+                                                            std::any value;
+                                                            m_options.from_string(args.front(), value);
+                                                            if (!m_options.choices.empty())
+                                                            {
+                                                                check_choices(value);
+                                                            }
                                                             it = args.erase(it);
+                                                            values.push_back(std::any_cast<std::string>(value));
                                                         }
                                                         m_value = values;
                                                         break;
