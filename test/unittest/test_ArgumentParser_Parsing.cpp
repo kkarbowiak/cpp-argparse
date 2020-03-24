@@ -1233,6 +1233,17 @@ TEST_CASE("Parsing an optional argument with choices set...")
                 CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "bar"}));
             }
         }
+
+        SUBCASE("...as *...")
+        {
+            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('*');
+
+            SUBCASE("...for one argument")
+            {
+                CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
+                CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "bar"}));
+            }
+        }
     }
 }
 
