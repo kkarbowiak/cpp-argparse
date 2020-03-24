@@ -1433,6 +1433,16 @@ TEST_CASE("Parsing an optional argument with choices set...")
                 CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
             }
         }
+
+        SUBCASE("...as +...")
+        {
+            SUBCASE("...for one argument")
+            {
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('+');
+
+                CHECK_THROWS(parser.parse_args(3, cstr_arr{"prog", "-o", "baz"}));
+            }
+        }
     }
 }
 
