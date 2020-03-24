@@ -676,6 +676,10 @@ namespace argparse
                                                         else
                                                         {
                                                             m_options.from_string(*it, m_value);
+                                                            if (!m_options.choices.empty())
+                                                            {
+                                                                check_choices(m_value);
+                                                            }
                                                             it = args.erase(it);
                                                         }
                                                         break;
