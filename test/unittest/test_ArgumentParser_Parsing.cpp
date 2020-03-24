@@ -1312,6 +1312,18 @@ TEST_CASE("Parsing an optional argument with choices set...")
                 CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>{"foo", "bar", "foo"});
             }
         }
+
+        SUBCASE("...as ?...")
+        {
+            SUBCASE("...for one argument")
+            {
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('?');
+
+                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
+
+                CHECK(parsed.get_value("o") == "foo");
+            }
+        }
     }
 }
 
