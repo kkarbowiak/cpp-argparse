@@ -1213,6 +1213,14 @@ TEST_CASE("Parsing an optional argument with choices set...")
                 CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "foo"}));
                 CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "bar", "bar"}));
             }
+
+            SUBCASE("...for three arguments")
+            {
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(3);
+
+                CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "foo", "foo"}));
+                CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "bar", "bar", "bar"}));
+            }
         }
     }
 }
