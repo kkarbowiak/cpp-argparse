@@ -1427,6 +1427,11 @@ TEST_CASE("Parsing an optional argument with choices set...")
             {
                 CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
             }
+
+            SUBCASE("...for three arguments")
+            {
+                CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+            }
         }
     }
 }
