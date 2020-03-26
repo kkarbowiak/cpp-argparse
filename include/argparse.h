@@ -55,22 +55,17 @@ namespace argparse
     template<typename T>
     inline auto from_string(std::string const & s, T & t) -> void
     {
-        (void) std::from_chars(s.data(), s.data() + s.size(), t);
-    }
-
-    inline auto from_string(std::string const & s, float & f) -> void
-    {
-        f = std::stof(s);
-    }
-
-    inline auto from_string(std::string const & s, double & d) -> void
-    {
-        d = std::stod(s);
-    }
-
-    inline auto from_string(std::string const & s, long double & ld) -> void
-    {
-        ld = std::stold(s);
+        std::istringstream iss(s);
+        if constexpr(std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+        {
+            int i;
+            iss >> i;
+            t = static_cast<T>(i);
+        }
+        else
+        {
+            iss >> t;
+        }
     }
 
     template<typename T>
