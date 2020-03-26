@@ -593,7 +593,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
     }
 }
 
-TEST_CASE("Parsing a positional argument with nargs set...")
+TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
@@ -603,21 +603,21 @@ TEST_CASE("Parsing a positional argument with nargs set...")
         {
             SUBCASE("...for one argument")
             {
-                parser.add_argument("pos").nargs(1);
+                parser.add_argument("pos").nargs(1).template type<T>();
 
                 CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "foo"}));
             }
 
             SUBCASE("...for two arguments")
             {
-                parser.add_argument("pos").nargs(2);
+                parser.add_argument("pos").nargs(2).template type<T>();
 
                 CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "foo", "bar"}));
             }
 
             SUBCASE("...for three arguments")
             {
-                parser.add_argument("pos").nargs(3);
+                parser.add_argument("pos").nargs(3).template type<T>();
 
                 CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"}));
             }
@@ -627,29 +627,29 @@ TEST_CASE("Parsing a positional argument with nargs set...")
         {
             SUBCASE("...for one argument")
             {
-                parser.add_argument("pos").nargs(1);
+                parser.add_argument("pos").nargs(1).template type<T>();
 
                 auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
 
-                CHECK(parsed.get_value<std::vector<std::string>>("pos") == std::vector<std::string>{"foo"});
+                CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo"});
             }
 
             SUBCASE("...for two arguments")
             {
-                parser.add_argument("pos").nargs(2);
+                parser.add_argument("pos").nargs(2).template type<T>();
 
                 auto const parsed = parser.parse_args(3, cstr_arr{"prog", "foo", "bar"});
 
-                CHECK(parsed.get_value<std::vector<std::string>>("pos") == std::vector<std::string>{"foo", "bar"});
+                CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "bar"});
             }
 
             SUBCASE("...for three arguments")
             {
-                parser.add_argument("pos").nargs(3);
+                parser.add_argument("pos").nargs(3).template type<T>();
 
                 auto const parsed = parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"});
 
-                CHECK(parsed.get_value<std::vector<std::string>>("pos") == std::vector<std::string>{"foo", "bar", "baz"});
+                CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "bar", "baz"});
             }
         }
 
@@ -657,21 +657,21 @@ TEST_CASE("Parsing a positional argument with nargs set...")
         {
             SUBCASE("...for one argument and no provided")
             {
-                parser.add_argument("pos").nargs(1);
+                parser.add_argument("pos").nargs(1).template type<T>();
 
                 CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: pos", argparse::parsing_error);
             }
 
             SUBCASE("...for two arguments and one provided")
             {
-                parser.add_argument("pos").nargs(2);
+                parser.add_argument("pos").nargs(2).template type<T>();
 
                 CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "foo"}), "the following arguments are required: pos", argparse::parsing_error);
             }
 
             SUBCASE("...for three arguments and two provided")
             {
-                parser.add_argument("pos").nargs(3);
+                parser.add_argument("pos").nargs(3).template type<T>();
 
                 CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "foo", "bar"}), "the following arguments are required: pos", argparse::parsing_error);
             }
@@ -682,11 +682,11 @@ TEST_CASE("Parsing a positional argument with nargs set...")
     {
         SUBCASE("...consumes single argument and yields it as a single item")
         {
-            parser.add_argument("pos").nargs('?');
+            parser.add_argument("pos").nargs('?').template type<T>();
 
             auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
 
-            CHECK(parsed.get_value("pos") == "foo");
+            CHECK(parsed.get_value<T>("pos") == T("foo"));
         }
 
         SUBCASE("...yields default value if no argument is provided")
@@ -695,7 +695,7 @@ TEST_CASE("Parsing a positional argument with nargs set...")
 
             auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
-            CHECK(parsed.get_value("pos") == "foo");
+            CHECK(parsed.get_value<T>("pos") == "foo");
         }
     }
 
@@ -703,29 +703,29 @@ TEST_CASE("Parsing a positional argument with nargs set...")
     {
         SUBCASE("...yields an empty list if no arguments provided")
         {
-            parser.add_argument("pos").nargs('*');
+            parser.add_argument("pos").nargs('*').template type<T>();
 
             auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
-            CHECK(parsed.get_value<std::vector<std::string>>("pos") == std::vector<std::string>());
+            CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>());
         }
 
         SUBCASE("...consumes single argument and yields it as a list")
         {
-            parser.add_argument("pos").nargs('*');
+            parser.add_argument("pos").nargs('*').template type<T>();
 
             auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
 
-            CHECK(parsed.get_value<std::vector<std::string>>("pos") == std::vector<std::string>{"foo"});
+            CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo"});
         }
 
         SUBCASE("...consumes all available arguments and yields them as a list")
         {
-            parser.add_argument("pos").nargs('*');
+            parser.add_argument("pos").nargs('*').template type<T>();
 
             auto const parsed = parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"});
 
-            CHECK(parsed.get_value<std::vector<std::string>>("pos") == std::vector<std::string>{"foo", "bar", "baz"});
+            CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "bar", "baz"});
         }
     }
 
@@ -733,27 +733,27 @@ TEST_CASE("Parsing a positional argument with nargs set...")
     {
         SUBCASE("...throws an exception if no arguments provided")
         {
-            parser.add_argument("pos").nargs('+');
+            parser.add_argument("pos").nargs('+').template type<T>();
 
             CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: pos", argparse::parsing_error);
         }
 
         SUBCASE("...consumes single argument and yields it as a list")
         {
-            parser.add_argument("pos").nargs('+');
+            parser.add_argument("pos").nargs('+').template type<T>();
 
             auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
 
-            CHECK(parsed.get_value<std::vector<std::string>>("pos") == std::vector<std::string>{"foo"});
+            CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo"});
         }
 
         SUBCASE("...consumes all available arguments and yields them as a list")
         {
-            parser.add_argument("pos").nargs('+');
+            parser.add_argument("pos").nargs('+').template type<T>();
 
             auto const parsed = parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"});
 
-            CHECK(parsed.get_value<std::vector<std::string>>("pos") == std::vector<std::string>{"foo", "bar", "baz"});
+            CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "bar", "baz"});
         }
     }
 }
