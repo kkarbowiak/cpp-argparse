@@ -535,7 +535,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
     }
 }
 
-TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom)
+TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
@@ -577,6 +577,12 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
             parser.add_argument("-o").choices({T(0.125), T(1.5)}).template type<T>();
 
             CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"}), "argument -o: invalid choice: 0.5 (choose from 0.125, 1.5)", argparse::parsing_error);
+        }
+        else if constexpr (std::is_same_v<std::string, T>)
+        {
+            parser.add_argument("-o").choices({T("foo"), T("bar")}).template type<T>();
+
+            CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "baz"}), "argument -o: invalid choice: baz (choose from foo, bar)", argparse::parsing_error);
         }
         else
         {
