@@ -219,7 +219,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument yields its requested type", T, 
     }
 }
 
-TEST_CASE_TEMPLATE("Parsing an optional argument with default value...", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom)
+TEST_CASE_TEMPLATE("Parsing an optional argument with default value...", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom)
 {
     auto parser = argparse::ArgumentParser();
 
