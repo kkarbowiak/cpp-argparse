@@ -71,29 +71,15 @@ namespace argparse
     template<typename T>
     inline auto to_string(T const& t) -> std::string
     {
-        std::array<char, 256> chars;
-        auto [ptr, ec] = std::to_chars(chars.data(), chars.data() + chars.size(), t);
-        return std::string(chars.data(), ptr);
-    }
-
-    inline auto to_string(float f) -> std::string
-    {
         std::ostringstream ostr;
-        ostr << f;
-        return ostr.str();
-    }
-
-    inline auto to_string(double d) -> std::string
-    {
-        std::ostringstream ostr;
-        ostr << d;
-        return ostr.str();
-    }
-
-    inline auto to_string(long double ld) -> std::string
-    {
-        std::ostringstream ostr;
-        ostr << ld;
+        if constexpr(std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+        {
+            ostr << static_cast<int>(t);
+        }
+        else
+        {
+            ostr << t;
+        }
         return ostr.str();
     }
 
