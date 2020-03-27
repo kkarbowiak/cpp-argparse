@@ -372,6 +372,21 @@ namespace argparse
                     {
                         return std::any_cast<std::string>(lhs) == std::any_cast<std::string>(rhs);
                     };
+                std::function<std::any (std::vector<std::any> const &)> transform =
+                    [](std::vector<std::any> const & values)
+                    {
+                        std::vector<std::string> result;
+                        for (auto const & v : values)
+                        {
+                            result.push_back(std::any_cast<std::string>(v));
+                        }
+                        return std::any(result);
+                    };
+                std::function<std::size_t (std::any const &)> size =
+                    [](std::any const & a)
+                    {
+                        return std::any_cast<std::vector<std::string>>(a).size();
+                    };
 
                 auto join_choices(std::string separator) const -> std::string
                 {
@@ -447,7 +462,7 @@ namespace argparse
                         {
                             if (std::holds_alternative<unsigned int>(*m_options.nargs))
                             {
-                                std::vector<std::string> values;
+                                std::vector<std::any> values;
                                 for (auto i = 0u; i < std::get<unsigned int>(*m_options.nargs); ++i)
                                 {
                                     if (!args.empty())
@@ -459,11 +474,11 @@ namespace argparse
                                             check_choices(value);
                                         }
                                         args.pop_front();
-                                        values.push_back(std::any_cast<std::string>(value));
+                                        values.push_back(value);
                                     }
                                 }
 
-                                m_value = values;
+                                m_value = m_options.transform(values);
                             }
                             else
                             {
@@ -488,7 +503,7 @@ namespace argparse
                                     }
                                     case '*':
                                     {
-                                        std::vector<std::string> values;
+                                        std::vector<std::any> values;
                                         while (!args.empty())
                                         {
                                             std::any value;
@@ -498,14 +513,14 @@ namespace argparse
                                                 check_choices(value);
                                             }
                                             args.pop_front();
-                                            values.push_back(std::any_cast<std::string>(value));
+                                            values.push_back(value);
                                         }
-                                        m_value = values;
+                                        m_value = m_options.transform(values);
                                         break;
                                     }
                                     case '+':
                                     {
-                                        std::vector<std::string> values;
+                                        std::vector<std::any> values;
                                         while (!args.empty())
                                         {
                                             std::any value;
@@ -515,11 +530,11 @@ namespace argparse
                                                 check_choices(value);
                                             }
                                             args.pop_front();
-                                            values.push_back(std::any_cast<std::string>(value));
+                                            values.push_back(value);
                                         }
                                         if (!values.empty())
                                         {
-                                            m_value = values;
+                                            m_value = m_options.transform(values);
                                         }
                                         break;
                                     }
@@ -564,7 +579,7 @@ namespace argparse
                     auto has_value() const -> bool override
                     {
                         return m_options.nargs && std::holds_alternative<unsigned int>(*m_options.nargs)
-                            ? std::any_cast<std::vector<std::string>>(m_value).size() == std::get<unsigned int>(*m_options.nargs)
+                            ? m_options.size(m_value) == std::get<unsigned int>(*m_options.nargs)
                             : m_value.has_value();
                     }
 
@@ -1064,6 +1079,21 @@ namespace argparse
                             [](std::any const & l, std::any const & r)
                             {
                                 return std::any_cast<T>(l) == std::any_cast<T>(r);
+                            };
+                        m_options.transform =
+                            [](std::vector<std::any> const & values)
+                            {
+                                std::vector<T> result;
+                                for (auto const & v : values)
+                                {
+                                    result.push_back(std::any_cast<T>(v));
+                                }
+                                return std::any(result);
+                            };
+                        m_options.size =
+                            [](std::any const & a)
+                            {
+                                return std::any_cast<std::vector<T>>(a).size();
                             };
                         return *this;
                     }

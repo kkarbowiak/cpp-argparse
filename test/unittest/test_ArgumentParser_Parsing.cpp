@@ -593,7 +593,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
     }
 }
 
-TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, std::string)
+TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, int, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
@@ -605,21 +605,42 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, std::st
             {
                 parser.add_argument("pos").nargs(1).template type<T>();
 
-                CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "foo"}));
+                if constexpr (std::is_integral_v<T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "42"}));
+                }
+                else
+                {
+                    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "foo"}));
+                }
             }
 
             SUBCASE("...for two arguments")
             {
                 parser.add_argument("pos").nargs(2).template type<T>();
 
-                CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "foo", "bar"}));
+                if constexpr (std::is_integral_v<T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "42", "54"}));
+                }
+                else
+                {
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "foo", "bar"}));
+                }
             }
 
             SUBCASE("...for three arguments")
             {
                 parser.add_argument("pos").nargs(3).template type<T>();
 
-                CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"}));
+                if constexpr (std::is_integral_v<T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "42", "54", "65"}));
+                }
+                else
+                {
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"}));
+                }
             }
         }
 
@@ -629,27 +650,54 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, std::st
             {
                 parser.add_argument("pos").nargs(1).template type<T>();
 
-                auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
+                if constexpr (std::is_integral_v<T>)
+                {
+                    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "42"});
 
-                CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo"});
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{42});
+                }
+                else
+                {
+                    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo"});
+                }
             }
 
             SUBCASE("...for two arguments")
             {
                 parser.add_argument("pos").nargs(2).template type<T>();
 
-                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "foo", "bar"});
+                if constexpr (std::is_integral_v<T>)
+                {
+                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "42", "54"});
 
-                CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "bar"});
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{42, 54});
+                }
+                else
+                {
+                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "foo", "bar"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "bar"});
+                }
             }
 
             SUBCASE("...for three arguments")
             {
                 parser.add_argument("pos").nargs(3).template type<T>();
 
-                auto const parsed = parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"});
+                if constexpr (std::is_integral_v<T>)
+                {
+                    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "42", "54", "65"});
 
-                CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "bar", "baz"});
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{42, 54, 65});
+                }
+                else
+                {
+                    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "bar", "baz"});
+                }
             }
         }
 
@@ -666,14 +714,28 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, std::st
             {
                 parser.add_argument("pos").nargs(2).template type<T>();
 
-                CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "foo"}), "the following arguments are required: pos", argparse::parsing_error);
+                if constexpr (std::is_integral_v<T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "42"}), "the following arguments are required: pos", argparse::parsing_error);
+                }
+                else
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "foo"}), "the following arguments are required: pos", argparse::parsing_error);
+                }
             }
 
             SUBCASE("...for three arguments and two provided")
             {
                 parser.add_argument("pos").nargs(3).template type<T>();
 
-                CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "foo", "bar"}), "the following arguments are required: pos", argparse::parsing_error);
+                if constexpr (std::is_integral_v<T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "42", "54"}), "the following arguments are required: pos", argparse::parsing_error);
+                }
+                else
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "foo", "bar"}), "the following arguments are required: pos", argparse::parsing_error);
+                }
             }
         }
     }
@@ -684,18 +746,38 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, std::st
         {
             parser.add_argument("pos").nargs('?').template type<T>();
 
-            auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
+            if constexpr (std::is_integral_v<T>)
+            {
+                auto const parsed = parser.parse_args(2, cstr_arr{"prog", "42"});
 
-            CHECK(parsed.get_value<T>("pos") == T("foo"));
+                CHECK(parsed.get_value<T>("pos") == T(42));
+            }
+            else
+            {
+                auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
+
+                CHECK(parsed.get_value<T>("pos") == T("foo"));
+            }
         }
 
         SUBCASE("...yields default value if no argument is provided")
         {
-            parser.add_argument("pos").nargs('?').default_("foo"s);
+            if constexpr (std::is_integral_v<T>)
+            {
+                parser.add_argument("pos").nargs('?').default_(T(10));
 
-            auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+                auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
-            CHECK(parsed.get_value<T>("pos") == "foo");
+                CHECK(parsed.get_value<T>("pos") == T(10));
+            }
+            else
+            {
+                parser.add_argument("pos").nargs('?').default_("foo"s);
+
+                auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+
+                CHECK(parsed.get_value<T>("pos") == T("foo"));
+            }
         }
     }
 
@@ -714,18 +796,36 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, std::st
         {
             parser.add_argument("pos").nargs('*').template type<T>();
 
-            auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
+            if constexpr (std::is_integral_v<T>)
+            {
+                auto const parsed = parser.parse_args(2, cstr_arr{"prog", "42"});
 
-            CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo"});
+                CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{42});
+            }
+            else
+            {
+                auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
+
+                CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo"});
+            }
         }
 
         SUBCASE("...consumes all available arguments and yields them as a list")
         {
             parser.add_argument("pos").nargs('*').template type<T>();
 
-            auto const parsed = parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"});
+            if constexpr (std::is_integral_v<T>)
+            {
+                auto const parsed = parser.parse_args(4, cstr_arr{"prog", "42", "54", "65"});
 
-            CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "bar", "baz"});
+                CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{42, 54, 65});
+            }
+            else
+            {
+                auto const parsed = parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"});
+
+                CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "bar", "baz"});
+            }
         }
     }
 
@@ -742,18 +842,36 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, std::st
         {
             parser.add_argument("pos").nargs('+').template type<T>();
 
-            auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
+            if constexpr (std::is_integral_v<T>)
+            {
+                auto const parsed = parser.parse_args(2, cstr_arr{"prog", "42"});
 
-            CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo"});
+                CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{42});
+            }
+            else
+            {
+                auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
+
+                CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo"});
+            }
         }
 
         SUBCASE("...consumes all available arguments and yields them as a list")
         {
             parser.add_argument("pos").nargs('+').template type<T>();
 
-            auto const parsed = parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"});
+            if constexpr (std::is_integral_v<T>)
+            {
+                auto const parsed = parser.parse_args(4, cstr_arr{"prog", "42", "54", "65"});
 
-            CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "bar", "baz"});
+                CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{42, 54, 65});
+            }
+            else
+            {
+                auto const parsed = parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"});
+
+                CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "bar", "baz"});
+            }
         }
     }
 }
