@@ -1056,12 +1056,12 @@ namespace argparse
                                 a = val;
                             };
                         m_options.to_string =
-                            [](std::any const& a)
+                            [](std::any const & a)
                             {
                                 return to_string(std::any_cast<T>(a));
                             };
                         m_options.comparator =
-                            [](std::any const& l, std::any const& r)
+                            [](std::any const & l, std::any const & r)
                             {
                                 return std::any_cast<T>(l) == std::any_cast<T>(r);
                             };
