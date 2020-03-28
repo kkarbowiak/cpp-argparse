@@ -952,7 +952,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
     }
 }
 
-TEST_CASE("Parsing an optional argument with nargs set...")
+TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
@@ -962,21 +962,21 @@ TEST_CASE("Parsing an optional argument with nargs set...")
         {
             SUBCASE("...for one argument")
             {
-                parser.add_argument("-o").nargs(1);
+                parser.add_argument("-o").nargs(1).template type<T>();
 
                 CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
             }
 
             SUBCASE("...for two arguments")
             {
-                parser.add_argument("-o").nargs(2);
+                parser.add_argument("-o").nargs(2).template type<T>();
 
                 CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"}));
             }
 
             SUBCASE("...for three arguments")
             {
-                parser.add_argument("-o").nargs(3);
+                parser.add_argument("-o").nargs(3).template type<T>();
 
                 CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"}));
             }
@@ -986,29 +986,29 @@ TEST_CASE("Parsing an optional argument with nargs set...")
         {
             SUBCASE("...for one argument")
             {
-                parser.add_argument("-o").nargs(1);
+                parser.add_argument("-o").nargs(1).template type<T>();
 
                 auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
 
-                CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>{"foo"});
+                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
             }
 
             SUBCASE("...for two arguments")
             {
-                parser.add_argument("-o").nargs(2);
+                parser.add_argument("-o").nargs(2).template type<T>();
 
                 auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"});
 
-                CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>{"foo", "bar"});
+                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar"});
             }
 
             SUBCASE("...for three arguments")
             {
-                parser.add_argument("-o").nargs(3);
+                parser.add_argument("-o").nargs(3).template type<T>();
 
                 auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"});
 
-                CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>{"foo", "bar", "baz"});
+                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar", "baz"});
             }
         }
 
@@ -1016,21 +1016,21 @@ TEST_CASE("Parsing an optional argument with nargs set...")
         {
             SUBCASE("...for one argument and no provided")
             {
-                parser.add_argument("-o").nargs(1);
+                parser.add_argument("-o").nargs(1).template type<T>();
 
                 CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o: expected 1 argument", argparse::parsing_error);
             }
 
             SUBCASE("...for two arguments and one provided")
             {
-                parser.add_argument("-o").nargs(2);
+                parser.add_argument("-o").nargs(2).template type<T>();
 
                 CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}), "argument -o: expected 2 arguments", argparse::parsing_error);
             }
 
             SUBCASE("...for three arguments and two provided")
             {
-                parser.add_argument("-o").nargs(3);
+                parser.add_argument("-o").nargs(3).template type<T>();
 
                 CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "foo", "bar"}), "argument -o: expected 3 arguments", argparse::parsing_error);
             }
@@ -1041,11 +1041,11 @@ TEST_CASE("Parsing an optional argument with nargs set...")
     {
         SUBCASE("...consumes single argument and yields it as a single item")
         {
-            parser.add_argument("-o").nargs('?');
+            parser.add_argument("-o").nargs('?').template type<T>();
 
             auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
 
-            CHECK(parsed.get_value("o") == "foo");
+            CHECK(parsed.get_value<T>("o") == T("foo"));
         }
 
         SUBCASE("...yields default value if no argument is provided")
@@ -1054,7 +1054,7 @@ TEST_CASE("Parsing an optional argument with nargs set...")
 
             auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
-            CHECK(parsed.get_value("o") == "foo");
+            CHECK(parsed.get_value<T>("o") == "foo");
         }
 
         SUBCASE("...yields const value if option string is present and no argument is provided")
@@ -1063,7 +1063,7 @@ TEST_CASE("Parsing an optional argument with nargs set...")
 
             auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
 
-            CHECK(parsed.get_value("o") == "foo");
+            CHECK(parsed.get_value<T>("o") == "foo");
         }
     }
 
@@ -1071,29 +1071,29 @@ TEST_CASE("Parsing an optional argument with nargs set...")
     {
         SUBCASE("...yields an empty list if no arguments provided")
         {
-            parser.add_argument("-o").nargs('*');
+            parser.add_argument("-o").nargs('*').template type<T>();
 
             auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
 
-            CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>());
+            CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>());
         }
 
         SUBCASE("...consumes single argument and yields it as a list")
         {
-            parser.add_argument("-o").nargs('*');
+            parser.add_argument("-o").nargs('*').template type<T>();
 
             auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
 
-            CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>{"foo"});
+            CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
         }
 
         SUBCASE("...consumes all available arguments and yields them as a list")
         {
-            parser.add_argument("-o").nargs('*');
+            parser.add_argument("-o").nargs('*').template type<T>();
 
             auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"});
 
-            CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>{"foo", "bar", "baz"});
+            CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar", "baz"});
         }
     }
 
@@ -1101,27 +1101,27 @@ TEST_CASE("Parsing an optional argument with nargs set...")
     {
         SUBCASE("...throws an exception if no arguments provided")
         {
-            parser.add_argument("-o").nargs('+');
+            parser.add_argument("-o").nargs('+').template type<T>();
 
             CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o: expected at least one argument", argparse::parsing_error);
         }
 
         SUBCASE("...consumes single argument and yields it as a list")
         {
-            parser.add_argument("-o").nargs('+');
+            parser.add_argument("-o").nargs('+').template type<T>();
 
             auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
 
-            CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>{"foo"});
+            CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
         }
 
         SUBCASE("...consumes all available arguments and yields them as a list")
         {
-            parser.add_argument("-o").nargs('+');
+            parser.add_argument("-o").nargs('+').template type<T>();
 
             auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"});
 
-            CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>{"foo", "bar", "baz"});
+            CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar", "baz"});
         }
     }
 }
