@@ -638,7 +638,7 @@ namespace argparse
                                             if (std::holds_alternative<unsigned int>(*m_options.nargs))
                                             {
                                                 auto const args_number = std::get<unsigned int>(*m_options.nargs);
-                                                std::vector<std::string> values;
+                                                std::vector<std::any> values;
                                                 for (auto j = 0u; j < args_number; ++j)
                                                 {
                                                     if (it == args.end() || it->front() == '-')
@@ -652,10 +652,10 @@ namespace argparse
                                                         check_choices(value);
                                                     }
                                                     it = args.erase(it);
-                                                    values.push_back(std::any_cast<std::string>(value));
+                                                    values.push_back(value);
                                                 }
 
-                                                m_value = values;
+                                                m_value = m_options.transform(values);
                                             }
                                             else
                                             {
@@ -680,7 +680,7 @@ namespace argparse
                                                     }
                                                     case '*':
                                                     {
-                                                        std::vector<std::string> values;
+                                                        std::vector<std::any> values;
                                                         while (it != args.end() && it->front() != '-')
                                                         {
                                                             std::any value;
@@ -690,14 +690,14 @@ namespace argparse
                                                                 check_choices(value);
                                                             }
                                                             it = args.erase(it);
-                                                            values.push_back(std::any_cast<std::string>(value));
+                                                            values.push_back(value);
                                                         }
-                                                        m_value = values;
+                                                        m_value = m_options.transform(values);
                                                         break;
                                                     }
                                                     case '+':
                                                     {
-                                                        std::vector<std::string> values;
+                                                        std::vector<std::any> values;
                                                         while (it != args.end() && it->front() != '-')
                                                         {
                                                             std::any value;
@@ -707,13 +707,13 @@ namespace argparse
                                                                 check_choices(value);
                                                             }
                                                             it = args.erase(it);
-                                                            values.push_back(std::any_cast<std::string>(value));
+                                                            values.push_back(value);
                                                         }
                                                         if (values.empty())
                                                         {
                                                             throw parsing_error("argument " + get_name() + ": expected at least one argument");
                                                         }
-                                                        m_value = values;
+                                                        m_value = m_options.transform(values);
                                                         break;
                                                     }
                                                 }
