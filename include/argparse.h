@@ -367,7 +367,7 @@ namespace argparse
                     {
                         return "\"" + std::any_cast<std::string>(a) + "\"";
                     };
-                std::function<bool (std::any const &, std::any const &)> comparator =
+                std::function<bool (std::any const &, std::any const &)> compare =
                     [](std::any const & lhs, std::any const & rhs)
                     {
                         return std::any_cast<std::string>(lhs) == std::any_cast<std::string>(rhs);
@@ -432,7 +432,7 @@ namespace argparse
                         if (!std::any_of(
                             m_options.choices.begin(),
                             m_options.choices.end(),
-                            [&](auto const& rhs) { return m_options.comparator(value, rhs); }))
+                            [&](auto const& rhs) { return m_options.compare(value, rhs); }))
                         {
                             std::string message = "argument " + get_name() + ": invalid choice: ";
                             message += m_options.to_string(value);
@@ -1075,7 +1075,7 @@ namespace argparse
                             {
                                 return to_string(std::any_cast<T>(a));
                             };
-                        m_options.comparator =
+                        m_options.compare =
                             [](std::any const & l, std::any const & r)
                             {
                                 return std::any_cast<T>(l) == std::any_cast<T>(r);
