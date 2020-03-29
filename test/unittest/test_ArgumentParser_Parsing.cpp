@@ -952,7 +952,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
     }
 }
 
-TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, int, std::string)
+TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
@@ -968,6 +968,10 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, int, std
                 {
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "42"}));
                 }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"}));
+                }
                 else
                 {
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
@@ -982,6 +986,10 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, int, std
                 {
                     CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "42", "54"}));
                 }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "0.5", "1.125"}));
+                }
                 else
                 {
                     CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"}));
@@ -995,6 +1003,10 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, int, std
                 if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"}));
+                }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "0.5", "1.125", "2.375"}));
                 }
                 else
                 {
@@ -1015,6 +1027,12 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, int, std
 
                     CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42});
                 }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5});
+                }
                 else
                 {
                     auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
@@ -1033,6 +1051,12 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, int, std
 
                     CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42, 54});
                 }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "0.5", "1.125"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5, 1.125});
+                }
                 else
                 {
                     auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"});
@@ -1050,6 +1074,12 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, int, std
                     auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"});
 
                     CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42, 54, 65});
+                }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "0.5", "1.125", "2.375"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5, 1.125, 2.375});
                 }
                 else
                 {
@@ -1077,6 +1107,10 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, int, std
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "42"}), "argument -o: expected 2 arguments", argparse::parsing_error);
                 }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"}), "argument -o: expected 2 arguments", argparse::parsing_error);
+                }
                 else
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}), "argument -o: expected 2 arguments", argparse::parsing_error);
@@ -1090,6 +1124,10 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, int, std
                 if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "42", "54"}), "argument -o: expected 3 arguments", argparse::parsing_error);
+                }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "0.5", "1.125"}), "argument -o: expected 3 arguments", argparse::parsing_error);
                 }
                 else
                 {
@@ -1111,6 +1149,12 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, int, std
 
                 CHECK(parsed.get_value<T>("o") == T(42));
             }
+            else if constexpr (std::is_floating_point_v<T>)
+            {
+                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"});
+
+                CHECK(parsed.get_value<T>("o") == T(0.5));
+            }
             else
             {
                 auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
@@ -1128,6 +1172,14 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, int, std
                 auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
                 CHECK(parsed.get_value<T>("o") == T(10));
+            }
+            else if constexpr (std::is_floating_point_v<T>)
+            {
+                parser.add_argument("-o").nargs('?').default_(T(0.0625));
+
+                auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+
+                CHECK(parsed.get_value<T>("o") == T(0.0625));
             }
             else
             {
@@ -1148,6 +1200,14 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, int, std
                 auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
 
                 CHECK(parsed.get_value<T>("o") == T(5));
+            }
+            else if constexpr (std::is_floating_point_v<T>)
+            {
+                parser.add_argument("-o").nargs('?').const_(T(0.875));
+
+                auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
+
+                CHECK(parsed.get_value<T>("o") == T(0.875));
             }
             else
             {
@@ -1181,6 +1241,12 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, int, std
 
                 CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42});
             }
+            else if constexpr (std::is_floating_point_v<T>)
+            {
+                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"});
+
+                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5});
+            }
             else
             {
                 auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
@@ -1198,6 +1264,12 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, int, std
                 auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"});
 
                 CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42, 54, 65});
+            }
+            else if constexpr (std::is_floating_point_v<T>)
+            {
+                auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "0.5", "1.125", "2.375"});
+
+                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5, 1.125, 2.375});
             }
             else
             {
@@ -1227,6 +1299,12 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, int, std
 
                 CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42});
             }
+            else if constexpr (std::is_floating_point_v<T>)
+            {
+                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"});
+
+                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5});
+            }
             else
             {
                 auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
@@ -1244,6 +1322,12 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, int, std
                 auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"});
 
                 CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42, 54, 65});
+            }
+            else if constexpr (std::is_floating_point_v<T>)
+            {
+                auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "0.5", "1.125", "2.375"});
+
+                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5, 1.125, 2.375});
             }
             else
             {
