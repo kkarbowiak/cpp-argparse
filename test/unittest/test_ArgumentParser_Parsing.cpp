@@ -1089,11 +1089,11 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, int, std
 
                 if constexpr (std::is_integral_v<T>)
                 {
-                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "42", "54"}), "argument -o: expected 3 arguments", argparse::parsing_error);
+                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "42", "54"}), "argument -o: expected 3 arguments", argparse::parsing_error);
                 }
                 else
                 {
-                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "foo", "bar"}), "argument -o: expected 3 arguments", argparse::parsing_error);
+                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"}), "argument -o: expected 3 arguments", argparse::parsing_error);
                 }
             }
         }
