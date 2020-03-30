@@ -436,6 +436,11 @@ namespace argparse
                         return std::holds_alternative<unsigned int>(*m_options.nargs);
                     }
 
+                    auto get_nargs_number() const -> unsigned int
+                    {
+                        return std::get<unsigned int>(*m_options.nargs);
+                    }
+
                 protected:
                     auto check_choices(std::any const & value) const -> void
                     {
@@ -473,7 +478,7 @@ namespace argparse
                             if (has_nargs_number())
                             {
                                 std::vector<std::any> values;
-                                for (auto i = 0u; i < std::get<unsigned int>(*m_options.nargs); ++i)
+                                for (auto i = 0u; i < get_nargs_number(); ++i)
                                 {
                                     if (!args.empty())
                                     {
@@ -589,7 +594,7 @@ namespace argparse
                     auto has_value() const -> bool override
                     {
                         return has_nargs() && has_nargs_number()
-                            ? m_options.size(m_value) == std::get<unsigned int>(*m_options.nargs)
+                            ? m_options.size(m_value) == get_nargs_number()
                             : m_value.has_value();
                     }
 
@@ -647,7 +652,7 @@ namespace argparse
                                         {
                                             if (has_nargs_number())
                                             {
-                                                auto const args_number = std::get<unsigned int>(*m_options.nargs);
+                                                auto const args_number = get_nargs_number();
                                                 std::vector<std::any> values;
                                                 for (auto j = 0u; j < args_number; ++j)
                                                 {
@@ -975,7 +980,7 @@ namespace argparse
 
                         if (argument.has_nargs_number())
                         {
-                            for (auto n = 0u; n < std::get<unsigned int>(*argument.get_options().nargs); n++)
+                            for (auto n = 0u; n < argument.get_nargs_number(); n++)
                             {
                                 result += " ";
                                 result += format_arg(argument);
