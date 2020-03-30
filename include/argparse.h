@@ -443,6 +443,11 @@ namespace argparse
                         }
                     }
 
+                    auto has_nargs() const -> bool
+                    {
+                        return m_options.nargs.has_value();
+                    }
+
                 protected:
                     Options const m_options;
             };
@@ -458,7 +463,7 @@ namespace argparse
 
                     auto parse_args(tokens args) -> tokens override
                     {
-                        if (m_options.nargs)
+                        if (has_nargs())
                         {
                             if (std::holds_alternative<unsigned int>(*m_options.nargs))
                             {
@@ -633,7 +638,7 @@ namespace argparse
                                 switch (m_options.action)
                                 {
                                     case store:
-                                        if (m_options.nargs)
+                                        if (has_nargs())
                                         {
                                             if (std::holds_alternative<unsigned int>(*m_options.nargs))
                                             {
