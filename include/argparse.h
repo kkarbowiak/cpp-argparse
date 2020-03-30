@@ -441,6 +441,11 @@ namespace argparse
                         return std::get<unsigned int>(*m_options.nargs);
                     }
 
+                    auto get_nargs_symbol() const -> char
+                    {
+                        return std::get<char>(*m_options.nargs);
+                    }
+
                 protected:
                     auto check_choices(std::any const & value) const -> void
                     {
@@ -497,7 +502,7 @@ namespace argparse
                             }
                             else
                             {
-                                switch (std::get<char>(*m_options.nargs))
+                                switch (get_nargs_symbol())
                                 {
                                     case '?':
                                     {
@@ -674,7 +679,7 @@ namespace argparse
                                             }
                                             else
                                             {
-                                                switch (std::get<char>(*m_options.nargs))
+                                                switch (get_nargs_symbol())
                                                 {
                                                     case '?':
                                                     {
@@ -988,7 +993,7 @@ namespace argparse
                         }
                         else
                         {
-                            switch (std::get<char>(*argument.get_options().nargs))
+                            switch (argument.get_nargs_symbol())
                             {
                                 case '?':
                                     result += " [";
