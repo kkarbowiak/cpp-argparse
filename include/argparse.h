@@ -431,6 +431,11 @@ namespace argparse
                         return m_options.nargs.has_value();
                     }
 
+                    auto has_nargs_number() const -> bool
+                    {
+                        return std::holds_alternative<unsigned int>(*m_options.nargs);
+                    }
+
                 protected:
                     auto check_choices(std::any const & value) const -> void
                     {
@@ -465,7 +470,7 @@ namespace argparse
                     {
                         if (has_nargs())
                         {
-                            if (std::holds_alternative<unsigned int>(*m_options.nargs))
+                            if (has_nargs_number())
                             {
                                 std::vector<std::any> values;
                                 for (auto i = 0u; i < std::get<unsigned int>(*m_options.nargs); ++i)
@@ -583,7 +588,7 @@ namespace argparse
 
                     auto has_value() const -> bool override
                     {
-                        return has_nargs() && std::holds_alternative<unsigned int>(*m_options.nargs)
+                        return has_nargs() && has_nargs_number()
                             ? m_options.size(m_value) == std::get<unsigned int>(*m_options.nargs)
                             : m_value.has_value();
                     }
@@ -640,7 +645,7 @@ namespace argparse
                                     case store:
                                         if (has_nargs())
                                         {
-                                            if (std::holds_alternative<unsigned int>(*m_options.nargs))
+                                            if (has_nargs_number())
                                             {
                                                 auto const args_number = std::get<unsigned int>(*m_options.nargs);
                                                 std::vector<std::any> values;
@@ -968,7 +973,7 @@ namespace argparse
                     {
                         std::string result;
 
-                        if (std::holds_alternative<unsigned int>(*argument.get_options().nargs))
+                        if (argument.has_nargs_number())
                         {
                             for (auto n = 0u; n < std::get<unsigned int>(*argument.get_options().nargs); n++)
                             {
