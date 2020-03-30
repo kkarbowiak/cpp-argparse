@@ -426,6 +426,11 @@ namespace argparse
                         return m_options;
                     }
 
+                    auto has_nargs() const -> bool
+                    {
+                        return m_options.nargs.has_value();
+                    }
+
                 protected:
                     auto check_choices(std::any const & value) const -> void
                     {
@@ -441,11 +446,6 @@ namespace argparse
                             message += ")";
                             throw parsing_error(message);
                         }
-                    }
-
-                    auto has_nargs() const -> bool
-                    {
-                        return m_options.nargs.has_value();
                     }
 
                 protected:
@@ -583,7 +583,7 @@ namespace argparse
 
                     auto has_value() const -> bool override
                     {
-                        return m_options.nargs && std::holds_alternative<unsigned int>(*m_options.nargs)
+                        return has_nargs() && std::holds_alternative<unsigned int>(*m_options.nargs)
                             ? m_options.size(m_value) == std::get<unsigned int>(*m_options.nargs)
                             : m_value.has_value();
                     }
@@ -854,7 +854,7 @@ namespace argparse
                         {
                             if (arg->is_positional())
                             {
-                                if (arg->get_options().nargs)
+                                if (arg->has_nargs())
                                 {
                                     positionals += format_nargs(*arg);
                                 }
@@ -869,7 +869,7 @@ namespace argparse
                                 optionals += arg->is_required()
                                     ? " "
                                     : " [";
-                                if (arg->get_options().nargs)
+                                if (arg->has_nargs())
                                 {
                                     optionals += arg->get_name();
                                     optionals += format_nargs(*arg);
@@ -915,7 +915,7 @@ namespace argparse
                                 optionals += "\n  " + arg->get_name();
                                 if (arg->get_options().action == store)
                                 {
-                                    if (arg->get_options().nargs)
+                                    if (arg->has_nargs())
                                     {
                                         optionals += format_nargs(*arg);
                                     }
