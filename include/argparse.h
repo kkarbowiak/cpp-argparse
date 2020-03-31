@@ -1083,38 +1083,41 @@ namespace argparse
                     template<typename T>
                     auto type() -> ArgumentBuilder &
                     {
-                        m_options.from_string =
-                            [](std::string const & s, std::any & a)
-                            {
-                                T val;
-                                from_string(s, val);
-                                a = val;
-                            };
-                        m_options.to_string =
-                            [](std::any const & a)
-                            {
-                                return to_string(std::any_cast<T>(a));
-                            };
-                        m_options.compare =
-                            [](std::any const & l, std::any const & r)
-                            {
-                                return std::any_cast<T>(l) == std::any_cast<T>(r);
-                            };
-                        m_options.transform =
-                            [](std::vector<std::any> const & values)
-                            {
-                                std::vector<T> result;
-                                for (auto const & v : values)
+                        if constexpr (!std::is_same_v<std::string, T>)
+                        {
+                            m_options.from_string =
+                                [](std::string const & s, std::any & a)
                                 {
-                                    result.push_back(std::any_cast<T>(v));
-                                }
-                                return std::any(result);
-                            };
-                        m_options.size =
-                            [](std::any const & a)
-                            {
-                                return std::any_cast<std::vector<T>>(a).size();
-                            };
+                                    T val;
+                                    from_string(s, val);
+                                    a = val;
+                                };
+                            m_options.to_string =
+                                [](std::any const & a)
+                                {
+                                    return to_string(std::any_cast<T>(a));
+                                };
+                            m_options.compare =
+                                [](std::any const & l, std::any const & r)
+                                {
+                                    return std::any_cast<T>(l) == std::any_cast<T>(r);
+                                };
+                            m_options.transform =
+                                [](std::vector<std::any> const & values)
+                                {
+                                    std::vector<T> result;
+                                    for (auto const & v : values)
+                                    {
+                                        result.push_back(std::any_cast<T>(v));
+                                    }
+                                    return std::any(result);
+                                };
+                            m_options.size =
+                                [](std::any const & a)
+                                {
+                                    return std::any_cast<std::vector<T>>(a).size();
+                                };
+                        }
                         return *this;
                     }
 

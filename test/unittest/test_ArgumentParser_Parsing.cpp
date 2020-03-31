@@ -524,7 +524,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
         {
             parser.add_argument("pos").choices({T("foo"), T("bar")}).template type<T>();
 
-            CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "baz"}), "argument pos: invalid choice: baz (choose from foo, bar)", argparse::parsing_error);
+            CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "baz"}), "argument pos: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
         }
         else
         {
@@ -582,7 +582,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
         {
             parser.add_argument("-o").choices({T("foo"), T("bar")}).template type<T>();
 
-            CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "baz"}), "argument -o: invalid choice: baz (choose from foo, bar)", argparse::parsing_error);
+            CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
         }
         else
         {
