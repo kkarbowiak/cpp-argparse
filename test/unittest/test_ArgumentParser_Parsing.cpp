@@ -1339,7 +1339,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
     }
 }
 
-TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, std::string)
+TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
@@ -1355,6 +1355,13 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
 
                     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "11"}));
                     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "22"}));
+                }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs(1).template type<T>();
+
+                    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "0.125"}));
+                    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "0.25"}));
                 }
                 else
                 {
@@ -1374,6 +1381,13 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "11", "11"}));
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "22", "22"}));
                 }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs(2).template type<T>();
+
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "0.125", "0.125"}));
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "0.25", "0.25"}));
+                }
                 else
                 {
                     parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(2).template type<T>();
@@ -1391,6 +1405,13 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
 
                     CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "11", "11", "11"}));
                     CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "22", "22", "22"}));
+                }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs(3).template type<T>();
+
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "0.125", "0.125", "0.125"}));
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "0.25", "0.25", "0.25"}));
                 }
                 else
                 {
@@ -1413,6 +1434,13 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
                     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "11"}));
                     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "22"}));
                 }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs('?').template type<T>();
+
+                    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "0.125"}));
+                    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "0.25"}));
+                }
                 else
                 {
                     parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs('?').template type<T>();
@@ -1429,6 +1457,10 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
             {
                 parser.add_argument("pos").choices({T(11), T(22)}).nargs('*').template type<T>();
             }
+            else if constexpr (std::is_floating_point_v<T>)
+            {
+                parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs('*').template type<T>();
+            }
             else
             {
                 parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs('*').template type<T>();
@@ -1440,6 +1472,11 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
                 {
                     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "11"}));
                     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "22"}));
+                }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "0.125"}));
+                    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "0.25"}));
                 }
                 else
                 {
@@ -1455,6 +1492,11 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "11", "11"}));
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "22", "22"}));
                 }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "0.125", "0.125"}));
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "0.25", "0.25"}));
+                }
                 else
                 {
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "foo", "foo"}));
@@ -1468,6 +1510,11 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
                 {
                     CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "11", "11", "11"}));
                     CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "22", "22", "22"}));
+                }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "0.125", "0.125", "0.125"}));
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "0.25", "0.25", "0.25"}));
                 }
                 else
                 {
@@ -1483,6 +1530,10 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
             {
                 parser.add_argument("pos").choices({T(11), T(22)}).nargs('+').template type<T>();
             }
+            else if constexpr (std::is_floating_point_v<T>)
+            {
+                parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs('+').template type<T>();
+            }
             else
             {
                 parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs('+').template type<T>();
@@ -1494,6 +1545,11 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
                 {
                     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "11"}));
                     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "22"}));
+                }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "0.125"}));
+                    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "0.25"}));
                 }
                 else
                 {
@@ -1509,6 +1565,11 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "11", "11"}));
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "22", "22"}));
                 }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "0.125", "0.125"}));
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "0.25", "0.25"}));
+                }
                 else
                 {
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "foo", "foo"}));
@@ -1522,6 +1583,11 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
                 {
                     CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "11", "11", "11"}));
                     CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "22", "22", "22"}));
+                }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "0.125", "0.125", "0.125"}));
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "0.25", "0.25", "0.25"}));
                 }
                 else
                 {
@@ -1546,6 +1612,14 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
 
                     CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{11});
                 }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs(1).template type<T>();
+
+                    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "0.125"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.125});
+                }
                 else
                 {
                     parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(1).template type<T>();
@@ -1566,6 +1640,14 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
 
                     CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{11, 22});
                 }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs(2).template type<T>();
+
+                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "0.125", "0.25"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.125, 0.25});
+                }
                 else
                 {
                     parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(2).template type<T>();
@@ -1585,6 +1667,14 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
                     auto const parsed = parser.parse_args(4, cstr_arr{"prog", "11", "22", "11"});
 
                     CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{11, 22, 11});
+                }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs(3).template type<T>();
+
+                    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "0.125", "0.25", "0.125"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.125, 0.25, 0.125});
                 }
                 else
                 {
@@ -1609,6 +1699,14 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
 
                     CHECK(parsed.get_value<T>("pos") == T(11));
                 }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs('?').template type<T>();
+
+                    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "0.125"});
+
+                    CHECK(parsed.get_value<T>("pos") == T(0.125));
+                }
                 else
                 {
                     parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs('?').template type<T>();
@@ -1626,6 +1724,10 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
             {
                 parser.add_argument("pos").choices({T(11), T(22)}).nargs('*').template type<T>();
             }
+            else if constexpr (std::is_floating_point_v<T>)
+            {
+                parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs('*').template type<T>();
+            }
             else
             {
                 parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs('*').template type<T>();
@@ -1638,6 +1740,12 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
                     auto const parsed = parser.parse_args(2, cstr_arr{"prog", "11"});
 
                     CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{11});
+                }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "0.125"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.125});
                 }
                 else
                 {
@@ -1655,6 +1763,12 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
 
                     CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{11, 11});
                 }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "0.125", "0.125"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.125, 0.125});
+                }
                 else
                 {
                     auto const parsed = parser.parse_args(3, cstr_arr{"prog", "foo", "foo"});
@@ -1670,6 +1784,12 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
                     auto const parsed = parser.parse_args(4, cstr_arr{"prog", "11", "11", "11"});
 
                     CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{11, 11, 11});
+                }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "0.125", "0.125", "0.125"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.125, 0.125, 0.125});
                 }
                 else
                 {
@@ -1686,6 +1806,10 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
             {
                 parser.add_argument("pos").choices({T(11), T(22)}).nargs('+').template type<T>();
             }
+            else if constexpr (std::is_floating_point_v<T>)
+            {
+                parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs('+').template type<T>();
+            }
             else
             {
                 parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs('+').template type<T>();
@@ -1698,6 +1822,12 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
                     auto const parsed = parser.parse_args(2, cstr_arr{"prog", "11"});
 
                     CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{11});
+                }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "0.125"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.125});
                 }
                 else
                 {
@@ -1715,6 +1845,12 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
 
                     CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{11, 11});
                 }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "0.125", "0.125"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.125, 0.125});
+                }
                 else
                 {
                     auto const parsed = parser.parse_args(3, cstr_arr{"prog", "foo", "foo"});
@@ -1730,6 +1866,12 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
                     auto const parsed = parser.parse_args(4, cstr_arr{"prog", "11", "11", "11"});
 
                     CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{11, 11, 11});
+                }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "0.125", "0.125", "0.125"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.125, 0.125, 0.125});
                 }
                 else
                 {
@@ -1753,6 +1895,12 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
 
                     CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "33"}), "argument pos: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
                 }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs(1).template type<T>();
+
+                    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "0.5"}), "argument pos: invalid choice: 0.5 (choose from 0.125, 0.25)", argparse::parsing_error);
+                }
                 else
                 {
                     parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(1).template type<T>();
@@ -1769,6 +1917,12 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
 
                     CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "11", "33"}), "argument pos: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
                 }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs(2).template type<T>();
+
+                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "0.125", "0.5"}), "argument pos: invalid choice: 0.5 (choose from 0.125, 0.25)", argparse::parsing_error);
+                }
                 else
                 {
                     parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(2).template type<T>();
@@ -1784,6 +1938,12 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
                     parser.add_argument("pos").choices({T(11), T(22)}).nargs(3).template type<T>();
 
                     CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "11", "22", "33"}), "argument pos: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs(3).template type<T>();
+
+                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "0.125", "0.25", "0.5"}), "argument pos: invalid choice: 0.5 (choose from 0.125, 0.25)", argparse::parsing_error);
                 }
                 else
                 {
@@ -1804,6 +1964,12 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
 
                     CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "33"}), "argument pos: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
                 }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs('?').template type<T>();
+
+                    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "0.5"}), "argument pos: invalid choice: 0.5 (choose from 0.125, 0.25)", argparse::parsing_error);
+                }
                 else
                 {
                     parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs('?').template type<T>();
@@ -1819,6 +1985,10 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
             {
                 parser.add_argument("pos").choices({T(11), T(22)}).nargs('*').template type<T>();
             }
+            else if constexpr (std::is_floating_point_v<T>)
+            {
+                parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs('*').template type<T>();
+            }
             else
             {
                 parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs('*').template type<T>();
@@ -1829,6 +1999,10 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
                 if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "33"}), "argument pos: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "0.5"}), "argument pos: invalid choice: 0.5 (choose from 0.125, 0.25)", argparse::parsing_error);
                 }
                 else
                 {
@@ -1842,6 +2016,10 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "11", "33"}), "argument pos: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
                 }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "0.125", "0.5"}), "argument pos: invalid choice: 0.5 (choose from 0.125, 0.25)", argparse::parsing_error);
+                }
                 else
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "foo", "baz"}), "argument pos: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
@@ -1853,6 +2031,10 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
                 if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "11", "22", "33"}), "argument pos: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "0.125", "0.25", "0.5"}), "argument pos: invalid choice: 0.5 (choose from 0.125, 0.25)", argparse::parsing_error);
                 }
                 else
                 {
@@ -1867,6 +2049,10 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
             {
                 parser.add_argument("pos").choices({T(11), T(22)}).nargs('+').template type<T>();
             }
+            else if constexpr (std::is_floating_point_v<T>)
+            {
+                parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs('+').template type<T>();
+            }
             else
             {
                 parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs('+').template type<T>();
@@ -1877,6 +2063,10 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
                 if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "33"}), "argument pos: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "0.5"}), "argument pos: invalid choice: 0.5 (choose from 0.125, 0.25)", argparse::parsing_error);
                 }
                 else
                 {
@@ -1890,6 +2080,10 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "11", "33"}), "argument pos: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
                 }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "0.125", "0.5"}), "argument pos: invalid choice: 0.5 (choose from 0.125, 0.25)", argparse::parsing_error);
+                }
                 else
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "foo", "baz"}), "argument pos: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
@@ -1901,6 +2095,10 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, int, 
                 if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "11", "22", "33"}), "argument pos: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "0.125", "0.25", "0.5"}), "argument pos: invalid choice: 0.5 (choose from 0.125, 0.25)", argparse::parsing_error);
                 }
                 else
                 {
