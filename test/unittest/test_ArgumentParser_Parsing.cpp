@@ -2109,7 +2109,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
     }
 }
 
-TEST_CASE("Parsing an optional argument with choices set...")
+TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
@@ -2119,7 +2119,7 @@ TEST_CASE("Parsing an optional argument with choices set...")
         {
             SUBCASE("...for one argument")
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(1);
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(1).template type<T>();
 
                 CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
                 CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "bar"}));
@@ -2127,7 +2127,7 @@ TEST_CASE("Parsing an optional argument with choices set...")
 
             SUBCASE("...for two arguments")
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(2);
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(2).template type<T>();
 
                 CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "foo"}));
                 CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "bar", "bar"}));
@@ -2135,7 +2135,7 @@ TEST_CASE("Parsing an optional argument with choices set...")
 
             SUBCASE("...for three arguments")
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(3);
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(3).template type<T>();
 
                 CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "foo", "foo"}));
                 CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "bar", "bar", "bar"}));
@@ -2146,7 +2146,7 @@ TEST_CASE("Parsing an optional argument with choices set...")
         {
             SUBCASE("...for one argument")
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('?');
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('?').template type<T>();
 
                 CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
                 CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "bar"}));
@@ -2155,7 +2155,7 @@ TEST_CASE("Parsing an optional argument with choices set...")
 
         SUBCASE("...as *...")
         {
-            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('*');
+            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('*').template type<T>();
 
             SUBCASE("...for one argument")
             {
@@ -2178,7 +2178,7 @@ TEST_CASE("Parsing an optional argument with choices set...")
 
         SUBCASE("...as +...")
         {
-            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('+');
+            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('+').template type<T>();
 
             SUBCASE("...for one argument")
             {
@@ -2206,29 +2206,29 @@ TEST_CASE("Parsing an optional argument with choices set...")
         {
             SUBCASE("...for one argument")
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(1);
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(1).template type<T>();
 
                 auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
 
-                CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>{"foo"});
+                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
             }
 
             SUBCASE("...for two arguments")
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(2);
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(2).template type<T>();
 
                 auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"});
 
-                CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>{"foo", "bar"});
+                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar"});
             }
 
             SUBCASE("...for three arguments")
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(3);
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(3).template type<T>();
 
                 auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "foo"});
 
-                CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>{"foo", "bar", "foo"});
+                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar", "foo"});
             }
         }
 
@@ -2236,63 +2236,63 @@ TEST_CASE("Parsing an optional argument with choices set...")
         {
             SUBCASE("...for one argument")
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('?');
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('?').template type<T>();
 
                 auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
 
-                CHECK(parsed.get_value("o") == "foo");
+                CHECK(parsed.get_value<T>("o") == T("foo"));
             }
         }
 
         SUBCASE("...as *...")
         {
-            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('*');
+            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('*').template type<T>();
 
             SUBCASE("...for one argument")
             {
                 auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
 
-                CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>{"foo"});
+                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
             }
 
             SUBCASE("...for two arguments")
             {
                 auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "foo"});
 
-                CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>{"foo", "foo"});
+                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "foo"});
             }
 
             SUBCASE("...for three arguments")
             {
                 auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "foo", "foo"});
 
-                CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>{"foo", "foo", "foo"});
+                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "foo", "foo"});
             }
         }
 
         SUBCASE("...as +...")
         {
-            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('+');
+            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('+').template type<T>();
 
             SUBCASE("...for one argument")
             {
                 auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
 
-                CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>{"foo"});
+                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
             }
 
             SUBCASE("...for two arguments")
             {
                 auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "foo"});
 
-                CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>{"foo", "foo"});
+                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "foo"});
             }
 
             SUBCASE("...for three arguments")
             {
                 auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "foo", "foo"});
 
-                CHECK(parsed.get_value<std::vector<std::string>>("o") == std::vector<std::string>{"foo", "foo", "foo"});
+                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "foo", "foo"});
             }
         }
     }
@@ -2303,21 +2303,21 @@ TEST_CASE("Parsing an optional argument with choices set...")
         {
             SUBCASE("...for one argument")
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(1);
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(1).template type<T>();
 
                 CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
             }
 
             SUBCASE("...for two arguments")
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(2);
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(2).template type<T>();
 
                 CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
             }
 
             SUBCASE("...for three arguments")
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(3);
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(3).template type<T>();
 
                 CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
             }
@@ -2327,7 +2327,7 @@ TEST_CASE("Parsing an optional argument with choices set...")
         {
             SUBCASE("...for one argument")
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('?');
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('?').template type<T>();
 
                 CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
             }
@@ -2335,7 +2335,7 @@ TEST_CASE("Parsing an optional argument with choices set...")
 
         SUBCASE("...as *...")
         {
-            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('*');
+            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('*').template type<T>();
 
             SUBCASE("...for one argument")
             {
@@ -2355,7 +2355,7 @@ TEST_CASE("Parsing an optional argument with choices set...")
 
         SUBCASE("...as +...")
         {
-            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('+');
+            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('+').template type<T>();
 
             SUBCASE("...for one argument")
             {
