@@ -2109,7 +2109,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
     }
 }
 
-TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, std::string)
+TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, int, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
@@ -2119,26 +2119,56 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, std::s
         {
             SUBCASE("...for one argument")
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(1).template type<T>();
+                if constexpr (std::is_integral_v<T>)
+                {
+                    parser.add_argument("-o").choices({T(11), T(22)}).nargs(1).template type<T>();
 
-                CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
-                CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "bar"}));
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "11"}));
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "22"}));
+                }
+                else
+                {
+                    parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(1).template type<T>();
+
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "bar"}));
+                }
             }
 
             SUBCASE("...for two arguments")
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(2).template type<T>();
+                if constexpr (std::is_integral_v<T>)
+                {
+                    parser.add_argument("-o").choices({T(11), T(22)}).nargs(2).template type<T>();
 
-                CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "foo"}));
-                CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "bar", "bar"}));
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "11", "11"}));
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "22", "22"}));
+                }
+                else
+                {
+                    parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(2).template type<T>();
+
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "foo"}));
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "bar", "bar"}));
+                }
             }
 
             SUBCASE("...for three arguments")
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(3).template type<T>();
+                if constexpr (std::is_integral_v<T>)
+                {
+                    parser.add_argument("-o").choices({T(11), T(22)}).nargs(3).template type<T>();
 
-                CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "foo", "foo"}));
-                CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "bar", "bar", "bar"}));
+                    CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "11", "11", "11"}));
+                    CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "22", "22", "22"}));
+                }
+                else
+                {
+                    parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(3).template type<T>();
+
+                    CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "foo", "foo"}));
+                    CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "bar", "bar", "bar"}));
+                }
             }
         }
 
@@ -2146,56 +2176,128 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, std::s
         {
             SUBCASE("...for one argument")
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('?').template type<T>();
+                if constexpr (std::is_integral_v<T>)
+                {
+                    parser.add_argument("-o").choices({T(11), T(22)}).nargs('?').template type<T>();
 
-                CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
-                CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "bar"}));
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "11"}));
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "22"}));
+                }
+                else
+                {
+                    parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('?').template type<T>();
+
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "bar"}));
+                }
             }
         }
 
         SUBCASE("...as *...")
         {
-            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('*').template type<T>();
+            if constexpr (std::is_integral_v<T>)
+            {
+                parser.add_argument("-o").choices({T(11), T(22)}).nargs('*').template type<T>();
+            }
+            else
+            {
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('*').template type<T>();
+            }
 
             SUBCASE("...for one argument")
             {
-                CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
-                CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "bar"}));
+                if constexpr (std::is_integral_v<T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "11"}));
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "22"}));
+                }
+                else
+                {
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "bar"}));
+                }
             }
 
             SUBCASE("...for two arguments")
             {
-                CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "foo"}));
-                CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "bar", "bar"}));
+                if constexpr (std::is_integral_v<T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "11", "11"}));
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "22", "22"}));
+                }
+                else
+                {
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "foo"}));
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "bar", "bar"}));
+                }
             }
 
             SUBCASE("...for three arguments")
             {
-                CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "foo", "foo"}));
-                CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "bar", "bar", "bar"}));
+                if constexpr (std::is_integral_v<T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "11", "11", "11"}));
+                    CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "22", "22", "22"}));
+                }
+                else
+                {
+                    CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "foo", "foo"}));
+                    CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "bar", "bar", "bar"}));
+                }
             }
         }
 
         SUBCASE("...as +...")
         {
-            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('+').template type<T>();
+            if constexpr (std::is_integral_v<T>)
+            {
+                parser.add_argument("-o").choices({T(11), T(22)}).nargs('+').template type<T>();
+            }
+            else
+            {
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('+').template type<T>();
+            }
 
             SUBCASE("...for one argument")
             {
-                CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
-                CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "bar"}));
+                if constexpr (std::is_integral_v<T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "11"}));
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "22"}));
+                }
+                else
+                {
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "bar"}));
+                }
             }
 
             SUBCASE("...for two arguments")
             {
-                CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "foo"}));
-                CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "bar", "bar"}));
+                if constexpr (std::is_integral_v<T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "11", "11"}));
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "22", "22"}));
+                }
+                else
+                {
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "foo"}));
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "bar", "bar"}));
+                }
             }
 
             SUBCASE("...for three arguments")
             {
-                CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "foo", "foo"}));
-                CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "bar", "bar", "bar"}));
+                if constexpr (std::is_integral_v<T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "11", "11", "11"}));
+                    CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "22", "22", "22"}));
+                }
+                else
+                {
+                    CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "foo", "foo"}));
+                    CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "bar", "bar", "bar"}));
+                }
             }
         }
     }
@@ -2206,29 +2308,62 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, std::s
         {
             SUBCASE("...for one argument")
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(1).template type<T>();
+                if constexpr (std::is_integral_v<T>)
+                {
+                    parser.add_argument("-o").choices({T(11), T(22)}).nargs(1).template type<T>();
 
-                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
+                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "11"});
 
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{11});
+                }
+                else
+                {
+                    parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(1).template type<T>();
+
+                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
+                }
             }
 
             SUBCASE("...for two arguments")
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(2).template type<T>();
+                if constexpr (std::is_integral_v<T>)
+                {
+                    parser.add_argument("-o").choices({T(11), T(22)}).nargs(2).template type<T>();
 
-                auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"});
+                    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "11", "22"});
 
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar"});
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{11, 22});
+                }
+                else
+                {
+                    parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(2).template type<T>();
+
+                    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar"});
+                }
             }
 
             SUBCASE("...for three arguments")
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(3).template type<T>();
+                if constexpr (std::is_integral_v<T>)
+                {
+                    parser.add_argument("-o").choices({T(11), T(22)}).nargs(3).template type<T>();
 
-                auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "foo"});
+                    auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "11", "22", "11"});
 
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar", "foo"});
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{11, 22, 11});
+                }
+                else
+                {
+                    parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(3).template type<T>();
+
+                    auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "foo"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar", "foo"});
+                }
             }
         }
 
@@ -2236,63 +2371,142 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, std::s
         {
             SUBCASE("...for one argument")
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('?').template type<T>();
+                if constexpr (std::is_integral_v<T>)
+                {
+                    parser.add_argument("-o").choices({T(11), T(22)}).nargs('?').template type<T>();
 
-                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
+                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "11"});
 
-                CHECK(parsed.get_value<T>("o") == T("foo"));
+                    CHECK(parsed.get_value<T>("o") == T(11));
+                }
+                else
+                {
+                    parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('?').template type<T>();
+
+                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
+
+                    CHECK(parsed.get_value<T>("o") == T("foo"));
+                }
             }
         }
 
         SUBCASE("...as *...")
         {
-            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('*').template type<T>();
+            if constexpr (std::is_integral_v<T>)
+            {
+                parser.add_argument("-o").choices({T(11), T(22)}).nargs('*').template type<T>();
+            }
+            else
+            {
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('*').template type<T>();
+            }
 
             SUBCASE("...for one argument")
             {
-                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
+                if constexpr (std::is_integral_v<T>)
+                {
+                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "11"});
 
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{11});
+                }
+                else
+                {
+                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
+                }
             }
 
             SUBCASE("...for two arguments")
             {
-                auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "foo"});
+                if constexpr (std::is_integral_v<T>)
+                {
+                    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "11", "11"});
 
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "foo"});
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{11, 11});
+                }
+                else
+                {
+                    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "foo"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "foo"});
+                }
             }
 
             SUBCASE("...for three arguments")
             {
-                auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "foo", "foo"});
+                if constexpr (std::is_integral_v<T>)
+                {
+                    auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "11", "11", "11"});
 
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "foo", "foo"});
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{11, 11, 11});
+                }
+                else
+                {
+                    auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "foo", "foo"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "foo", "foo"});
+                }
             }
         }
 
         SUBCASE("...as +...")
         {
-            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('+').template type<T>();
+            if constexpr (std::is_integral_v<T>)
+            {
+                parser.add_argument("-o").choices({T(11), T(22)}).nargs('+').template type<T>();
+            }
+            else
+            {
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('+').template type<T>();
+            }
 
             SUBCASE("...for one argument")
             {
-                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
+                if constexpr (std::is_integral_v<T>)
+                {
+                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "11"});
 
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{11});
+                }
+                else
+                {
+                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
+                }
             }
 
             SUBCASE("...for two arguments")
             {
-                auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "foo"});
+                if constexpr (std::is_integral_v<T>)
+                {
+                    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "11", "11"});
 
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "foo"});
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{11, 11});
+                }
+                else
+                {
+                    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "foo"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "foo"});
+                }
             }
 
             SUBCASE("...for three arguments")
             {
-                auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "foo", "foo"});
+                if constexpr (std::is_integral_v<T>)
+                {
+                    auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "11", "11", "11"});
 
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "foo", "foo"});
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{11, 11, 11});
+                }
+                else
+                {
+                    auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "foo", "foo"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "foo", "foo"});
+                }
             }
         }
     }
@@ -2303,23 +2517,50 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, std::s
         {
             SUBCASE("...for one argument")
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(1).template type<T>();
+                if constexpr (std::is_integral_v<T>)
+                {
+                    parser.add_argument("-o").choices({T(11), T(22)}).nargs(1).template type<T>();
 
-                CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "33"}), "argument -o: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
+                }
+                else
+                {
+                    parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(1).template type<T>();
+
+                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+                }
             }
 
             SUBCASE("...for two arguments")
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(2).template type<T>();
+                if constexpr (std::is_integral_v<T>)
+                {
+                    parser.add_argument("-o").choices({T(11), T(22)}).nargs(2).template type<T>();
 
-                CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "11", "33"}), "argument -o: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
+                }
+                else
+                {
+                    parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(2).template type<T>();
+
+                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+                }
             }
 
             SUBCASE("...for three arguments")
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(3).template type<T>();
+                if constexpr (std::is_integral_v<T>)
+                {
+                    parser.add_argument("-o").choices({T(11), T(22)}).nargs(3).template type<T>();
 
-                CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+                    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "11", "22", "33"}), "argument -o: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
+                }
+                else
+                {
+                    parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(3).template type<T>();
+
+                    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+                }
             }
         }
 
@@ -2327,49 +2568,114 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, std::s
         {
             SUBCASE("...for one argument")
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('?').template type<T>();
+                if constexpr (std::is_integral_v<T>)
+                {
+                    parser.add_argument("-o").choices({T(11), T(22)}).nargs('?').template type<T>();
 
-                CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "33"}), "argument -o: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
+                }
+                else
+                {
+                    parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('?').template type<T>();
+
+                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+                }
             }
         }
 
         SUBCASE("...as *...")
         {
-            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('*').template type<T>();
+            if constexpr (std::is_integral_v<T>)
+            {
+                parser.add_argument("-o").choices({T(11), T(22)}).nargs('*').template type<T>();
+            }
+            else
+            {
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('*').template type<T>();
+            }
 
             SUBCASE("...for one argument")
             {
-                CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+                if constexpr (std::is_integral_v<T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "33"}), "argument -o: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
+                }
+                else
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+                }
             }
 
             SUBCASE("...for two arguments")
             {
-                CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+                if constexpr (std::is_integral_v<T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "11", "33"}), "argument -o: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
+                }
+                else
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+                }
             }
 
             SUBCASE("...for three arguments")
             {
-                CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+                if constexpr (std::is_integral_v<T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "11", "22", "33"}), "argument -o: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
+                }
+                else
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+                }
             }
         }
 
         SUBCASE("...as +...")
         {
-            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('+').template type<T>();
+            if constexpr (std::is_integral_v<T>)
+            {
+                parser.add_argument("-o").choices({T(11), T(22)}).nargs('+').template type<T>();
+            }
+            else
+            {
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('+').template type<T>();
+            }
 
             SUBCASE("...for one argument")
             {
-                CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+                if constexpr (std::is_integral_v<T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "33"}), "argument -o: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
+                }
+                else
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+                }
             }
 
             SUBCASE("...for two arguments")
             {
-                CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+                if constexpr (std::is_integral_v<T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "11", "33"}), "argument -o: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
+                }
+                else
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+                }
             }
 
             SUBCASE("...for three arguments")
             {
-                CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+                if constexpr (std::is_integral_v<T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "11", "22", "33"}), "argument -o: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
+                }
+                else
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+                }
             }
         }
     }
