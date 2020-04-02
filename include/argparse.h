@@ -533,17 +533,15 @@ namespace argparse
                                     }
                                     case '+':
                                     {
-                                        std::vector<std::any> values;
-                                        while (!args.empty())
+                                        std::vector<std::any> values(args.size());
+                                        for (auto & value : values)
                                         {
-                                            std::any value;
                                             m_options.from_string(args.front(), value);
                                             if (!m_options.choices.empty())
                                             {
                                                 check_choices(value);
                                             }
                                             args.pop_front();
-                                            values.push_back(value);
                                         }
                                         if (!values.empty())
                                         {
