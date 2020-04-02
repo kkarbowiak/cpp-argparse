@@ -356,7 +356,7 @@ namespace argparse
                 std::any default_;
                 bool required;
                 std::vector<std::any> choices;
-                std::optional<std::variant<unsigned int, char>> nargs;
+                std::optional<std::variant<std::size_t, char>> nargs;
                 std::function<void (std::string const &, std::any &)> from_string =
                     [](std::string const & s, std::any & a)
                     {
@@ -433,12 +433,12 @@ namespace argparse
 
                     auto has_nargs_number() const -> bool
                     {
-                        return std::holds_alternative<unsigned int>(*m_options.nargs);
+                        return std::holds_alternative<std::size_t>(*m_options.nargs);
                     }
 
-                    auto get_nargs_number() const -> unsigned int
+                    auto get_nargs_number() const -> std::size_t
                     {
-                        return std::get<unsigned int>(*m_options.nargs);
+                        return std::get<std::size_t>(*m_options.nargs);
                     }
 
                     auto get_nargs_symbol() const -> char
@@ -1143,7 +1143,7 @@ namespace argparse
                         return *this;
                     }
 
-                    auto nargs(unsigned int nargs) -> ArgumentBuilder &
+                    auto nargs(std::size_t nargs) -> ArgumentBuilder &
                     {
                         m_options.nargs = nargs;
                         return *this;
@@ -1151,7 +1151,7 @@ namespace argparse
 
                     auto nargs(int nargs) -> ArgumentBuilder &
                     {
-                        m_options.nargs = static_cast<unsigned int>(nargs);
+                        m_options.nargs = static_cast<std::size_t>(nargs);
                         return *this;
                     }
 
