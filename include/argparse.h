@@ -482,20 +482,15 @@ namespace argparse
                         {
                             if (has_nargs_number())
                             {
-                                std::vector<std::any> values;
-                                for (auto i = 0u; i < get_nargs_number(); ++i)
+                                std::vector<std::any> values(std::min(get_nargs_number(), args.size()));
+                                for (auto & value : values)
                                 {
-                                    if (!args.empty())
+                                    m_options.from_string(args.front(), value);
+                                    if (!m_options.choices.empty())
                                     {
-                                        std::any value;
-                                        m_options.from_string(args.front(), value);
-                                        if (!m_options.choices.empty())
-                                        {
-                                            check_choices(value);
-                                        }
-                                        args.pop_front();
-                                        values.push_back(value);
+                                        check_choices(value);
                                     }
+                                    args.pop_front();
                                 }
 
                                 m_value = m_options.transform(values);
