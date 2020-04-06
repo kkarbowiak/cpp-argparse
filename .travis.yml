@@ -7,6 +7,11 @@ matrix:
       compiler: gcc
       env: COMPILER='g++'
 
+    - os: linux
+      dist: bionic
+      compiler: clang
+      env: COMPILER='clang'
+
     - os: windows
 
 install:
