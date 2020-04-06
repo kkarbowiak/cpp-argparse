@@ -5,12 +5,10 @@ matrix:
     - os: linux
       dist: bionic
       compiler: gcc
-      env: COMPILER='g++'
 
     - os: linux
       dist: bionic
       compiler: clang
-      env: COMPILER='clang'
 
     - os: windows
 
@@ -23,9 +21,6 @@ install:
       travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C ${TRAVIS_BUILD_DIR}/deps/cmake
       export PATH=${TRAVIS_BUILD_DIR}/deps/cmake/bin:${PATH}
     fi
-
-before_script:
-  - export CXX=${COMPILER}
 
 script:
   - mkdir build
