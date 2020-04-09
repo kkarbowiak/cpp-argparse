@@ -622,8 +622,7 @@ namespace argparse
 
                     auto parse_args(tokens args) -> tokens override
                     {
-                        auto it = find_arg(args);
-                        if (it != args.end())
+                        if (auto it = find_arg(args); it != args.end())
                         {
                             it = args.erase(it);
                             switch (m_options.action)
