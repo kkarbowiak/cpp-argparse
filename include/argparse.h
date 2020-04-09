@@ -636,128 +636,125 @@ namespace argparse
 
                     auto parse_args(tokens args) -> tokens override
                     {
-                        for (auto it = args.begin(); it != args.end(); ++it)
+                        auto it = find_arg(args);
+                        if (it != args.end())
                         {
-                            if (*it == m_options.name1 || *it == m_options.name2)
+                            it = args.erase(it);
+                            switch (m_options.action)
                             {
-                                it = args.erase(it);
-                                switch (m_options.action)
-                                {
-                                    case store:
-                                        if (has_nargs())
+                                case store:
+                                    if (has_nargs())
+                                    {
+                                        if (has_nargs_number())
                                         {
-                                            if (has_nargs_number())
+                                            auto const args_number = get_nargs_number();
+                                            std::vector<std::any> values;
+                                            for (auto j = 0u; j < args_number; ++j)
                                             {
-                                                auto const args_number = get_nargs_number();
-                                                std::vector<std::any> values;
-                                                for (auto j = 0u; j < args_number; ++j)
+                                                if (it == args.end() || it->front() == '-')
                                                 {
-                                                    if (it == args.end() || it->front() == '-')
-                                                    {
-                                                        throw parsing_error("argument " + get_name() + ": expected " + std::to_string(args_number) + " argument" + (args_number > 1 ? "s" : ""));
-                                                    }
-                                                    std::any value;
-                                                    m_options.from_string(*it, value);
-                                                    if (!m_options.choices.empty())
-                                                    {
-                                                        check_choices(value);
-                                                    }
-                                                    it = args.erase(it);
-                                                    values.push_back(value);
+                                                    throw parsing_error("argument " + get_name() + ": expected " + std::to_string(args_number) + " argument" + (args_number > 1 ? "s" : ""));
                                                 }
+                                                std::any value;
+                                                m_options.from_string(*it, value);
+                                                if (!m_options.choices.empty())
+                                                {
+                                                    check_choices(value);
+                                                }
+                                                it = args.erase(it);
+                                                values.push_back(value);
+                                            }
 
-                                                m_value = m_options.transform(values);
-                                            }
-                                            else
-                                            {
-                                                switch (get_nargs_symbol())
-                                                {
-                                                    case '?':
-                                                    {
-                                                        if (it == args.end() || it->front() == '-')
-                                                        {
-                                                            m_value = m_options.const_;
-                                                        }
-                                                        else
-                                                        {
-                                                            m_options.from_string(*it, m_value);
-                                                            if (!m_options.choices.empty())
-                                                            {
-                                                                check_choices(m_value);
-                                                            }
-                                                            it = args.erase(it);
-                                                        }
-                                                        break;
-                                                    }
-                                                    case '*':
-                                                    {
-                                                        std::vector<std::any> values;
-                                                        while (it != args.end() && it->front() != '-')
-                                                        {
-                                                            std::any value;
-                                                            m_options.from_string(args.front(), value);
-                                                            if (!m_options.choices.empty())
-                                                            {
-                                                                check_choices(value);
-                                                            }
-                                                            it = args.erase(it);
-                                                            values.push_back(value);
-                                                        }
-                                                        m_value = m_options.transform(values);
-                                                        break;
-                                                    }
-                                                    case '+':
-                                                    {
-                                                        std::vector<std::any> values;
-                                                        while (it != args.end() && it->front() != '-')
-                                                        {
-                                                            std::any value;
-                                                            m_options.from_string(args.front(), value);
-                                                            if (!m_options.choices.empty())
-                                                            {
-                                                                check_choices(value);
-                                                            }
-                                                            it = args.erase(it);
-                                                            values.push_back(value);
-                                                        }
-                                                        if (values.empty())
-                                                        {
-                                                            throw parsing_error("argument " + get_name() + ": expected at least one argument");
-                                                        }
-                                                        m_value = m_options.transform(values);
-                                                        break;
-                                                    }
-                                                }
-                                            }
+                                            m_value = m_options.transform(values);
                                         }
                                         else
                                         {
-                                            if (it == args.end() || it->front() == '-')
+                                            switch (get_nargs_symbol())
                                             {
-                                                throw parsing_error("argument " + get_name() + ": expected one argument");
+                                                case '?':
+                                                {
+                                                    if (it == args.end() || it->front() == '-')
+                                                    {
+                                                        m_value = m_options.const_;
+                                                    }
+                                                    else
+                                                    {
+                                                        m_options.from_string(*it, m_value);
+                                                        if (!m_options.choices.empty())
+                                                        {
+                                                            check_choices(m_value);
+                                                        }
+                                                        it = args.erase(it);
+                                                    }
+                                                    break;
+                                                }
+                                                case '*':
+                                                {
+                                                    std::vector<std::any> values;
+                                                    while (it != args.end() && it->front() != '-')
+                                                    {
+                                                        std::any value;
+                                                        m_options.from_string(args.front(), value);
+                                                        if (!m_options.choices.empty())
+                                                        {
+                                                            check_choices(value);
+                                                        }
+                                                        it = args.erase(it);
+                                                        values.push_back(value);
+                                                    }
+                                                    m_value = m_options.transform(values);
+                                                    break;
+                                                }
+                                                case '+':
+                                                {
+                                                    std::vector<std::any> values;
+                                                    while (it != args.end() && it->front() != '-')
+                                                    {
+                                                        std::any value;
+                                                        m_options.from_string(args.front(), value);
+                                                        if (!m_options.choices.empty())
+                                                        {
+                                                            check_choices(value);
+                                                        }
+                                                        it = args.erase(it);
+                                                        values.push_back(value);
+                                                    }
+                                                    if (values.empty())
+                                                    {
+                                                        throw parsing_error("argument " + get_name() + ": expected at least one argument");
+                                                    }
+                                                    m_value = m_options.transform(values);
+                                                    break;
+                                                }
                                             }
-                                            m_options.from_string(*it, m_value);
-                                            if (!m_options.choices.empty())
-                                            {
-                                                check_choices(m_value);
-                                            }
-                                            (void) args.erase(it);
                                         }
-                                        break;
-                                    case store_true:
-                                        m_value = true;
-                                        break;
-                                    case store_false:
-                                        m_value = false;
-                                        break;
-                                    case store_const:
-                                        m_value = m_options.const_;
-                                        break;
-                                    case help:
-                                        m_value = true;
-                                        throw HelpRequested();
-                                }
-                                break;
+                                    }
+                                    else
+                                    {
+                                        if (it == args.end() || it->front() == '-')
+                                        {
+                                            throw parsing_error("argument " + get_name() + ": expected one argument");
+                                        }
+                                        m_options.from_string(*it, m_value);
+                                        if (!m_options.choices.empty())
+                                        {
+                                            check_choices(m_value);
+                                        }
+                                        (void) args.erase(it);
+                                    }
+                                    break;
+                                case store_true:
+                                    m_value = true;
+                                    break;
+                                case store_false:
+                                    m_value = false;
+                                    break;
+                                case store_const:
+                                    m_value = m_options.const_;
+                                    break;
+                                case help:
+                                    m_value = true;
+                                    throw HelpRequested();
                             }
                         }
 
@@ -828,6 +825,12 @@ namespace argparse
                     auto is_positional() const -> bool override
                     {
                         return false;
+                    }
+
+                private:
+                    auto find_arg(tokens const & args) const -> tokens::const_iterator
+                    {
+                        return std::find_if(args.begin(), args.end(), [this](auto const & arg){ return arg == m_options.name1 || arg == m_options.name2; });
                     }
 
                 private:
