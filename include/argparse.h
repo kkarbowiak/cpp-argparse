@@ -694,7 +694,7 @@ namespace argparse
                                                     while (it != args.end() && it->front() != '-')
                                                     {
                                                         std::any value;
-                                                        m_options.from_string(args.front(), value);
+                                                        m_options.from_string(*it, value);
                                                         if (!m_options.choices.empty())
                                                         {
                                                             check_choices(value);
@@ -711,7 +711,7 @@ namespace argparse
                                                     while (it != args.end() && it->front() != '-')
                                                     {
                                                         std::any value;
-                                                        m_options.from_string(args.front(), value);
+                                                        m_options.from_string(*it, value);
                                                         if (!m_options.choices.empty())
                                                         {
                                                             check_choices(value);
