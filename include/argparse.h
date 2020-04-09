@@ -485,12 +485,7 @@ namespace argparse
                                 std::vector<std::any> values(std::min(get_nargs_number(), args.size()));
                                 for (auto & value : values)
                                 {
-                                    m_options.from_string(args.front(), value);
-                                    if (!m_options.choices.empty())
-                                    {
-                                        check_choices(value);
-                                    }
-                                    args.pop_front();
+                                    consume_arg(args, value);
                                 }
 
                                 m_value = m_options.transform(values);
@@ -503,12 +498,7 @@ namespace argparse
                                     {
                                         if (!args.empty())
                                         {
-                                            m_options.from_string(args.front(), m_value);
-                                            if (!m_options.choices.empty())
-                                            {
-                                                check_choices(m_value);
-                                            }
-                                            args.pop_front();
+                                            consume_arg(args, m_value);
                                         }
                                         else
                                         {
@@ -521,12 +511,7 @@ namespace argparse
                                         std::vector<std::any> values(args.size());
                                         for (auto & value : values)
                                         {
-                                            m_options.from_string(args.front(), value);
-                                            if (!m_options.choices.empty())
-                                            {
-                                                check_choices(value);
-                                            }
-                                            args.pop_front();
+                                            consume_arg(args, value);
                                         }
                                         m_value = m_options.transform(values);
                                         break;
@@ -536,12 +521,7 @@ namespace argparse
                                         std::vector<std::any> values(args.size());
                                         for (auto & value : values)
                                         {
-                                            m_options.from_string(args.front(), value);
-                                            if (!m_options.choices.empty())
-                                            {
-                                                check_choices(value);
-                                            }
-                                            args.pop_front();
+                                            consume_arg(args, value);
                                         }
                                         if (!values.empty())
                                         {
@@ -556,12 +536,7 @@ namespace argparse
                         {
                             if (!args.empty())
                             {
-                                m_options.from_string(args.front(), m_value);
-                                if (!m_options.choices.empty())
-                                {
-                                    check_choices(m_value);
-                                }
-                                args.pop_front();
+                                consume_arg(args, m_value);
                             }
                         }
 
@@ -607,6 +582,17 @@ namespace argparse
                     auto is_positional() const -> bool override
                     {
                         return true;
+                    }
+
+                private:
+                    auto consume_arg(tokens & args, std::any & value) -> void
+                    {
+                        m_options.from_string(args.front(), value);
+                        if (!m_options.choices.empty())
+                        {
+                            check_choices(value);
+                        }
+                        args.pop_front();
                     }
 
                 private:
