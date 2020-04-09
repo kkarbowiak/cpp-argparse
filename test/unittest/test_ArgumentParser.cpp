@@ -121,6 +121,13 @@ TEST_CASE("ArgumentParser uses prog parameter as its name...")
     }
 }
 
+TEST_CASE("ArgumentParser uses usage parameter as its usage")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").usage("program [options]");
+
+    CHECK(parser.format_usage() == "usage: program [options]"s);
+}
+
 TEST_CASE("Adding a positional argument with required option set results in error")
 {
     auto parser = argparse::ArgumentParser();

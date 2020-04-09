@@ -203,6 +203,13 @@ namespace argparse
                 return std::move(*this);
             }
 
+            auto usage(std::string const & usage) -> ArgumentParser &&
+            {
+                m_usage = usage;
+
+                return std::move(*this);
+            }
+
             auto description(std::string const & description) -> ArgumentParser &&
             {
                 m_description = description;
@@ -236,13 +243,13 @@ namespace argparse
 
             auto format_usage() const -> std::string
             {
-                auto const formatter = Formatter(m_arguments, m_prog, m_description, m_epilog);
+                auto const formatter = Formatter(m_arguments, m_prog, m_usage, m_description, m_epilog);
                 return formatter.format_usage();
             }
 
             auto format_help() const -> std::string
             {
-                auto const formatter = Formatter(m_arguments, m_prog, m_description, m_epilog);
+                auto const formatter = Formatter(m_arguments, m_prog, m_usage, m_description, m_epilog);
                 return formatter.format_help();
             }
 
@@ -815,9 +822,10 @@ namespace argparse
             class Formatter
             {
                 public:
-                    Formatter(argument_uptrs const & arguments, optstring const & prog, optstring const & description, optstring const & epilog)
+                    Formatter(argument_uptrs const & arguments, optstring const & prog, optstring const & usage, optstring const & description, optstring const & epilog)
                       : m_arguments(arguments)
                       , m_prog(prog)
+                      , m_usage(usage)
                       , m_description(description)
                       , m_epilog(epilog)
                     {
@@ -825,6 +833,11 @@ namespace argparse
 
                     auto format_usage() const -> std::string
                     {
+                        if (m_usage)
+                        {
+                            return "usage: " + *m_usage;
+                        }
+
                         std::string message = "usage: " + *m_prog;
                         std::string optionals;
                         std::string positionals;
@@ -987,6 +1000,7 @@ namespace argparse
                 private:
                     argument_uptrs const & m_arguments;
                     optstring const & m_prog;
+                    optstring const & m_usage;
                     optstring const & m_description;
                     optstring const & m_epilog;
             };
@@ -1139,6 +1153,7 @@ namespace argparse
         private:
             argument_uptrs m_arguments;
             optstring m_prog;
+            optstring m_usage;
             optstring m_description;
             optstring m_epilog;
             Handle m_handle;
