@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
 The below lists features of the `argparse` module that this implementation supports:
 * `ArgumentParser` objects
    * [x] `prog`
-   * [ ] `usage`
+   * [x] `usage`
    * [x] `description`
    * [x] `epilog`
    * [ ] `parents`
