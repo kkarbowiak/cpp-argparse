@@ -656,12 +656,7 @@ namespace argparse
                                                     throw parsing_error("argument " + get_name() + ": expected " + std::to_string(args_number) + " argument" + (args_number > 1 ? "s" : ""));
                                                 }
                                                 std::any value;
-                                                m_options.from_string(*it, value);
-                                                if (!m_options.choices.empty())
-                                                {
-                                                    check_choices(value);
-                                                }
-                                                it = args.erase(it);
+                                                consume_arg(args, it, value);
                                                 values.push_back(value);
                                             }
 
@@ -679,12 +674,7 @@ namespace argparse
                                                     }
                                                     else
                                                     {
-                                                        m_options.from_string(*it, m_value);
-                                                        if (!m_options.choices.empty())
-                                                        {
-                                                            check_choices(m_value);
-                                                        }
-                                                        it = args.erase(it);
+                                                        consume_arg(args, it, m_value);
                                                     }
                                                     break;
                                                 }
@@ -694,12 +684,7 @@ namespace argparse
                                                     while (it != args.end() && it->front() != '-')
                                                     {
                                                         std::any value;
-                                                        m_options.from_string(*it, value);
-                                                        if (!m_options.choices.empty())
-                                                        {
-                                                            check_choices(value);
-                                                        }
-                                                        it = args.erase(it);
+                                                        consume_arg(args, it, value);
                                                         values.push_back(value);
                                                     }
                                                     m_value = m_options.transform(values);
@@ -711,12 +696,7 @@ namespace argparse
                                                     while (it != args.end() && it->front() != '-')
                                                     {
                                                         std::any value;
-                                                        m_options.from_string(*it, value);
-                                                        if (!m_options.choices.empty())
-                                                        {
-                                                            check_choices(value);
-                                                        }
-                                                        it = args.erase(it);
+                                                        consume_arg(args, it, value);
                                                         values.push_back(value);
                                                     }
                                                     if (values.empty())
@@ -735,12 +715,7 @@ namespace argparse
                                         {
                                             throw parsing_error("argument " + get_name() + ": expected one argument");
                                         }
-                                        m_options.from_string(*it, m_value);
-                                        if (!m_options.choices.empty())
-                                        {
-                                            check_choices(m_value);
-                                        }
-                                        (void) args.erase(it);
+                                        consume_arg(args, it, m_value);
                                     }
                                     break;
                                 case store_true:
@@ -831,6 +806,16 @@ namespace argparse
                     auto find_arg(tokens const & args) const -> tokens::const_iterator
                     {
                         return std::find_if(args.begin(), args.end(), [this](auto const & arg){ return arg == m_options.name1 || arg == m_options.name2; });
+                    }
+
+                    auto consume_arg(tokens & args, tokens::const_iterator & arg_it, std::any & value) -> void
+                    {
+                        m_options.from_string(*arg_it, value);
+                        if (!m_options.choices.empty())
+                        {
+                            check_choices(value);
+                        }
+                        arg_it = args.erase(arg_it);
                     }
 
                 private:
