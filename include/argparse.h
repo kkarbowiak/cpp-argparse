@@ -894,12 +894,13 @@ namespace argparse
                         {
                             if (arg->is_positional())
                             {
+                                auto const arg_str = format_arg(*arg);
                                 positionals += "\n  ";
-                                positionals += format_arg(*arg);
+                                positionals += arg_str;
 
                                 if (!arg->get_options().help.empty())
                                 {
-                                    positionals += " " + arg->get_options().help;
+                                    positionals += std::string(22 - arg_str.size(), ' ') + arg->get_options().help;
                                 }
                             }
                             else

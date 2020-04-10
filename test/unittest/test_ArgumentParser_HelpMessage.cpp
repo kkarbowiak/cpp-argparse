@@ -128,7 +128,7 @@ TEST_CASE("Help message contains...")
         {
             parser.add_argument("p1").help("help1");
 
-            CHECK(parser.format_help() == "usage: prog p1\n\npositional arguments:\n  p1 help1"s);
+            CHECK(parser.format_help() == "usage: prog p1\n\npositional arguments:\n  p1                    help1"s);
         }
 
         SUBCASE("...choices for argument with choices set")
@@ -516,4 +516,13 @@ TEST_CASE("Help message contains...")
             CHECK(parser.format_help() == "usage: prog [-o {\"foo\",\"bar\"} [{\"foo\",\"bar\"} ...]]\n\noptional arguments:\n  -o {\"foo\",\"bar\"} [{\"foo\",\"bar\"} ...]"s);
         }
     }
+}
+
+TEST_CASE("Help string starts on 25th column for positional arguments")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+
+    parser.add_argument("pos").help("help");
+
+    CHECK(parser.format_help() == "usage: prog pos\n\npositional arguments:\n  pos                   help");
 }
