@@ -547,5 +547,12 @@ TEST_CASE("Help string starts on 25th column...")
 
             CHECK(parser.format_help() == "usage: prog abcdefghijklmnopqrstu\n\npositional arguments:\n  abcdefghijklmnopqrstu\n                        help");
         }
+
+        SUBCASE("...optional arguments with length of 21 characters or more")
+        {
+            parser.add_argument("--abcdefghijklmnopq").metavar("A").help("help");
+
+            CHECK(parser.format_help() == "usage: prog [--abcdefghijklmnopq A]\n\noptional arguments:\n  --abcdefghijklmnopq A\n                        help");
+        }
     }
 }
