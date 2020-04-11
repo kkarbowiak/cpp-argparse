@@ -518,21 +518,24 @@ TEST_CASE("Help message contains...")
     }
 }
 
-TEST_CASE("Help string starts on 25th column for...")
+TEST_CASE("Help string starts on 25th column...")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
 
-    SUBCASE("...positional arguments")
+    SUBCASE("...of the same line for...")
     {
-        parser.add_argument("pos").help("help");
+        SUBCASE("...positional arguments with length less than 21 characters")
+        {
+            parser.add_argument("pos").help("help");
 
-        CHECK(parser.format_help() == "usage: prog pos\n\npositional arguments:\n  pos                   help");
-    }
+            CHECK(parser.format_help() == "usage: prog pos\n\npositional arguments:\n  pos                   help");
+        }
 
-    SUBCASE("...optional arguments")
-    {
-        parser.add_argument("-o").help("help");
+        SUBCASE("...optional arguments with length less than 21 characters")
+        {
+            parser.add_argument("-o").help("help");
 
-        CHECK(parser.format_help() == "usage: prog [-o O]\n\noptional arguments:\n  -o O                  help");
+            CHECK(parser.format_help() == "usage: prog [-o O]\n\noptional arguments:\n  -o O                  help");
+        }
     }
 }
