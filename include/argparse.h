@@ -905,24 +905,27 @@ namespace argparse
                             }
                             else
                             {
-                                optionals += "\n  " + arg->get_name();
+                                auto arg_line = "  " + arg->get_name();
+
                                 if (arg->get_options().action == store)
                                 {
                                     if (arg->has_nargs())
                                     {
-                                        optionals += format_nargs(*arg);
+                                        arg_line += format_nargs(*arg);
                                     }
                                     else
                                     {
-                                        optionals += " ";
-                                        optionals += format_arg(*arg);
+                                        arg_line += " ";
+                                        arg_line += format_arg(*arg);
                                     }
                                 }
 
                                 if (!arg->get_options().help.empty())
                                 {
-                                    optionals += " " + arg->get_options().help;
+                                    arg_line += std::string(24 - arg_line.size(), ' ') + arg->get_options().help;
                                 }
+
+                                optionals += '\n' + arg_line;
                             }
                         }
 
