@@ -1003,7 +1003,9 @@ namespace argparse
 
                     auto help_string_separation(std::size_t arg_line_length) const -> std::string
                     {
-                        return std::string(24 - arg_line_length, ' ');
+                        return arg_line_length < 23
+                            ? std::string(24 - arg_line_length, ' ')
+                            : '\n' + std::string(24, ' ');
                     }
 
                 private:
