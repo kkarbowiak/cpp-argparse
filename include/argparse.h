@@ -898,7 +898,7 @@ namespace argparse
 
                                 if (!arg->get_options().help.empty())
                                 {
-                                    arg_line += std::string(24 - arg_line.size(), ' ') + arg->get_options().help;
+                                    arg_line += help_string_separation(arg_line.size()) + arg->get_options().help;
                                 }
 
                                 positionals += '\n' + arg_line;
@@ -922,7 +922,7 @@ namespace argparse
 
                                 if (!arg->get_options().help.empty())
                                 {
-                                    arg_line += std::string(24 - arg_line.size(), ' ') + arg->get_options().help;
+                                    arg_line += help_string_separation(arg_line.size()) + arg->get_options().help;
                                 }
 
                                 optionals += '\n' + arg_line;
@@ -999,6 +999,11 @@ namespace argparse
                         }
 
                         return result;
+                    }
+
+                    auto help_string_separation(std::size_t arg_line_length) const -> std::string
+                    {
+                        return std::string(24 - arg_line_length, ' ');
                     }
 
                 private:
