@@ -266,7 +266,7 @@ namespace argparse
         private:
             auto extract_filename(std::string path) -> std::string
             {
-                if (auto path_separator = path.rfind("/"); path_separator != std::string::npos)
+                if (auto path_separator = path.find_last_of("/\\"); path_separator != std::string::npos)
                 {
                     return path.substr(path_separator + 1);
                 }
