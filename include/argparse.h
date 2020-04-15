@@ -166,7 +166,12 @@ namespace argparse
             {
                 if (!m_prog)
                 {
-                    m_prog = argv[0];
+                    std::string prog = argv[0];
+                    if (auto path_separator = prog.rfind("/"); path_separator != std::string::npos)
+                    {
+                        prog = prog.substr(path_separator + 1);
+                    }
+                    m_prog = prog;
                 }
 
                 try
