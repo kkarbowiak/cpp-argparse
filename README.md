@@ -1,9 +1,9 @@
 # C++ argparse
 
 [![Build Status](https://travis-ci.org/kkarbowiak/cpp-argparse.svg?branch=master)](https://travis-ci.org/kkarbowiak/cpp-argparse)
-[![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/kkarbowiak/cpp-argparse?sort=semver)](https://github.com/kkarbowiak/cpp-argparse/releases)
+[![Version](https://img.shields.io/github/v/tag/kkarbowiak/cpp-argparse?sort=semver)](https://github.com/kkarbowiak/cpp-argparse/releases)
 ![Standard](https://img.shields.io/badge/C%2B%2B-17-blue)
-[![GitHub license](https://img.shields.io/github/license/kkarbowiak/cpp-argparse)](https://github.com/kkarbowiak/cpp-argparse/blob/master/LICENSE.md)
+[![License](https://img.shields.io/github/license/kkarbowiak/cpp-argparse)](https://github.com/kkarbowiak/cpp-argparse/blob/master/LICENSE.md)
 
 ## Overview
 
