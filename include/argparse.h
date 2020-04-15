@@ -166,12 +166,7 @@ namespace argparse
             {
                 if (!m_prog)
                 {
-                    std::string prog = argv[0];
-                    if (auto path_separator = prog.rfind("/"); path_separator != std::string::npos)
-                    {
-                        prog = prog.substr(path_separator + 1);
-                    }
-                    m_prog = prog;
+                    m_prog = extract_filename(argv[0]);
                 }
 
                 try
@@ -269,6 +264,16 @@ namespace argparse
             }
 
         private:
+            auto extract_filename(std::string path) -> std::string
+            {
+                if (auto path_separator = path.rfind("/"); path_separator != std::string::npos)
+                {
+                    return path.substr(path_separator + 1);
+                }
+
+                return path;
+            }
+
             auto parse_args(tokens args) -> Parameters
             {
                 for (auto & arg : m_arguments)
