@@ -112,6 +112,21 @@ TEST_CASE("ArgumentParser uses first command-line parameter as its name...")
 
     SUBCASE("...when executed from current directory...")
     {
+        SUBCASE("...using no separators...")
+        {
+            parser.parse_args(1, cstr_arr{"prog"});
+
+            SUBCASE("...in usage message")
+            {
+                CHECK(parser.format_usage() == "usage: prog"s);
+            }
+
+            SUBCASE("...in help message")
+            {
+                CHECK(parser.format_help() == "usage: prog"s);
+            }
+        }
+
         SUBCASE("...using slash separators...")
         {
             parser.parse_args(1, cstr_arr{"./prog"});
