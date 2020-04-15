@@ -1,5 +1,11 @@
 /*
     Copyright 2018 Krzysztof Karbowiak
+
+    cpp-argparse v0.8.2
+
+    See https://github.com/kkarbowiak/cpp-argparse
+
+    Distributed under MIT license
 */
 
 #ifndef CPP_ARGPARSE_H__DDK
