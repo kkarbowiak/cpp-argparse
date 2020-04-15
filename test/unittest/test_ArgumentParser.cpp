@@ -112,7 +112,7 @@ TEST_CASE("ArgumentParser uses first command-line parameter as its name...")
 
     SUBCASE("...when executed from current directory...")
     {
-        parser.parse_args(1, cstr_arr{"prog"});
+        parser.parse_args(1, cstr_arr{"./prog"});
 
         SUBCASE("...in usage message")
         {
