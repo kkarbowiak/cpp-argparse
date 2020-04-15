@@ -139,6 +139,21 @@ TEST_CASE("ArgumentParser uses first command-line parameter as its name...")
             CHECK(parser.format_help() == "usage: prog"s);
         }
     }
+
+    SUBCASE("...without preceding path when executed from upper directory...")
+    {
+        parser.parse_args(1, cstr_arr{"../prog"});
+
+        SUBCASE("...in usage message")
+        {
+            CHECK(parser.format_usage() == "usage: prog"s);
+        }
+
+        SUBCASE("...in help message")
+        {
+            CHECK(parser.format_help() == "usage: prog"s);
+        }
+    }
 }
 
 TEST_CASE("ArgumentParser uses prog parameter as its name...")
