@@ -106,13 +106,21 @@ TEST_CASE("ArgumentParser does not handle parsing errors when requested to...")
     }
 }
 
-TEST_CASE("ArgumentParser uses first command-line parameter as its name")
+TEST_CASE("ArgumentParser uses first command-line parameter as its name...")
 {
     auto parser = argparse::ArgumentParser().add_help(false);
 
     parser.parse_args(1, cstr_arr{"prog"});
 
-    CHECK(parser.format_usage() == "usage: prog"s);
+    SUBCASE("...in usage message")
+    {
+        CHECK(parser.format_usage() == "usage: prog"s);
+    }
+
+    SUBCASE("...in help message")
+    {
+        CHECK(parser.format_help() == "usage: prog"s);
+    }
 }
 
 TEST_CASE("ArgumentParser uses prog parameter as its name...")
