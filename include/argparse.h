@@ -163,9 +163,10 @@ namespace argparse
             class HelpRequested {};
 
         public:
-            decltype(auto) add_argument(std::string const & name1, std::string const & name2 = "")
+            template<typename ...Args>
+            decltype(auto) add_argument(Args&&... names)
             {
-                return ArgumentBuilder(m_arguments, name1, name2);
+                return ArgumentBuilder(m_arguments, std::vector<std::string>{names...});
             }
 
             auto parse_args(int argc, char const * const argv[]) -> Parameters
@@ -369,8 +370,7 @@ namespace argparse
         private:
             struct Options
             {
-                std::string name1;
-                std::string name2;
+                std::vector<std::string> names;
                 std::string help;
                 std::string metavar;
                 std::string dest;
@@ -568,20 +568,20 @@ namespace argparse
 
                     auto get_name() const -> std::string override
                     {
-                        return m_options.name1;
+                        return m_options.names.front();
                     }
 
                     auto get_dest_name() const -> std::string override
                     {
                         return m_options.dest.empty()
-                            ? m_options.name1
+                            ? m_options.names.front()
                             : m_options.dest;
                     }
 
                     auto get_metavar_name() const -> std::string override
                     {
                         return m_options.metavar.empty()
-                            ? m_options.name1
+                            ? m_options.names.front()
                             : m_options.metavar;
                     }
 
@@ -746,7 +746,7 @@ namespace argparse
 
                     auto get_name() const -> std::string override
                     {
-                        return m_options.name1;
+                        return m_options.names.front();
                     }
 
                     auto get_dest_name() const -> std::string override
@@ -756,20 +756,7 @@ namespace argparse
                             return m_options.dest;
                         }
 
-                        std::string dest;
-
-                        if (m_options.name1[0] == '-' && m_options.name1[1] == '-')
-                        {
-                            dest = m_options.name1.substr(2);
-                        }
-                        else if (m_options.name2[0] == '-' && m_options.name2[1] == '-')
-                        {
-                            dest = m_options.name2.substr(2);
-                        }
-                        else
-                        {
-                            dest = m_options.name1.substr(1);
-                        }
+                        std::string dest = get_name_for_dest();
 
                         std::replace(dest.begin(), dest.end(), '-', '_');
 
@@ -813,7 +800,7 @@ namespace argparse
                 private:
                     auto find_arg(tokens const & args) const -> tokens::const_iterator
                     {
-                        return std::find_if(args.begin(), args.end(), [this](auto const & arg){ return arg == m_options.name1 || arg == m_options.name2; });
+                        return std::find_first_of(args.begin(), args.end(), m_options.names.begin(), m_options.names.end());
                     }
 
                     auto consume_arg(tokens & args, tokens::const_iterator & arg_it, std::any & value) -> void
@@ -824,6 +811,19 @@ namespace argparse
                             check_choices(value);
                         }
                         arg_it = args.erase(arg_it);
+                    }
+
+                    auto get_name_for_dest() const -> std::string
+                    {
+                        for (auto const & name : m_options.names)
+                        {
+                            if (name[0] == '-' && name[1] == '-')
+                            {
+                                return name.substr(2);
+                            }
+                        }
+
+                        return m_options.names.front().substr(1);
                     }
 
                 private:
@@ -1035,12 +1035,11 @@ namespace argparse
             class ArgumentBuilder
             {
                 public:
-                    ArgumentBuilder(argument_uptrs & arguments, std::string const & name1, std::string const & name2)
+                    ArgumentBuilder(argument_uptrs & arguments, std::vector<std::string> names)
                       : m_arguments(arguments)
                       , m_options()
                     {
-                        m_options.name1 = name1;
-                        m_options.name2 = name2;
+                        m_options.names = std::move(names);
                     }
 
                     ~ArgumentBuilder()
@@ -1169,7 +1168,7 @@ namespace argparse
                 private:
                     auto is_positional() const -> bool
                     {
-                        return m_options.name1.front() != '-';
+                        return m_options.names.front().front() != '-';
                     }
 
                 private:
