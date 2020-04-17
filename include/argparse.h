@@ -436,13 +436,17 @@ namespace argparse
                     virtual ~Argument() = default;
 
                     virtual auto parse_args(tokens args) -> tokens = 0;
-                    virtual auto get_name() const -> std::string = 0;
                     virtual auto get_dest_name() const -> std::string = 0;
                     virtual auto get_metavar_name() const -> std::string = 0;
                     virtual auto has_value() const -> bool = 0;
                     virtual auto get_value() const -> std::any = 0;
                     virtual auto is_required() const -> bool = 0;
                     virtual auto is_positional() const -> bool = 0;
+
+                    auto get_name() const -> std::string
+                    {
+                        return m_options.names.front();
+                    }
 
                     auto get_options() const -> Options const &
                     {
@@ -564,11 +568,6 @@ namespace argparse
                         }
 
                         return args;
-                    }
-
-                    auto get_name() const -> std::string override
-                    {
-                        return m_options.names.front();
                     }
 
                     auto get_dest_name() const -> std::string override
@@ -742,11 +741,6 @@ namespace argparse
                         }
 
                         return args;
-                    }
-
-                    auto get_name() const -> std::string override
-                    {
-                        return m_options.names.front();
                     }
 
                     auto get_dest_name() const -> std::string override
