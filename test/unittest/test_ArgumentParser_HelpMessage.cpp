@@ -283,6 +283,13 @@ TEST_CASE("Help message contains...")
             CHECK(parser.format_help() == "usage: prog [-o]\n\noptional arguments:\n  -o"s);
         }
 
+        SUBCASE("...name and long name for argument with store true action")
+        {
+            parser.add_argument("-o", "--option").action(argparse::store_true);
+
+            CHECK(parser.format_help() == "usage: prog [-o]\n\noptional arguments:\n  -o, --option"s);
+        }
+
         SUBCASE("...name and help for argument with store true action and help string")
         {
             parser.add_argument("-o").action(argparse::store_true).help("help1");
@@ -336,7 +343,7 @@ TEST_CASE("Help message contains...")
         {
             auto parser = argparse::ArgumentParser().prog("prog");
 
-            CHECK(parser.format_help() == "usage: prog [-h]\n\noptional arguments:\n  -h                    show this help message and exit"s);
+            CHECK(parser.format_help() == "usage: prog [-h]\n\noptional arguments:\n  -h, --help            show this help message and exit"s);
         }
 
         SUBCASE("...name and automatic metavar")

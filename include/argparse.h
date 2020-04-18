@@ -448,6 +448,11 @@ namespace argparse
                         return m_options.names.front();
                     }
 
+                    auto get_names() const -> std::vector<std::string> const &
+                    {
+                        return m_options.names;
+                    }
+
                     auto get_options() const -> Options const &
                     {
                         return m_options;
@@ -915,18 +920,27 @@ namespace argparse
                             }
                             else
                             {
-                                auto arg_line = "  " + arg->get_name();
+                                std::string arg_line = "  ";
 
-                                if (arg->get_options().action == store)
+                                for (auto name_it = arg->get_names().begin(); name_it != arg->get_names().end(); ++name_it)
                                 {
-                                    if (arg->has_nargs())
+                                    if (name_it != arg->get_names().begin())
                                     {
-                                        arg_line += format_nargs(*arg);
+                                        arg_line += ", ";
                                     }
-                                    else
+
+                                    arg_line += *name_it;
+                                    if (arg->get_options().action == store)
                                     {
-                                        arg_line += " ";
-                                        arg_line += format_arg(*arg);
+                                        if (arg->has_nargs())
+                                        {
+                                            arg_line += format_nargs(*arg);
+                                        }
+                                        else
+                                        {
+                                            arg_line += " ";
+                                            arg_line += format_arg(*arg);
+                                        }
                                     }
                                 }
 
