@@ -3,7 +3,7 @@
 #include "cstring_array.h"
 #include "custom.h"
 
-#include <doctest.h>
+#include "doctest.h"
 
 #include <string>
 #include <type_traits>

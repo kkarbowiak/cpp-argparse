@@ -2,7 +2,7 @@
 
 #include "cstring_array.h"
 
-#include <doctest.h>
+#include "doctest.h"
 
 #include <string>
 
