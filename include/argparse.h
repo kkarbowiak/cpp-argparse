@@ -22,6 +22,7 @@
 #include <stdexcept>
 #include <algorithm>
 #include <functional>
+#include <type_traits>
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
