@@ -12,6 +12,9 @@ matrix:
 
     - os: windows
 
+    - os: osx
+      osx_image: xcode10.2
+
 install:
   # Download and install cmake 3.15
   - |
