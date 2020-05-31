@@ -369,6 +369,69 @@ namespace argparse
             }
 
         private:
+            class TypeHandler
+            {
+                public:
+                    virtual ~TypeHandler() = default;
+
+                    virtual auto from_string(std::string const & string, std::any & value) const -> void = 0;
+                    virtual auto to_string(std::any const & value) const -> std::string = 0;
+                    virtual auto compare(std::any const & lhs, std::any const & rhs) const -> bool = 0;
+                    virtual auto transform(std::vector<std::any> const & values) const -> std::any = 0;
+                    virtual auto size(std::any const & value) const -> std::size_t = 0;
+            };
+
+            template<typename T>
+            class TypeHandlerT : public TypeHandler
+            {
+                public:
+                    auto from_string(std::string const & string, std::any & value) const -> void override
+                    {
+                        if constexpr (std::is_same_v<std::string, T>)
+                        {
+                            value = string;
+                        }
+                        else
+                        {
+                            T val;
+                            from_string(string, val);
+                            value = val;
+                        }
+                    }
+
+                    auto to_string(std::any const & value) const -> std::string override
+                    {
+                        if constexpr (std::is_same_v<std::string, T>)
+                        {
+                            return "\"" + std::any_cast<std::string>(value) + "\"";
+                        }
+                        else
+                        {
+                            return to_string(std::any_cast<T>(value));
+                        }
+                    }
+
+                    auto compare(std::any const & lhs, std::any const & rhs) const -> bool override
+                    {
+                        return std::any_cast<T>(lhs) == std::any_cast<T>(rhs);
+                    }
+
+                    auto transform(std::vector<std::any> const & values) const -> std::any override
+                    {
+                        std::vector<T> result;
+                        for (auto const & value : values)
+                        {
+                            result.push_back(std::any_cast<T>(value));
+                        }
+                        return std::any(result);
+                    }
+
+                    auto size(std::any const & value) const -> std::size_t override
+                    {
+                        return std::any_cast<std::vector<T>>(value).size();
+                    }
+            };
+
             struct Options
             {
                 std::vector<std::string> names;
@@ -381,36 +444,7 @@ namespace argparse
                 bool required;
                 std::vector<std::any> choices;
                 std::optional<std::variant<std::size_t, char>> nargs;
-                std::function<void (std::string const &, std::any &)> from_string =
-                    [](std::string const & s, std::any & a)
-                    {
-                        a = s;
-                    };
-                std::function<std::string(std::any const&)> to_string =
-                    [](std::any const& a)
-                    {
-                        return "\"" + std::any_cast<std::string>(a) + "\"";
-                    };
-                std::function<bool (std::any const &, std::any const &)> compare =
-                    [](std::any const & lhs, std::any const & rhs)
-                    {
-                        return std::any_cast<std::string>(lhs) == std::any_cast<std::string>(rhs);
-                    };
-                std::function<std::any (std::vector<std::any> const &)> transform =
-                    [](std::vector<std::any> const & values)
-                    {
-                        std::vector<std::string> result;
-                        for (auto const & v : values)
-                        {
-                            result.push_back(std::any_cast<std::string>(v));
-                        }
-                        return std::any(result);
-                    };
-                std::function<std::size_t (std::any const &)> size =
-                    [](std::any const & a)
-                    {
-                        return std::any_cast<std::vector<std::string>>(a).size();
-                    };
+                std::unique_ptr<TypeHandler> type_handler = std::make_unique<TypeHandlerT<std::string>>();
 
                 auto join_choices(std::string separator) const -> std::string
                 {
@@ -421,7 +455,7 @@ namespace argparse
                         {
                             result += separator;
                         }
-                        result += to_string(*i);
+                        result += type_handler->to_string(*i);
                     }
                     return result;
                 }
@@ -485,10 +519,10 @@ namespace argparse
                         if (!std::any_of(
                             m_options.choices.begin(),
                             m_options.choices.end(),
-                            [&](auto const& rhs) { return m_options.compare(value, rhs); }))
+                            [&](auto const& rhs) { return m_options.type_handler->compare(value, rhs); }))
                         {
                             std::string message = "argument " + get_name() + ": invalid choice: ";
-                            message += m_options.to_string(value);
+                            message += m_options.type_handler->to_string(value);
                             message += " (choose from ";
                             message += m_options.join_choices(", ");
                             message += ")";
@@ -521,7 +555,7 @@ namespace argparse
                                     consume_arg(args, value);
                                 }
 
-                                m_value = m_options.transform(values);
+                                m_value = m_options.type_handler->transform(values);
                             }
                             else
                             {
@@ -546,7 +580,7 @@ namespace argparse
                                         {
                                             consume_arg(args, value);
                                         }
-                                        m_value = m_options.transform(values);
+                                        m_value = m_options.type_handler->transform(values);
                                         break;
                                     }
                                     case '+':
@@ -558,7 +592,7 @@ namespace argparse
                                         }
                                         if (!values.empty())
                                         {
-                                            m_value = m_options.transform(values);
+                                            m_value = m_options.type_handler->transform(values);
                                         }
                                         break;
                                     }
@@ -593,7 +627,7 @@ namespace argparse
                     auto has_value() const -> bool override
                     {
                         return has_nargs() && has_nargs_number()
-                            ? m_options.size(m_value) == get_nargs_number()
+                            ? m_options.type_handler->size(m_value) == get_nargs_number()
                             : m_value.has_value();
                     }
 
@@ -615,7 +649,7 @@ namespace argparse
                 private:
                     auto consume_arg(tokens & args, std::any & value) -> void
                     {
-                        m_options.from_string(args.front(), value);
+                        m_options.type_handler->from_string(args.front(), value);
                         if (!m_options.choices.empty())
                         {
                             check_choices(value);
@@ -673,7 +707,7 @@ namespace argparse
                                                 values.push_back(value);
                                             }
 
-                                            m_value = m_options.transform(values);
+                                            m_value = m_options.type_handler->transform(values);
                                         }
                                         else
                                         {
@@ -700,7 +734,7 @@ namespace argparse
                                                         consume_arg(args, it, value);
                                                         values.push_back(value);
                                                     }
-                                                    m_value = m_options.transform(values);
+                                                    m_value = m_options.type_handler->transform(values);
                                                     break;
                                                 }
                                                 case '+':
@@ -716,7 +750,7 @@ namespace argparse
                                                     {
                                                         throw parsing_error("argument " + get_name() + ": expected at least one argument");
                                                     }
-                                                    m_value = m_options.transform(values);
+                                                    m_value = m_options.type_handler->transform(values);
                                                     break;
                                                 }
                                             }
@@ -805,7 +839,7 @@ namespace argparse
 
                     auto consume_arg(tokens & args, tokens::const_iterator & arg_it, std::any & value) -> void
                     {
-                        m_options.from_string(*arg_it, value);
+                        m_options.type_handler->from_string(*arg_it, value);
                         if (!m_options.choices.empty())
                         {
                             check_choices(value);
@@ -1098,38 +1132,7 @@ namespace argparse
                     {
                         if constexpr (!std::is_same_v<std::string, T>)
                         {
-                            m_options.from_string =
-                                [](std::string const & s, std::any & a)
-                                {
-                                    T val;
-                                    from_string(s, val);
-                                    a = val;
-                                };
-                            m_options.to_string =
-                                [](std::any const & a)
-                                {
-                                    return to_string(std::any_cast<T>(a));
-                                };
-                            m_options.compare =
-                                [](std::any const & l, std::any const & r)
-                                {
-                                    return std::any_cast<T>(l) == std::any_cast<T>(r);
-                                };
-                            m_options.transform =
-                                [](std::vector<std::any> const & values)
-                                {
-                                    std::vector<T> result;
-                                    for (auto const & v : values)
-                                    {
-                                        result.push_back(std::any_cast<T>(v));
-                                    }
-                                    return std::any(result);
-                                };
-                            m_options.size =
-                                [](std::any const & a)
-                                {
-                                    return std::any_cast<std::vector<T>>(a).size();
-                                };
+                            m_options.type_handler = std::make_unique<TypeHandlerT<T>>();
                         }
                         return *this;
                     }
