@@ -304,6 +304,13 @@ TEST_CASE("Help message contains...")
             CHECK(parser.format_help() == "usage: prog [-o]\n\noptional arguments:\n  -o"s);
         }
 
+        SUBCASE("...name and long name for argument with store false action")
+        {
+            parser.add_argument("-o", "--option").action(argparse::store_false);
+
+            CHECK(parser.format_help() == "usage: prog [-o]\n\noptional arguments:\n  -o, --option"s);
+        }
+
         SUBCASE("...name and help for argument with store false action and help string")
         {
             parser.add_argument("-o").action(argparse::store_false).help("help1");
