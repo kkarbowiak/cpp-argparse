@@ -353,6 +353,13 @@ TEST_CASE("Help message contains...")
             CHECK(parser.format_help() == "usage: prog [-h]\n\noptional arguments:\n  -h"s);
         }
 
+        SUBCASE("...name and long namefor argument with help action")
+        {
+            parser.add_argument("-h", "--help").action(argparse::help);
+
+            CHECK(parser.format_help() == "usage: prog [-h]\n\noptional arguments:\n  -h, --help"s);
+        }
+
         SUBCASE("...name and help for argument with help action and help string")
         {
             parser.add_argument("-h").action(argparse::help).help("help1");
