@@ -412,7 +412,7 @@ namespace argparse
                         return std::any_cast<std::vector<std::string>>(a).size();
                     };
 
-                auto join_choices(std::string separator) const -> std::string
+                auto join_choices(std::string const & separator) const -> std::string
                 {
                     std::string result;
                     for (auto i = choices.begin(); i != choices.end(); ++i)
