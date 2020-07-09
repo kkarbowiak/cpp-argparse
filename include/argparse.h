@@ -315,7 +315,7 @@ namespace argparse
                 return tokens(&argv[1], &argv[argc]);
             }
 
-            auto get_string(tokens args) const -> std::string
+            auto get_string(tokens const & args) const -> std::string
             {
                 std::string result;
 
