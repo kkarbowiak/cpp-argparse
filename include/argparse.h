@@ -500,7 +500,7 @@ namespace argparse
                     Options const m_options;
             };
 
-            class PositionalArgument : public Argument
+            class PositionalArgument final : public Argument
             {
                 public:
                     explicit PositionalArgument(Options options)
@@ -627,7 +627,7 @@ namespace argparse
                     std::any m_value;
             };
 
-            class OptionalArgument : public Argument
+            class OptionalArgument final : public Argument
             {
                 public:
                     explicit OptionalArgument(Options options)
