@@ -142,7 +142,7 @@ TEST_CASE("ArgumentParser uses first command-line parameter as its name...")
             }
         }
 
-        SUBCASE("...using slash separators...")
+        SUBCASE("...using backslash separators...")
         {
             parser.parse_args(1, cstr_arr{".\\prog"});
 
