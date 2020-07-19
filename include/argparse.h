@@ -205,9 +205,9 @@ namespace argparse
                 }
             }
 
-            auto add_mutually_exclusive_group() -> int
+            auto add_mutually_exclusive_group()
             {
-                return 0;
+                return MutuallyExclusiveGroup();
             }
 
             auto prog(std::string const & prog) -> ArgumentParser &&
@@ -841,6 +841,15 @@ namespace argparse
 
                 private:
                     std::any m_value;
+            };
+
+            class MutuallyExclusiveGroup
+            {
+                public:
+                    template<typename T>
+                    auto add_argument(T) -> void
+                    {
+                    }
             };
 
         private:

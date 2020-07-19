@@ -275,4 +275,5 @@ TEST_CASE("ArgumentParser supports mutually exclusive groups")
 {
     auto parser = argparse::ArgumentParser();
     auto group = parser.add_mutually_exclusive_group();
+    group.add_argument("-o");
 }
