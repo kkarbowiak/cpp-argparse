@@ -6,10 +6,10 @@ add_executable(unittest)
 target_sources(unittest
     PRIVATE
     main.cpp
-    test_ArgumentParser.cpp
-    test_ArgumentParser_Parsing.cpp
-    test_ArgumentParser_UsageMessage.cpp
-    test_ArgumentParser_HelpMessage.cpp
+    test_argument_parser.cpp
+    test_parsing.cpp
+    test_usage_message.cpp
+    test_help_message.cpp
     cstring_array.h
     custom.h)
 
