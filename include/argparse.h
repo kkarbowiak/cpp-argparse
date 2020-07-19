@@ -205,6 +205,11 @@ namespace argparse
                 }
             }
 
+            auto add_mutually_exclusive_group() -> int
+            {
+                return 0;
+            }
+
             auto prog(std::string const & prog) -> ArgumentParser &&
             {
                 m_prog = prog;

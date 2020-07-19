@@ -270,3 +270,9 @@ TEST_CASE("Adding an optional argument with required option does not result in e
     CHECK_NOTHROW(parser.add_argument("-o").required(true));
     CHECK_NOTHROW(parser.add_argument("-o").required(false));
 }
+
+TEST_CASE("ArgumentParser supports mutually exclusive groups")
+{
+    auto parser = argparse::ArgumentParser();
+    auto group = parser.add_mutually_exclusive_group();
+}
