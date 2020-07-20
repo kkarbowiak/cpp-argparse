@@ -316,7 +316,7 @@ namespace argparse
             }
 
             template<typename Container>
-            auto join(Container const & strings, std::string const & separator) const -> std::string
+            static auto join(Container const & strings, std::string const & separator) -> std::string
             {
                 std::string result;
 
