@@ -341,7 +341,16 @@ namespace argparse
                     {
                         if (!error_message)
                         {
-                            error_message = "the following arguments are required: " + arg->get_name();
+                            error_message = "the following arguments are required: ";
+                            auto const & names = arg->get_names();
+                            for (auto it = names.begin(); it != names.end(); ++it)
+                            {
+                                if (it != names.begin())
+                                {
+                                    *error_message += '/';
+                                }
+                                *error_message += *it;
+                            }
                         }
                         else
                         {
