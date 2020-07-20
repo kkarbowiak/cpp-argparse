@@ -302,7 +302,7 @@ namespace argparse
 
                 if (!args.empty())
                 {
-                    throw parsing_error("unrecognised arguments: " + get_string(args));
+                    throw parsing_error("unrecognised arguments: " + join(args, " "));
                 }
 
                 ensure_no_arguments_missing();
@@ -315,23 +315,8 @@ namespace argparse
                 return tokens(&argv[1], &argv[argc]);
             }
 
-            auto get_string(tokens const & args) const -> std::string
-            {
-                std::string result;
-
-                for (auto it = args.begin(); it != args.end(); ++it)
-                {
-                    if (it != args.begin())
-                    {
-                        result += " ";
-                    }
-                    result += *it;
-                }
-
-                return result;
-            }
-
-            auto join(std::vector<std::string> const & strings, std::string const & separator) const -> std::string
+            template<typename Container>
+            auto join(Container const & strings, std::string const & separator) const -> std::string
             {
                 std::string result;
 
