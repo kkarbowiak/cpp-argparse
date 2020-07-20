@@ -10,6 +10,7 @@ target_sources(unittest
     test_parsing.cpp
     test_usage_message.cpp
     test_help_message.cpp
+    test_error_message.cpp
     cstring_array.h
     custom.h)
 
