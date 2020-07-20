@@ -22,4 +22,11 @@ TEST_CASE("Missing required arguments message lists all argument's names...")
 
         CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: -o/--option", argparse::parsing_error);
     }
+
+    SUBCASE("...for argument with three names")
+    {
+        parser.add_argument("-o", "--option", "--long-option").required(true);
+
+        CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: -o/--option/--long-option", argparse::parsing_error);
+    }
 }
