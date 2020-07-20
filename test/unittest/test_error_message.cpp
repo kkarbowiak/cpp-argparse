@@ -5,7 +5,7 @@
 #include "doctest.h"
 
 
-TEST_CASE("Missing required arguments message lists all argument's names...")
+TEST_CASE("Missing required arguments message lists all optional argument's names...")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
