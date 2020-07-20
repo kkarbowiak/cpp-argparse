@@ -488,7 +488,7 @@ namespace argparse
                             m_options.choices.end(),
                             [&](auto const& rhs) { return m_options.compare(value, rhs); }))
                         {
-                            std::string message = "argument " + get_name() + ": invalid choice: ";
+                            std::string message = "argument " + join(m_options.names, "/") + ": invalid choice: ";
                             message += m_options.to_string(value);
                             message += " (choose from ";
                             message += m_options.join_choices(", ");
