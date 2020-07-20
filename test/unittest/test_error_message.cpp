@@ -5,6 +5,8 @@
 #include "doctest.h"
 
 
+using namespace std::string_literals;
+
 TEST_CASE("Missing required arguments message lists all optional argument's names...")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
@@ -59,4 +61,12 @@ TEST_CASE("Missing required arguments message lists all optional argument's name
             CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: -o/--option/--long-option -r/--required/--really-required", argparse::parsing_error);
         }
     }
+}
+
+TEST_CASE("Invalid choice message lists all optional argument's names")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").choices({"a"s, "b"s});
+
+    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "c"}), "argument -o: invalid choice: \"c\" (choose from \"a\", \"b\")", argparse::parsing_error);
 }
