@@ -354,7 +354,16 @@ namespace argparse
                         }
                         else
                         {
-                            *error_message += " " + arg->get_name();
+                            *error_message += " ";
+                            auto const & names = arg->get_names();
+                            for (auto it = names.begin(); it != names.end(); ++it)
+                            {
+                                if (it != names.begin())
+                                {
+                                    *error_message += '/';
+                                }
+                                *error_message += *it;
+                            }
                         }
                     }
                 }
