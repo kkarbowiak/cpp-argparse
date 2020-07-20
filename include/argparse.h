@@ -331,6 +331,22 @@ namespace argparse
                 return result;
             }
 
+            auto join(std::vector<std::string> const & strings, std::string const & separator) const -> std::string
+            {
+                std::string result;
+
+                for (auto it = strings.begin(); it != strings.end(); ++it)
+                {
+                    if (it != strings.begin())
+                    {
+                        result += separator;
+                    }
+                    result += *it;
+                }
+
+                return result;
+            }
+
             auto ensure_no_arguments_missing() const -> void
             {
                 optstring error_message;
@@ -341,29 +357,11 @@ namespace argparse
                     {
                         if (!error_message)
                         {
-                            error_message = "the following arguments are required: ";
-                            auto const & names = arg->get_names();
-                            for (auto it = names.begin(); it != names.end(); ++it)
-                            {
-                                if (it != names.begin())
-                                {
-                                    *error_message += '/';
-                                }
-                                *error_message += *it;
-                            }
+                            error_message = "the following arguments are required: " + join(arg->get_names(), "/");
                         }
                         else
                         {
-                            *error_message += " ";
-                            auto const & names = arg->get_names();
-                            for (auto it = names.begin(); it != names.end(); ++it)
-                            {
-                                if (it != names.begin())
-                                {
-                                    *error_message += '/';
-                                }
-                                *error_message += *it;
-                            }
+                            *error_message += " " + join(arg->get_names(), "/");
                         }
                     }
                 }
