@@ -88,3 +88,11 @@ TEST_CASE("Invalid choice message lists all optional argument's names...")
         CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "c"}), "argument -o/--option/--long-option: invalid choice: \"c\" (choose from \"a\", \"b\")", argparse::parsing_error);
     }
 }
+
+TEST_CASE("Expected number of arguments message lists all optional argument's names")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(1);
+
+    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o: expected 1 argument", argparse::parsing_error);
+}
