@@ -140,3 +140,11 @@ TEST_CASE("Expected at least one argument message lists all optional argument's 
         CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o/--option/--long-option: expected at least one argument", argparse::parsing_error);
     }
 }
+
+TEST_CASE("Expected one argument message lists all optional argument's names")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o");
+
+    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o: expected one argument", argparse::parsing_error);
+}
