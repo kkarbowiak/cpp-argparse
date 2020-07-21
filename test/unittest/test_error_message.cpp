@@ -158,4 +158,11 @@ TEST_CASE("Expected one argument message lists all optional argument's names..."
 
         CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o/--option: expected one argument", argparse::parsing_error);
     }
+
+    SUBCASE("...for argument with three names")
+    {
+        parser.add_argument("-o", "--option", "--long-option");
+
+        CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o/--option/--long-option: expected one argument", argparse::parsing_error);
+    }
 }
