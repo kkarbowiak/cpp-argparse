@@ -715,7 +715,7 @@ namespace argparse
                                                     }
                                                     if (values.empty())
                                                     {
-                                                        throw parsing_error("argument " + get_name() + ": expected at least one argument");
+                                                        throw parsing_error("argument " + join(get_names(), "/") + ": expected at least one argument");
                                                     }
                                                     m_value = m_options.transform(values);
                                                     break;
