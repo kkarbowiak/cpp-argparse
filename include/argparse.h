@@ -727,7 +727,7 @@ namespace argparse
                                     {
                                         if (it == args.end() || it->front() == '-')
                                         {
-                                            throw parsing_error("argument " + get_name() + ": expected one argument");
+                                            throw parsing_error("argument " + join(get_names(), "/") + ": expected one argument");
                                         }
                                         consume_arg(args, it, m_value);
                                     }
