@@ -80,4 +80,11 @@ TEST_CASE("Invalid choice message lists all optional argument's names...")
 
         CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "c"}), "argument -o/--option: invalid choice: \"c\" (choose from \"a\", \"b\")", argparse::parsing_error);
     }
+
+    SUBCASE("...for argument with three names")
+    {
+        parser.add_argument("-o", "--option", "--long-option").choices({"a"s, "b"s});
+
+        CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "c"}), "argument -o/--option/--long-option: invalid choice: \"c\" (choose from \"a\", \"b\")", argparse::parsing_error);
+    }
 }
