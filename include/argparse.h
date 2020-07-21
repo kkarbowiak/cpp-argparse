@@ -667,7 +667,7 @@ namespace argparse
                                             {
                                                 if (it == args.end() || it->front() == '-')
                                                 {
-                                                    throw parsing_error("argument " + get_name() + ": expected " + std::to_string(args_number) + " argument" + (args_number > 1 ? "s" : ""));
+                                                    throw parsing_error("argument " + join(get_names(), "/") + ": expected " + std::to_string(args_number) + " argument" + (args_number > 1 ? "s" : ""));
                                                 }
                                                 std::any value;
                                                 consume_arg(args, it, value);
