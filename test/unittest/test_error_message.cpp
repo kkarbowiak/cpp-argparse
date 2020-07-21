@@ -132,4 +132,11 @@ TEST_CASE("Expected at least one argument message lists all optional argument's 
 
         CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o/--option: expected at least one argument", argparse::parsing_error);
     }
+
+    SUBCASE("...for argument with three names")
+    {
+        parser.add_argument("-o", "--option", "--long-option").nargs('+');
+
+        CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o/--option/--long-option: expected at least one argument", argparse::parsing_error);
+    }
 }
