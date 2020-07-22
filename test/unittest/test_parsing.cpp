@@ -408,7 +408,6 @@ TEST_CASE("Parsing no arguments of a mutually exclusive group does not throw")
     auto group = parser.add_mutually_exclusive_group();
     group.add_argument("-a");
     group.add_argument("-b");
-    group.add_argument("-c");
 
     CHECK_NOTHROW(parser.parse_args(1, cstr_arr{"prog"}));
 }
