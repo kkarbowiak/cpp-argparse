@@ -417,6 +417,7 @@ TEST_CASE("Parsing mutually exclusive group...")
     SUBCASE("...does not throw for a single argument")
     {
         CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-a", "a"}));
+        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-b", "b"}));
     }
 }
 
