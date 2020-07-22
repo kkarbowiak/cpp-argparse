@@ -12,6 +12,7 @@
 #define CPP_ARGPARSE_H__DDK
 
 #include <string>
+#include <string_view>
 #include <list>
 #include <vector>
 #include <map>
@@ -915,7 +916,8 @@ namespace argparse
 
                                 if (!arg->get_options().help.empty())
                                 {
-                                    arg_line += help_string_separation(arg_line.size()) + arg->get_options().help;
+                                    arg_line += help_string_separation(arg_line.size());
+                                    arg_line += arg->get_options().help;
                                 }
 
                                 positionals += '\n' + arg_line;
@@ -948,7 +950,8 @@ namespace argparse
 
                                 if (!arg->get_options().help.empty())
                                 {
-                                    arg_line += help_string_separation(arg_line.size()) + arg->get_options().help;
+                                    arg_line += help_string_separation(arg_line.size());
+                                    arg_line += arg->get_options().help;
                                 }
 
                                 optionals += '\n' + arg_line;
@@ -1027,11 +1030,12 @@ namespace argparse
                         return result;
                     }
 
-                    auto help_string_separation(std::size_t arg_line_length) const -> std::string
+                    auto help_string_separation(std::size_t arg_line_length) const -> std::string_view
                     {
+                        constexpr std::string_view fill = "\n                        ";
                         return arg_line_length < 23
-                            ? std::string(24 - arg_line_length, ' ')
-                            : '\n' + std::string(24, ' ');
+                            ? fill.substr(arg_line_length + 1)
+                            : fill;
                     }
 
                 private:
