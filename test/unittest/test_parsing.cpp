@@ -402,14 +402,22 @@ TEST_CASE("Parsing mixed positional and optional arguments give same result no m
     }
 }
 
-TEST_CASE("Parsing no arguments of a mutually exclusive group does not throw")
+TEST_CASE("Parsing mutually exclusive group...")
 {
     auto parser = argparse::ArgumentParser();
     auto group = parser.add_mutually_exclusive_group();
     group.add_argument("-a");
     group.add_argument("-b");
 
-    CHECK_NOTHROW(parser.parse_args(1, cstr_arr{"prog"}));
+    SUBCASE("...does not throw for no arguments")
+    {
+        CHECK_NOTHROW(parser.parse_args(1, cstr_arr{"prog"}));
+    }
+
+    SUBCASE("...does not throw for a single argument")
+    {
+        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-a", "a"}));
+    }
 }
 
 TEST_CASE("The resulting attribute name is based on...")

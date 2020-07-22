@@ -207,7 +207,7 @@ namespace argparse
 
             auto add_mutually_exclusive_group()
             {
-                return MutuallyExclusiveGroup();
+                return MutuallyExclusiveGroup(m_arguments);
             }
 
             auto prog(std::string const & prog) -> ArgumentParser &&
@@ -843,15 +843,6 @@ namespace argparse
                     std::any m_value;
             };
 
-            class MutuallyExclusiveGroup
-            {
-                public:
-                    template<typename T>
-                    auto add_argument(T) -> void
-                    {
-                    }
-            };
-
         private:
             using argument_uptr = std::unique_ptr<Argument>;
             using argument_uptrs = std::vector<argument_uptr>;
@@ -1064,6 +1055,24 @@ namespace argparse
                     optstring const & m_usage;
                     optstring const & m_description;
                     optstring const & m_epilog;
+            };
+
+            class MutuallyExclusiveGroup
+            {
+                public:
+                    MutuallyExclusiveGroup(argument_uptrs & arguments)
+                      : m_arguments(arguments)
+                    {
+                    }
+
+                    template<typename ...Args>
+                    decltype(auto) add_argument(Args&&... names)
+                    {
+                        return ArgumentBuilder(m_arguments, std::vector<std::string>{names...});
+                    }
+
+                private:
+                    argument_uptrs & m_arguments;
             };
 
             class ArgumentBuilder
