@@ -636,18 +636,6 @@ namespace argparse
                       : Argument(std::move(options))
                       , m_value()
                     {
-                        if (m_options.action == store_true || m_options.action == help)
-                        {
-                            m_value = false;
-                        }
-                        else if (m_options.action == store_false)
-                        {
-                            m_value = true;
-                        }
-                        else if (m_options.default_.has_value())
-                        {
-                            m_value = m_options.default_;
-                        }
                     }
 
                     auto parse_args(tokens args) -> tokens override
@@ -745,6 +733,21 @@ namespace argparse
                                 case help:
                                     m_value = true;
                                     throw HelpRequested();
+                            }
+                        }
+                        else
+                        {
+                            if (m_options.action == store_true || m_options.action == help)
+                            {
+                                m_value = false;
+                            }
+                            else if (m_options.action == store_false)
+                            {
+                                m_value = true;
+                            }
+                            else if (m_options.default_.has_value())
+                            {
+                                m_value = m_options.default_;
                             }
                         }
 
