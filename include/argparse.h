@@ -316,9 +316,9 @@ namespace argparse
                 {
                     if (arg->has_value() && arg->get_options().mutually_exclusive_group != nullptr)
                     {
-                        if (exclusive_args.count(arg->get_options().mutually_exclusive_group) == 1)
+                        if (auto it = exclusive_args.find(arg->get_options().mutually_exclusive_group); it != exclusive_args.end())
                         {
-                            throw parsing_error("argument " + join(arg->get_names(), "/") + ": not allowed with argument " + join(exclusive_args[arg->get_options().mutually_exclusive_group]->get_names(), "/"));
+                            throw parsing_error("argument " + join(arg->get_names(), "/") + ": not allowed with argument " + join(it->second->get_names(), "/"));
                         }
                         else
                         {
