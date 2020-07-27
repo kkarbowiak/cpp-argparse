@@ -187,4 +187,12 @@ TEST_CASE("Argument not allowed with argument message lists all optional argumen
 
         CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-a", "a", "-b", "b"}), "argument -b/--bbb: not allowed with argument -a/--aaa", argparse::parsing_error);
     }
+
+    SUBCASE("...for arguments with three names")
+    {
+        group.add_argument("-a", "--aaa", "--more-aaa");
+        group.add_argument("-b", "--bbb", "--more-bbb");
+
+        CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-a", "a", "-b", "b"}), "argument -b/--bbb/--more-bbb: not allowed with argument -a/--aaa/--more-aaa", argparse::parsing_error);
+    }
 }
