@@ -318,7 +318,7 @@ namespace argparse
                     {
                         if (exclusive_args.count(arg->get_options().mutually_exclusive_group) == 1)
                         {
-                            throw 3;
+                            throw parsing_error("argument " + arg->get_name() + ": not allowed with argument " + exclusive_args[arg->get_options().mutually_exclusive_group]->get_name());
                         }
                         else
                         {

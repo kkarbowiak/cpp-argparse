@@ -404,7 +404,7 @@ TEST_CASE("Parsing mixed positional and optional arguments give same result no m
 
 TEST_CASE("Parsing mutually exclusive group...")
 {
-    auto parser = argparse::ArgumentParser();
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     auto group = parser.add_mutually_exclusive_group();
     group.add_argument("-a");
     group.add_argument("-b");
@@ -422,7 +422,7 @@ TEST_CASE("Parsing mutually exclusive group...")
 
     SUBCASE("...throws for exclusive arguments")
     {
-        CHECK_THROWS(parser.parse_args(5, cstr_arr{"prog", "-a", "a", "-b", "b"}));
+        CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-a", "a", "-b", "b"}), "argument -b: not allowed with argument -a", argparse::parsing_error);
     }
 }
 
