@@ -311,22 +311,7 @@ namespace argparse
                     throw parsing_error("unrecognised arguments: " + join(args, " "));
                 }
 
-                std::map<MutuallyExclusiveGroup const *, Argument const *> exclusive_args;
-                for (auto const & arg : m_arguments)
-                {
-                    if (arg->has_value() && arg->get_options().mutually_exclusive_group != nullptr)
-                    {
-                        if (auto it = exclusive_args.find(arg->get_options().mutually_exclusive_group); it != exclusive_args.end())
-                        {
-                            throw parsing_error("argument " + join(arg->get_names(), "/") + ": not allowed with argument " + join(it->second->get_names(), "/"));
-                        }
-                        else
-                        {
-                            exclusive_args[arg->get_options().mutually_exclusive_group] = arg.get();
-                        }
-                    }
-                }
-
+                ensure_no_arguments_excluded();
                 ensure_no_arguments_missing();
 
                 return get_parameters();
@@ -352,6 +337,25 @@ namespace argparse
                 }
 
                 return result;
+            }
+
+            auto ensure_no_arguments_excluded() const -> void
+            {
+                std::map<MutuallyExclusiveGroup const *, Argument const *> exclusive_args;
+                for (auto const & arg : m_arguments)
+                {
+                    if (arg->has_value() && arg->get_options().mutually_exclusive_group != nullptr)
+                    {
+                        if (auto it = exclusive_args.find(arg->get_options().mutually_exclusive_group); it != exclusive_args.end())
+                        {
+                            throw parsing_error("argument " + join(arg->get_names(), "/") + ": not allowed with argument " + join(it->second->get_names(), "/"));
+                        }
+                        else
+                        {
+                            exclusive_args[arg->get_options().mutually_exclusive_group] = arg.get();
+                        }
+                    }
+                }
             }
 
             auto ensure_no_arguments_missing() const -> void
