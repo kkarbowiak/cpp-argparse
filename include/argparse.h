@@ -518,10 +518,7 @@ namespace argparse
                             if (has_nargs_number())
                             {
                                 std::vector<std::any> values(std::min(get_nargs_number(), args.size()));
-                                for (auto & value : values)
-                                {
-                                    consume_arg(args, value);
-                                }
+                                consume_args(args, values);
 
                                 m_value = m_options.transform(values);
                             }
@@ -544,20 +541,14 @@ namespace argparse
                                     case '*':
                                     {
                                         std::vector<std::any> values(args.size());
-                                        for (auto & value : values)
-                                        {
-                                            consume_arg(args, value);
-                                        }
+                                        consume_args(args, values);
                                         m_value = m_options.transform(values);
                                         break;
                                     }
                                     case '+':
                                     {
                                         std::vector<std::any> values(args.size());
-                                        for (auto & value : values)
-                                        {
-                                            consume_arg(args, value);
-                                        }
+                                        consume_args(args, values);
                                         if (!values.empty())
                                         {
                                             m_value = m_options.transform(values);
@@ -623,6 +614,14 @@ namespace argparse
                             check_choices(value);
                         }
                         args.pop_front();
+                    }
+
+                    auto consume_args(tokens & args, std::vector<std::any> & values) -> void
+                    {
+                        for (auto & value : values)
+                        {
+                            consume_arg(args, value);
+                        }
                     }
 
                 private:
