@@ -420,6 +420,14 @@ TEST_CASE("Parsing mutually exclusive group...")
         CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-b", "b"}));
     }
 
+    SUBCASE("..does not throw for arguments in separate groups")
+    {
+        auto other_group = parser.add_mutually_exclusive_group();
+        other_group.add_argument("-c");
+
+        CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-a", "a", "-c", "c"}));
+    }
+
     SUBCASE("...throws for exclusive arguments")
     {
         CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-a", "a", "-b", "b"}), "argument -b: not allowed with argument -a", argparse::parsing_error);
