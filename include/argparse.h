@@ -311,6 +311,22 @@ namespace argparse
                     throw parsing_error("unrecognised arguments: " + join(args, " "));
                 }
 
+                std::map<MutuallyExclusiveGroup const *, Argument const *> exclusive_args;
+                for (auto const & arg : m_arguments)
+                {
+                    if (arg->has_value() && arg->get_options().mutually_exclusive_group != nullptr)
+                    {
+                        if (exclusive_args.count(arg->get_options().mutually_exclusive_group) == 1)
+                        {
+                            throw 3;
+                        }
+                        else
+                        {
+                            exclusive_args[arg->get_options().mutually_exclusive_group] = arg.get();
+                        }
+                    }
+                }
+
                 ensure_no_arguments_missing();
 
                 return get_parameters();
@@ -376,6 +392,8 @@ namespace argparse
             }
 
         private:
+            class MutuallyExclusiveGroup;
+
             struct Options
             {
                 std::vector<std::string> names;
@@ -388,6 +406,7 @@ namespace argparse
                 bool required;
                 std::vector<std::any> choices;
                 std::optional<std::variant<std::size_t, char>> nargs;
+                MutuallyExclusiveGroup const * mutually_exclusive_group = nullptr;
                 std::function<void (std::string const &, std::any &)> from_string =
                     [](std::string const & s, std::any & a)
                     {
@@ -734,7 +753,7 @@ namespace argparse
                             {
                                 m_value = true;
                             }
-                            else if (m_options.default_.has_value())
+                            else
                             {
                                 m_value = m_options.default_;
                             }
@@ -1068,7 +1087,7 @@ namespace argparse
                     template<typename ...Args>
                     decltype(auto) add_argument(Args&&... names)
                     {
-                        return ArgumentBuilder(m_arguments, std::vector<std::string>{names...});
+                        return ArgumentBuilder(m_arguments, std::vector<std::string>{names...}, this);
                     }
 
                 private:
@@ -1078,11 +1097,12 @@ namespace argparse
             class ArgumentBuilder
             {
                 public:
-                    ArgumentBuilder(argument_uptrs & arguments, std::vector<std::string> names)
+                    ArgumentBuilder(argument_uptrs & arguments, std::vector<std::string> names, MutuallyExclusiveGroup * group = nullptr)
                       : m_arguments(arguments)
                       , m_options()
                     {
                         m_options.names = std::move(names);
+                        m_options.mutually_exclusive_group = group;
                     }
 
                     ~ArgumentBuilder()

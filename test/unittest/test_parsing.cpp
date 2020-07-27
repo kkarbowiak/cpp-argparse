@@ -419,6 +419,11 @@ TEST_CASE("Parsing mutually exclusive group...")
         CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-a", "a"}));
         CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-b", "b"}));
     }
+
+    SUBCASE("...throws for exclusive arguments")
+    {
+        CHECK_THROWS(parser.parse_args(5, cstr_arr{"prog", "-a", "a", "-b", "b"}));
+    }
 }
 
 TEST_CASE("The resulting attribute name is based on...")
