@@ -166,3 +166,13 @@ TEST_CASE("Expected one argument message lists all optional argument's names..."
         CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o/--option/--long-option: expected one argument", argparse::parsing_error);
     }
 }
+
+TEST_CASE("Argument not allowed with argument message lists all optional argument's names")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    auto group = parser.add_mutually_exclusive_group();
+    group.add_argument("-a");
+    group.add_argument("-b");
+
+    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-a", "a", "-b", "b"}), "argument -b: not allowed with argument -a", argparse::parsing_error);
+}
