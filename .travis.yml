@@ -44,6 +44,16 @@ matrix:
       osx_image: xcode10.2
       env: CMAKE_FLAGS="-DCMAKE_BUILD_TYPE=Release"
 
+    - name: Valgrind
+      os: Linux
+      dist: bionic
+      compiler: gcc
+      env: CMAKE_FLAGS="-DCMAKE_BUILD_TYPE=Release"
+      addons:
+        apt:
+          packages: valgrind
+      after_script: valgrind ./test/unittest/unittest
+
 install:
   # Download and install cmake 3.15
   - |
