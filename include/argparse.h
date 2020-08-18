@@ -682,24 +682,20 @@ namespace argparse
                                                 }
                                                 case '*':
                                                 {
-                                                    std::vector<std::any> values;
-                                                    while (it != args.end() && it->front() != '-')
+                                                    std::vector<std::any> values(count_args(it, args.end()));
+                                                    for (auto & value : values)
                                                     {
-                                                        std::any value;
                                                         consume_arg(args, it, value);
-                                                        values.push_back(value);
                                                     }
                                                     m_value = m_options.transform(values);
                                                     break;
                                                 }
                                                 case '+':
                                                 {
-                                                    std::vector<std::any> values;
-                                                    while (it != args.end() && it->front() != '-')
+                                                    std::vector<std::any> values(count_args(it, args.end()));
+                                                    for (auto & value : values)
                                                     {
-                                                        std::any value;
                                                         consume_arg(args, it, value);
-                                                        values.push_back(value);
                                                     }
                                                     if (values.empty())
                                                     {
@@ -805,6 +801,17 @@ namespace argparse
                     auto find_arg(tokens const & args) const -> tokens::const_iterator
                     {
                         return std::find_first_of(args.begin(), args.end(), m_options.names.begin(), m_options.names.end());
+                    }
+
+                    auto count_args(tokens::const_iterator it, tokens::const_iterator end) const -> std::size_t
+                    {
+                        std::size_t result = 0;
+                        while (it != end && it->front() != '-')
+                        {
+                            ++result;
+                            ++it;
+                        }
+                        return result;
                     }
 
                     auto consume_arg(tokens & args, tokens::const_iterator & arg_it, std::any & value) -> void
