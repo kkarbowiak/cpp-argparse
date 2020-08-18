@@ -2,22 +2,47 @@ language: cpp
 
 matrix:
   include:
-    - name: GCC
+    - name: GCC Debug
       os: linux
       dist: bionic
       compiler: gcc
+      env: CMAKE_FLAGS="-DCMAKE_BUILD_TYPE=Debug"
 
-    - name: Clang
+    - name: GCC Release
+      os: linux
+      dist: bionic
+      compiler: gcc
+      env: CMAKE_FLAGS="-DCMAKE_BUILD_TYPE=Release"
+
+    - name: Clang Debug
       os: linux
       dist: bionic
       compiler: clang
+      env: CMAKE_FLAGS="-DCMAKE_BUILD_TYPE=Debug"
 
-    - name: VS
+    - name: Clang Release
+      os: linux
+      dist: bionic
+      compiler: clang
+      env: CMAKE_FLAGS="-DCMAKE_BUILD_TYPE=Release"
+
+    - name: VS Debug
       os: windows
+      env: CMAKE_FLAGS="-DCMAKE_BUILD_TYPE=Debug"
 
-    - name: XCode
+    - name: VS Release
+      os: windows
+      env: CMAKE_FLAGS="-DCMAKE_BUILD_TYPE=Release"
+
+    - name: XCode Debug
       os: osx
       osx_image: xcode10.2
+      env: CMAKE_FLAGS="-DCMAKE_BUILD_TYPE=Debug"
+
+    - name: XCode Release
+      os: osx
+      osx_image: xcode10.2
+      env: CMAKE_FLAGS="-DCMAKE_BUILD_TYPE=Release"
 
 install:
   # Download and install cmake 3.15
@@ -32,5 +57,5 @@ install:
 script:
   - mkdir build
   - cd build
-  - cmake ..
+  - cmake "$(CMAKE_FLAGS)" ..
   - cmake --build .
