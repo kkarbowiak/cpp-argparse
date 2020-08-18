@@ -649,19 +649,17 @@ namespace argparse
                                     {
                                         if (has_nargs_number())
                                         {
-                                            auto const args_number = get_nargs_number();
-                                            std::vector<std::any> values;
-                                            for (auto j = 0u; j < args_number; ++j)
+                                            auto const nargs_number = get_nargs_number();
+                                            auto const args_number = count_args(it, args.end());
+                                            if (args_number < nargs_number)
                                             {
-                                                if (it == args.end() || it->front() == '-')
-                                                {
-                                                    throw parsing_error("argument " + join(get_names(), "/") + ": expected " + std::to_string(args_number) + " argument" + (args_number > 1 ? "s" : ""));
-                                                }
-                                                std::any value;
-                                                consume_arg(args, it, value);
-                                                values.push_back(value);
+                                                throw parsing_error("argument " + join(get_names(), "/") + ": expected " + std::to_string(nargs_number) + " argument" + (nargs_number > 1 ? "s" : ""));
                                             }
-
+                                            std::vector<std::any> values(args_number);
+                                            for (auto & value : values)
+                                            {
+                                                consume_arg(args, it, value);
+                                            }
                                             m_value = m_options.transform(values);
                                         }
                                         else
