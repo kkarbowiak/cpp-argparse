@@ -656,10 +656,7 @@ namespace argparse
                                                 throw parsing_error("argument " + join(get_names(), "/") + ": expected " + std::to_string(nargs_number) + " argument" + (nargs_number > 1 ? "s" : ""));
                                             }
                                             std::vector<std::any> values(args_number);
-                                            for (auto & value : values)
-                                            {
-                                                consume_arg(args, it, value);
-                                            }
+                                            consume_args(args, it, values);
                                             m_value = m_options.transform(values);
                                         }
                                         else
@@ -681,20 +678,14 @@ namespace argparse
                                                 case '*':
                                                 {
                                                     std::vector<std::any> values(count_args(it, args.end()));
-                                                    for (auto & value : values)
-                                                    {
-                                                        consume_arg(args, it, value);
-                                                    }
+                                                    consume_args(args, it, values);
                                                     m_value = m_options.transform(values);
                                                     break;
                                                 }
                                                 case '+':
                                                 {
                                                     std::vector<std::any> values(count_args(it, args.end()));
-                                                    for (auto & value : values)
-                                                    {
-                                                        consume_arg(args, it, value);
-                                                    }
+                                                    consume_args(args, it, values);
                                                     if (values.empty())
                                                     {
                                                         throw parsing_error("argument " + join(get_names(), "/") + ": expected at least one argument");
@@ -820,6 +811,14 @@ namespace argparse
                             check_choices(value);
                         }
                         arg_it = args.erase(arg_it);
+                    }
+
+                    auto consume_args(tokens & args, tokens::const_iterator & arg_it, std::vector<std::any> & values) -> void
+                    {
+                        for (auto & value : values)
+                        {
+                            consume_arg(args, arg_it, value);
+                        }
                     }
 
                     auto get_name_for_dest() const -> std::string
