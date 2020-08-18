@@ -2,17 +2,21 @@ language: cpp
 
 matrix:
   include:
-    - os: linux
+    - name: GCC
+      os: linux
       dist: bionic
       compiler: gcc
 
-    - os: linux
+    - name: Clang
+      os: linux
       dist: bionic
       compiler: clang
 
-    - os: windows
+    - name: VS
+      os: windows
 
-    - os: osx
+    - name: XCode
+      os: osx
       osx_image: xcode10.2
 
 install:
