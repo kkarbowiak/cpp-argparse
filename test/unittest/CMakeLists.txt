@@ -23,9 +23,10 @@ target_link_libraries(unittest PRIVATE doctest)
 target_compile_features(unittest PRIVATE cxx_std_17)
 target_compile_options(unittest PRIVATE
                            $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
-                               -Wall -Wextra -pedantic>
+                               -Wall -Wextra -pedantic $ENV{COMPILER_OPTIONS}>
                            $<$<CXX_COMPILER_ID:MSVC>:
                                /W4>)
+target_link_options(unittest PRIVATE $ENV{LINKER_OPTIONS})
 
 add_test(NAME unittest COMMAND unittest)
 add_custom_target(run_unit_test ALL
