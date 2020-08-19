@@ -54,6 +54,24 @@ matrix:
           packages: valgrind
       after_script: valgrind ./test/unittest/unittest
 
+    - name: Coverage
+      os: Linux
+      dist: bionic
+      compiler: gcc
+      env:
+        - CMAKE_FLAGS="-DCMAKE_BUILD_TYPE=Debug"
+        - COMPILER_OPTIONS="--coverage"
+        - LINKER_OPTIONS="--coverage"
+      addons:
+        apt:
+          packages: lcov
+      after_success:
+        - lcov --directory . --capture --output-file coverage.info
+        - lcov --list coverage.info
+        - lcov --extract coverage.info --output-file argparse.info */argparse.h
+        - lcov --list argparse.info
+        - bash <(curl -s https://codecov.io/bash) -f argparse.info
+
 install:
   # Download and install cmake 3.15
   - |
