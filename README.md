@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/kkarbowiak/cpp-argparse.svg?branch=master)](https://travis-ci.org/kkarbowiak/cpp-argparse)
 [![Version](https://img.shields.io/github/v/tag/kkarbowiak/cpp-argparse?sort=semver)](https://github.com/kkarbowiak/cpp-argparse/releases)
+[![Codecov](https://codecov.io/gh/kkarbowiak/cpp-argparse/branch/master/graph/badge.svg)](https://codecov.io/gh/kkarbowiak/cpp-argparse)
 ![Standard](https://img.shields.io/badge/C%2B%2B-17-blue)
 [![License](https://img.shields.io/github/license/kkarbowiak/cpp-argparse)](https://github.com/kkarbowiak/cpp-argparse/blob/master/LICENSE.md)
 
