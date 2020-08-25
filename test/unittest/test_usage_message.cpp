@@ -478,4 +478,12 @@ TEST_CASE("Usage message contains...")
             CHECK(parser.format_usage() == "usage: prog [-o {\"foo\",\"bar\"} [{\"foo\",\"bar\"} ...]]"s);
         }
     }
+
+    SUBCASE("...for optional argument in mutually exclusive group its name in brackets")
+    {
+        auto group = parser.add_mutually_exclusive_group();
+        group.add_argument("-o");
+
+        CHECK(parser.format_usage() == "usage: prog [-o O]"s);
+    }
 }
