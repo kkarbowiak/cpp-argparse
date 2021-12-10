@@ -346,13 +346,9 @@ namespace argparse
                 {
                     if (arg->has_value() && arg->get_options().mutually_exclusive_group != nullptr)
                     {
-                        if (auto it = exclusive_args.find(arg->get_options().mutually_exclusive_group); it != exclusive_args.end())
+                        if (auto const result = exclusive_args.insert(std::make_pair(arg->get_options().mutually_exclusive_group, arg.get())); !result.second)
                         {
-                            throw parsing_error("argument " + join(arg->get_names(), "/") + ": not allowed with argument " + join(it->second->get_names(), "/"));
-                        }
-                        else
-                        {
-                            exclusive_args[arg->get_options().mutually_exclusive_group] = arg.get();
+                            throw parsing_error("argument " + join(arg->get_names(), "/") + ": not allowed with argument " + join(result.first->second->get_names(), "/"));
                         }
                     }
                 }
