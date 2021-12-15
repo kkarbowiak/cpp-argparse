@@ -899,9 +899,19 @@ namespace argparse
                             }
                             else
                             {
-                                optionals += arg->is_required()
-                                    ? " "
-                                    : " [";
+                                if (arg->is_required())
+                                {
+                                    optionals += " ";
+                                }
+                                else if (arg->get_options().mutually_exclusive_group != nullptr && it != m_arguments.cbegin() && arg->get_options().mutually_exclusive_group == (*std::prev(it))->get_options().mutually_exclusive_group)
+                                {
+                                    optionals += " | ";
+                                }
+                                else
+                                {
+                                    optionals += " [";
+                                }
+
                                 if (arg->has_nargs())
                                 {
                                     optionals += arg->get_name();
@@ -916,9 +926,19 @@ namespace argparse
                                         optionals += format_arg(**it);
                                     }
                                 }
-                                optionals += arg->is_required()
-                                    ? ""
-                                    : "]";
+
+                                if (arg->is_required())
+                                {
+                                    // skip
+                                }
+                                else if (arg->get_options().mutually_exclusive_group != nullptr && std::next(it) != m_arguments.cend() && arg->get_options().mutually_exclusive_group == (*std::next(it))->get_options().mutually_exclusive_group)
+                                {
+                                    // skip
+                                }
+                                else
+                                {
+                                    optionals += "]";
+                                }
                             }
                         }
 
