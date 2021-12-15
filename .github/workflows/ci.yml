@@ -39,3 +39,16 @@ jobs:
         run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=${{ matrix.config.cc }} -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }}
       - name: CMake build
         run: cmake --build build
+  valgrind:
+    name: "Valgrind"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Valgrind
+        run: sudo apt install -y valgrind
+      - name: CMake configure
+        run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++
+      - name: CMake build
+        run: cmake --build build
+      - name: Run Valgrind
+        run: valgrind ./build/test/unittest/unittest
