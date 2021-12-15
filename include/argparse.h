@@ -118,7 +118,7 @@ namespace argparse
                     }
 
                 private:
-                    std::any m_value;
+                    std::any const m_value;
             };
 
             class Parameters
