@@ -101,13 +101,6 @@ namespace argparse
                     {
                     }
 
-                    template<typename T>
-                    auto operator=(T const & t) -> Value &
-                    {
-                        m_value = t;
-                        return *this;
-                    }
-
                     explicit operator bool() const
                     {
                         return m_value.has_value();
