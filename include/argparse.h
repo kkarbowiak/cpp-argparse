@@ -881,40 +881,40 @@ namespace argparse
                         std::string optionals;
                         std::string positionals;
 
-                        for (auto const & arg : m_arguments)
+                        for (auto it = m_arguments.cbegin(); it != m_arguments.cend(); ++it)
                         {
-                            if (arg->is_positional())
+                            if ((*it)->is_positional())
                             {
-                                if (arg->has_nargs())
+                                if ((*it)->has_nargs())
                                 {
-                                    positionals += format_nargs(*arg);
+                                    positionals += format_nargs(**it);
                                 }
                                 else
                                 {
                                     positionals += " ";
-                                    positionals += format_arg(*arg);
+                                    positionals += format_arg(**it);
                                 }
                             }
                             else
                             {
-                                optionals += arg->is_required()
+                                optionals += (*it)->is_required()
                                     ? " "
                                     : " [";
-                                if (arg->has_nargs())
+                                if ((*it)->has_nargs())
                                 {
-                                    optionals += arg->get_name();
-                                    optionals += format_nargs(*arg);
+                                    optionals += (*it)->get_name();
+                                    optionals += format_nargs(**it);
                                 }
                                 else
                                 {
-                                    optionals += arg->get_name();
-                                    if (arg->get_options().action == store)
+                                    optionals += (*it)->get_name();
+                                    if ((*it)->get_options().action == store)
                                     {
                                         optionals += " ";
-                                        optionals += format_arg(*arg);
+                                        optionals += format_arg(**it);
                                     }
                                 }
-                                optionals += arg->is_required()
+                                optionals += (*it)->is_required()
                                     ? ""
                                     : "]";
                             }
