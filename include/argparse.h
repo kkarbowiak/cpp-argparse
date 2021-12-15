@@ -149,9 +149,9 @@ namespace argparse
                         return get(name).get<T>();
                     }
 
-                    auto operator[](std::string const & name) -> Value &
+                    auto insert(std::string const & name, std::any const & value) -> void
                     {
-                        return m_parameters[name];
+                        (void) m_parameters.emplace(name, value);
                     }
 
                 private:
@@ -385,7 +385,7 @@ namespace argparse
 
                 for (auto const & arg : m_arguments)
                 {
-                    result[arg->get_dest_name()] = arg->get_value();
+                    result.insert(arg->get_dest_name(), arg->get_value());
                 }
 
                 return result;
