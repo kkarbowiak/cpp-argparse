@@ -1,5 +1,5 @@
 /*
-    Copyright 2018 - 2020 Krzysztof Karbowiak
+    Copyright 2018 - 2021 Krzysztof Karbowiak
 
     cpp-argparse v0.8.5
 
