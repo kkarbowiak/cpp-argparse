@@ -883,9 +883,11 @@ namespace argparse
 
                         for (auto it = m_arguments.cbegin(); it != m_arguments.cend(); ++it)
                         {
-                            if ((*it)->is_positional())
+                            auto const & arg = *it;
+
+                            if (arg->is_positional())
                             {
-                                if ((*it)->has_nargs())
+                                if (arg->has_nargs())
                                 {
                                     positionals += format_nargs(**it);
                                 }
@@ -897,24 +899,24 @@ namespace argparse
                             }
                             else
                             {
-                                optionals += (*it)->is_required()
+                                optionals += arg->is_required()
                                     ? " "
                                     : " [";
-                                if ((*it)->has_nargs())
+                                if (arg->has_nargs())
                                 {
-                                    optionals += (*it)->get_name();
+                                    optionals += arg->get_name();
                                     optionals += format_nargs(**it);
                                 }
                                 else
                                 {
-                                    optionals += (*it)->get_name();
-                                    if ((*it)->get_options().action == store)
+                                    optionals += arg->get_name();
+                                    if (arg->get_options().action == store)
                                     {
                                         optionals += " ";
                                         optionals += format_arg(**it);
                                     }
                                 }
-                                optionals += (*it)->is_required()
+                                optionals += arg->is_required()
                                     ? ""
                                     : "]";
                             }
