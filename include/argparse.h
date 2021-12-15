@@ -95,8 +95,6 @@ namespace argparse
             class Value
             {
                 public:
-                    Value() = default;
-
                     template<typename T>
                     Value(T const & t)
                       : m_value(t)
