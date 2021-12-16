@@ -1,5 +1,6 @@
 # C++ argparse
 
+[![Build argparse](https://github.com/kkarbowiak/cpp-argparse/actions/workflows/ci.yml/badge.svg)](https://github.com/kkarbowiak/cpp-argparse/actions/workflows/ci.yml)
 [![Build Status](https://travis-ci.org/kkarbowiak/cpp-argparse.svg?branch=master)](https://travis-ci.org/kkarbowiak/cpp-argparse)
 [![Version](https://img.shields.io/github/v/tag/kkarbowiak/cpp-argparse?sort=semver)](https://github.com/kkarbowiak/cpp-argparse/releases)
 [![Codecov](https://codecov.io/gh/kkarbowiak/cpp-argparse/branch/master/graph/badge.svg)](https://codecov.io/gh/kkarbowiak/cpp-argparse)
