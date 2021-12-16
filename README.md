@@ -151,6 +151,10 @@ The below lists features of the `argparse` module that this implementation suppo
       * [ ] double-dash pseudo-argument (`--`)
       * [ ] argument abbreviations (prefix matching)
 
+* Mutual exclusion
+   * you can put optional arguments in a mutually exclusive group to have only one of them accepted by the parser
+   * the group itself (together with its arguments) is optional
+
 ## License
 
 This project is released under **MIT** license, so feel free to do anything you like with it.
