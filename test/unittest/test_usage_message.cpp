@@ -505,4 +505,14 @@ TEST_CASE("Usage message contains...")
 
         CHECK(parser.format_usage() == "usage: prog [-o O | -a A | -z Z]"s);
     }
+
+    SUBCASE("...for two optional arguments in separate mutually exclusive groups their names in brackets")
+    {
+        auto group1 = parser.add_mutually_exclusive_group();
+        group1.add_argument("-o");
+        auto group2 = parser.add_mutually_exclusive_group();
+        group2.add_argument("-a");
+
+        CHECK(parser.format_usage() == "usage: prog [-o O] [-a A]"s);
+    }
 }
