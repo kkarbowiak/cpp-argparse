@@ -887,27 +887,27 @@ namespace argparse
 
                         for (auto it = m_arguments.cbegin(); it != m_arguments.cend(); ++it)
                         {
-                            auto const & arg = *it;
+                            auto const & arg = **it;
 
-                            if (arg->is_positional())
+                            if (arg.is_positional())
                             {
-                                if (arg->has_nargs())
+                                if (arg.has_nargs())
                                 {
-                                    positionals += format_nargs(*arg);
+                                    positionals += format_nargs(arg);
                                 }
                                 else
                                 {
                                     positionals += " ";
-                                    positionals += format_arg(*arg);
+                                    positionals += format_arg(arg);
                                 }
                             }
                             else
                             {
-                                if (arg->is_required())
+                                if (arg.is_required())
                                 {
                                     optionals += " ";
                                 }
-                                else if (arg->get_options().mutually_exclusive_group != nullptr && it != m_arguments.cbegin() && arg->get_options().mutually_exclusive_group == (*std::prev(it))->get_options().mutually_exclusive_group)
+                                else if (arg.get_options().mutually_exclusive_group != nullptr && it != m_arguments.cbegin() && arg.get_options().mutually_exclusive_group == (*std::prev(it))->get_options().mutually_exclusive_group)
                                 {
                                     optionals += " | ";
                                 }
@@ -916,26 +916,26 @@ namespace argparse
                                     optionals += " [";
                                 }
 
-                                if (arg->has_nargs())
+                                if (arg.has_nargs())
                                 {
-                                    optionals += arg->get_name();
-                                    optionals += format_nargs(*arg);
+                                    optionals += arg.get_name();
+                                    optionals += format_nargs(arg);
                                 }
                                 else
                                 {
-                                    optionals += arg->get_name();
-                                    if (arg->get_options().action == store)
+                                    optionals += arg.get_name();
+                                    if (arg.get_options().action == store)
                                     {
                                         optionals += " ";
-                                        optionals += format_arg(*arg);
+                                        optionals += format_arg(arg);
                                     }
                                 }
 
-                                if (arg->is_required())
+                                if (arg.is_required())
                                 {
                                     // skip
                                 }
-                                else if (arg->get_options().mutually_exclusive_group != nullptr && std::next(it) != m_arguments.cend() && arg->get_options().mutually_exclusive_group == (*std::next(it))->get_options().mutually_exclusive_group)
+                                else if (arg.get_options().mutually_exclusive_group != nullptr && std::next(it) != m_arguments.cend() && arg.get_options().mutually_exclusive_group == (*std::next(it))->get_options().mutually_exclusive_group)
                                 {
                                     // skip
                                 }
