@@ -1039,13 +1039,14 @@ namespace argparse
                     auto format_nargs(Argument const & argument) const -> std::string
                     {
                         std::string result;
+                        auto const formatted_arg = format_arg(argument);
 
                         if (argument.has_nargs_number())
                         {
                             for (auto n = 0u; n < argument.get_nargs_number(); n++)
                             {
                                 result += " ";
-                                result += format_arg(argument);
+                                result += formatted_arg;
                             }
                         }
                         else
@@ -1054,21 +1055,21 @@ namespace argparse
                             {
                                 case '?':
                                     result += " [";
-                                    result += format_arg(argument);
+                                    result += formatted_arg;
                                     result += "]";
                                     break;
                                 case '*':
                                     result += " [";
-                                    result += format_arg(argument);
+                                    result += formatted_arg;
                                     result += " [";
-                                    result += format_arg(argument);
+                                    result += formatted_arg;
                                     result += " ...]]";
                                     break;
                                 case '+':
                                     result += " ";
-                                    result += format_arg(argument);
+                                    result += formatted_arg;
                                     result += " [";
-                                    result += format_arg(argument);
+                                    result += formatted_arg;
                                     result += " ...]";
                                     break;
                             }
