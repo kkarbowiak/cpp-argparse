@@ -1045,8 +1045,7 @@ namespace argparse
                         {
                             for (auto n = 0u; n < argument.get_nargs_number(); n++)
                             {
-                                result += " ";
-                                result += formatted_arg;
+                                result += " " + formatted_arg;
                             }
                         }
                         else
@@ -1054,23 +1053,13 @@ namespace argparse
                             switch (argument.get_nargs_symbol())
                             {
                                 case '?':
-                                    result += " [";
-                                    result += formatted_arg;
-                                    result += "]";
+                                    result += " [" + formatted_arg + "]";
                                     break;
                                 case '*':
-                                    result += " [";
-                                    result += formatted_arg;
-                                    result += " [";
-                                    result += formatted_arg;
-                                    result += " ...]]";
+                                    result += " [" + formatted_arg + " [" + formatted_arg + " ...]]";
                                     break;
                                 case '+':
-                                    result += " ";
-                                    result += formatted_arg;
-                                    result += " [";
-                                    result += formatted_arg;
-                                    result += " ...]";
+                                    result += " " + formatted_arg + " [" + formatted_arg + " ...]";
                                     break;
                             }
                         }
