@@ -297,11 +297,7 @@ namespace argparse
                     }
                 }
 
-                if (!args.empty())
-                {
-                    throw parsing_error("unrecognised arguments: " + join(args, " "));
-                }
-
+                ensure_no_unrecognised_arguments(args);
                 ensure_no_arguments_excluded();
                 ensure_no_arguments_missing();
 
@@ -328,6 +324,14 @@ namespace argparse
                 }
 
                 return result;
+            }
+
+            auto ensure_no_unrecognised_arguments(tokens const & args) const -> void
+            {
+                if (!args.empty())
+                {
+                    throw parsing_error("unrecognised arguments: " + join(args, " "));
+                }
             }
 
             auto ensure_no_arguments_excluded() const -> void
