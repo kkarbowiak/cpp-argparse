@@ -893,12 +893,12 @@ namespace argparse
                             {
                                 if (arg->has_nargs())
                                 {
-                                    positionals += format_nargs(**it);
+                                    positionals += format_nargs(*arg);
                                 }
                                 else
                                 {
                                     positionals += " ";
-                                    positionals += format_arg(**it);
+                                    positionals += format_arg(*arg);
                                 }
                             }
                             else
@@ -919,7 +919,7 @@ namespace argparse
                                 if (arg->has_nargs())
                                 {
                                     optionals += arg->get_name();
-                                    optionals += format_nargs(**it);
+                                    optionals += format_nargs(*arg);
                                 }
                                 else
                                 {
@@ -927,7 +927,7 @@ namespace argparse
                                     if (arg->get_options().action == store)
                                     {
                                         optionals += " ";
-                                        optionals += format_arg(**it);
+                                        optionals += format_arg(*arg);
                                     }
                                 }
 
