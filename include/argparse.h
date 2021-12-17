@@ -72,6 +72,11 @@ namespace argparse
         {
             iss >> t;
         }
+
+        if (iss.fail())
+        {
+            throw 7;
+        }
     }
 
     template<typename T>
