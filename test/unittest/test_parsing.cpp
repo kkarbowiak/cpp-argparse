@@ -227,6 +227,14 @@ TEST_CASE("Parsing a positional argument with invalid value throws an exception"
     CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "not-a-number"}), "argument pos: invalid value: 'not-a-number'", argparse::parsing_error);
 }
 
+TEST_CASE("Parsing an optional argument with invalid value throws an exception")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").type<int>();
+
+    CHECK_THROWS(parser.parse_args(3, cstr_arr{"prog", "-o", "not-a-number"}));
+}
+
 TEST_CASE_TEMPLATE("Parsing an optional argument with default value...", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom)
 {
     auto parser = argparse::ArgumentParser();

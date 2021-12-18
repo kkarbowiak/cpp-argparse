@@ -830,7 +830,10 @@ namespace argparse
 
                     auto consume_arg(tokens & args, tokens::const_iterator & arg_it, std::any & value) -> void
                     {
-                        m_options.from_string(*arg_it, value);
+                        if (!m_options.from_string(*arg_it, value))
+                        {
+                            throw 7;
+                        }
                         if (!m_options.choices.empty())
                         {
                             check_choices(value);
