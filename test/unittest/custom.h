@@ -27,9 +27,10 @@ namespace foo
 
 namespace foo
 {
-inline auto from_string(std::string const & s, Custom & c) -> void
+inline auto from_string(std::string const & s, Custom & c) -> bool
 {
     c = Custom(s);
+    return true;
 }
 
 inline auto to_string(Custom const& c) -> std::string

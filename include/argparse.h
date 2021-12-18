@@ -59,7 +59,7 @@ namespace argparse
     };
 
     template<typename T>
-    inline auto from_string(std::string const & s, T & t) -> void
+    inline auto from_string(std::string const & s, T & t) -> bool
     {
         std::istringstream iss(s);
         if constexpr(std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
@@ -73,10 +73,7 @@ namespace argparse
             iss >> t;
         }
 
-        if (iss.fail())
-        {
-            throw 7;
-        }
+        return !iss.fail();
     }
 
     template<typename T>
@@ -407,10 +404,11 @@ namespace argparse
                 std::vector<std::any> choices;
                 std::optional<std::variant<std::size_t, char>> nargs;
                 MutuallyExclusiveGroup const * mutually_exclusive_group = nullptr;
-                std::function<void (std::string const &, std::any &)> from_string =
+                std::function<bool (std::string const &, std::any &)> from_string =
                     [](std::string const & s, std::any & a)
                     {
                         a = s;
+                        return true;
                     };
                 std::function<std::string(std::any const&)> to_string =
                     [](std::any const& a)
@@ -632,7 +630,10 @@ namespace argparse
                 private:
                     auto consume_arg(tokens & args, std::any & value) -> void
                     {
-                        m_options.from_string(args.front(), value);
+                        if (!m_options.from_string(args.front(), value))
+                        {
+                            throw 7;
+                        }
                         if (!m_options.choices.empty())
                         {
                             check_choices(value);
@@ -1168,8 +1169,15 @@ namespace argparse
                                 [](std::string const & s, std::any & a)
                                 {
                                     T val;
-                                    from_string(s, val);
-                                    a = val;
+                                    if (from_string(s, val))
+                                    {
+                                        a = val;
+                                        return true;
+                                    }
+                                    else
+                                    {
+                                        return false;
+                                    }
                                 };
                             m_options.to_string =
                                 [](std::any const & a)
