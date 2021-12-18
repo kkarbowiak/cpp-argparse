@@ -832,7 +832,7 @@ namespace argparse
                     {
                         if (!m_options.from_string(*arg_it, value))
                         {
-                            throw 7;
+                            throw parsing_error("argument " + join(get_names(), "/") + ": invalid value: '" + *arg_it + "'");
                         }
                         if (!m_options.choices.empty())
                         {
