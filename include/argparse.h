@@ -632,7 +632,7 @@ namespace argparse
                     {
                         if (!m_options.from_string(args.front(), value))
                         {
-                            throw 7;
+                            throw parsing_error("argument " + get_dest_name() + ": invalid value: '" + args.front() + "'");
                         }
                         if (!m_options.choices.empty())
                         {
