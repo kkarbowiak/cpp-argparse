@@ -15,11 +15,6 @@ namespace foo
             {
             }
 
-            auto operator==(Custom const & other) const -> bool
-            {
-                return m_text == other.m_text;
-            }
-
         public:
             std::string m_text;
     };
@@ -27,6 +22,11 @@ namespace foo
 
 namespace foo
 {
+inline auto operator==(Custom const & lhs, Custom const & rhs) -> bool
+{
+    return lhs.m_text == rhs.m_text;
+}
+
 inline auto from_string(std::string const & s, Custom & c) -> bool
 {
     c = Custom(s);
