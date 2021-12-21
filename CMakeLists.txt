@@ -12,3 +12,4 @@ enable_testing()
 add_subdirectory(test/unittest)
 add_subdirectory(thirdparty/doctest)
 
+add_subdirectory(tutorial)
