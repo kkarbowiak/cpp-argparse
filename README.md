@@ -88,7 +88,7 @@ auto file_name = args.get_value("filename");
 
 ## Usage
 
-You can find example applications in the project's `examples` subdirectory. A short example follows below:
+You can follow the tutorial in the project's `tutorial` subdirectory to learn how to use this library. A short example follows below:
 
 ```c++
 #include "argparse.h"
