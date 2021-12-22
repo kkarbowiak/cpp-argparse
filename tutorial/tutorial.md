@@ -85,3 +85,71 @@ Here is what is happening:
  * The program now requires us to specify an option.
  * The `parse_args` function actually returns the result of parsing. You can get the argument's value by calling `get_value` on the returned object and giving the option name.
  * By default, the returned value is of type `std::string`.
+
+Note that while the help message looks nice, it is not as helpful as it could be. For example we see that we got `echo` as a positional argument, but we don't know what it does. Let's make it a bit more useful:
+```c++
+#include "argparse.h"
+#include <iostream>
+
+int main(int argc, char * argv[])
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("echo").help("echo the string you use here");
+    auto parsed = parser.parse_args(argc, argv);
+    std::cout << parsed.get_value("echo") << '\n';
+}
+```
+And we get:
+```
+$ positional1 --help
+usage: positional1 [-h] echo
+
+positional arguments:
+  echo                  echo the string you use here
+
+optional arguments:
+  -h, --help            show this help message and exit
+```
+Now, how about doing some math:
+```c++
+#include "argparse.h"
+#include <iostream>
+
+int main(int argc, char * argv[])
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("square").help("display a square of a given number");
+    auto parsed = parser.parse_args(argc, argv);
+    auto value = parsed.get_value("square");
+    std::cout << value * value << '\n';
+}
+```
+Well, this won't compile and your compiler will complain that the `std::string` type does not define a binary `*` operator. As I mentioned, the default type for all options is `std::string`. Let's tell the parser to treat the `square` option as an integer:
+```c++
+#include "argparse.h"
+#include <iostream>
+
+int main(int argc, char * argv[])
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("square").help("display a square of a given number").type<int>();
+    auto parsed = parser.parse_args(argc, argv);
+    auto value = parsed.get_value<int>("square");
+    std::cout << value * value << '\n';
+}
+```
+Follwoing is the result of running the code:
+```
+$ positional3 4
+16
+$ positional3 four
+argument square: invalid value: 'four'
+usage: positional3 [-h] square
+
+positional arguments:
+  square                display a square of a given number
+
+optional arguments:
+  -h, --help            show this help message and exit
+```
+That went well. The program now even detects an invalid value and quits with an informative error message.
