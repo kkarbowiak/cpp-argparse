@@ -153,3 +153,88 @@ optional arguments:
   -h, --help            show this help message and exit
 ```
 That went well. The program now even detects an invalid value and quits with an informative error message.
+
+## Introducing Optional arguments
+
+So far we have been playing with positional arguments. Let's see how to add optional ones:
+```c++
+#include "argparse.h"
+#include <iostream>
+
+int main(int argc, char * argv[])
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("--verbosity").help("increase output verbosity");
+    auto parsed = parser.parse_args(argc, argv);
+    if (parsed.get("verbosity"))
+    {
+        std::cout << "verbosity turned on\n";
+    }
+}
+```
+And the output:
+```
+$ optional --verbosity 1
+verbosity turned on
+$ optional
+$ optional --help
+usage: optional [-h] [--verbosity VERBOSITY]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --verbosity VERBOSITY
+                        increase output verbosity
+$ optional --verbosity
+argument --verbosity: expected one argument
+usage: optional [-h] [--verbosity VERBOSITY]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --verbosity VERBOSITY
+                        increase output verbosity
+```
+Here is what is happening:
+ * The program is written so as to display something when `--verbosity` is specified and display nothing when not.
+ * To show that the option is actually optional, there is no error when running the program without it. Note that by default, it an optional argument isn't used, the object holding the relevant value (the one retrieved using `parsed.get("verbosity")`) is empty and in a boolean context (in an `if` statement) yields `false`.
+ * The help message is a bit different.
+ * When using the `--verbosity` option, one must specify some arbitrary value.
+
+The above example accepts arbitrary values for `--verbosity`, but for our simple program, only two values are actually useful, `true` and `false`. Let's modify the code accordingly:
+```c++
+#include "argparse.h"
+#include <iostream>
+
+int main(int argc, char * argv[])
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("--verbose").help("increase output verbosity").action(argparse::store_true);
+    auto parsed = parser.parse_args(argc, argv);
+    if (parsed.get_value<bool>("verbose"))
+    {
+        std::cout << "verbosity turned on\n";
+    }
+}
+```
+And the output:
+```
+$ optional1 --verbose
+verbosity turned on
+$ optional1 --verbose 1
+unrecognised arguments: 1
+usage: optional1 [-h] [--verbose]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --verbose             increase output verbosity
+$ optional1 --help
+usage: optional1 [-h] [--verbose]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --verbose             increase output verbosity
+```
+Here is what is happening:
+ * The option is now more of a flag than something that requires a value. We even changed the name of the option to match that idea. Note that we now used a new function, `action`, and passed it the value `argparse::store_true`. This means that, if the option is specified, assing the value `true` to the relevant object. Not speficying it implies `false`.
+ * We now need to retireve the value using `parsed.get_value<bool>()` as we now expect the value of type `bool` instead of the usual `std::string`.
+ * The option now complains when you specify a value, in true spirit of what flags actually are.
+ * Notice the different help text.
