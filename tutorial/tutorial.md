@@ -270,3 +270,145 @@ optional arguments:
 ```
 Note that the new ability is also reflected in the help text.
 
+## Combining Positional and Optional arguments
+
+Our program keeps growing in complexity:
+```c++
+#include "argparse.h"
+#include <iostream>
+
+int main(int argc, char * argv[])
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("square").help("display a square of a given number").type<int>();
+    parser.add_argument("-v", "--verbose").help("increase output verbosity").action(argparse::store_true);
+    auto parsed = parser.parse_args(argc, argv);
+    auto value = parsed.get_value<int>("square");
+    auto answer = value * value;
+    if (parsed.get_value<bool>("verbose"))
+    {
+        std::cout << "the square of " << value << " equals " << answer << '\n';
+    }
+    else
+    {
+        std::cout << answer << '\n';
+    }
+}
+```
+And now the output:
+```
+$ complex
+the following arguments are required: square
+usage: complex [-h] [-v] square
+
+positional arguments:
+  square                display a square of a given number
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --verbose         increase output verbosity
+$ complex 4
+16
+$ complex 4 --verbose
+the square of 4 equals 16
+$ complex --verbose 4
+the square of 4 equals 16
+```
+ * We have brought back a positional argument, hence the complaint.
+ * Note that the order does not matter.
+
+How about we give this program of ours back the ability to have multiple verbosity values, and actually get to use them:
+```c++
+#include "argparse.h"
+#include <iostream>
+
+int main(int argc, char * argv[])
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("square").help("display a square of a given number").type<int>();
+    parser.add_argument("-v", "--verbosity").help("increase output verbosity").type<int>();
+    auto parsed = parser.parse_args(argc, argv);
+    auto value = parsed.get_value<int>("square");
+    auto answer = value * value;
+    auto verbosity = parsed.get("verbosity");
+    if (verbosity && verbosity.get<int>() == 2)
+    {
+        std::cout << "the square of " << value << " equals " << answer << '\n';
+    }
+    else if (verbosity && verbosity.get<int>() == 1)
+    {
+        std::cout << value << "^2 == " << answer << '\n';
+    }
+    else
+    {
+        std::cout << answer << '\n';
+    }
+}
+```
+And the output:
+```
+$ complex1 4
+16
+$ complex 4 -v
+argument -v/--verbosity: expected one argument
+usage: complex1 [-h] [-v VERBOSITY] square
+
+positional arguments:
+  square                display a square of a given number
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v VERBOSITY, --verbosity VERBOSITY
+                        increase output verbosity
+$ complex1 4 -v 1
+4^2 == 16
+$ complex1 4 -v 2
+the square of 4 equals 16
+$ complex1 4 -v 3
+16
+```
+One new thing to note here is the new way of extracting a value for the argument that may be missing. We cannot simply call `parsed.get_value<int>("verbosity")`, because the underlying object may be empty. Instead, we can extract the object itself (`auto verbosity = parsed.get("verbosity")`) and use it in a boolean context to check whether it contain a value. Then, we can extract the value itself (`verbosity.get<int>()`).
+
+The above outputs all look good except the last one, which exposes a bug in our program. Let's fix it by restricting the values the `--verbosity` option can accept:
+```c++
+#include "argparse.h"
+#include <iostream>
+
+int main(int argc, char * argv[])
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("square").help("display a square of a given number").type<int>();
+    parser.add_argument("-v", "--verbosity").help("increase output verbosity").type<int>().choices({0, 1, 2});
+    auto parsed = parser.parse_args(argc, argv);
+    auto value = parsed.get_value<int>("square");
+    auto answer = value * value;
+    auto verbosity = parsed.get("verbosity");
+    if (verbosity && verbosity.get<int>() == 2)
+    {
+        std::cout << "the square of " << value << " equals " << answer << '\n';
+    }
+    else if (verbosity && verbosity.get<int>() == 1)
+    {
+        std::cout << value << "^2 == " << answer << '\n';
+    }
+    else
+    {
+        std::cout << answer << '\n';
+    }
+}
+```
+And the output:
+```
+$ complex2 -v 3
+argument -v/--verbosity: invalid choice: 3 (choose from 0, 1, 2)
+usage: complex2 [-h] [-v {0,1,2}] square
+
+positional arguments:
+  square                display a square of a given number
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v {0,1,2}, --verbosity {0,1,2}
+                        increase output verbosity
+```
+Note that the change reflects in both the error message and the help string.
