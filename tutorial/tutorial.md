@@ -367,7 +367,7 @@ the square of 4 equals 16
 $ complex1 4 -v 3
 16
 ```
-One new thing to note here is the new way of extracting a value for the argument that may be missing. We cannot simply call `parsed.get_value<int>("verbosity")`, because the underlying object may be empty. Instead, we can extract the object itself (`auto verbosity = parsed.get("verbosity")`) and use it in a boolean context to check whether it contain a value. Then, we can extract the value itself (`verbosity.get<int>()`).
+One new thing to note here is the new way of extracting a value for the argument that may be missing. We cannot simply call `parsed.get_value<int>("verbosity")`, because the underlying object may be empty. Instead, we can extract the object itself (`auto verbosity = parsed.get("verbosity")`) and use it in a boolean context to check whether it contains a value. Then, we can extract the value itself (`verbosity.get<int>()`).
 
 The above outputs all look good except the last one, which exposes a bug in our program. Let's fix it by restricting the values the `--verbosity` option can accept:
 ```c++
