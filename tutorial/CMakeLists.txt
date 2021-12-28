@@ -159,3 +159,19 @@ target_compile_options(complex2 PRIVATE
                                -Wall -Wextra -pedantic>
                            $<$<CXX_COMPILER_ID:MSVC>:
                                /W4>)
+
+add_executable(complex3)
+target_sources(complex3
+    PRIVATE
+    complex3.cpp)
+
+target_include_directories(complex3
+    PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>/include
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>)
+
+target_compile_features(complex3 PRIVATE cxx_std_17)
+target_compile_options(complex3 PRIVATE
+                           $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
+                               -Wall -Wextra -pedantic>
+                           $<$<CXX_COMPILER_ID:MSVC>:
+                               /W4>)

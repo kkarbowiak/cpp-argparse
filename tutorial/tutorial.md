@@ -412,3 +412,46 @@ optional arguments:
                         increase output verbosity
 ```
 Note that the change reflects in both the error message and the help string.
+
+### Default values
+
+One way to remove the need of getting the value object and doing a boolean test before extracting the value is to give the option a default value:
+```c++
+#include "argparse.h"
+#include <iostream>
+
+int main(int argc, char * argv[])
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("square").help("display a square of a given number").type<int>();
+    parser.add_argument("-v", "--verbosity").help("increase output verbosity").type<int>().default_(0);
+    auto parsed = parser.parse_args(argc, argv);
+    auto value = parsed.get_value<int>("square");
+    auto answer = value * value;
+    auto verbosity = parsed.get_value<int>("verbosity");
+    if (verbosity == 2)
+    {
+        std::cout << "the square of " << value << " equals " << answer << '\n';
+    }
+    else if (verbosity == 1)
+    {
+        std::cout << value << "^2 == " << answer << '\n';
+    }
+    else
+    {
+        std::cout << answer << '\n';
+    }
+}
+```
+Note that the function for specifying a default value is spelled with an underscore as suffix to prevent clash with language keyword.
+
+The output:
+```
+$ complex3 4
+16
+$ complex3 4 --verbosity 1
+4^2 == 16
+$ complex3 4 --verbosity 2
+the square of 4 equals 16
+```
+As expected, if the argument is not specified, it assumes its default value.
