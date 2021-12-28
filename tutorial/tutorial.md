@@ -238,3 +238,35 @@ Here is what is happening:
  * We now need to retireve the value using `parsed.get_value<bool>()` as we now expect the value of type `bool` instead of the usual `std::string`.
  * The option now complains when you specify a value, in true spirit of what flags actually are.
  * Notice the different help text.
+
+### Short options
+
+If you are familiar with command line usage, you will notice that I haven't touched on the topic of short versions of the options. It's quite simple:
+```c++
+#include "argparse.h"
+#include <iostream>
+
+int main(int argc, char * argv[])
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-v", "--verbose").help("increase output verbosity").action(argparse::store_true);
+    auto parsed = parser.parse_args(argc, argv);
+    if (parsed.get_value<bool>("verbose"))
+    {
+        std::cout << "verbosity turned on\n";
+    }
+}
+```
+And the output:
+```
+$ optional2 -v
+verbosity turned on
+$ optional2 --help
+usage: optional2 [-h] [-v]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --verbose         increase output verbosity
+```
+Note that the new ability is also reflected in the help text.
+

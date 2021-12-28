@@ -95,3 +95,19 @@ target_compile_options(optional1 PRIVATE
                                -Wall -Wextra -pedantic>
                            $<$<CXX_COMPILER_ID:MSVC>:
                                /W4>)
+
+add_executable(optional2)
+target_sources(optional2
+    PRIVATE
+    optional2.cpp)
+
+target_include_directories(optional2
+    PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>/include
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>)
+
+target_compile_features(optional2 PRIVATE cxx_std_17)
+target_compile_options(optional2 PRIVATE
+                           $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
+                               -Wall -Wextra -pedantic>
+                           $<$<CXX_COMPILER_ID:MSVC>:
+                               /W4>)
