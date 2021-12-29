@@ -207,3 +207,19 @@ target_compile_options(advanced1 PRIVATE
                                -Wall -Wextra -pedantic>
                            $<$<CXX_COMPILER_ID:MSVC>:
                                /W4>)
+
+add_executable(conflicting)
+target_sources(conflicting
+    PRIVATE
+    conflicting.cpp)
+
+target_include_directories(conflicting
+    PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>/include
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>)
+
+target_compile_features(conflicting PRIVATE cxx_std_17)
+target_compile_options(conflicting PRIVATE
+                           $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
+                               -Wall -Wextra -pedantic>
+                           $<$<CXX_COMPILER_ID:MSVC>:
+                               /W4>)
