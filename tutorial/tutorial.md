@@ -455,3 +455,92 @@ $ complex3 4 --verbosity 2
 the square of 4 equals 16
 ```
 As expected, if the argument is not specified, it assumes its default value.
+
+## Getting a little more advanced
+
+What if we wanted to expand our tiny program to perform other powers, not just squares:
+```c++
+#include "argparse.h"
+#include <iostream>
+#include <cmath>
+
+int main(int argc, char * argv[])
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("x").type<int>().help("the base");
+    parser.add_argument("y").type<int>().help("the exponent");
+    parser.add_argument("-v", "--verbosity").type<int>().default_(0);
+    auto parsed = parser.parse_args(argc, argv);
+    auto base = parsed.get_value<int>("x");
+    auto exp = parsed.get_value<int>("y");
+    auto answer = std::pow(base, exp);
+    auto verbosity = parsed.get_value<int>("verbosity");
+    if (verbosity >= 2)
+    {
+        std::cout << base << " to the power " << exp << " equals " << answer << '\n';
+    }
+    else if (verbosity >= 1)
+    {
+        std::cout << base << "^" << exp << " == " << answer << '\n';
+    }
+    else
+    {
+        std::cout << answer << '\n';
+    }
+}
+```
+Output:
+```
+$ advanced
+the following arguments are required: x y
+usage: advanced [-h] [-v VERBOSITY] x y
+
+positional arguments:
+  x                     the base
+  y                     the exponent
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v VERBOSITY, --verbosity VERBOSITY
+$ advanced 4 2 -v 1
+4^2 == 16
+```
+Notice that so far we've been using verbosity to *change* the text that gets displayed. The following example instead uses verbosity to display *more* text instead:
+```c++
+#include "argparse.h"
+#include <iostream>
+#include <cmath>
+
+int main(int argc, char * argv[])
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("x").type<int>().help("the base");
+    parser.add_argument("y").type<int>().help("the exponent");
+    parser.add_argument("-v", "--verbosity").type<int>().default_(0);
+    auto parsed = parser.parse_args(argc, argv);
+    auto base = parsed.get_value<int>("x");
+    auto exp = parsed.get_value<int>("y");
+    auto answer = std::pow(base, exp);
+    auto verbosity = parsed.get_value<int>("verbosity");
+    if (verbosity >= 2)
+    {
+        std::cout << "Running '" << argv[0] << "'\n";
+    }
+    if (verbosity >= 1)
+    {
+        std::cout << base << "^" << exp << " == ";
+    }
+
+    std::cout << answer << '\n';
+}
+```
+Output:
+```
+$ advanced1 4 2
+16
+$ advanced1 4 2 -v 1
+4^2 == 16
+$ advanced1 4 2 -v 2
+Running 'advanced1'
+4^2 == 16
+```
