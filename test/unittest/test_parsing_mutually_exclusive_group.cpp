@@ -30,7 +30,6 @@ TEST_CASE("Parsing mutually exclusive group of arguments with store action does 
     {
         CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-b", "b"}));
     }
-    
 }
 
 TEST_CASE("Parsing mutually exclusive group of arguments with store action does not throw for arguments in separate groups")
