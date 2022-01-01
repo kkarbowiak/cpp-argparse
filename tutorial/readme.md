@@ -579,3 +579,58 @@ int main(int argc, char * argv[])
     }
 }
 ```
+Our program is now simpler, and we've lost some functionality for the sake of demonstration. Anyways, here's the output:
+```
+$ conflicting 4 2
+4^2 == 16
+$ conflicting 4 2 -q
+16
+$ conflicting 4 2 -v
+4 to the power 2 equals 16
+$ conflicting 4 2 -q -v
+argument -q/--quiet: not allowed with argument -v/--verbose
+usage: conflicting [-h] [-v | -q] x y
+
+positional arguments:
+  x                     the base
+  y                     the exponent
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --verbose
+  -q, --quiet
+```
+That should be easy to follow. Note that slight difference in the usage text. Note the `[-v | -q]`, which tells us that we can either use `-v` or `-q`, but not both at the same time.
+
+Before we end this part, you probably want to tell your users the main purpose of your program, just in case they don't know:
+```c++
+#include "argparse.h"
+#include <iostream>
+#include <cmath>
+
+int main(int argc, char * argv[])
+{
+    auto parser = argparse::ArgumentParser().description("calculate X to the power of Y");
+    auto group = parser.add_mutually_exclusive_group();
+    group.add_argument("-v", "--verbose").action(argparse::store_true);
+    group.add_argument("-q", "--quiet").action(argparse::store_true);
+    parser.add_argument("x").type<int>().help("the base");
+    parser.add_argument("y").type<int>().help("the exponent");
+    auto parsed = parser.parse_args(argc, argv);
+    auto base = parsed.get_value<int>("x");
+    auto exp = parsed.get_value<int>("y");
+    auto answer = std::pow(base, exp);
+    if (parsed.get_value<bool>("quiet"))
+    {
+        std::cout << answer << '\n';
+    }
+    else if (parsed.get_value<bool>("verbose"))
+    {
+        std::cout << base << " to the power " << exp << " equals " << answer << '\n';
+    }
+    else
+    {
+        std::cout << base << "^" << exp << " == " << answer << '\n';
+    }
+}
+```
