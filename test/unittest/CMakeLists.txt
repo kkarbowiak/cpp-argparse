@@ -8,6 +8,7 @@ target_sources(unittest
     main.cpp
     test_argument_parser.cpp
     test_parsing.cpp
+    test_parsing_mutually_exclusive_group.cpp
     test_usage_message.cpp
     test_help_message.cpp
     test_error_message.cpp
