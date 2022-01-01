@@ -102,3 +102,13 @@ TEST_CASE("Parsing mutually exclusive group of arguments with store true action 
 
     CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-a", "-b"}), "argument -b: not allowed with argument -a", argparse::parsing_error);
 }
+
+TEST_CASE("Parsing mutually exclusive group of arguments with store false action does not throw for no arguments")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    auto group = parser.add_mutually_exclusive_group();
+    group.add_argument("-a").action(argparse::store_false);
+    group.add_argument("-b").action(argparse::store_false);
+
+    CHECK_NOTHROW(parser.parse_args(1, cstr_arr{"prog"}));
+}
