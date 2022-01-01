@@ -341,7 +341,7 @@ namespace argparse
                 std::map<MutuallyExclusiveGroup const *, Argument const *> exclusive_args;
                 for (auto const & arg : m_arguments)
                 {
-                    if (arg->has_value() && arg->get_options().mutually_exclusive_group != nullptr)
+                    if (arg->is_present() && arg->get_options().mutually_exclusive_group != nullptr)
                     {
                         if (auto const result = exclusive_args.emplace(arg->get_options().mutually_exclusive_group, arg.get()); !result.second)
                         {
@@ -467,6 +467,7 @@ namespace argparse
                     virtual auto get_value() const -> std::any = 0;
                     virtual auto is_required() const -> bool = 0;
                     virtual auto is_positional() const -> bool = 0;
+                    virtual auto is_present() const -> bool = 0;
 
                     auto get_name() const -> std::string
                     {
@@ -627,6 +628,11 @@ namespace argparse
                         return true;
                     }
 
+                    auto is_present() const -> bool override
+                    {
+                        return false;
+                    }
+
                 private:
                     auto consume_arg(tokens & args, std::any & value) -> void
                     {
@@ -659,6 +665,7 @@ namespace argparse
                     explicit OptionalArgument(Options options)
                       : Argument(std::move(options))
                       , m_value()
+                      , m_present(false)
                     {
                     }
 
@@ -743,6 +750,7 @@ namespace argparse
                                     m_value = true;
                                     throw HelpRequested();
                             }
+                            m_present = true;
                         }
                         else
                         {
@@ -811,6 +819,11 @@ namespace argparse
                         return false;
                     }
 
+                    auto is_present() const -> bool override
+                    {
+                        return m_present;
+                    }
+
                 private:
                     auto find_arg(tokens const & args) const -> tokens::const_iterator
                     {
@@ -864,6 +877,7 @@ namespace argparse
 
                 private:
                     std::any m_value;
+                    bool m_present;
             };
 
         private:
