@@ -6,7 +6,7 @@ This document is based on the tutorial for the Python's argparse library.
 
 ## The basics
 
-Let's start with a very simple example that doesn't do much:
+Let's start with a very simple example that doesn't do much (`basic.cpp`):
 ```c++
 #include "argparse.h"
 
@@ -45,7 +45,7 @@ Here is what is happening:
 
  ## Introducing Positional arguments
 
-An example:
+An example (`positional.cpp`):
 ```c++
 #include "argparse.h"
 #include <iostream>
@@ -86,7 +86,7 @@ Here is what is happening:
  * The `parse_args` function actually returns the result of parsing. You can get the argument's value by calling `get_value` on the returned object and giving the option name.
  * By default, the returned value is of type `std::string`.
 
-Note that while the help message looks nice, it is not as helpful as it could be. For example we see that we got `echo` as a positional argument, but we don't know what it does. Let's make it a bit more useful:
+Note that while the help message looks nice, it is not as helpful as it could be. For example we see that we got `echo` as a positional argument, but we don't know what it does. Let's make it a bit more useful  (`positional1.cpp`):
 ```c++
 #include "argparse.h"
 #include <iostream>
@@ -110,7 +110,7 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
 ```
-Now, how about doing some math:
+Now, how about doing some math  (`positional2.cpp`):
 ```c++
 #include "argparse.h"
 #include <iostream>
@@ -124,7 +124,7 @@ int main(int argc, char * argv[])
     std::cout << value * value << '\n';
 }
 ```
-Well, this won't compile and your compiler will complain that the `std::string` type does not define a binary `*` operator. As I mentioned, the default type for all options is `std::string`. Let's tell the parser to treat the `square` option as an integer:
+Well, this won't compile and your compiler will complain that the `std::string` type does not define a binary `*` operator. As I mentioned, the default type for all options is `std::string`. Let's tell the parser to treat the `square` option as an integer  (`positional3.cpp`):
 ```c++
 #include "argparse.h"
 #include <iostream>
@@ -156,7 +156,7 @@ That went well. The program now even detects an invalid value and quits with an 
 
 ## Introducing Optional arguments
 
-So far we have been playing with positional arguments. Let's see how to add optional ones:
+So far we have been playing with positional arguments. Let's see how to add optional ones (`optional.cpp`):
 ```c++
 #include "argparse.h"
 #include <iostream>
@@ -199,7 +199,7 @@ Here is what is happening:
  * The help message is a bit different.
  * When using the `--verbosity` option, one must specify some arbitrary value.
 
-The above example accepts arbitrary values for `--verbosity`, but for our simple program, only two values are actually useful, `true` and `false`. Let's modify the code accordingly:
+The above example accepts arbitrary values for `--verbosity`, but for our simple program, only two values are actually useful, `true` and `false`. Let's modify the code accordingly (`optional1.cpp`):
 ```c++
 #include "argparse.h"
 #include <iostream>
@@ -241,7 +241,7 @@ Here is what is happening:
 
 ### Short options
 
-If you are familiar with command line usage, you will notice that I haven't touched on the topic of short versions of the options. It's quite simple:
+If you are familiar with command line usage, you will notice that I haven't touched on the topic of short versions of the options. It's quite simple (`optional2.cpp`):
 ```c++
 #include "argparse.h"
 #include <iostream>
@@ -272,7 +272,7 @@ Note that the new ability is also reflected in the help text.
 
 ## Combining Positional and Optional arguments
 
-Our program keeps growing in complexity:
+Our program keeps growing in complexity (`complex.cpp`):
 ```c++
 #include "argparse.h"
 #include <iostream>
@@ -317,7 +317,7 @@ the square of 4 equals 16
  * We have brought back a positional argument, hence the complaint.
  * Note that the order does not matter.
 
-How about we give this program of ours back the ability to have multiple verbosity values, and actually get to use them:
+How about we give this program of ours back the ability to have multiple verbosity values, and actually get to use them (`complex1.cpp`):
 ```c++
 #include "argparse.h"
 #include <iostream>
@@ -369,7 +369,7 @@ the square of 4 equals 16
 $ complex1 4 -v 3
 16
 ```
-The above outputs all look good except the last one, which exposes a bug in our program. Let's fix it by restricting the values the `--verbosity` option can accept:
+The above outputs all look good except the last one, which exposes a bug in our program. Let's fix it by restricting the values the `--verbosity` option can accept (`complex2.cpp`):
 ```c++
 #include "argparse.h"
 #include <iostream>
@@ -415,7 +415,7 @@ Note that the change reflects in both the error message and the help string.
 
 ### Default values
 
-One way to remove the need of getting the value object and doing a boolean test before extracting the value is to give the option a default value:
+One way to remove the need of getting the value object and doing a boolean test before extracting the value is to give the option a default value (`complex3.cpp`):
 ```c++
 #include "argparse.h"
 #include <iostream>
@@ -458,7 +458,7 @@ As expected, if the argument is not specified, it assumes its default value.
 
 ## Getting a little more advanced
 
-What if we wanted to expand our tiny program to perform other powers, not just squares:
+What if we wanted to expand our tiny program to perform other powers, not just squares (`advanced.cpp`):
 ```c++
 #include "argparse.h"
 #include <iostream>
@@ -505,7 +505,7 @@ optional arguments:
 $ advanced 4 2 -v 1
 4^2 == 16
 ```
-Notice that so far we've been using verbosity to *change* the text that gets displayed. The following example instead uses verbosity to display *more* text instead:
+Notice that so far we've been using verbosity to *change* the text that gets displayed. The following example instead uses verbosity to display *more* text instead (`advanced1.cpp`):
 ```c++
 #include "argparse.h"
 #include <iostream>
@@ -547,7 +547,7 @@ Running 'advanced1'
 
 ### Conflicting options
 
-So far we have been using two member functions of `argparse::ArgumentParser` class. Let's introduce a third one, `add_mutually_exclusive_group()`. It allows us to specify options that conflict with each other. Let's also change the rest of the program so that the new functionality makes more sense: we'll introduce the `--quiet` option, which will be the opposite of the `--verbose` one:
+So far we have been using two member functions of `argparse::ArgumentParser` class. Let's introduce a third one, `add_mutually_exclusive_group()`. It allows us to specify options that conflict with each other. Let's also change the rest of the program so that the new functionality makes more sense: we'll introduce the `--quiet` option, which will be the opposite of the `--verbose` one (`conflicting.cpp`):
 ```c++
 #include "argparse.h"
 #include <iostream>
@@ -602,7 +602,7 @@ optional arguments:
 ```
 That should be easy to follow. Note that slight difference in the usage text. Note the `[-v | -q]`, which tells us that we can either use `-v` or `-q`, but not both at the same time.
 
-Before we end this part, you probably want to tell your users the main purpose of your program, just in case they don't know:
+Before we end this part, you probably want to tell your users the main purpose of your program, just in case they don't know (`conflicting1.cpp`):
 ```c++
 #include "argparse.h"
 #include <iostream>
