@@ -656,6 +656,84 @@ optional arguments:
 
 Before we end this tutorial, I would like to mention some more topics more related to this implementation rather than to the Python's version.
 
+### Pay attention to types
+
+When you want to use default values, choices, or const values in conjunction with types other that `std::string`, please remember to also specify the argument type and then retireve this same exact type (`types.cpp`):
+```c++
+#include "argparse.h"
+#include <iostream>
+
+int main(int argc, char * argv[])
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("pos").type<int>().choices({1, 2, 3});
+    parser.add_argument("-c").type<double>().const_(3.14).action(argparse::store_const);
+    parser.add_argument("-d").type<int>().default_(7);
+    auto parsed = parser.parse_args(argc, argv);
+    std::cout << "pos:\t" << parsed.get_value<int>("pos") << '\n';
+    std::cout << "c:\t" << (parsed.get("c") ? parsed.get_value<double>("c") : 0) << '\n';
+    std::cout << "d:\t" << parsed.get_value<int>("d") << '\n';
+}
+```
+Which outputs:
+```
+$ types
+the following arguments are required: pos
+usage: types [-h] [-c] [-d D] {1,2,3}
+
+positional arguments:
+  {1,2,3}
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -c
+  -d D
+$ types 2
+pos:    2
+c:      0
+d:      7
+$ types 2 -c
+pos:    2
+c:      3.14
+d:      7
+$ types 2 -d 21
+pos:    2
+c:      0
+d:      21
+```
+
+When using `std::string`, **beware not to use** `const char*` by accident. The easiest and most convenient way to avoid this is to use the `""s` string literal (`string.cpp`):
+```c++
+#include "argparse.h"
+#include <string>
+#include <iostream>
+
+int main(int argc, char * argv[])
+{
+    using namespace std::string_literals;
+
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("name").type<std::string>().choices({"John"s, "Lukas"s, "Gregory"s});
+    auto parsed = parser.parse_args(argc, argv);
+    std::cout << "Hello, " << parsed.get_value("name") << "!\n";
+}
+```
+And the output:
+```
+$ string
+the following arguments are required: name
+usage: string [-h] {"John","Lukas","Gregory"}
+
+positional arguments:
+  {"John","Lukas","Gregory"}
+
+optional arguments:
+  -h, --help            show this help message and exit
+$ string Lukas
+Hello, Lukas!
+```
+The library could act smart here and automatically convert the `const char*` types to `std::string`s, but (at least for now) I decided not to.
+
 ### Using custom types
 
 You may wonder whether this library allows using types other than the built-in ones (`int`, `float`, `double`, etc.) or `std::string`. Actually, yes, it does!
