@@ -12,6 +12,14 @@
 
 using namespace std::string_literals;
 
+namespace bar
+{
+auto operator==(Custom const & lhs, Custom const & rhs) -> bool
+{
+    return lhs.m_text == rhs.m_text;
+}
+}
+
 TEST_CASE("Parsing a positional argument yields its value")
 {
     auto parser = argparse::ArgumentParser();

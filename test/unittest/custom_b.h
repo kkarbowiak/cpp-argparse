@@ -15,11 +15,6 @@ namespace bar
             {
             }
 
-            auto operator==(Custom const & other) const -> bool
-            {
-                return m_text == other.m_text;
-            }
-
         public:
             std::string m_text;
     };
@@ -43,7 +38,7 @@ inline auto to_string<bar::Custom>(bar::Custom const & t) -> std::string
 template<>
 inline auto are_equal<bar::Custom>(bar::Custom const & lhs, bar::Custom const & rhs) -> bool
 {
-    return lhs == rhs;
+    return lhs.m_text == rhs.m_text;
 }
 }
 
