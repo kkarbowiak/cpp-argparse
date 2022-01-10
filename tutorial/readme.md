@@ -1120,3 +1120,7 @@ Some things to note here:
    * only help (`argparse::Handle::help`),
    * only errors (`argparse::Handle::errors`),
    * both help and errors (`argparse::Handle::errors_and_help`), which is the default.
+
+## Conclusion
+
+This ends the tutorial. I hope the information here is useful and can get you started using the library!
