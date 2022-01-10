@@ -13,7 +13,8 @@ target_sources(unittest
     test_help_message.cpp
     test_error_message.cpp
     cstring_array.h
-    custom.h)
+    custom_a.h
+    custom_b.h)
 
 target_include_directories(unittest
     PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>/include
