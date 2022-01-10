@@ -634,3 +634,20 @@ int main(int argc, char * argv[])
     }
 }
 ```
+
+This results in additional information in help message:
+```
+$ conflicting1 --help
+usage: conflicting1 [-h] [-v | -q] x y
+
+calculate X to the power of Y
+
+positional arguments:
+  x                     the base
+  y                     the exponent
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --verbose
+  -q, --quiet
+```
