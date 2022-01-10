@@ -77,7 +77,7 @@ namespace argparse
     }
 
     template<typename T>
-    inline auto to_string(T const& t) -> std::string
+    inline auto to_string(T const & t) -> std::string
     {
         std::ostringstream ostr;
         if constexpr(std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
