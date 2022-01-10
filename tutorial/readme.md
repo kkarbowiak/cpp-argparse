@@ -651,3 +651,162 @@ optional arguments:
   -v, --verbose
   -q, --quiet
 ```
+
+## Other important considerations
+
+Before we end this tutorial, I would like to mention some more topics more related to this implementation rather than to the Python's version.
+
+### Help and error handling
+
+As you have noticed, the parser automatically adds the `-h/--help` optional argument and handles help requests and parsing errors. There are some cases, when this may be undesirable.
+
+You can disable adding the `--help` option like this (`nohelp.cpp`):
+```c++
+#include "argparse.h"
+
+int main(int argc, char * argv[])
+{
+    auto parser = argparse::ArgumentParser().add_help(false);
+    parser.parse_args(argc, argv);
+}
+```
+Output:
+```
+$ nohelp --help
+unrecognised arguments: --help
+usage: nohelp
+```
+The automatic help and error handling consists of printing a relevant message and exiting the program by a call to `std::exit`. The reason this may be undesirable is that `std::exit` does not ensure cleanup of local variables (`undesired.cpp`):
+```c++
+#include "argparse.h"
+#include <iostream>
+
+class Logger
+{
+    public:
+        Logger()
+        {
+            std::cout << "Log started\n";
+        }
+
+        ~Logger()
+        {
+            std::cout << "Log ended\n";
+        }
+};
+
+int main(int argc, char * argv[])
+{
+    Logger logger;
+    auto parser = argparse::ArgumentParser();
+    parser.parse_args(argc, argv);
+}
+```
+As you will notice, the logger's destructor is not called:
+```
+$ undesired
+Log started
+Log ended
+$ undesired --help
+Log started
+usage: undesired [-h]
+
+optional arguments:
+  -h, --help            show this help message and exit
+$ undesired foo
+Log started
+unrecognised arguments: foo
+usage: undesired [-h]
+
+optional arguments:
+  -h, --help            show this help message and exit
+```
+To improve this situation, you may tell the logger not to handle help and errors (`nohandling.cpp`):
+```c++
+#include "argparse.h"
+#include <iostream>
+
+class Logger
+{
+    public:
+        Logger()
+        {
+            std::cout << "Log started\n";
+        }
+
+        ~Logger()
+        {
+            std::cout << "Log ended\n";
+        }
+};
+
+int main(int argc, char * argv[])
+{
+    Logger logger;
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.parse_args(argc, argv);
+}
+```
+In such a case, you'll most likely want to handle help requests yourself. Also, you will now **need** to handle errors, otherwise you will encounter unhandled exceptions. Let's extend the program (`nohandling1.cpp`):
+```c++
+#include "argparse.h"
+#include <iostream>
+
+class Logger
+{
+    public:
+        Logger()
+        {
+            std::cout << "Log started\n";
+        }
+
+        ~Logger()
+        {
+            std::cout << "Log ended\n";
+        }
+};
+
+int main(int argc, char * argv[])
+{
+    Logger logger;
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    try
+    {
+        auto parsed = parser.parse_args(argc, argv);
+        if (parsed.get_value<bool>("help"))
+        {
+            std::cout << parser.format_help() << '\n';
+            return 0;
+        }
+    }
+    catch (argparse::parsing_error const & e)
+    {
+        std::cout << e.what() << '\n';
+        return 1;
+    }
+}
+```
+This version outputs:
+```
+$ nohandling1
+Log started
+Log ended
+$ nohandling1 --help
+Log started
+usage: nohandling1 [-h]
+
+optional arguments:
+  -h, --help            show this help message and exit
+Log ended
+$ nohandling1 foo
+Log started
+unrecognised arguments: foo
+Log ended
+```
+Some things to note here:
+ * You can use parser's `format_help` and `format_usage` functions to generate the messages for you.
+ * In case of error, parser throws an exception of type `argparse::parsing_error` (or type derived from it), which derives from `std::runtime_error`.
+ * The control is more granular; you can tell the parser to handle:
+   * only help (`argparse::Handle::help`),
+   * only errors (`argparse::Handle::errors`),
+   * both help and errors (`argparse::Handle::errors_and_help`), which is the default.
