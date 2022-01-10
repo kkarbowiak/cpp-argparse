@@ -665,6 +665,7 @@ You can parse directly to any custom type, provided that this type is default-co
 #include "argparse.h"
 #include <string>
 #include <sstream>
+#include <cmath>
 
 namespace geometry
 {
@@ -739,6 +740,7 @@ The return value of `argparse::from_string` indicates whether the conversion suc
 #include "argparse.h"
 #include <string>
 #include <sstream>
+#include <cmath>
 
 namespace geometry
 {
