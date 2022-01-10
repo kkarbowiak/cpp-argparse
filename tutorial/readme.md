@@ -656,6 +656,160 @@ optional arguments:
 
 Before we end this tutorial, I would like to mention some more topics more related to this implementation rather than to the Python's version.
 
+### Using custom types
+
+You may wonder whether this library allows using types other than the built-in ones (`int`, `float`, `double`, etc.) or `std::string`. Actually, yes, it does!
+
+You can parse directly to any custom type, provided that this type is default-constructible and you provide a way to do string-type and type-string conversion as well as equality comparison. This may sound complicated, but basically boils down to specialising three template functions: `argparse::from_string`, `argparse::to_string`, and `argparse::are_equal`, which are the library's customisation points. Let's have a look at an example (`custom.cpp`):
+```c++
+#include "argparse.h"
+#include <string>
+#include <sstream>
+
+namespace geometry
+{
+    struct Point
+    {
+        Point() : x(0), y(0)
+        {
+        }
+
+        Point(int x, int y) : x(x), y(y)
+        {
+        }
+
+        int x;
+        int y;
+    };
+}
+
+namespace argparse
+{
+template<>
+inline auto from_string(std::string const & s, geometry::Point & p) -> bool
+{
+    std::istringstream iss(s);
+    char comma;
+    iss >> p.x >> comma >> p.y;
+    return true;
+}
+
+template<>
+inline auto to_string(geometry::Point const & p) -> std::string
+{
+    return std::to_string(p.x) + "," + std::to_string(p.y);
+}
+
+template<>
+inline auto are_equal(geometry::Point const & l, geometry::Point const & r) -> bool
+{
+    return l.x == r.x && l.y == r.y;
+}
+}
+
+int main(int argc, char * argv[])
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("start").type<geometry::Point>();
+    parser.add_argument("end").type<geometry::Point>();
+    auto parsed = parser.parse_args(argc, argv);
+    auto start = parsed.get_value<geometry::Point>("start");
+    auto end = parsed.get_value<geometry::Point>("end");
+    auto distance = std::hypot(end.x - start.x, end.y - start.y);
+    std::cout << "The distance is " << distance << '\n';
+}
+```
+And the output:
+```
+$ custom
+the following arguments are required: start end
+usage: custom [-h] start end
+
+positional arguments:
+  start
+  end
+
+optional arguments:
+  -h, --help            show this help message and exit
+$ custom 0,0 1,1
+The distance is 1.41421
+```
+The return value of `argparse::from_string` indicates whether the conversion succeeded. You can use it to your advantage (`custom1.cpp`):
+```c++
+#include "argparse.h"
+#include <string>
+#include <sstream>
+
+namespace geometry
+{
+    struct Point
+    {
+        Point() : x(0), y(0)
+        {
+        }
+
+        Point(int x, int y) : x(x), y(y)
+        {
+        }
+
+        int x;
+        int y;
+    };
+}
+
+namespace argparse
+{
+template<>
+inline auto from_string(std::string const & s, geometry::Point & p) -> bool
+{
+    std::istringstream iss(s);
+    char comma;
+    iss >> p.x >> comma >> p.y;
+    return !iss.fail();
+}
+
+template<>
+inline auto to_string(geometry::Point const & p) -> std::string
+{
+    return std::to_string(p.x) + "," + std::to_string(p.y);
+}
+
+template<>
+inline auto are_equal(geometry::Point const & l, geometry::Point const & r) -> bool
+{
+    return l.x == r.x && l.y == r.y;
+}
+}
+
+int main(int argc, char * argv[])
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("start").type<geometry::Point>();
+    parser.add_argument("end").type<geometry::Point>();
+    auto parsed = parser.parse_args(argc, argv);
+    auto start = parsed.get_value<geometry::Point>("start");
+    auto end = parsed.get_value<geometry::Point>("end");
+    auto distance = std::hypot(end.x - start.x, end.y - start.y);
+    std::cout << "The distance is " << distance << '\n';
+}
+```
+Let's see how it works:
+```
+$ custom1 0,0 -1,-1
+The distance is 1.41421
+$ custom1 foo bar
+argument start: invalid value: 'foo'
+usage: custom1 [-h] start end
+
+positional arguments:
+  start
+  end
+
+optional arguments:
+  -h, --help            show this help message and exit
+```
+Of course it would be even better to let the user know what is the proper format of the arguments instead of having them guess. This can be done via arguments' help messages, but is left here as an excercise for the readers.
+
 ### Help and error handling
 
 As you have noticed, the parser automatically adds the `-h/--help` optional argument and handles help requests and parsing errors. There are some cases, when this may be undesirable.

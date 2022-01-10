@@ -19,7 +19,9 @@ foreach(target
     nohelp
     undesired
     nohandling
-    nohandling1)
+    nohandling1
+    custom
+    custom1)
         add_executable(${target})
         target_sources(${target} PRIVATE ${target}.cpp)
         target_include_directories(${target} PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>/include)
