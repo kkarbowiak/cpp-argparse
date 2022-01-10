@@ -2,6 +2,7 @@
 
 #include "cstring_array.h"
 #include "custom_a.h"
+#include "custom_b.h"
 
 #include "doctest.h"
 
@@ -86,7 +87,7 @@ TEST_CASE("Parsing an optional argument with store false action...")
     }
 }
 
-TEST_CASE_TEMPLATE("Parsing an optional argument with store const action...", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom)
+TEST_CASE_TEMPLATE("Parsing an optional argument with store const action...", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
 {
     auto parser = argparse::ArgumentParser();
 
@@ -169,7 +170,7 @@ TEST_CASE("Optional argument can be used with either...")
     }
 }
 
-TEST_CASE_TEMPLATE("Parsing a positional argument yields its requested type", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom)
+TEST_CASE_TEMPLATE("Parsing a positional argument yields its requested type", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom, bar::Custom)
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("pos").type<T>();
@@ -194,7 +195,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument yields its requested type", T,
     }
 }
 
-TEST_CASE_TEMPLATE("Parsing an optional argument yields its requested type", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom)
+TEST_CASE_TEMPLATE("Parsing an optional argument yields its requested type", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom, bar::Custom)
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o").type<T>();
@@ -235,7 +236,7 @@ TEST_CASE("Parsing an optional argument with invalid value throws an exception")
     CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "not-a-number"}), "argument -o: invalid value: 'not-a-number'", argparse::parsing_error);
 }
 
-TEST_CASE_TEMPLATE("Parsing an optional argument with default value...", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom)
+TEST_CASE_TEMPLATE("Parsing an optional argument with default value...", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
 {
     auto parser = argparse::ArgumentParser();
 
@@ -493,7 +494,7 @@ TEST_CASE("Parsing a missing optional argument with required...")
     }
 }
 
-TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom)
+TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
@@ -551,7 +552,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
     }
 }
 
-TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom)
+TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
