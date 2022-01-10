@@ -226,6 +226,7 @@ TEST_CASE("Parsing a positional argument with invalid value throws an exception"
     parser.add_argument("pos").type<int>();
 
     CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "not-a-number"}), "argument pos: invalid value: 'not-a-number'", argparse::parsing_error);
+    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "10gibberish"}), "argument pos: invalid value: '10gibberish'", argparse::parsing_error);
 }
 
 TEST_CASE("Parsing an optional argument with invalid value throws an exception")

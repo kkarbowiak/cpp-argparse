@@ -73,7 +73,7 @@ namespace argparse
             iss >> t;
         }
 
-        return !iss.fail();
+        return !iss.fail() && iss.eof();
     }
 
     template<typename T>
