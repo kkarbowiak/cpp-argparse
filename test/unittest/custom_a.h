@@ -1,5 +1,5 @@
-#ifndef CUSTOM_H
-#define CUSTOM_H
+#ifndef CUSTOMA_H
+#define CUSTOMA_H
 
 #include <string>
 
@@ -39,4 +39,4 @@ inline auto to_string(Custom const& c) -> std::string
 }
 }
 
-#endif /* CUSTOM_H */
+#endif /* CUSTOMA_H */
