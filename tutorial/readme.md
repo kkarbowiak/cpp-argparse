@@ -812,6 +812,82 @@ optional arguments:
 ```
 Of course it would be even better to let the user know what is the proper format of the arguments instead of having them guess. This can be done via arguments' help messages, but is left here as an excercise for the readers.
 
+At this point you may wonder what the type-string conversion and comparison are needed for. They become important when you want to use choices (`custom2.cpp`):
+```c++
+#include "argparse.h"
+#include <string>
+#include <sstream>
+#include <cmath>
+
+namespace geometry
+{
+    struct Point
+    {
+        Point() : x(0), y(0)
+        {
+        }
+
+        Point(int x, int y) : x(x), y(y)
+        {
+        }
+
+        int x;
+        int y;
+    };
+}
+
+namespace argparse
+{
+template<>
+inline auto from_string(std::string const & s, geometry::Point & p) -> bool
+{
+    std::istringstream iss(s);
+    char comma;
+    iss >> p.x >> comma >> p.y;
+    return !iss.fail();
+}
+
+template<>
+inline auto to_string(geometry::Point const & p) -> std::string
+{
+    return std::to_string(p.x) + "," + std::to_string(p.y);
+}
+
+template<>
+inline auto are_equal(geometry::Point const & l, geometry::Point const & r) -> bool
+{
+    return l.x == r.x && l.y == r.y;
+}
+}
+
+int main(int argc, char * argv[])
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("start").type<geometry::Point>().choices({geometry::Point(0, 0), geometry::Point(1, 1), geometry::Point(2, 2)});
+    parser.add_argument("end").type<geometry::Point>();
+    auto parsed = parser.parse_args(argc, argv);
+    auto start = parsed.get_value<geometry::Point>("start");
+    auto end = parsed.get_value<geometry::Point>("end");
+    auto distance = std::hypot(end.x - start.x, end.y - start.y);
+    std::cout << "The distance is " << distance << '\n';
+}
+```
+And the output:
+```
+$ custom2 0,0 9,9
+The distance is 12.7279
+$ custom2 1,0 9,9
+argument start: invalid choice: 1,0 (choose from 0,0, 1,1, 2,2)
+usage: custom2 [-h] {0,0,1,1,2,2} end
+
+positional arguments:
+  {0,0,1,1,2,2}
+  end
+
+optional arguments:
+  -h, --help            show this help message and exit
+```
+
 ### Help and error handling
 
 As you have noticed, the parser automatically adds the `-h/--help` optional argument and handles help requests and parsing errors. There are some cases, when this may be undesirable.

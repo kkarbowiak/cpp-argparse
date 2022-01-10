@@ -21,7 +21,8 @@ foreach(target
     nohandling
     nohandling1
     custom
-    custom1)
+    custom1
+    custom2)
         add_executable(${target})
         target_sources(${target} PRIVATE ${target}.cpp)
         target_include_directories(${target} PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>/include)
