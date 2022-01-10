@@ -91,6 +91,12 @@ namespace argparse
         return ostr.str();
     }
 
+    template<typename T>
+    inline auto are_equal(T const & lhs, T const & rhs) -> bool
+    {
+        return lhs == rhs;
+    }
+
     class ArgumentParser
     {
         private:
@@ -1204,7 +1210,7 @@ namespace argparse
                             m_options.compare =
                                 [](std::any const & l, std::any const & r)
                                 {
-                                    return std::any_cast<T>(l) == std::any_cast<T>(r);
+                                    return are_equal(std::any_cast<T>(l), std::any_cast<T>(r));
                                 };
                             m_options.transform =
                                 [](std::vector<std::any> const & values)
