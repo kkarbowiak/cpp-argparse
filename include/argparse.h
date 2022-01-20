@@ -826,7 +826,7 @@ namespace argparse
                             return m_options.dest;
                         }
 
-                        std::string dest = get_name_for_dest();
+                        auto dest = get_name_for_dest();
 
                         std::replace(dest.begin(), dest.end(), '-', '_');
 
