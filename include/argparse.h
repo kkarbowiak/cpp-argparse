@@ -164,7 +164,7 @@ namespace argparse
 
         public:
             template<typename ...Args>
-            decltype(auto) add_argument(Args&&... names)
+            decltype(auto) add_argument(Args &&... names)
             {
                 return ArgumentBuilder(m_arguments, std::vector<std::string>{names...});
             }
@@ -558,7 +558,7 @@ namespace argparse
                         if (!std::any_of(
                             m_options.choices.begin(),
                             m_options.choices.end(),
-                            [&](auto const& rhs) { return m_options.type_handler->compare(value, rhs); }))
+                            [&](auto const & rhs) { return m_options.type_handler->compare(value, rhs); }))
                         {
                             std::string message = "argument " + join(m_options.names, "/") + ": invalid choice: ";
                             message += m_options.type_handler->to_string(value);
@@ -1163,7 +1163,7 @@ namespace argparse
                     }
 
                     template<typename ...Args>
-                    decltype(auto) add_argument(Args&&... names)
+                    decltype(auto) add_argument(Args &&... names)
                     {
                         return ArgumentBuilder(m_arguments, std::vector<std::string>{names...}, this);
                     }
