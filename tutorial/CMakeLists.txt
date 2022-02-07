@@ -31,7 +31,7 @@ foreach(target
         target_compile_features(${target} PRIVATE cxx_std_17)
         target_compile_options(${target} PRIVATE
                                $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
-                                   -Wall -Wextra -pedantic>
+                                   -Wall -Wextra -Werror -pedantic-errors>
                                $<$<CXX_COMPILER_ID:MSVC>:
-                                   /W4>)
+                                   /W4 /WX>)
 endforeach()
