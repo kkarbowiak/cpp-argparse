@@ -33,5 +33,5 @@ foreach(target
                                $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
                                    -Wall -Wextra -Werror -pedantic-errors>
                                $<$<CXX_COMPILER_ID:MSVC>:
-                                   /W4 /WX>)
+                                   /W4 /WX /permissive->)
 endforeach()

@@ -27,7 +27,7 @@ target_compile_options(unittest PRIVATE
                            $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
                                -Wall -Wextra -Werror -pedantic-errors $ENV{COMPILER_OPTIONS}>
                            $<$<CXX_COMPILER_ID:MSVC>:
-                               /W4 /WX>)
+                               /W4 /WX /permissive->)
 target_link_options(unittest PRIVATE $ENV{LINKER_OPTIONS})
 
 add_test(NAME unittest COMMAND unittest)
