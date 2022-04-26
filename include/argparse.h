@@ -61,7 +61,7 @@ namespace argparse
     inline auto from_string(std::string const & s, T & t) -> bool
     {
         std::istringstream iss(s);
-        if constexpr(std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+        if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
         {
             int i;
             iss >> i;
@@ -79,7 +79,7 @@ namespace argparse
     inline auto to_string(T const & t) -> std::string
     {
         std::ostringstream ostr;
-        if constexpr(std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+        if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
         {
             ostr << static_cast<int>(t);
         }
