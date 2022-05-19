@@ -88,7 +88,7 @@ auto file_name = args.get_value("filename");
 
 ## Usage
 
-You can follow the [tutorial](tutorial/readme.md) in the project's [`tutorial`](https://github.com/kkarbowiak/cpp-argparse/tree/master/tutorial) subdirectory to learn how to use this library. A short example follows below:
+You can follow the [tutorial](tutorial/readme.md) in the project's [`tutorial`](tutorial) subdirectory to learn how to use this library. A short example follows below:
 
 ```c++
 #include "argparse.h"
