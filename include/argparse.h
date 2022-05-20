@@ -288,21 +288,8 @@ namespace argparse
 
             auto parse_args(tokens args) -> Parameters
             {
-                for (auto & arg : m_arguments)
-                {
-                    if (!arg->is_positional())
-                    {
-                        args = arg->parse_args(args);
-                    }
-                }
-
-                for (auto & arg : m_arguments)
-                {
-                    if (arg->is_positional())
-                    {
-                        args = arg->parse_args(args);
-                    }
-                }
+                args = parse_optional_arguments(args);
+                args = parse_positional_arguments(args);
 
                 ensure_no_unrecognised_arguments(args);
                 ensure_no_arguments_excluded();
@@ -331,6 +318,32 @@ namespace argparse
                 }
 
                 return result;
+            }
+
+            auto parse_optional_arguments(tokens args) -> tokens
+            {
+                for (auto & arg : m_arguments)
+                {
+                    if (!arg->is_positional())
+                    {
+                        args = arg->parse_args(args);
+                    }
+                }
+
+                return args;
+            }
+
+            auto parse_positional_arguments(tokens args) -> tokens
+            {
+                for (auto & arg : m_arguments)
+                {
+                    if (arg->is_positional())
+                    {
+                        args = arg->parse_args(args);
+                    }
+                }
+
+                return args;
             }
 
             auto ensure_no_unrecognised_arguments(tokens const & args) const -> void
