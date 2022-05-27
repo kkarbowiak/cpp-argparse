@@ -235,7 +235,7 @@ optional arguments:
 ```
 Here is what is happening:
  * The option is now more of a flag than something that requires a value. We even changed the name of the option to match that idea. Note that we now used a new function, `action`, and passed it the value `argparse::store_true`. This means that, if the option is specified, assing the value `true` to the relevant object. Not speficying it implies `false`.
- * We now need to retireve the value using `parsed.get_value<bool>()` as we now expect the value of type `bool` instead of the usual `std::string`.
+ * We now need to retrieve the value using `parsed.get_value<bool>()` as we now expect the value of type `bool` instead of the usual `std::string`.
  * The option now complains when you specify a value, in true spirit of what flags actually are.
  * Notice the different help text.
 
@@ -658,7 +658,7 @@ Before we end this tutorial, I would like to mention some more topics more relat
 
 ### Pay attention to types
 
-When you want to use default values, choices, or const values in conjunction with types other that `std::string`, please remember to also specify the argument type and then retireve this same exact type (`types.cpp`):
+When you want to use default values, choices, or const values in conjunction with types other that `std::string`, please remember to also specify the argument type and then retrieve this same exact type (`types.cpp`):
 ```c++
 #include "argparse.h"
 #include <iostream>
