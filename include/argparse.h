@@ -347,7 +347,7 @@ namespace argparse
 
             auto ensure_no_unrecognised_arguments(tokens const & args) const -> void
             {
-                if (!args.empty())
+                if (!args.empty() && !(args.size() == 1 && args.front() == "--"))
                 {
                     throw parsing_error("unrecognised arguments: " + join(args, " "));
                 }

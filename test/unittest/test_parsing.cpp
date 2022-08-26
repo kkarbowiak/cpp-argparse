@@ -2998,3 +2998,10 @@ TEST_CASE("An optional argument does not consume another optional argument...")
         CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}), "argument -o: expected at least one argument", argparse::parsing_error);
     }
 }
+
+TEST_CASE("Parsing -- pseudo argument does not throw")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
+    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "--"}));
+}
