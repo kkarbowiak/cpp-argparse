@@ -2998,3 +2998,82 @@ TEST_CASE("An optional argument does not consume another optional argument...")
         CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}), "argument -o: expected at least one argument", argparse::parsing_error);
     }
 }
+
+TEST_CASE("Parsing -- pseudo argument does not throw")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
+    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "--"}));
+}
+
+TEST_CASE("An optional argument does not consume arguments past the -- pseudo argument...")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
+    SUBCASE("...for simple argument")
+    {
+        parser.add_argument("-o");
+
+        CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "--"}), "argument -o: expected one argument", argparse::parsing_error);
+    }
+
+    SUBCASE("...for argument with nargs set as number...")
+    {
+        SUBCASE("...1")
+        {
+            parser.add_argument("-o").nargs(1);
+
+            CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "--"}), "argument -o: expected 1 argument", argparse::parsing_error);
+        }
+
+        SUBCASE("...2")
+        {
+            parser.add_argument("-o").nargs(2);
+
+            CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "--"}), "argument -o: expected 2 arguments", argparse::parsing_error);
+        }
+
+        SUBCASE("...3")
+        {
+            parser.add_argument("-o").nargs(3);
+
+            CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "--"}), "argument -o: expected 3 arguments", argparse::parsing_error);
+        }
+    }
+
+    SUBCASE("...for argument with nargs set as ?")
+    {
+        parser.add_argument("-o").nargs('?');
+
+        auto args = parser.parse_args(3, cstr_arr{"prog", "-o", "--"});
+
+        CHECK(!args.get("o"));
+    }
+
+    SUBCASE("...for argument with nargs set as *")
+    {
+        parser.add_argument("-o").nargs('*');
+
+        auto args = parser.parse_args(3, cstr_arr{"prog", "-o", "--"});
+
+        CHECK(args.get_value<std::vector<std::string>>("o") == std::vector<std::string>());
+    }
+
+    SUBCASE("...for argument with nargs set as +")
+    {
+        parser.add_argument("-o").nargs('+');
+
+        CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "--"}), "argument -o: expected at least one argument", argparse::parsing_error);
+    }
+
+    SUBCASE("...for argument with nargs set as * and followed by a positional argument")
+    {
+        parser.add_argument("-o").nargs('*');
+        parser.add_argument("pos");
+
+        auto args = parser.parse_args(4, cstr_arr{"prog", "-o", "--", "val"});
+
+        CHECK(args.get_value<std::vector<std::string>>("o") == std::vector<std::string>());
+        CHECK(args.get_value("pos") == "val");
+    }
+}

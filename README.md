@@ -148,7 +148,7 @@ The below lists features of the `argparse` module that this implementation suppo
       * [ ] passing long option and value as a single command-line argument (`--foo=FOO`)
       * [ ] passing short option and value concatenated (`-xX`)
       * [ ] joining together several short options (`-xyz`)
-      * [ ] double-dash pseudo-argument (`--`)
+      * [x] double-dash pseudo-argument (`--`)
       * [ ] argument abbreviations (prefix matching)
 
 * Mutual exclusion

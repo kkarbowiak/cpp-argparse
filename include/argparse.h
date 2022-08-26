@@ -288,6 +288,7 @@ namespace argparse
             auto parse_args(tokens args) -> Parameters
             {
                 args = parse_optional_arguments(args);
+                args = remove_pseudo_arguments(args);
                 args = parse_positional_arguments(args);
 
                 ensure_no_unrecognised_arguments(args);
@@ -341,6 +342,13 @@ namespace argparse
                         args = arg->parse_args(args);
                     }
                 }
+
+                return args;
+            }
+
+            auto remove_pseudo_arguments(tokens args) -> tokens
+            {
+                args.erase(std::remove(args.begin(), args.end(), "--"), args.end());
 
                 return args;
             }
