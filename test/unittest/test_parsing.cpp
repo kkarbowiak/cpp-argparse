@@ -3005,3 +3005,11 @@ TEST_CASE("Parsing -- pseudo argument does not throw")
 
     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "--"}));
 }
+
+TEST_CASE("An optional argument does not consume arguments past the -- pseudo argument")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o");
+
+    CHECK_THROWS(parser.parse_args(3, cstr_arr{"prog", "-o", "--"}));
+}
