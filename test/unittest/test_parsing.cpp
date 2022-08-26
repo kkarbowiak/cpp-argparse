@@ -3032,5 +3032,12 @@ TEST_CASE("An optional argument does not consume arguments past the -- pseudo ar
 
             CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "--"}), "argument -o: expected 2 arguments", argparse::parsing_error);
         }
+
+        SUBCASE("...3")
+        {
+            parser.add_argument("-o").nargs(3);
+
+            CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "--"}), "argument -o: expected 3 arguments", argparse::parsing_error);
+        }
     }
 }
