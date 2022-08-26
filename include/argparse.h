@@ -13,7 +13,6 @@
 
 #include <string>
 #include <string_view>
-#include <list>
 #include <vector>
 #include <map>
 #include <optional>
@@ -157,7 +156,7 @@ namespace argparse
             };
 
         private:
-            using tokens = std::list<std::string>;
+            using tokens = std::vector<std::string>;
             using optstring = std::optional<std::string>;
 
             class HelpRequested {};
@@ -705,7 +704,7 @@ namespace argparse
                         {
                             check_choices(value);
                         }
-                        args.pop_front();
+                        args.erase(args.begin());
                     }
 
                     auto consume_args(tokens & args, std::vector<std::any> & values) -> void
