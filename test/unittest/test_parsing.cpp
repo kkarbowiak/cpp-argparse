@@ -3058,4 +3058,11 @@ TEST_CASE("An optional argument does not consume arguments past the -- pseudo ar
 
         CHECK(args.get_value<std::vector<std::string>>("o") == std::vector<std::string>());
     }
+
+    SUBCASE("...for argument with nargs set as +")
+    {
+        parser.add_argument("-o").nargs('+');
+
+        CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "--"}), "argument -o: expected at least one argument", argparse::parsing_error);
+    }
 }
