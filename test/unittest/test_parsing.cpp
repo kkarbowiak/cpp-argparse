@@ -3089,4 +3089,12 @@ TEST_CASE("Parsing joined short options does not throw...")
 
         CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-ab"}));
     }
+
+    SUBCASE("...for arguments with store false action")
+    {
+        parser.add_argument("-a").action(argparse::store_false);
+        parser.add_argument("-b").action(argparse::store_false);
+
+        CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-ab"}));
+    }
 }
