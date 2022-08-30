@@ -287,17 +287,7 @@ namespace argparse
 
             auto parse_args(tokens args) -> Parameters
             {
-                for (auto it = args.begin(); it != args.end();)
-                {
-                    if ((*it)[0] == '-' && (*it)[1] != '-' and it->size() > 2)
-                    {
-                        it = args.erase(it);
-                    }
-                    else
-                    {
-                        ++it;
-                    }
-                }
+                args = remove_joined_short_options(args);
                 args = parse_optional_arguments(args);
                 args = remove_pseudo_arguments(args);
                 args = parse_positional_arguments(args);
@@ -329,6 +319,23 @@ namespace argparse
                 }
 
                 return result;
+            }
+
+            auto remove_joined_short_options(tokens args) -> tokens
+            {
+                for (auto it = args.begin(); it != args.end();)
+                {
+                    if ((*it)[0] == '-' && (*it)[1] != '-' and it->size() > 2)
+                    {
+                        it = args.erase(it);
+                    }
+                    else
+                    {
+                        ++it;
+                    }
+                }
+
+                return args;
             }
 
             auto parse_optional_arguments(tokens args) -> tokens
