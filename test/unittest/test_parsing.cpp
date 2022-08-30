@@ -3078,11 +3078,15 @@ TEST_CASE("An optional argument does not consume arguments past the -- pseudo ar
     }
 }
 
-TEST_CASE("Parsing joined short options does not throw")
+TEST_CASE("Parsing joined short options does not throw...")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
-    parser.add_argument("-a");
-    parser.add_argument("-b");
 
-    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-ab"}));
+    SUBCASE("...for arguments with store true action")
+    {
+        parser.add_argument("-a").action(argparse::store_true);
+        parser.add_argument("-b").action(argparse::store_true);
+
+        CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-ab"}));
+    }
 }
