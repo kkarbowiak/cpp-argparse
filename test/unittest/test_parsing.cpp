@@ -3098,3 +3098,14 @@ TEST_CASE("Parsing joined short options does not throw...")
         CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-ab"}));
     }
 }
+
+TEST_CASE("Parsing joined short options with store true action yields true for each of them")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-a").action(argparse::store_true);
+    parser.add_argument("-b").action(argparse::store_true);
+
+    auto args = parser.parse_args(2, cstr_arr{"prog", "-ab"});
+
+    CHECK(args.get_value<bool>("a") == true);
+}
