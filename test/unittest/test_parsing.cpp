@@ -3077,3 +3077,12 @@ TEST_CASE("An optional argument does not consume arguments past the -- pseudo ar
         CHECK(args.get_value("pos") == "val");
     }
 }
+
+TEST_CASE("Parsing joined short options does not throw")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-a");
+    parser.add_argument("-b");
+
+    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-ab"}));
+}
