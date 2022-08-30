@@ -3108,4 +3108,5 @@ TEST_CASE("Parsing joined short options with store true action yields true for e
     auto args = parser.parse_args(2, cstr_arr{"prog", "-ab"});
 
     CHECK(args.get_value<bool>("a") == true);
+    CHECK(args.get_value<bool>("b") == true);
 }
