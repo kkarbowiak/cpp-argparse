@@ -3110,3 +3110,14 @@ TEST_CASE("Parsing joined short options with store true action yields true for e
     CHECK(args.get_value<bool>("a") == true);
     CHECK(args.get_value<bool>("b") == true);
 }
+
+TEST_CASE("Parsing joined short options with store false action yields false for each of them")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-a").action(argparse::store_false);
+    parser.add_argument("-b").action(argparse::store_false);
+
+    auto args = parser.parse_args(2, cstr_arr{"prog", "-ab"});
+
+    CHECK(args.get_value<bool>("a") == false);
+}
