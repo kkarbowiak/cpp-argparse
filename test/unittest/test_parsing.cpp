@@ -3140,4 +3140,5 @@ TEST_CASE("Parsing joined short options with store const action yields const val
     auto args = parser.parse_args(2, cstr_arr{"prog", "-ab"});
 
     CHECK(args.get_value<int>("a") == 10);
+    CHECK(args.get_value<int>("b") == 20);
 }
