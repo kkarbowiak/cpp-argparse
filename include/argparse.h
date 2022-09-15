@@ -287,6 +287,7 @@ namespace argparse
 
             auto parse_args(tokens args) -> Parameters
             {
+                args = split_joined_short_options(args);
                 args = parse_optional_arguments(args);
                 args = remove_pseudo_arguments(args);
                 args = parse_positional_arguments(args);
@@ -318,6 +319,24 @@ namespace argparse
                 }
 
                 return result;
+            }
+
+            auto split_joined_short_options(tokens args) -> tokens
+            {
+                for (auto idx = 0u; idx < args.size(); ++idx)
+                {
+                    if (args[idx][0] == '-' && args[idx][1] != '-')
+                    {
+                        auto const options = args[idx].substr(2);
+                        args[idx] = '-' + args[idx].substr(1, 1);
+                        for (auto const & option : options)
+                        {
+                            args.insert(args.begin() + idx, std::string("-") + option);
+                        }
+                    }
+                }
+
+                return args;
             }
 
             auto parse_optional_arguments(tokens args) -> tokens

@@ -3077,3 +3077,68 @@ TEST_CASE("An optional argument does not consume arguments past the -- pseudo ar
         CHECK(args.get_value("pos") == "val");
     }
 }
+
+TEST_CASE("Parsing joined short options does not throw...")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
+    SUBCASE("...for arguments with store true action")
+    {
+        parser.add_argument("-a").action(argparse::store_true);
+        parser.add_argument("-b").action(argparse::store_true);
+
+        CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-ab"}));
+    }
+
+    SUBCASE("...for arguments with store false action")
+    {
+        parser.add_argument("-a").action(argparse::store_false);
+        parser.add_argument("-b").action(argparse::store_false);
+
+        CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-ab"}));
+    }
+
+    SUBCASE("...for arguments with store const action")
+    {
+        parser.add_argument("-a").action(argparse::store_const).const_(10);
+        parser.add_argument("-b").action(argparse::store_const).const_(20);
+
+        CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-ab"}));
+    }
+}
+
+TEST_CASE("Parsing joined short options with store true action yields true for each of them")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-a").action(argparse::store_true);
+    parser.add_argument("-b").action(argparse::store_true);
+
+    auto args = parser.parse_args(2, cstr_arr{"prog", "-ab"});
+
+    CHECK(args.get_value<bool>("a") == true);
+    CHECK(args.get_value<bool>("b") == true);
+}
+
+TEST_CASE("Parsing joined short options with store false action yields false for each of them")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-a").action(argparse::store_false);
+    parser.add_argument("-b").action(argparse::store_false);
+
+    auto args = parser.parse_args(2, cstr_arr{"prog", "-ab"});
+
+    CHECK(args.get_value<bool>("a") == false);
+    CHECK(args.get_value<bool>("b") == false);
+}
+
+TEST_CASE("Parsing joined short options with store const action yields const value")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-a").action(argparse::store_const).const_(10);
+    parser.add_argument("-b").action(argparse::store_const).const_(20);
+
+    auto args = parser.parse_args(2, cstr_arr{"prog", "-ab"});
+
+    CHECK(args.get_value<int>("a") == 10);
+    CHECK(args.get_value<int>("b") == 20);
+}
