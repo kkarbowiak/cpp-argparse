@@ -3150,3 +3150,13 @@ TEST_CASE("Parsing long option with joined argument does not throw")
 
     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "--long-opt=value"}));
 }
+
+TEST_CASE("Parsing long option with joined argument yields its value")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("--long");
+
+    auto args = parser.parse_args(2, cstr_arr{"prog", "--long=value"});
+
+    CHECK(args.get_value("long") == "value");
+}
