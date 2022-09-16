@@ -3142,3 +3142,21 @@ TEST_CASE("Parsing joined short options with store const action yields const val
     CHECK(args.get_value<int>("a") == 10);
     CHECK(args.get_value<int>("b") == 20);
 }
+
+TEST_CASE("Parsing long option with joined argument does not throw")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("--long-opt");
+
+    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "--long-opt=value"}));
+}
+
+TEST_CASE("Parsing long option with joined argument yields its value")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("--long");
+
+    auto args = parser.parse_args(2, cstr_arr{"prog", "--long=value"});
+
+    CHECK(args.get_value("long") == "value");
+}
