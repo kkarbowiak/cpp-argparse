@@ -145,7 +145,7 @@ The below lists features of the `argparse` module that this implementation suppo
 * The `parse_args()` method
    * no defaults, you need to pass `argc` and `argv` explicitly (normally, forward what you got in `main`)
    * option value syntax
-      * [ ] passing long option and value as a single command-line argument (`--foo=FOO`)
+      * [x] passing long option and value as a single command-line argument (`--foo=FOO`)
       * [ ] passing short option and value concatenated (`-xX`)
       * [x] joining together several short options (`-xyz`)
       * [x] double-dash pseudo-argument (`--`)
