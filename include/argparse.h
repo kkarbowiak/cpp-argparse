@@ -287,11 +287,11 @@ namespace argparse
 
             auto parse_args(tokens args) -> Parameters
             {
-                args = split_joined_short_options(args);
-                args = split_long_options_with_arguments(args);
-                args = parse_optional_arguments(args);
-                args = remove_pseudo_arguments(args);
-                args = parse_positional_arguments(args);
+                args = split_joined_short_options(std::move(args));
+                args = split_long_options_with_arguments(std::move(args));
+                args = parse_optional_arguments(std::move(args));
+                args = remove_pseudo_arguments(std::move(args));
+                args = parse_positional_arguments(std::move(args));
 
                 ensure_no_unrecognised_arguments(args);
                 ensure_no_arguments_excluded();
