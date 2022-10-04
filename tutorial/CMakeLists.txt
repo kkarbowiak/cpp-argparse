@@ -37,3 +37,6 @@ foreach(target ${targets})
                                $<$<CXX_COMPILER_ID:MSVC>:
                                    /W4 /WX /permissive->)
 endforeach()
+
+add_custom_target(tutorial)
+add_dependencies(tutorial ${targets})
