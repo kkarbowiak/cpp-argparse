@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-foreach(target
+set(targets
     basic
     positional
     positional1
@@ -25,6 +25,8 @@ foreach(target
     custom2
     types
     string)
+
+foreach(target ${targets})
         add_executable(${target})
         target_sources(${target} PRIVATE ${target}.cpp)
         target_include_directories(${target} PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>/include)
