@@ -66,7 +66,7 @@ jobs:
       - name: CMake configure
         run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_EXE_LINKER_FLAGS=--coverage
       - name: CMake build
-        run: cmake --build build --parallel 2
+        run: cmake --build build --parallel 2 --target unittest
       - name: Generate coverage
         run: |
           lcov --directory build --capture --output-file coverage.info
