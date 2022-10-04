@@ -69,6 +69,7 @@ jobs:
         run: cmake --build build --parallel 2 --target unittest
       - name: Generate coverage
         run: |
+          ./build/test/unittest/unittest
           lcov --directory build --capture --output-file coverage.info
           lcov --list coverage.info
           lcov --extract coverage.info --output-file argparse.info *argparse.h
