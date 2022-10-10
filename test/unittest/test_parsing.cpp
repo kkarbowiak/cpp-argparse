@@ -3021,7 +3021,9 @@ TEST_CASE("Arguments past the -- pseudo argument are treated as positional")
     {
         parser.add_argument("pos");
 
-        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "--", "-o"}));
+        auto const parsed =parser.parse_args(3, cstr_arr{"prog", "--", "-o"});
+
+        CHECK(parsed.get_value("pos") == "-o");
     }
 }
 
