@@ -365,7 +365,7 @@ namespace argparse
                 {
                     if (!arg->is_positional())
                     {
-                        args = arg->parse_args(args);
+                        args = arg->parse_args(std::move(args));
                     }
                 }
 
@@ -378,7 +378,7 @@ namespace argparse
                 {
                     if (arg->is_positional())
                     {
-                        args = arg->parse_args(args);
+                        args = arg->parse_args(std::move(args));
                     }
                 }
 
