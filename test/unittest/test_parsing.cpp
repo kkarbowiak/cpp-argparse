@@ -3006,6 +3006,27 @@ TEST_CASE("Parsing -- pseudo argument does not throw")
     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "--"}));
 }
 
+TEST_CASE("Arguments past the -- pseudo argument are treated as positional...")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
+    SUBCASE("...for optional arguments")
+    {
+        parser.add_argument("-o").action(argparse::store_true);
+
+        CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "--", "-o"}), "unrecognised arguments: -o", argparse::parsing_error);
+    }
+
+    SUBCASE("...for positional arguments")
+    {
+        parser.add_argument("pos");
+
+        auto const parsed =parser.parse_args(3, cstr_arr{"prog", "--", "-o"});
+
+        CHECK(parsed.get_value("pos") == "-o");
+    }
+}
+
 TEST_CASE("An optional argument does not consume arguments past the -- pseudo argument...")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
