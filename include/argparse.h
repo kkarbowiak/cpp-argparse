@@ -778,7 +778,7 @@ namespace argparse
 
                     auto parse_args(tokens args) -> tokens override
                     {
-                        auto pseudo_it = find_pseudo_arg(args);
+                        auto const pseudo_it = find_pseudo_arg(args);
                         if (auto it = find_arg(args.begin(), pseudo_it); it != pseudo_it)
                         {
                             it = args.erase(it);
