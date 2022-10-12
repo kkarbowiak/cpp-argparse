@@ -9,8 +9,10 @@ target_include_directories(${PROJECT_NAME} INTERFACE include/)
 
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_17)
 
-enable_testing()
-add_subdirectory(test/unittest)
-add_subdirectory(thirdparty/doctest)
+if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    enable_testing()
+    add_subdirectory(test/unittest)
+    add_subdirectory(thirdparty/doctest)
 
-add_subdirectory(tutorial)
+    add_subdirectory(tutorial)
+endif()
