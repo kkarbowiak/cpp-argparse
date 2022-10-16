@@ -26,8 +26,20 @@ jobs:
               cxx: "g++",
             }
           - {
+              name: "Ubuntu 22.04 - GCC",
+              os: ubuntu-22.04,
+              cc: "gcc",
+              cxx: "g++",
+            }
+          - {
               name: "Ubuntu latest - Clang",
               os: ubuntu-latest,
+              cc: "clang",
+              cxx: "clang++",
+            }
+          - {
+              name: "Ubuntu 22.04 - Clang",
+              os: ubuntu-22.04,
               cc: "clang",
               cxx: "clang++",
             }
@@ -37,12 +49,18 @@ jobs:
               cc: "clang",
               cxx: "clang++",
             }
+          - {
+              name: "macOS 12",
+              os: macos-12,
+              cc: "clang",
+              cxx: "clang++",
+            }
     steps:
       - uses: actions/checkout@v2
       - name: CMake configure
         run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=${{ matrix.config.cc }} -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }}
       - name: CMake build
-        run: cmake --build build --parallel 2
+        run: cmake --build build --parallel
   valgrind:
     name: "Valgrind"
     runs-on: ubuntu-latest
@@ -55,7 +73,7 @@ jobs:
       - name: CMake configure
         run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++
       - name: CMake build
-        run: cmake --build build --parallel 2 --target unittest
+        run: cmake --build build --parallel --target unittest
       - name: Run Valgrind
         run: valgrind ./build/test/unittest/unittest
   coverage:
@@ -70,7 +88,7 @@ jobs:
       - name: CMake configure
         run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_EXE_LINKER_FLAGS=--coverage
       - name: CMake build
-        run: cmake --build build --parallel 2 --target run_unit_test
+        run: cmake --build build --parallel --target run_unit_test
       - name: Generate coverage
         run: |
           lcov --directory build --capture --output-file coverage.info
