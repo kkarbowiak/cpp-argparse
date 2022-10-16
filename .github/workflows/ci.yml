@@ -26,14 +26,32 @@ jobs:
               cxx: "g++",
             }
           - {
+              name: "Ubuntu 22.04 - GCC",
+              os: ubuntu-22.04,
+              cc: "gcc",
+              cxx: "g++",
+            }
+          - {
               name: "Ubuntu latest - Clang",
               os: ubuntu-latest,
               cc: "clang",
               cxx: "clang++",
             }
           - {
+              name: "Ubuntu 22.04 - Clang",
+              os: ubuntu-22.04,
+              cc: "clang",
+              cxx: "clang++",
+            }
+          - {
               name: "macOS latest",
               os: macos-latest,
+              cc: "clang",
+              cxx: "clang++",
+            }
+          - {
+              name: "macOS 12",
+              os: macos-12,
               cc: "clang",
               cxx: "clang++",
             }
