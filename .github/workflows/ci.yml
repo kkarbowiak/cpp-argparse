@@ -61,6 +61,19 @@ jobs:
         run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=${{ matrix.config.cc }} -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }}
       - name: CMake build
         run: cmake --build build --parallel
+  clangtidy:
+    name: "clang-tidy"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install clang-tidy
+        run: |
+          sudo apt-get update
+          sudo apt install -y clang-tidy
+      - name: Cmake configure
+        run: cmake -Bbuild -DCMAKE_CXX_CLANG_TIDY=clang-tidy
+      - name: CMake build
+        run: cmake --build build --parallel
   valgrind:
     name: "Valgrind"
     runs-on: ubuntu-latest
