@@ -75,7 +75,7 @@ jobs:
           sudo apt-get update
           sudo apt install -y clang-tidy
 
-      - name: Cmake configure
+      - name: CMake configure
         run: cmake -Bbuild -DCMAKE_CXX_CLANG_TIDY=clang-tidy
 
       - name: CMake build
