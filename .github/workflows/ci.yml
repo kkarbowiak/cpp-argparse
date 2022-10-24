@@ -76,7 +76,7 @@ jobs:
           sudo apt install -y clang-tidy
 
       - name: CMake configure
-        run: cmake -Bbuild -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_CLANG_TIDY=clang-tidy
+        run: cmake -Bbuild -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_CLANG_TIDY="clang-tidy;-checks=*"
 
       - name: CMake build
         run: cmake --build build --parallel
