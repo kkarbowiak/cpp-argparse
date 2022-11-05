@@ -1,7 +1,7 @@
 #include "argparse.h"
 #include <iostream>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("--verbosity").help("increase output verbosity");

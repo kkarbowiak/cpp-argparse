@@ -410,7 +410,7 @@ TEST_CASE("Parsing mixed positional and optional arguments give same result no m
 
     SUBCASE("...for positional and optional")
     {
-        char const * argv[] = {"prog", "val1", "-f", "a"};
+        auto const argv = cstr_arr{"prog", "val1", "-f", "a"};
         auto const parsed1 = parser1.parse_args(4, argv);
         auto const parsed2 = parser2.parse_args(4, argv);
 
@@ -420,7 +420,7 @@ TEST_CASE("Parsing mixed positional and optional arguments give same result no m
 
     SUBCASE("...for optional and positional")
     {
-        char const * argv[] = {"prog", "-f", "a", "val1"};
+        auto const argv = cstr_arr{"prog", "-f", "a", "val1"};
         auto const parsed1 = parser1.parse_args(4, argv);
         auto const parsed2 = parser2.parse_args(4, argv);
 

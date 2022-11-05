@@ -2,7 +2,7 @@
 #include <iostream>
 #include <cmath>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser().description("calculate X to the power of Y");
     auto group = parser.add_mutually_exclusive_group();

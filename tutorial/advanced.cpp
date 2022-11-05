@@ -2,7 +2,7 @@
 #include <iostream>
 #include <cmath>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("x").type<int>().help("the base");
