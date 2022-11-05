@@ -44,7 +44,7 @@ inline auto are_equal(geometry::Point const & l, geometry::Point const & r) -> b
 }
 }
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("start").type<geometry::Point>();

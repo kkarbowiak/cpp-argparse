@@ -15,7 +15,7 @@ class Logger
         }
 };
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     Logger logger;
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);

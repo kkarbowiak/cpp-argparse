@@ -2,7 +2,7 @@
 #include <string>
 #include <iostream>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     using namespace std::string_literals;
 
