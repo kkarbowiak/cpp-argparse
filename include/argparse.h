@@ -791,7 +791,7 @@ namespace argparse
                                         if (has_nargs_number())
                                         {
                                             auto const nargs_number = get_nargs_number();
-                                            auto const args_number = count_args(it, args.end());
+                                            auto const args_number = count_args(args, idx, args.size());
                                             if (args_number < nargs_number)
                                             {
                                                 throw parsing_error("argument " + join(get_names(), "/") + ": expected " + std::to_string(nargs_number) + " argument" + (nargs_number > 1 ? "s" : ""));
@@ -818,14 +818,14 @@ namespace argparse
                                                 }
                                                 case '*':
                                                 {
-                                                    std::vector<std::any> values(count_args(it, args.end()));
+                                                    std::vector<std::any> values(count_args(args, idx, args.size()));
                                                     consume_args(args, it, values);
                                                     m_value = m_options.type_handler->transform(values);
                                                     break;
                                                 }
                                                 case '+':
                                                 {
-                                                    std::vector<std::any> values(count_args(it, args.end()));
+                                                    std::vector<std::any> values(count_args(args, idx, args.size()));
                                                     consume_args(args, it, values);
                                                     if (values.empty())
                                                     {
@@ -944,13 +944,13 @@ namespace argparse
                         return std::find_first_of(&args[begin], &args[end], m_options.names.begin(), m_options.names.end()) - &args[begin];
                     }
 
-                    auto count_args(tokens::const_iterator it, tokens::const_iterator end) const -> std::size_t
+                    auto count_args(tokens const & args, tokens::size_type idx, tokens::size_type end) const -> std::size_t
                     {
                         std::size_t result = 0;
-                        while (it != end && it->front() != '-')
+                        while (idx != end && args[idx].front() != '-')
                         {
                             ++result;
-                            ++it;
+                            ++idx;
                         }
                         return result;
                     }
