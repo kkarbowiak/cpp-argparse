@@ -778,7 +778,7 @@ namespace argparse
 
                     auto parse_args(tokens args) -> tokens override
                     {
-                        auto const pseudo_it = find_pseudo_arg(args);
+                        auto const pseudo_it = args.begin() + find_pseudo_arg(args);
                         if (auto it = find_arg(args.begin(), pseudo_it); it != pseudo_it)
                         {
                             it = args.erase(it);
@@ -933,9 +933,9 @@ namespace argparse
                     }
 
                 private:
-                    auto find_pseudo_arg(tokens const & args) const -> tokens::const_iterator
+                    auto find_pseudo_arg(tokens const & args) const -> tokens::size_type
                     {
-                        return std::find(args.begin(), args.end(), "--");
+                        return std::find(args.begin(), args.end(), "--") - args.begin();
                     }
 
                     auto find_arg(tokens::const_iterator begin, tokens::const_iterator end) const -> tokens::const_iterator
