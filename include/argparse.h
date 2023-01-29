@@ -941,7 +941,11 @@ namespace argparse
 
                     auto find_arg(tokens const & args, tokens::size_type begin, tokens::size_type end) const -> tokens::size_type
                     {
-                        return std::find_first_of(&args[begin], &args[end], m_options.names.begin(), m_options.names.end()) - &args[begin];
+                        if (end == begin)
+                        {
+                            return end;
+                        }
+                        return std::find_first_of(&args[begin], &args[begin] + end - begin, m_options.names.begin(), m_options.names.end()) - &args[begin];
                     }
 
                     auto count_args(tokens const & args, tokens::size_type idx, tokens::size_type end) const -> std::size_t
