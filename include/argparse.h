@@ -797,7 +797,7 @@ namespace argparse
                                                 throw parsing_error("argument " + join(get_names(), "/") + ": expected " + std::to_string(nargs_number) + " argument" + (nargs_number > 1 ? "s" : ""));
                                             }
                                             std::vector<std::any> values(args_number);
-                                            consume_args(args, it, values);
+                                            consume_args(args, idx, values);
                                             m_value = m_options.type_handler->transform(values);
                                         }
                                         else
@@ -812,21 +812,21 @@ namespace argparse
                                                     }
                                                     else
                                                     {
-                                                        consume_arg(args, it, m_value);
+                                                        consume_arg(args, idx, m_value);
                                                     }
                                                     break;
                                                 }
                                                 case '*':
                                                 {
                                                     std::vector<std::any> values(count_args(args, idx, args.size()));
-                                                    consume_args(args, it, values);
+                                                    consume_args(args, idx, values);
                                                     m_value = m_options.type_handler->transform(values);
                                                     break;
                                                 }
                                                 case '+':
                                                 {
                                                     std::vector<std::any> values(count_args(args, idx, args.size()));
-                                                    consume_args(args, it, values);
+                                                    consume_args(args, idx, values);
                                                     if (values.empty())
                                                     {
                                                         throw parsing_error("argument " + join(get_names(), "/") + ": expected at least one argument");
@@ -843,7 +843,7 @@ namespace argparse
                                         {
                                             throw parsing_error("argument " + join(get_names(), "/") + ": expected one argument");
                                         }
-                                        consume_arg(args, it, m_value);
+                                        consume_arg(args, idx, m_value);
                                     }
                                     break;
                                 case store_true:
@@ -955,24 +955,24 @@ namespace argparse
                         return result;
                     }
 
-                    auto consume_arg(tokens & args, tokens::const_iterator & arg_it, std::any & value) -> void
+                    auto consume_arg(tokens & args, tokens::size_type arg_idx, std::any & value) -> void
                     {
-                        if (!m_options.type_handler->from_string(*arg_it, value))
+                        if (!m_options.type_handler->from_string(args[arg_idx], value))
                         {
-                            throw parsing_error("argument " + join(get_names(), "/") + ": invalid value: '" + *arg_it + "'");
+                            throw parsing_error("argument " + join(get_names(), "/") + ": invalid value: '" + args[arg_idx] + "'");
                         }
                         if (!m_options.choices.empty())
                         {
                             check_choices(value);
                         }
-                        arg_it = args.erase(arg_it);
+                        args.erase(args.begin() + arg_idx);
                     }
 
-                    auto consume_args(tokens & args, tokens::const_iterator & arg_it, std::vector<std::any> & values) -> void
+                    auto consume_args(tokens & args, tokens::size_type arg_idx, std::vector<std::any> & values) -> void
                     {
                         for (auto & value : values)
                         {
-                            consume_arg(args, arg_it, value);
+                            consume_arg(args, arg_idx, value);
                         }
                     }
 
