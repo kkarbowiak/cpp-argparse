@@ -779,7 +779,7 @@ namespace argparse
                     auto parse_args(tokens args) -> tokens override
                     {
                         auto const pseudo_it = args.cbegin() + find_pseudo_arg(args);
-                        if (auto it = find_arg(args.begin(), pseudo_it); it != pseudo_it)
+                        if (auto it = args.cbegin() + find_arg(args, 0, pseudo_it - args.cbegin()); it != pseudo_it)
                         {
                             it = args.erase(it);
                             switch (m_options.action)
@@ -938,9 +938,9 @@ namespace argparse
                         return std::find(args.begin(), args.end(), "--") - args.begin();
                     }
 
-                    auto find_arg(tokens::const_iterator begin, tokens::const_iterator end) const -> tokens::const_iterator
+                    auto find_arg(tokens const & args, tokens::size_type begin, tokens::size_type end) const -> tokens::size_type
                     {
-                        return std::find_first_of(begin, end, m_options.names.begin(), m_options.names.end());
+                        return std::find_first_of(&args[begin], &args[end], m_options.names.begin(), m_options.names.end()) - &args[begin];
                     }
 
                     auto count_args(tokens::const_iterator it, tokens::const_iterator end) const -> std::size_t
