@@ -778,10 +778,11 @@ namespace argparse
 
                     auto parse_args(tokens args) -> tokens override
                     {
-                        auto const pseudo_idx = find_pseudo_arg(args);
+                        auto pseudo_idx = find_pseudo_arg(args);
                         if (auto idx = find_arg(args, 0, pseudo_idx); idx != pseudo_idx)
                         {
                             args.erase(args.begin() + idx);
+                            --pseudo_idx;
                             switch (m_options.action)
                             {
                                 case store:
@@ -790,7 +791,7 @@ namespace argparse
                                         if (has_nargs_number())
                                         {
                                             auto const nargs_number = get_nargs_number();
-                                            auto const args_number = count_args(args, idx, args.size());
+                                            auto const args_number = count_args(args, idx, pseudo_idx);
                                             if (args_number < nargs_number)
                                             {
                                                 throw parsing_error("argument " + join(get_names(), "/") + ": expected " + std::to_string(nargs_number) + " argument" + (nargs_number > 1 ? "s" : ""));
@@ -805,7 +806,7 @@ namespace argparse
                                             {
                                                 case '?':
                                                 {
-                                                    if (idx == args.size() || args[idx].front() == '-')
+                                                    if (idx == pseudo_idx || args[idx].front() == '-')
                                                     {
                                                         m_value = m_options.const_;
                                                     }
@@ -817,14 +818,14 @@ namespace argparse
                                                 }
                                                 case '*':
                                                 {
-                                                    std::vector<std::any> values(count_args(args, idx, args.size()));
+                                                    std::vector<std::any> values(count_args(args, idx, pseudo_idx));
                                                     consume_args(args, idx, values);
                                                     m_value = m_options.type_handler->transform(values);
                                                     break;
                                                 }
                                                 case '+':
                                                 {
-                                                    std::vector<std::any> values(count_args(args, idx, args.size()));
+                                                    std::vector<std::any> values(count_args(args, idx, pseudo_idx));
                                                     consume_args(args, idx, values);
                                                     if (values.empty())
                                                     {
@@ -838,7 +839,7 @@ namespace argparse
                                     }
                                     else
                                     {
-                                        if (idx == args.size() || args[idx].front() == '-')
+                                        if (idx == pseudo_idx || args[idx].front() == '-')
                                         {
                                             throw parsing_error("argument " + join(get_names(), "/") + ": expected one argument");
                                         }
