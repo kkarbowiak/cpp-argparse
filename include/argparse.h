@@ -778,9 +778,10 @@ namespace argparse
 
                     auto parse_args(tokens args) -> tokens override
                     {
-                        auto const pseudo_it = args.cbegin() + find_pseudo_arg(args);
-                        if (auto it = args.cbegin() + find_arg(args, 0, pseudo_it - args.cbegin()); it != pseudo_it)
+                        auto const pseudo_idx = find_pseudo_arg(args);
+                        if (auto idx = find_arg(args, 0, pseudo_idx); idx != pseudo_idx)
                         {
+                            auto it = args.cbegin() + idx;
                             it = args.erase(it);
                             switch (m_options.action)
                             {
