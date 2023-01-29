@@ -781,8 +781,7 @@ namespace argparse
                         auto const pseudo_idx = find_pseudo_arg(args);
                         if (auto idx = find_arg(args, 0, pseudo_idx); idx != pseudo_idx)
                         {
-                            auto it = args.cbegin() + idx;
-                            it = args.erase(it);
+                            args.erase(args.begin() + idx);
                             switch (m_options.action)
                             {
                                 case store:
@@ -806,7 +805,7 @@ namespace argparse
                                             {
                                                 case '?':
                                                 {
-                                                    if (it == args.end() || it->front() == '-')
+                                                    if (idx == args.size() || args[idx].front() == '-')
                                                     {
                                                         m_value = m_options.const_;
                                                     }
@@ -839,7 +838,7 @@ namespace argparse
                                     }
                                     else
                                     {
-                                        if (it == args.end() || it->front() == '-')
+                                        if (idx == args.size() || args[idx].front() == '-')
                                         {
                                             throw parsing_error("argument " + join(get_names(), "/") + ": expected one argument");
                                         }
