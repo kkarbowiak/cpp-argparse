@@ -29,13 +29,13 @@ set(targets
 foreach(target ${targets})
         add_executable(${target})
         target_sources(${target} PRIVATE ${target}.cpp)
-        target_include_directories(${target} PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>/include)
         target_compile_features(${target} PRIVATE cxx_std_17)
         target_compile_options(${target} PRIVATE
                                $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
                                    -Wall -Wextra -Werror -pedantic-errors>
                                $<$<CXX_COMPILER_ID:MSVC>:
                                    /W4 /WX /permissive->)
+        target_link_libraries(${target} PRIVATE cpp-argparse)
 endforeach()
 
 add_custom_target(tutorial)
