@@ -17,10 +17,11 @@ target_sources(unittest
     custom_b.h)
 
 target_include_directories(unittest
-    PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>/include
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>)
+    PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>)
 
-target_link_libraries(unittest PRIVATE doctest)
+target_link_libraries(unittest PRIVATE
+    cpp-argparse
+    doctest)
 
 target_compile_features(unittest PRIVATE cxx_std_17)
 target_compile_options(unittest PRIVATE
