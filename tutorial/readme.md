@@ -234,7 +234,7 @@ optional arguments:
   --verbose             increase output verbosity
 ```
 Here is what is happening:
- * The option is now more of a flag than something that requires a value. We even changed the name of the option to match that idea. Note that we now used a new function, `action`, and passed it the value `argparse::store_true`. This means that, if the option is specified, assign the value `true` to the relevant object. Not speficying it implies `false`.
+ * The option is now more of a flag than something that requires a value. We even changed the name of the option to match that idea. Note that we now used a new function, `action`, and passed it the value `argparse::store_true`. This means that, if the option is specified, assign the value `true` to the relevant object. Not specifying it implies `false`.
  * We now need to retrieve the value using `parsed.get_value<bool>()` as we now expect the value of type `bool` instead of the usual `std::string`.
  * The option now complains when you specify a value, in true spirit of what flags actually are.
  * Notice the different help text.
