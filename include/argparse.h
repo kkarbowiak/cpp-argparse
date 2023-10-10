@@ -781,7 +781,23 @@ namespace argparse
                         auto const pseudo_it = find_pseudo_arg(args);
                         if (auto it = find_arg(args.begin(), pseudo_it); it != pseudo_it)
                         {
-                            it = args.erase(it);
+                            if (auto const & arg = *it; arg[0] == '-' && arg[1] == '-')
+                            {
+                                if (auto const pos = arg.find('='); pos != std::string::npos)
+                                {
+                                    auto const value = arg.substr(pos + 1);
+                                    *it = value;
+                                }
+                                else
+                                {
+                                    it = args.erase(it);
+                                }
+                            }
+                            else
+                            {
+                                it = args.erase(it);
+                            }
+
                             switch (m_options.action)
                             {
                                 case store:
