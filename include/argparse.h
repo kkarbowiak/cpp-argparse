@@ -933,12 +933,12 @@ namespace argparse
                     }
 
                 private:
-                    auto find_pseudo_arg(tokens const & args) const -> tokens::const_iterator
+                    auto find_pseudo_arg(tokens & args) const -> tokens::iterator
                     {
                         return std::find(args.begin(), args.end(), "--");
                     }
 
-                    auto find_arg(tokens::const_iterator begin, tokens::const_iterator end) const -> tokens::const_iterator
+                    auto find_arg(tokens::iterator begin, tokens::iterator end) const -> tokens::iterator
                     {
                         return std::find_first_of(begin, end, m_options.names.begin(), m_options.names.end());
                     }
@@ -954,7 +954,7 @@ namespace argparse
                         return result;
                     }
 
-                    auto consume_arg(tokens & args, tokens::const_iterator & arg_it, std::any & value) -> void
+                    auto consume_arg(tokens & args, tokens::iterator & arg_it, std::any & value) -> void
                     {
                         if (!m_options.type_handler->from_string(*arg_it, value))
                         {
@@ -967,7 +967,7 @@ namespace argparse
                         arg_it = args.erase(arg_it);
                     }
 
-                    auto consume_args(tokens & args, tokens::const_iterator & arg_it, std::vector<std::any> & values) -> void
+                    auto consume_args(tokens & args, tokens::iterator & arg_it, std::vector<std::any> & values) -> void
                     {
                         for (auto & value : values)
                         {
