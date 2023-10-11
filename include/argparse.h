@@ -287,7 +287,6 @@ namespace argparse
 
             auto parse_args(tokens args) -> Parameters
             {
-                args = split_joined_short_options(std::move(args));
                 args = parse_optional_arguments(std::move(args));
                 args = remove_pseudo_arguments(std::move(args));
                 args = parse_positional_arguments(std::move(args));
@@ -319,24 +318,6 @@ namespace argparse
                 }
 
                 return result;
-            }
-
-            auto split_joined_short_options(tokens args) -> tokens
-            {
-                for (auto idx = 0u; idx < args.size(); ++idx)
-                {
-                    if (args[idx][0] == '-' && args[idx][1] != '-')
-                    {
-                        auto const options = args[idx].substr(2);
-                        args[idx] = '-' + args[idx].substr(1, 1);
-                        for (auto const & option : options)
-                        {
-                            args.insert(args.begin() + idx, std::string("-") + option);
-                        }
-                    }
-                }
-
-                return args;
             }
 
             auto parse_optional_arguments(tokens args) -> tokens
@@ -759,8 +740,9 @@ namespace argparse
                     auto parse_args(tokens args) -> tokens override
                     {
                         auto const pseudo_it = find_pseudo_arg(args);
-                        if (auto it = find_arg(args.begin(), pseudo_it); it != pseudo_it)
+                        if (auto result = find_arg(args.begin(), pseudo_it); result.first != pseudo_it)
                         {
+                            auto it = result.first;
                             if (auto const & arg = *it; arg[0] == '-' && arg[1] == '-')
                             {
                                 if (auto const pos = arg.find('='); pos != std::string::npos)
@@ -771,6 +753,21 @@ namespace argparse
                                 else
                                 {
                                     it = args.erase(it);
+                                }
+                            }
+                            else if ( arg[0] == '-' && arg[1] != '-')
+                            {
+                                if (result.second.size() == 2)
+                                {
+                                    if (it->size() == 2)
+                                    {
+                                        it = args.erase(it);
+                                    }
+                                    else
+                                    {
+                                        auto const pos = it->find(result.second[1]);
+                                        it->erase(pos, 1);
+                                    }
                                 }
                             }
                             else
@@ -934,21 +931,34 @@ namespace argparse
                         return std::find(args.begin(), args.end(), "--");
                     }
 
-                    auto find_arg(tokens::iterator begin, tokens::iterator end) const -> tokens::iterator
+                    auto find_arg(tokens::iterator begin, tokens::iterator end) const -> std::pair<tokens::iterator, std::string>
                     {
                         for (auto const & name : m_options.names)
                         {
-                            for (auto it = begin; it != end; ++it)
+                            if (name[1] != '-')
                             {
-                                auto const result = std::mismatch(name.begin(), name.end(), it->begin(), it->end());
-                                if (result.first == name.end() && (result.second == it->end() || *result.second == '='))
+                                for (auto it = begin; it != end; ++it)
                                 {
-                                    return it;
+                                    if ((*it)[0] == '-' && it->find(name[1]) != std::string::npos)
+                                    {
+                                        return {it, name};
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                for (auto it = begin; it != end; ++it)
+                                {
+                                    auto const result = std::mismatch(name.begin(), name.end(), it->begin(), it->end());
+                                    if (result.first == name.end() && (result.second == it->end() || *result.second == '='))
+                                    {
+                                        return {it, name};
+                                    }
                                 }
                             }
                         }
 
-                        return end;
+                        return {end, ""};
                     }
 
                     auto count_args(tokens::const_iterator it, tokens::const_iterator end) const -> std::size_t
