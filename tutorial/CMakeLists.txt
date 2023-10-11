@@ -29,7 +29,7 @@ set(targets
 foreach(target ${targets})
         add_executable(${target})
         target_sources(${target} PRIVATE ${target}.cpp)
-        target_compile_features(${target} PRIVATE cxx_std_17)
+        target_compile_features(${target} PRIVATE cxx_std_20)
         target_compile_options(${target} PRIVATE
                                $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
                                    -Wall -Wextra -Werror -pedantic-errors>
