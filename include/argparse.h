@@ -764,6 +764,10 @@ namespace argparse
                                     {
                                         auto const pos = it->find(result.second[1]);
                                         it->erase(pos, 1);
+                                        if (m_options.action == store)
+                                        {
+                                            it->erase(0, 1);
+                                        }
                                     }
                                 }
                             }

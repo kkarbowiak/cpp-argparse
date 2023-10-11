@@ -3206,3 +3206,11 @@ TEST_CASE("Parsing long options with same prefix correctly recognises them")
         CHECK(!args.get("same"));
     }
 }
+
+TEST_CASE("Parsing short option with joined argument does not throw")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o");
+
+    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-ovalue"}));
+}
