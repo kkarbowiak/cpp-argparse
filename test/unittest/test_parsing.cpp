@@ -809,7 +809,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
     {
         SUBCASE("...consumes single argument and yields it as a single item")
         {
-            parser.add_argument("pos").nargs('?').template type<T>();
+            parser.add_argument("pos").nargs(argparse::zero_or_one).template type<T>();
 
             if constexpr (std::is_integral_v<T>)
             {
@@ -835,7 +835,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
         {
             if constexpr (std::is_integral_v<T>)
             {
-                parser.add_argument("pos").nargs('?').default_(T(10));
+                parser.add_argument("pos").nargs(argparse::zero_or_one).default_(T(10));
 
                 auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
@@ -843,7 +843,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
             }
             else if constexpr (std::is_floating_point_v<T>)
             {
-                parser.add_argument("pos").nargs('?').default_(T(0.0625));
+                parser.add_argument("pos").nargs(argparse::zero_or_one).default_(T(0.0625));
 
                 auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
@@ -851,7 +851,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
             }
             else
             {
-                parser.add_argument("pos").nargs('?').default_("foo"s);
+                parser.add_argument("pos").nargs(argparse::zero_or_one).default_("foo"s);
 
                 auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
@@ -864,7 +864,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
     {
         SUBCASE("...yields an empty list if no arguments provided")
         {
-            parser.add_argument("pos").nargs('*').template type<T>();
+            parser.add_argument("pos").nargs(argparse::zero_or_more).template type<T>();
 
             auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
@@ -873,7 +873,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
 
         SUBCASE("...consumes single argument and yields it as a list")
         {
-            parser.add_argument("pos").nargs('*').template type<T>();
+            parser.add_argument("pos").nargs(argparse::zero_or_more).template type<T>();
 
             if constexpr (std::is_integral_v<T>)
             {
@@ -897,7 +897,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
 
         SUBCASE("...consumes all available arguments and yields them as a list")
         {
-            parser.add_argument("pos").nargs('*').template type<T>();
+            parser.add_argument("pos").nargs(argparse::zero_or_more).template type<T>();
 
             if constexpr (std::is_integral_v<T>)
             {
@@ -924,14 +924,14 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
     {
         SUBCASE("...throws an exception if no arguments provided")
         {
-            parser.add_argument("pos").nargs('+').template type<T>();
+            parser.add_argument("pos").nargs(argparse::one_or_more).template type<T>();
 
             CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: pos", argparse::parsing_error);
         }
 
         SUBCASE("...consumes single argument and yields it as a list")
         {
-            parser.add_argument("pos").nargs('+').template type<T>();
+            parser.add_argument("pos").nargs(argparse::one_or_more).template type<T>();
 
             if constexpr (std::is_integral_v<T>)
             {
@@ -955,7 +955,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
 
         SUBCASE("...consumes all available arguments and yields them as a list")
         {
-            parser.add_argument("pos").nargs('+').template type<T>();
+            parser.add_argument("pos").nargs(argparse::one_or_more).template type<T>();
 
             if constexpr (std::is_integral_v<T>)
             {
@@ -1168,7 +1168,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
     {
         SUBCASE("...consumes single argument and yields it as a single item")
         {
-            parser.add_argument("-o").nargs('?').template type<T>();
+            parser.add_argument("-o").nargs(argparse::zero_or_one).template type<T>();
 
             if constexpr (std::is_integral_v<T>)
             {
@@ -1194,7 +1194,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
         {
             if constexpr (std::is_integral_v<T>)
             {
-                parser.add_argument("-o").nargs('?').default_(T(10));
+                parser.add_argument("-o").nargs(argparse::zero_or_one).default_(T(10));
 
                 auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
@@ -1202,7 +1202,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
             }
             else if constexpr (std::is_floating_point_v<T>)
             {
-                parser.add_argument("-o").nargs('?').default_(T(0.0625));
+                parser.add_argument("-o").nargs(argparse::zero_or_one).default_(T(0.0625));
 
                 auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
@@ -1210,7 +1210,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
             }
             else
             {
-                parser.add_argument("-o").nargs('?').default_("foo"s);
+                parser.add_argument("-o").nargs(argparse::zero_or_one).default_("foo"s);
 
                 auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
@@ -1222,7 +1222,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
         {
             if constexpr (std::is_integral_v<T>)
             {
-                parser.add_argument("-o").nargs('?').const_(T(5));
+                parser.add_argument("-o").nargs(argparse::zero_or_one).const_(T(5));
 
                 auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
 
@@ -1230,7 +1230,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
             }
             else if constexpr (std::is_floating_point_v<T>)
             {
-                parser.add_argument("-o").nargs('?').const_(T(0.875));
+                parser.add_argument("-o").nargs(argparse::zero_or_one).const_(T(0.875));
 
                 auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
 
@@ -1238,7 +1238,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
             }
             else
             {
-                parser.add_argument("-o").nargs('?').const_("foo"s);
+                parser.add_argument("-o").nargs(argparse::zero_or_one).const_("foo"s);
 
                 auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
 
@@ -1251,7 +1251,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
     {
         SUBCASE("...yields an empty list if no arguments provided")
         {
-            parser.add_argument("-o").nargs('*').template type<T>();
+            parser.add_argument("-o").nargs(argparse::zero_or_more).template type<T>();
 
             auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
 
@@ -1260,7 +1260,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
 
         SUBCASE("...consumes single argument and yields it as a list")
         {
-            parser.add_argument("-o").nargs('*').template type<T>();
+            parser.add_argument("-o").nargs(argparse::zero_or_more).template type<T>();
 
             if constexpr (std::is_integral_v<T>)
             {
@@ -1284,7 +1284,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
 
         SUBCASE("...consumes all available arguments and yields them as a list")
         {
-            parser.add_argument("-o").nargs('*').template type<T>();
+            parser.add_argument("-o").nargs(argparse::zero_or_more).template type<T>();
 
             if constexpr (std::is_integral_v<T>)
             {
@@ -1311,14 +1311,14 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
     {
         SUBCASE("...throws an exception if no arguments provided")
         {
-            parser.add_argument("-o").nargs('+').template type<T>();
+            parser.add_argument("-o").nargs(argparse::one_or_more).template type<T>();
 
             CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o: expected at least one argument", argparse::parsing_error);
         }
 
         SUBCASE("...consumes single argument and yields it as a list")
         {
-            parser.add_argument("-o").nargs('+').template type<T>();
+            parser.add_argument("-o").nargs(argparse::one_or_more).template type<T>();
 
             if constexpr (std::is_integral_v<T>)
             {
@@ -1342,7 +1342,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
 
         SUBCASE("...consumes all available arguments and yields them as a list")
         {
-            parser.add_argument("-o").nargs('+').template type<T>();
+            parser.add_argument("-o").nargs(argparse::one_or_more).template type<T>();
 
             if constexpr (std::is_integral_v<T>)
             {
@@ -1456,21 +1456,21 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
             {
                 if constexpr (std::is_integral_v<T>)
                 {
-                    parser.add_argument("pos").choices({T(11), T(22)}).nargs('?').template type<T>();
+                    parser.add_argument("pos").choices({T(11), T(22)}).nargs(argparse::zero_or_one).template type<T>();
 
                     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "11"}));
                     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "22"}));
                 }
                 else if constexpr (std::is_floating_point_v<T>)
                 {
-                    parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs('?').template type<T>();
+                    parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs(argparse::zero_or_one).template type<T>();
 
                     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "0.125"}));
                     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "0.25"}));
                 }
                 else
                 {
-                    parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs('?').template type<T>();
+                    parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::zero_or_one).template type<T>();
 
                     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "foo"}));
                     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "bar"}));
@@ -1482,15 +1482,15 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
         {
             if constexpr (std::is_integral_v<T>)
             {
-                parser.add_argument("pos").choices({T(11), T(22)}).nargs('*').template type<T>();
+                parser.add_argument("pos").choices({T(11), T(22)}).nargs(argparse::zero_or_more).template type<T>();
             }
             else if constexpr (std::is_floating_point_v<T>)
             {
-                parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs('*').template type<T>();
+                parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs(argparse::zero_or_more).template type<T>();
             }
             else
             {
-                parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs('*').template type<T>();
+                parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::zero_or_more).template type<T>();
             }
 
             SUBCASE("...for one argument")
@@ -1555,15 +1555,15 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
         {
             if constexpr (std::is_integral_v<T>)
             {
-                parser.add_argument("pos").choices({T(11), T(22)}).nargs('+').template type<T>();
+                parser.add_argument("pos").choices({T(11), T(22)}).nargs(argparse::one_or_more).template type<T>();
             }
             else if constexpr (std::is_floating_point_v<T>)
             {
-                parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs('+').template type<T>();
+                parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs(argparse::one_or_more).template type<T>();
             }
             else
             {
-                parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs('+').template type<T>();
+                parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::one_or_more).template type<T>();
             }
 
             SUBCASE("...for one argument")
@@ -1720,7 +1720,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
             {
                 if constexpr (std::is_integral_v<T>)
                 {
-                    parser.add_argument("pos").choices({T(11), T(22)}).nargs('?').template type<T>();
+                    parser.add_argument("pos").choices({T(11), T(22)}).nargs(argparse::zero_or_one).template type<T>();
 
                     auto const parsed = parser.parse_args(2, cstr_arr{"prog", "11"});
 
@@ -1728,7 +1728,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
                 }
                 else if constexpr (std::is_floating_point_v<T>)
                 {
-                    parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs('?').template type<T>();
+                    parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs(argparse::zero_or_one).template type<T>();
 
                     auto const parsed = parser.parse_args(2, cstr_arr{"prog", "0.125"});
 
@@ -1736,7 +1736,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
                 }
                 else
                 {
-                    parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs('?').template type<T>();
+                    parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::zero_or_one).template type<T>();
 
                     auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
 
@@ -1749,15 +1749,15 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
         {
             if constexpr (std::is_integral_v<T>)
             {
-                parser.add_argument("pos").choices({T(11), T(22)}).nargs('*').template type<T>();
+                parser.add_argument("pos").choices({T(11), T(22)}).nargs(argparse::zero_or_more).template type<T>();
             }
             else if constexpr (std::is_floating_point_v<T>)
             {
-                parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs('*').template type<T>();
+                parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs(argparse::zero_or_more).template type<T>();
             }
             else
             {
-                parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs('*').template type<T>();
+                parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::zero_or_more).template type<T>();
             }
 
             SUBCASE("...for one argument")
@@ -1831,15 +1831,15 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
         {
             if constexpr (std::is_integral_v<T>)
             {
-                parser.add_argument("pos").choices({T(11), T(22)}).nargs('+').template type<T>();
+                parser.add_argument("pos").choices({T(11), T(22)}).nargs(argparse::one_or_more).template type<T>();
             }
             else if constexpr (std::is_floating_point_v<T>)
             {
-                parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs('+').template type<T>();
+                parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs(argparse::one_or_more).template type<T>();
             }
             else
             {
-                parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs('+').template type<T>();
+                parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::one_or_more).template type<T>();
             }
 
             SUBCASE("...for one argument")
@@ -1987,19 +1987,19 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
             {
                 if constexpr (std::is_integral_v<T>)
                 {
-                    parser.add_argument("pos").choices({T(11), T(22)}).nargs('?').template type<T>();
+                    parser.add_argument("pos").choices({T(11), T(22)}).nargs(argparse::zero_or_one).template type<T>();
 
                     CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "33"}), "argument pos: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
                 }
                 else if constexpr (std::is_floating_point_v<T>)
                 {
-                    parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs('?').template type<T>();
+                    parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs(argparse::zero_or_one).template type<T>();
 
                     CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "0.5"}), "argument pos: invalid choice: 0.5 (choose from 0.125, 0.25)", argparse::parsing_error);
                 }
                 else
                 {
-                    parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs('?').template type<T>();
+                    parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::zero_or_one).template type<T>();
 
                     CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "baz"}), "argument pos: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
                 }
@@ -2010,15 +2010,15 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
         {
             if constexpr (std::is_integral_v<T>)
             {
-                parser.add_argument("pos").choices({T(11), T(22)}).nargs('*').template type<T>();
+                parser.add_argument("pos").choices({T(11), T(22)}).nargs(argparse::zero_or_more).template type<T>();
             }
             else if constexpr (std::is_floating_point_v<T>)
             {
-                parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs('*').template type<T>();
+                parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs(argparse::zero_or_more).template type<T>();
             }
             else
             {
-                parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs('*').template type<T>();
+                parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::zero_or_more).template type<T>();
             }
 
             SUBCASE("...for one argument")
@@ -2074,15 +2074,15 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
         {
             if constexpr (std::is_integral_v<T>)
             {
-                parser.add_argument("pos").choices({T(11), T(22)}).nargs('+').template type<T>();
+                parser.add_argument("pos").choices({T(11), T(22)}).nargs(argparse::one_or_more).template type<T>();
             }
             else if constexpr (std::is_floating_point_v<T>)
             {
-                parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs('+').template type<T>();
+                parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs(argparse::one_or_more).template type<T>();
             }
             else
             {
-                parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs('+').template type<T>();
+                parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::one_or_more).template type<T>();
             }
 
             SUBCASE("...for one argument")
@@ -2226,21 +2226,21 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
             {
                 if constexpr (std::is_integral_v<T>)
                 {
-                    parser.add_argument("-o").choices({T(11), T(22)}).nargs('?').template type<T>();
+                    parser.add_argument("-o").choices({T(11), T(22)}).nargs(argparse::zero_or_one).template type<T>();
 
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "11"}));
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "22"}));
                 }
                 else if constexpr (std::is_floating_point_v<T>)
                 {
-                    parser.add_argument("-o").choices({T(0.125), T(0.25)}).nargs('?').template type<T>();
+                    parser.add_argument("-o").choices({T(0.125), T(0.25)}).nargs(argparse::zero_or_one).template type<T>();
 
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "0.125"}));
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "0.25"}));
                 }
                 else
                 {
-                    parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('?').template type<T>();
+                    parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_one).template type<T>();
 
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "bar"}));
@@ -2252,15 +2252,15 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
         {
             if constexpr (std::is_integral_v<T>)
             {
-                parser.add_argument("-o").choices({T(11), T(22)}).nargs('*').template type<T>();
+                parser.add_argument("-o").choices({T(11), T(22)}).nargs(argparse::zero_or_more).template type<T>();
             }
             else if constexpr (std::is_floating_point_v<T>)
             {
-                parser.add_argument("-o").choices({T(0.125), T(0.25)}).nargs('*').template type<T>();
+                parser.add_argument("-o").choices({T(0.125), T(0.25)}).nargs(argparse::zero_or_more).template type<T>();
             }
             else
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('*').template type<T>();
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_more).template type<T>();
             }
 
             SUBCASE("...for one argument")
@@ -2325,15 +2325,15 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
         {
             if constexpr (std::is_integral_v<T>)
             {
-                parser.add_argument("-o").choices({T(11), T(22)}).nargs('+').template type<T>();
+                parser.add_argument("-o").choices({T(11), T(22)}).nargs(argparse::one_or_more).template type<T>();
             }
             else if constexpr (std::is_floating_point_v<T>)
             {
-                parser.add_argument("-o").choices({T(0.125), T(0.25)}).nargs('+').template type<T>();
+                parser.add_argument("-o").choices({T(0.125), T(0.25)}).nargs(argparse::one_or_more).template type<T>();
             }
             else
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('+').template type<T>();
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::one_or_more).template type<T>();
             }
 
             SUBCASE("...for one argument")
@@ -2490,7 +2490,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
             {
                 if constexpr (std::is_integral_v<T>)
                 {
-                    parser.add_argument("-o").choices({T(11), T(22)}).nargs('?').template type<T>();
+                    parser.add_argument("-o").choices({T(11), T(22)}).nargs(argparse::zero_or_one).template type<T>();
 
                     auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "11"});
 
@@ -2498,7 +2498,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
                 }
                 else if constexpr (std::is_floating_point_v<T>)
                 {
-                    parser.add_argument("-o").choices({T(0.125), T(0.25)}).nargs('?').template type<T>();
+                    parser.add_argument("-o").choices({T(0.125), T(0.25)}).nargs(argparse::zero_or_one).template type<T>();
 
                     auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "0.125"});
 
@@ -2506,7 +2506,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
                 }
                 else
                 {
-                    parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('?').template type<T>();
+                    parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_one).template type<T>();
 
                     auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
 
@@ -2519,15 +2519,15 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
         {
             if constexpr (std::is_integral_v<T>)
             {
-                parser.add_argument("-o").choices({T(11), T(22)}).nargs('*').template type<T>();
+                parser.add_argument("-o").choices({T(11), T(22)}).nargs(argparse::zero_or_more).template type<T>();
             }
             else if constexpr (std::is_floating_point_v<T>)
             {
-                parser.add_argument("-o").choices({T(0.125), T(0.25)}).nargs('*').template type<T>();
+                parser.add_argument("-o").choices({T(0.125), T(0.25)}).nargs(argparse::zero_or_more).template type<T>();
             }
             else
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('*').template type<T>();
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_more).template type<T>();
             }
 
             SUBCASE("...for one argument")
@@ -2601,15 +2601,15 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
         {
             if constexpr (std::is_integral_v<T>)
             {
-                parser.add_argument("-o").choices({T(11), T(22)}).nargs('+').template type<T>();
+                parser.add_argument("-o").choices({T(11), T(22)}).nargs(argparse::one_or_more).template type<T>();
             }
             else if constexpr (std::is_floating_point_v<T>)
             {
-                parser.add_argument("-o").choices({T(0.125), T(0.25)}).nargs('+').template type<T>();
+                parser.add_argument("-o").choices({T(0.125), T(0.25)}).nargs(argparse::one_or_more).template type<T>();
             }
             else
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('+').template type<T>();
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::one_or_more).template type<T>();
             }
 
             SUBCASE("...for one argument")
@@ -2757,19 +2757,19 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
             {
                 if constexpr (std::is_integral_v<T>)
                 {
-                    parser.add_argument("-o").choices({T(11), T(22)}).nargs('?').template type<T>();
+                    parser.add_argument("-o").choices({T(11), T(22)}).nargs(argparse::zero_or_one).template type<T>();
 
                     CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "33"}), "argument -o: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
                 }
                 else if constexpr (std::is_floating_point_v<T>)
                 {
-                    parser.add_argument("-o").choices({T(0.125), T(0.25)}).nargs('?').template type<T>();
+                    parser.add_argument("-o").choices({T(0.125), T(0.25)}).nargs(argparse::zero_or_one).template type<T>();
 
                     CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"}), "argument -o: invalid choice: 0.5 (choose from 0.125, 0.25)", argparse::parsing_error);
                 }
                 else
                 {
-                    parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('?').template type<T>();
+                    parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_one).template type<T>();
 
                     CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
                 }
@@ -2780,15 +2780,15 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
         {
             if constexpr (std::is_integral_v<T>)
             {
-                parser.add_argument("-o").choices({T(11), T(22)}).nargs('*').template type<T>();
+                parser.add_argument("-o").choices({T(11), T(22)}).nargs(argparse::zero_or_more).template type<T>();
             }
             else if constexpr (std::is_floating_point_v<T>)
             {
-                parser.add_argument("-o").choices({T(0.125), T(0.25)}).nargs('*').template type<T>();
+                parser.add_argument("-o").choices({T(0.125), T(0.25)}).nargs(argparse::zero_or_more).template type<T>();
             }
             else
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('*').template type<T>();
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_more).template type<T>();
             }
 
             SUBCASE("...for one argument")
@@ -2844,15 +2844,15 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
         {
             if constexpr (std::is_integral_v<T>)
             {
-                parser.add_argument("-o").choices({T(11), T(22)}).nargs('+').template type<T>();
+                parser.add_argument("-o").choices({T(11), T(22)}).nargs(argparse::one_or_more).template type<T>();
             }
             else if constexpr (std::is_floating_point_v<T>)
             {
-                parser.add_argument("-o").choices({T(0.125), T(0.25)}).nargs('+').template type<T>();
+                parser.add_argument("-o").choices({T(0.125), T(0.25)}).nargs(argparse::one_or_more).template type<T>();
             }
             else
             {
-                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('+').template type<T>();
+                parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::one_or_more).template type<T>();
             }
 
             SUBCASE("...for one argument")
@@ -2976,7 +2976,7 @@ TEST_CASE("An optional argument does not consume another optional argument...")
 
     SUBCASE("...for argument with nargs set as ?")
     {
-        parser.add_argument("-o").nargs('?');
+        parser.add_argument("-o").nargs(argparse::zero_or_one);
         parser.add_argument("-p");
 
         CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}), "argument -p: expected one argument", argparse::parsing_error);
@@ -2984,7 +2984,7 @@ TEST_CASE("An optional argument does not consume another optional argument...")
 
     SUBCASE("...for argument with nargs set as *")
     {
-        parser.add_argument("-o").nargs('*');
+        parser.add_argument("-o").nargs(argparse::zero_or_more);
         parser.add_argument("-p");
 
         CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}), "argument -p: expected one argument", argparse::parsing_error);
@@ -2992,7 +2992,7 @@ TEST_CASE("An optional argument does not consume another optional argument...")
 
     SUBCASE("...for argument with nargs set as +")
     {
-        parser.add_argument("-o").nargs('+');
+        parser.add_argument("-o").nargs(argparse::one_or_more);
         parser.add_argument("-p");
 
         CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}), "argument -o: expected at least one argument", argparse::parsing_error);
@@ -3064,7 +3064,7 @@ TEST_CASE("An optional argument does not consume arguments past the -- pseudo ar
 
     SUBCASE("...for argument with nargs set as ?")
     {
-        parser.add_argument("-o").nargs('?');
+        parser.add_argument("-o").nargs(argparse::zero_or_one);
 
         auto args = parser.parse_args(3, cstr_arr{"prog", "-o", "--"});
 
@@ -3073,7 +3073,7 @@ TEST_CASE("An optional argument does not consume arguments past the -- pseudo ar
 
     SUBCASE("...for argument with nargs set as *")
     {
-        parser.add_argument("-o").nargs('*');
+        parser.add_argument("-o").nargs(argparse::zero_or_more);
 
         auto args = parser.parse_args(3, cstr_arr{"prog", "-o", "--"});
 
@@ -3082,14 +3082,14 @@ TEST_CASE("An optional argument does not consume arguments past the -- pseudo ar
 
     SUBCASE("...for argument with nargs set as +")
     {
-        parser.add_argument("-o").nargs('+');
+        parser.add_argument("-o").nargs(argparse::one_or_more);
 
         CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "--"}), "argument -o: expected at least one argument", argparse::parsing_error);
     }
 
     SUBCASE("...for argument with nargs set as * and followed by a positional argument")
     {
-        parser.add_argument("-o").nargs('*');
+        parser.add_argument("-o").nargs(argparse::zero_or_more);
         parser.add_argument("pos");
 
         auto args = parser.parse_args(4, cstr_arr{"prog", "-o", "--", "val"});

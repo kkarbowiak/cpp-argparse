@@ -38,6 +38,13 @@ namespace argparse
         help
     };
 
+    enum Nargs
+    {
+        zero_or_one,
+        zero_or_more,
+        one_or_more
+    };
+
     enum class Handle
     {
         errors_and_help,
@@ -497,7 +504,7 @@ namespace argparse
                 std::any default_;
                 bool required;
                 std::vector<std::any> choices;
-                std::optional<std::variant<std::size_t, char>> nargs;
+                std::optional<std::variant<std::size_t, Nargs>> nargs;
                 MutuallyExclusiveGroup const * mutually_exclusive_group = nullptr;
                 std::unique_ptr<TypeHandler> type_handler = std::make_unique<TypeHandlerT<std::string>>();
 
@@ -564,9 +571,9 @@ namespace argparse
                         return std::get<std::size_t>(*m_options.nargs);
                     }
 
-                    auto get_nargs_symbol() const -> char
+                    auto get_nargs_option() const -> Nargs
                     {
-                        return std::get<char>(*m_options.nargs);
+                        return std::get<Nargs>(*m_options.nargs);
                     }
 
                 protected:
@@ -612,9 +619,9 @@ namespace argparse
                             }
                             else
                             {
-                                switch (get_nargs_symbol())
+                                switch (get_nargs_option())
                                 {
-                                    case '?':
+                                    case zero_or_one:
                                     {
                                         if (!args.empty())
                                         {
@@ -626,14 +633,14 @@ namespace argparse
                                         }
                                         break;
                                     }
-                                    case '*':
+                                    case zero_or_more:
                                     {
                                         std::vector<std::any> values(args.size());
                                         consume_args(args, values);
                                         m_value = m_options.type_handler->transform(values);
                                         break;
                                     }
-                                    case '+':
+                                    case one_or_more:
                                     {
                                         std::vector<std::any> values(args.size());
                                         consume_args(args, values);
@@ -795,9 +802,9 @@ namespace argparse
                                         }
                                         else
                                         {
-                                            switch (get_nargs_symbol())
+                                            switch (get_nargs_option())
                                             {
-                                                case '?':
+                                                case zero_or_one:
                                                 {
                                                     if (it == args.end() || it->front() == '-')
                                                     {
@@ -809,14 +816,14 @@ namespace argparse
                                                     }
                                                     break;
                                                 }
-                                                case '*':
+                                                case zero_or_more:
                                                 {
                                                     std::vector<std::any> values(count_args(it, args.end()));
                                                     consume_args(args, it, values);
                                                     m_value = m_options.type_handler->transform(values);
                                                     break;
                                                 }
-                                                case '+':
+                                                case one_or_more:
                                                 {
                                                     std::vector<std::any> values(count_args(it, args.end()));
                                                     consume_args(args, it, values);
@@ -1205,15 +1212,15 @@ namespace argparse
                         }
                         else
                         {
-                            switch (argument.get_nargs_symbol())
+                            switch (argument.get_nargs_option())
                             {
-                                case '?':
+                                case zero_or_one:
                                     result += " [" + formatted_arg + "]";
                                     break;
-                                case '*':
+                                case zero_or_more:
                                     result += " [" + formatted_arg + " [" + formatted_arg + " ...]]";
                                     break;
-                                case '+':
+                                case one_or_more:
                                     result += " " + formatted_arg + " [" + formatted_arg + " ...]";
                                     break;
                             }
@@ -1353,7 +1360,7 @@ namespace argparse
                         return *this;
                     }
 
-                    auto nargs(char nargs) -> ArgumentBuilder &
+                    auto nargs(Nargs nargs) -> ArgumentBuilder &
                     {
                         m_options.nargs = nargs;
                         return *this;

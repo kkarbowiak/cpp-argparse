@@ -213,42 +213,42 @@ TEST_CASE("Usage message contains...")
 
         SUBCASE("...its name in brackets for argument with nargs set as ?")
         {
-            parser.add_argument("p1").nargs('?');
+            parser.add_argument("p1").nargs(argparse::zero_or_one);
 
             CHECK(parser.format_usage() == "usage: prog [p1]"s);
         }
 
         SUBCASE("...choices in brackets for argument with choices set and nargs set as ?")
         {
-            parser.add_argument("p1").choices({"foo"s, "bar"s}).nargs('?');
+            parser.add_argument("p1").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_one);
 
             CHECK(parser.format_usage() == "usage: prog [{\"foo\",\"bar\"}]"s);
         }
 
         SUBCASE("...its name in brackets followed by its name and ellipsis in brackets for argument with nargs set as *")
         {
-            parser.add_argument("p1").nargs('*');
+            parser.add_argument("p1").nargs(argparse::zero_or_more);
 
             CHECK(parser.format_usage() == "usage: prog [p1 [p1 ...]]"s);
         }
 
         SUBCASE("...choices in brackets followed by choices and ellipsis in brackets for argument with choices set and nargs set as *")
         {
-            parser.add_argument("p1").choices({"foo"s, "bar"s}).nargs('*');
+            parser.add_argument("p1").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_more);
 
             CHECK(parser.format_usage() == "usage: prog [{\"foo\",\"bar\"} [{\"foo\",\"bar\"} ...]]"s);
         }
 
         SUBCASE("...its name followed by its name and ellipsis in brackets for argument with nargs set as +")
         {
-            parser.add_argument("p1").nargs('+');
+            parser.add_argument("p1").nargs(argparse::one_or_more);
 
             CHECK(parser.format_usage() == "usage: prog p1 [p1 ...]"s);
         }
 
         SUBCASE("...choices followed by choices and ellipsis in brackets for argument with choices set and nargs set as +")
         {
-            parser.add_argument("p1").choices({"foo"s, "bar"s}).nargs('+');
+            parser.add_argument("p1").choices({"foo"s, "bar"s}).nargs(argparse::one_or_more);
 
             CHECK(parser.format_usage() == "usage: prog {\"foo\",\"bar\"} [{\"foo\",\"bar\"} ...]"s);
         }
@@ -417,63 +417,63 @@ TEST_CASE("Usage message contains...")
 
         SUBCASE("...is name and automatic metavar in brackets for argument with nargs set as ?")
         {
-            parser.add_argument("-o").nargs('?');
+            parser.add_argument("-o").nargs(argparse::zero_or_one);
 
             CHECK(parser.format_usage() == "usage: prog [-o [O]]"s);
         }
 
         SUBCASE("...is name and metavar in brackets for argument with metavar set and nargs set as ?")
         {
-            parser.add_argument("-o").metavar("METAVARO").nargs('?');
+            parser.add_argument("-o").metavar("METAVARO").nargs(argparse::zero_or_one);
 
             CHECK(parser.format_usage() == "usage: prog [-o [METAVARO]]"s);
         }
 
         SUBCASE("...is name and choices in brackets for argument with choices set and nargs set as ?")
         {
-            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('?');
+            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_one);
 
             CHECK(parser.format_usage() == "usage: prog [-o [{\"foo\",\"bar\"}]]"s);
         }
 
         SUBCASE("...its name followed by automatic metavar in brackets and automatic metavar and ellipsis in nested brackets for arguments with nargs set as *")
         {
-            parser.add_argument("-o").nargs('*');
+            parser.add_argument("-o").nargs(argparse::zero_or_more);
 
             CHECK(parser.format_usage() == "usage: prog [-o [O [O ...]]]"s);
         }
 
         SUBCASE("...its name followed by metavar in brackets and metavar and ellipsis in nested brackets for arguments with metavar set and nargs set as *")
         {
-            parser.add_argument("-o").metavar("METAVARO").nargs('*');
+            parser.add_argument("-o").metavar("METAVARO").nargs(argparse::zero_or_more);
 
             CHECK(parser.format_usage() == "usage: prog [-o [METAVARO [METAVARO ...]]]"s);
         }
 
         SUBCASE("...its name followed by choices in brackets and choices and ellipsis in nested brackets for arguments with choices set and nargs set as *")
         {
-            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('*');
+            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_more);
 
             CHECK(parser.format_usage() == "usage: prog [-o [{\"foo\",\"bar\"} [{\"foo\",\"bar\"} ...]]]"s);
         }
 
         SUBCASE("...its name followed by automatic metavar and automatic metavar and ellipsis in brackets for arguments with nargs set as +")
         {
-            parser.add_argument("-o").nargs('+');
+            parser.add_argument("-o").nargs(argparse::one_or_more);
 
             CHECK(parser.format_usage() == "usage: prog [-o O [O ...]]"s);
         }
 
         SUBCASE("...its name followed by metavar and metavar and ellipsis in brackets for arguments with metavar set and nargs set as +")
         {
-            parser.add_argument("-o").metavar("METAVARO").nargs('+');
+            parser.add_argument("-o").metavar("METAVARO").nargs(argparse::one_or_more);
 
             CHECK(parser.format_usage() == "usage: prog [-o METAVARO [METAVARO ...]]"s);
         }
 
         SUBCASE("...its name followed by choices and choices and ellipsis in brackets for arguments with choices set and nargs set as +")
         {
-            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs('+');
+            parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::one_or_more);
 
             CHECK(parser.format_usage() == "usage: prog [-o {\"foo\",\"bar\"} [{\"foo\",\"bar\"} ...]]"s);
         }
