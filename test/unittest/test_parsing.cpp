@@ -3214,3 +3214,13 @@ TEST_CASE("Parsing short option with joined argument does not throw")
 
     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-ovalue"}));
 }
+
+TEST_CASE("Parsing short option with joined argument yields its value")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-o");
+
+    auto args = parser.parse_args(2, cstr_arr{"prog", "-ovalue"});
+
+    CHECK(args.get_value("o") == "value");
+}
