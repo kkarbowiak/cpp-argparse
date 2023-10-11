@@ -805,7 +805,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
         }
     }
 
-    SUBCASE("...as ?...")
+    SUBCASE("...as zero_or_one...")
     {
         SUBCASE("...consumes single argument and yields it as a single item")
         {
@@ -860,7 +860,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
         }
     }
 
-    SUBCASE("...as *...")
+    SUBCASE("...as zero_or_more...")
     {
         SUBCASE("...yields an empty list if no arguments provided")
         {
@@ -920,7 +920,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
         }
     }
 
-    SUBCASE("...as +...")
+    SUBCASE("...as one_or_more...")
     {
         SUBCASE("...throws an exception if no arguments provided")
         {
@@ -1164,7 +1164,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
         }
     }
 
-    SUBCASE("...as ?...")
+    SUBCASE("...as zero_or_one...")
     {
         SUBCASE("...consumes single argument and yields it as a single item")
         {
@@ -1247,7 +1247,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
         }
     }
 
-    SUBCASE("...as *...")
+    SUBCASE("...as zero_or_more...")
     {
         SUBCASE("...yields an empty list if no arguments provided")
         {
@@ -1307,7 +1307,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
         }
     }
 
-    SUBCASE("...as +...")
+    SUBCASE("...as one_or_more...")
     {
         SUBCASE("...throws an exception if no arguments provided")
         {
@@ -1450,7 +1450,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
             }
         }
 
-        SUBCASE("...as ?...")
+        SUBCASE("...as zero_or_one...")
         {
             SUBCASE("...for one argument")
             {
@@ -1478,7 +1478,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
             }
         }
 
-        SUBCASE("...as *...")
+        SUBCASE("...as zero_or_more...")
         {
             if constexpr (std::is_integral_v<T>)
             {
@@ -1551,7 +1551,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
             }
         }
 
-        SUBCASE("...as +...")
+        SUBCASE("...as one_or_more...")
         {
             if constexpr (std::is_integral_v<T>)
             {
@@ -1714,7 +1714,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
             }
         }
 
-        SUBCASE("...as ?...")
+        SUBCASE("...as zero_or_one...")
         {
             SUBCASE("...for one argument")
             {
@@ -1745,7 +1745,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
             }
         }
 
-        SUBCASE("...as *...")
+        SUBCASE("...as zero_or_more...")
         {
             if constexpr (std::is_integral_v<T>)
             {
@@ -1827,7 +1827,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
             }
         }
 
-        SUBCASE("...as +...")
+        SUBCASE("...as one_or_more...")
         {
             if constexpr (std::is_integral_v<T>)
             {
@@ -1981,7 +1981,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
             }
         }
 
-        SUBCASE("...as ?...")
+        SUBCASE("...as zero_or_one...")
         {
             SUBCASE("...for one argument")
             {
@@ -2006,7 +2006,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
             }
         }
 
-        SUBCASE("...as *...")
+        SUBCASE("...as zero_or_more...")
         {
             if constexpr (std::is_integral_v<T>)
             {
@@ -2070,7 +2070,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
             }
         }
 
-        SUBCASE("...as +...")
+        SUBCASE("...as one_or_more...")
         {
             if constexpr (std::is_integral_v<T>)
             {
@@ -2220,7 +2220,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
             }
         }
 
-        SUBCASE("...as ?...")
+        SUBCASE("...as zero_or_one...")
         {
             SUBCASE("...for one argument")
             {
@@ -2248,7 +2248,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
             }
         }
 
-        SUBCASE("...as *...")
+        SUBCASE("...as zero_or_more...")
         {
             if constexpr (std::is_integral_v<T>)
             {
@@ -2321,7 +2321,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
             }
         }
 
-        SUBCASE("...as +...")
+        SUBCASE("...as one_or_more...")
         {
             if constexpr (std::is_integral_v<T>)
             {
@@ -2484,7 +2484,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
             }
         }
 
-        SUBCASE("...as ?...")
+        SUBCASE("...as zero_or_one...")
         {
             SUBCASE("...for one argument")
             {
@@ -2515,7 +2515,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
             }
         }
 
-        SUBCASE("...as *...")
+        SUBCASE("...as zero_or_more...")
         {
             if constexpr (std::is_integral_v<T>)
             {
@@ -2597,7 +2597,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
             }
         }
 
-        SUBCASE("...as +...")
+        SUBCASE("...as one_or_more...")
         {
             if constexpr (std::is_integral_v<T>)
             {
@@ -2751,7 +2751,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
             }
         }
 
-        SUBCASE("...as ?...")
+        SUBCASE("...as zero_or_one...")
         {
             SUBCASE("...for one argument")
             {
@@ -2776,7 +2776,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
             }
         }
 
-        SUBCASE("...as *...")
+        SUBCASE("...as zero_or_more...")
         {
             if constexpr (std::is_integral_v<T>)
             {
@@ -2840,7 +2840,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
             }
         }
 
-        SUBCASE("...as +...")
+        SUBCASE("...as one_or_more...")
         {
             if constexpr (std::is_integral_v<T>)
             {
@@ -2974,7 +2974,7 @@ TEST_CASE("An optional argument does not consume another optional argument...")
         }
     }
 
-    SUBCASE("...for argument with nargs set as ?")
+    SUBCASE("...for argument with nargs set as zero_or_one")
     {
         parser.add_argument("-o").nargs(argparse::zero_or_one);
         parser.add_argument("-p");
@@ -2982,7 +2982,7 @@ TEST_CASE("An optional argument does not consume another optional argument...")
         CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}), "argument -p: expected one argument", argparse::parsing_error);
     }
 
-    SUBCASE("...for argument with nargs set as *")
+    SUBCASE("...for argument with nargs set as zero_or_more")
     {
         parser.add_argument("-o").nargs(argparse::zero_or_more);
         parser.add_argument("-p");
@@ -2990,7 +2990,7 @@ TEST_CASE("An optional argument does not consume another optional argument...")
         CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}), "argument -p: expected one argument", argparse::parsing_error);
     }
 
-    SUBCASE("...for argument with nargs set as +")
+    SUBCASE("...for argument with nargs set as one_or_more")
     {
         parser.add_argument("-o").nargs(argparse::one_or_more);
         parser.add_argument("-p");
@@ -3062,7 +3062,7 @@ TEST_CASE("An optional argument does not consume arguments past the -- pseudo ar
         }
     }
 
-    SUBCASE("...for argument with nargs set as ?")
+    SUBCASE("...for argument with nargs set as zero_or_one")
     {
         parser.add_argument("-o").nargs(argparse::zero_or_one);
 
@@ -3071,7 +3071,7 @@ TEST_CASE("An optional argument does not consume arguments past the -- pseudo ar
         CHECK(!args.get("o"));
     }
 
-    SUBCASE("...for argument with nargs set as *")
+    SUBCASE("...for argument with nargs set as zero_or_more")
     {
         parser.add_argument("-o").nargs(argparse::zero_or_more);
 
@@ -3080,14 +3080,14 @@ TEST_CASE("An optional argument does not consume arguments past the -- pseudo ar
         CHECK(args.get_value<std::vector<std::string>>("o") == std::vector<std::string>());
     }
 
-    SUBCASE("...for argument with nargs set as +")
+    SUBCASE("...for argument with nargs set as one_or_more")
     {
         parser.add_argument("-o").nargs(argparse::one_or_more);
 
         CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "--"}), "argument -o: expected at least one argument", argparse::parsing_error);
     }
 
-    SUBCASE("...for argument with nargs set as * and followed by a positional argument")
+    SUBCASE("...for argument with nargs set as zero_or_more and followed by a positional argument")
     {
         parser.add_argument("-o").nargs(argparse::zero_or_more);
         parser.add_argument("pos");
