@@ -956,7 +956,7 @@ namespace argparse
                     auto count_args(tokens::const_iterator it, tokens::const_iterator end) const -> std::size_t
                     {
                         auto result = std::size_t(0);
-                        while (it != end && it->front() != '-')
+                        while (it != end && !it->starts_with('-'))
                         {
                             ++result;
                             ++it;
@@ -989,7 +989,7 @@ namespace argparse
                     {
                         for (auto const & name : m_options.names)
                         {
-                            if (name[0] == '-' && name[1] == '-')
+                            if (name.starts_with("--"))
                             {
                                 return name.substr(2);
                             }
@@ -1353,7 +1353,7 @@ namespace argparse
                 private:
                     auto is_positional() const -> bool
                     {
-                        return m_options.names.front().front() != '-';
+                        return !m_options.names.front().starts_with('-');
                     }
 
                 private:
