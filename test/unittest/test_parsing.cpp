@@ -3206,3 +3206,54 @@ TEST_CASE("Parsing long options with same prefix correctly recognises them")
         CHECK(!args.get("same"));
     }
 }
+
+TEST_CASE("Parsing short option with joined argument does not throw")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o");
+
+    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-ovalue"}));
+}
+
+TEST_CASE("Parsing short option with joined argument yields its value")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-o");
+
+    auto args = parser.parse_args(2, cstr_arr{"prog", "-ovalue"});
+
+    CHECK(args.get_value("o") == "value");
+}
+
+TEST_CASE("Parsing joined short options and short option joined with argument does not throw")
+{
+    auto parser = argparse::ArgumentParser();
+
+    SUBCASE("order ao")
+    {
+        parser.add_argument("-a").action(argparse::store_true);
+        parser.add_argument("-o");
+
+        CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-aovalue"}));
+    }
+
+    SUBCASE("order oa")
+    {
+        parser.add_argument("-o");
+        parser.add_argument("-a").action(argparse::store_true);
+
+        CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-aovalue"}));
+    }
+}
+
+TEST_CASE("Parsing joined short options and short option joined with argument yields their values")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-a").action(argparse::store_true);
+    parser.add_argument("-o");
+
+    auto args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
+
+    CHECK(args.get_value<bool>("a") == true);
+    CHECK(args.get_value("o") == "value");
+}

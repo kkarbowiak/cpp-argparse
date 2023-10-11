@@ -50,10 +50,7 @@ namespace argparse
       : public std::runtime_error
     {
         public:
-            explicit parsing_error(std::string const & message)
-              : std::runtime_error(message)
-            {
-            }
+            using runtime_error::runtime_error;
     };
 
     template<typename T>
@@ -767,6 +764,10 @@ namespace argparse
                                     {
                                         auto const pos = it->find(result.second[1]);
                                         it->erase(pos, 1);
+                                        if (m_options.action == store)
+                                        {
+                                            it->erase(0, 1);
+                                        }
                                     }
                                 }
                             }
