@@ -288,7 +288,6 @@ namespace argparse
             auto parse_args(tokens args) -> Parameters
             {
                 args = split_joined_short_options(std::move(args));
-                args = split_long_options_with_arguments(std::move(args));
                 args = parse_optional_arguments(std::move(args));
                 args = remove_pseudo_arguments(std::move(args));
                 args = parse_positional_arguments(std::move(args));
@@ -333,25 +332,6 @@ namespace argparse
                         for (auto const & option : options)
                         {
                             args.insert(args.begin() + idx, std::string("-") + option);
-                        }
-                    }
-                }
-
-                return args;
-            }
-
-            auto split_long_options_with_arguments(tokens args) -> tokens
-            {
-                for (auto idx = 0u; idx < args.size(); ++idx)
-                {
-                    if (args[idx][0] == '-' && args[idx][1] == '-')
-                    {
-                        if (auto const pos = args[idx].find('='); pos != std::string::npos)
-                        {
-                            auto const option = args[idx].substr(0, pos);
-                            auto const value = args[idx].substr(pos + 1);
-                            args[idx] = option;
-                            args.insert(args.begin() + idx + 1, value);
                         }
                     }
                 }
@@ -956,7 +936,23 @@ namespace argparse
 
                     auto find_arg(tokens::iterator begin, tokens::iterator end) const -> tokens::iterator
                     {
-                        return std::find_first_of(begin, end, m_options.names.begin(), m_options.names.end());
+                        for (auto const & name : m_options.names)
+                        {
+                            for (auto it = begin; it != end; ++it)
+                            {
+                                auto const result = std::mismatch(name.begin(), name.end(), it->begin(), it->end());
+                                if (result.first == name.end())
+                                {
+                                    return it;
+                                }
+                                if (result.second == it->end() || *result.second == '=')
+                                {
+                                    return it;
+                                }
+                            }
+                        }
+
+                        return end;
                     }
 
                     auto count_args(tokens::const_iterator it, tokens::const_iterator end) const -> std::size_t
