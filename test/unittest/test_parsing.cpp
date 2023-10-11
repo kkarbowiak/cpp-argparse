@@ -3185,10 +3185,24 @@ TEST_CASE("Parsing long option with joined argument yields its value")
 TEST_CASE("Parsing long options with same prefix correctly recognises them")
 {
     auto parser = argparse::ArgumentParser();
-    parser.add_argument("--same").action(argparse::store_true);
-    parser.add_argument("--same-prefix").action(argparse::store_true);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "--same-prefix"});
+    SUBCASE("plane options")
+    {
+        parser.add_argument("--same").action(argparse::store_true);
+        parser.add_argument("--same-prefix").action(argparse::store_true);
 
-    CHECK(args.get_value<bool>("same") == false);
+        auto args = parser.parse_args(2, cstr_arr{"prog", "--same-prefix"});
+
+        CHECK(args.get_value<bool>("same") == false);
+    }
+
+    SUBCASE("options with joined argument")
+    {
+        parser.add_argument("--same");
+        parser.add_argument("--same-prefix");
+
+        auto args = parser.parse_args(2, cstr_arr{"prog", "--same-prefix=value"});
+
+        CHECK(!args.get("same"));
+    }
 }
