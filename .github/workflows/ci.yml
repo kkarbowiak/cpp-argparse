@@ -70,7 +70,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: CMake configure
-        run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS=-fsanitize=address,undefined -DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address,undefined
+        run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS=-fsanitize=address,undefined,alignment,array-bounds -DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address,undefined,alignment,array-bounds
 
       - name: CMake build
         run: cmake --build build --parallel --target run_unit_test
