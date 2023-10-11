@@ -941,11 +941,7 @@ namespace argparse
                             for (auto it = begin; it != end; ++it)
                             {
                                 auto const result = std::mismatch(name.begin(), name.end(), it->begin(), it->end());
-                                if (result.first == name.end())
-                                {
-                                    return it;
-                                }
-                                if (result.second == it->end() || *result.second == '=')
+                                if (result.first == name.end() && (result.second == it->end() || *result.second == '='))
                                 {
                                     return it;
                                 }
