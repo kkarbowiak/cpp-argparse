@@ -960,7 +960,7 @@ namespace argparse
 
                     auto consume_name(tokens & args, tokens::iterator it, std::string const & name) const -> tokens::iterator
                     {
-                        if (auto const & arg = *it; arg[0] == '-' && arg[1] == '-')
+                        if (auto const & arg = *it; arg.starts_with("--"))
                         {
                             if (auto const pos = arg.find('='); pos != std::string::npos)
                             {
