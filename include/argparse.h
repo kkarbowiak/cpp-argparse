@@ -729,9 +729,8 @@ namespace argparse
                     auto parse_args(tokens args) -> tokens override
                     {
                         auto const pseudo_it = find_pseudo_arg(args);
-                        if (auto result = find_arg(args.begin(), pseudo_it); result.first != pseudo_it)
+                        if (auto [it, name] = find_arg(args.begin(), pseudo_it); it != pseudo_it)
                         {
-                            auto it = result.first;
                             if (auto const & arg = *it; arg[0] == '-' && arg[1] == '-')
                             {
                                 if (auto const pos = arg.find('='); pos != std::string::npos)
@@ -746,7 +745,7 @@ namespace argparse
                             }
                             else if (arg[0] == '-' && arg[1] != '-')
                             {
-                                if (result.second.size() == 2)
+                                if (name.size() == 2)
                                 {
                                     if (it->size() == 2)
                                     {
@@ -754,7 +753,7 @@ namespace argparse
                                     }
                                     else
                                     {
-                                        auto const pos = it->find(result.second[1]);
+                                        auto const pos = it->find(name[1]);
                                         it->erase(pos, 1);
                                         if (m_options.action == store)
                                         {
