@@ -337,7 +337,7 @@ namespace argparse
 
             auto remove_pseudo_arguments(tokens args) -> tokens
             {
-                args.erase(std::remove(args.begin(), args.end(), "--"), args.end());
+                std::erase(args, "--");
 
                 return args;
             }
