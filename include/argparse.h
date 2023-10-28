@@ -63,7 +63,7 @@ namespace argparse
     template<typename T>
     inline auto from_string(std::string const & s, T & t) -> bool
     {
-        std::istringstream iss(s);
+        auto iss = std::istringstream(s);
         iss >> t;
 
         return !iss.fail() && (iss.eof() || iss.peek() == std::istringstream::traits_type::eof());
@@ -72,7 +72,7 @@ namespace argparse
     template<typename T>
     inline auto to_string(T const & t) -> std::string
     {
-        std::ostringstream ostr;
+        auto ostr = std::ostringstream();
         ostr << t;
 
         return ostr.str();
@@ -295,7 +295,7 @@ namespace argparse
             template<typename Container>
             static auto join(Container const & strings, std::string const & separator) -> std::string
             {
-                std::string result;
+                auto result = std::string();
 
                 for (auto it = strings.begin(); it != strings.end(); ++it)
                 {
@@ -352,7 +352,7 @@ namespace argparse
 
             auto ensure_no_arguments_excluded() const -> void
             {
-                std::map<MutuallyExclusiveGroup const *, Argument const *> exclusive_args;
+                auto exclusive_args = std::map<MutuallyExclusiveGroup const *, Argument const *>();
                 for (auto const & arg : m_arguments)
                 {
                     if (arg->is_present() && arg->get_options().mutually_exclusive_group != nullptr)
@@ -367,7 +367,7 @@ namespace argparse
 
             auto ensure_no_arguments_missing() const -> void
             {
-                optstring error_message;
+                auto error_message = optstring();
 
                 for (auto const & arg : m_arguments)
                 {
@@ -392,7 +392,7 @@ namespace argparse
 
             auto get_parameters() const -> Parameters
             {
-                Parameters result;
+                auto result = Parameters();
 
                 for (auto const & arg : m_arguments)
                 {
@@ -431,7 +431,7 @@ namespace argparse
                         else
                         {
                             using argparse::from_string;
-                            T val;
+                            auto val = T();
                             if (from_string(string, val))
                             {
                                 value = val;
@@ -464,7 +464,7 @@ namespace argparse
 
                     auto transform(std::vector<std::any> const & values) const -> std::any override
                     {
-                        std::vector<T> result;
+                        auto result = std::vector<T>();
                         for (auto const & value : values)
                         {
                             result.push_back(std::any_cast<T>(value));
@@ -495,7 +495,7 @@ namespace argparse
 
                 auto join_choices(std::string const & separator) const -> std::string
                 {
-                    std::string result;
+                    auto result = std::string();
                     for (auto i = choices.begin(); i != choices.end(); ++i)
                     {
                         if (i != choices.begin())
@@ -597,7 +597,7 @@ namespace argparse
                         {
                             if (has_nargs_number())
                             {
-                                std::vector<std::any> values(std::min(get_nargs_number(), args.size()));
+                                auto values = std::vector<std::any>(std::min(get_nargs_number(), args.size()));
                                 consume_args(args, values);
 
                                 m_value = m_options.type_handler->transform(values);
@@ -620,14 +620,14 @@ namespace argparse
                                     }
                                     case zero_or_more:
                                     {
-                                        std::vector<std::any> values(args.size());
+                                        auto values = std::vector<std::any>(args.size());
                                         consume_args(args, values);
                                         m_value = m_options.type_handler->transform(values);
                                         break;
                                     }
                                     case one_or_more:
                                     {
-                                        std::vector<std::any> values(args.size());
+                                        auto values = std::vector<std::any>(args.size());
                                         consume_args(args, values);
                                         if (!values.empty())
                                         {
@@ -781,7 +781,7 @@ namespace argparse
                                             {
                                                 throw parsing_error("argument " + join(get_names(), "/") + ": expected " + std::to_string(nargs_number) + " argument" + (nargs_number > 1 ? "s" : ""));
                                             }
-                                            std::vector<std::any> values(args_number);
+                                            auto values = std::vector<std::any>(args_number);
                                             consume_args(args, it, values);
                                             m_value = m_options.type_handler->transform(values);
                                         }
@@ -803,14 +803,14 @@ namespace argparse
                                                 }
                                                 case zero_or_more:
                                                 {
-                                                    std::vector<std::any> values(count_args(it, args.end()));
+                                                    auto values = std::vector<std::any>(count_args(it, args.end()));
                                                     consume_args(args, it, values);
                                                     m_value = m_options.type_handler->transform(values);
                                                     break;
                                                 }
                                                 case one_or_more:
                                                 {
-                                                    std::vector<std::any> values(count_args(it, args.end()));
+                                                    auto values = std::vector<std::any>(count_args(it, args.end()));
                                                     consume_args(args, it, values);
                                                     if (values.empty())
                                                     {
@@ -956,7 +956,7 @@ namespace argparse
 
                     auto count_args(tokens::const_iterator it, tokens::const_iterator end) const -> std::size_t
                     {
-                        std::size_t result = 0;
+                        auto result = std::size_t(0);
                         while (it != end && it->front() != '-')
                         {
                             ++result;
@@ -1028,9 +1028,9 @@ namespace argparse
                             return "usage: " + *m_usage;
                         }
 
-                        std::string message = "usage: " + *m_prog;
-                        std::string optionals;
-                        std::string positionals;
+                        auto message = std::string("usage: " + *m_prog);
+                        auto optionals = std::string();
+                        auto positionals = std::string();
 
                         for (auto it = m_arguments.cbegin(); it != m_arguments.cend(); ++it)
                         {
@@ -1098,9 +1098,9 @@ namespace argparse
 
                     auto format_help() const -> std::string
                     {
-                        std::string message = format_usage();
-                        std::string positionals;
-                        std::string optionals;
+                        auto message = format_usage();
+                        auto positionals = std::string();
+                        auto optionals = std::string();
 
                         for (auto const & arg : m_arguments)
                         {
@@ -1118,7 +1118,7 @@ namespace argparse
                             }
                             else
                             {
-                                std::string arg_line = "  ";
+                                auto arg_line = std::string("  ");
 
                                 for (auto name_it = arg->get_names().begin(); name_it != arg->get_names().end(); ++name_it)
                                 {
@@ -1185,7 +1185,7 @@ namespace argparse
 
                     auto format_nargs(Argument const & argument) const -> std::string
                     {
-                        std::string result;
+                        auto result = std::string();
                         auto const formatted_arg = format_arg(argument);
 
                         if (argument.has_nargs_number())
@@ -1216,7 +1216,7 @@ namespace argparse
 
                     auto help_string_separation(std::size_t arg_line_length) const -> std::string_view
                     {
-                        constexpr std::string_view fill = "\n                        ";
+                        constexpr auto fill = std::string_view("\n                        ");
                         return arg_line_length < 23
                             ? fill.substr(arg_line_length + 1)
                             : fill;
