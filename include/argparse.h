@@ -563,9 +563,8 @@ namespace argparse
                 protected:
                     auto check_choices(std::any const & value) const -> void
                     {
-                        if (!std::any_of(
-                            m_options.choices.begin(),
-                            m_options.choices.end(),
+                        if (!std::ranges::any_of(
+                            m_options.choices,
                             [&](auto const & rhs) { return m_options.type_handler->compare(value, rhs); }))
                         {
                             std::string message = "argument " + join(m_options.names, "/") + ": invalid choice: ";
