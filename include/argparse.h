@@ -916,7 +916,7 @@ namespace argparse
                             {
                                 if (name[1] != '-')
                                 {
-                                    if ((*it)[0] == '-' && it->find(name[1]) != std::string::npos)
+                                    if (it->starts_with("-") && it->find(name[1]) != std::string::npos)
                                     {
                                         return {it, name};
                                     }
