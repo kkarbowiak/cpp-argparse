@@ -60,8 +60,7 @@ namespace argparse
             using runtime_error::runtime_error;
     };
 
-    template<typename T>
-    inline auto from_string(std::string const & s, T & t) -> bool
+    inline auto from_string(std::string const & s, auto & t) -> bool
     {
         auto iss = std::istringstream(s);
         iss >> t;
@@ -69,8 +68,7 @@ namespace argparse
         return !iss.fail() && (iss.eof() || iss.peek() == std::istringstream::traits_type::eof());
     }
 
-    template<typename T>
-    inline auto to_string(T const & t) -> std::string
+    inline auto to_string(auto const & t) -> std::string
     {
         auto ostr = std::ostringstream();
         ostr << t;
@@ -78,8 +76,7 @@ namespace argparse
         return ostr.str();
     }
 
-    template<typename T>
-    inline auto are_equal(T const & lhs, T const & rhs) -> bool
+    inline auto are_equal(auto const & lhs, auto const & rhs) -> bool
     {
         return lhs == rhs;
     }
