@@ -64,32 +64,17 @@ namespace argparse
     inline auto from_string(std::string const & s, T & t) -> bool
     {
         std::istringstream iss(s);
-        if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
-        {
-            int i;
-            iss >> i;
-            t = static_cast<T>(i);
-        }
-        else
-        {
-            iss >> t;
-        }
+        iss >> t;
 
-        return !iss.fail() && iss.eof();
+        return !iss.fail() && (iss.eof() || iss.peek() == std::istringstream::traits_type::eof());
     }
 
     template<typename T>
     inline auto to_string(T const & t) -> std::string
     {
         std::ostringstream ostr;
-        if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
-        {
-            ostr << static_cast<int>(t);
-        }
-        else
-        {
-            ostr << t;
-        }
+        ostr << t;
+
         return ostr.str();
     }
 

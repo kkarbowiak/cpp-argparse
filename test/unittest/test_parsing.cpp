@@ -183,7 +183,13 @@ TEST_CASE_TEMPLATE("Parsing a positional argument yields its requested type", T,
     auto parser = argparse::ArgumentParser();
     parser.add_argument("pos").type<T>();
 
-    if constexpr (std::is_integral_v<T>)
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "A"});
+
+        CHECK(parsed.get_value<T>("pos") == T(65));
+    }
+    else if constexpr (std::is_integral_v<T>)
     {
         auto const parsed = parser.parse_args(2, cstr_arr{"prog", "65"});
 
@@ -208,7 +214,13 @@ TEST_CASE_TEMPLATE("Parsing an optional argument yields its requested type", T, 
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o").type<T>();
 
-    if constexpr (std::is_integral_v<T>)
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+
+        CHECK(parsed.get_value<T>("o") == T(65));
+    }
+    else if constexpr (std::is_integral_v<T>)
     {
         auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "65"});
 
@@ -283,7 +295,13 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with default value...", T, char
 
     SUBCASE("...yields value of the argument's type")
     {
-        if constexpr (std::is_integral_v<T>)
+        if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+        {
+            auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+
+            CHECK(parsed.get_value<T>("o") == T(65));
+        }
+        else if constexpr (std::is_integral_v<T>)
         {
             auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "65"});
 
@@ -510,7 +528,14 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
     SUBCASE("...accepts one of the values...")
     {
-        if constexpr (std::is_integral_v<T>)
+        if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+        {
+            parser.add_argument("pos").choices({T('A'), T('C')}).template type<T>();
+
+            CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "A"}));
+            CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "C"}));
+        }
+        else if constexpr (std::is_integral_v<T>)
         {
             parser.add_argument("pos").choices({T(23), T(34)}).template type<T>();
 
@@ -535,7 +560,13 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
     SUBCASE("...throws an exception on incorrect value...")
     {
-        if constexpr (std::is_integral_v<T>)
+        if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+        {
+            parser.add_argument("pos").choices({T('A'), T('C')}).template type<T>();
+
+            CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "B"}), "argument pos: invalid choice: B (choose from A, C)", argparse::parsing_error);
+        }
+        else if constexpr (std::is_integral_v<T>)
         {
             parser.add_argument("pos").choices({T(23), T(34)}).template type<T>();
 
@@ -568,7 +599,14 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
     SUBCASE("...accepts one of the values...")
     {
-        if constexpr (std::is_integral_v<T>)
+        if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+        {
+            parser.add_argument("-o").choices({T('A'), T('C')}).template type<T>();
+
+            CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "A"}));
+            CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "C"}));
+        }
+        else if constexpr (std::is_integral_v<T>)
         {
             parser.add_argument("-o").choices({T(23), T(34)}).template type<T>();
 
@@ -593,7 +631,13 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
     SUBCASE("...throws an exception on incorrect value...")
     {
-        if constexpr (std::is_integral_v<T>)
+        if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+        {
+            parser.add_argument("-o").choices({T('A'), T('C')}).template type<T>();
+
+            CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "B"}), "argument -o: invalid choice: B (choose from A, C)", argparse::parsing_error);
+        }
+        else if constexpr (std::is_integral_v<T>)
         {
             parser.add_argument("-o").choices({T(23), T(34)}).template type<T>();
 
@@ -632,7 +676,11 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
             {
                 parser.add_argument("pos").nargs(1).template type<T>();
 
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "A"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "42"}));
                 }
@@ -650,7 +698,11 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
             {
                 parser.add_argument("pos").nargs(2).template type<T>();
 
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "A", "C"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "42", "54"}));
                 }
@@ -668,7 +720,11 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
             {
                 parser.add_argument("pos").nargs(3).template type<T>();
 
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "A", "C", "E"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "42", "54", "65"}));
                 }
@@ -689,7 +745,13 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
             {
                 parser.add_argument("pos").nargs(1).template type<T>();
 
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "B"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'B'});
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     auto const parsed = parser.parse_args(2, cstr_arr{"prog", "42"});
 
@@ -713,7 +775,13 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
             {
                 parser.add_argument("pos").nargs(2).template type<T>();
 
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "B", "D"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'B', 'D'});
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     auto const parsed = parser.parse_args(3, cstr_arr{"prog", "42", "54"});
 
@@ -737,7 +805,13 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
             {
                 parser.add_argument("pos").nargs(3).template type<T>();
 
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "B", "D", "F"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'B', 'D', 'F'});
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     auto const parsed = parser.parse_args(4, cstr_arr{"prog", "42", "54", "65"});
 
@@ -771,7 +845,11 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
             {
                 parser.add_argument("pos").nargs(2).template type<T>();
 
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "A"}), "the following arguments are required: pos", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "42"}), "the following arguments are required: pos", argparse::parsing_error);
                 }
@@ -789,7 +867,11 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
             {
                 parser.add_argument("pos").nargs(3).template type<T>();
 
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "A", "B"}), "the following arguments are required: pos", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "42", "54"}), "the following arguments are required: pos", argparse::parsing_error);
                 }
@@ -811,7 +893,13 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
         {
             parser.add_argument("pos").nargs(argparse::zero_or_one).template type<T>();
 
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                auto const parsed = parser.parse_args(2, cstr_arr{"prog", "A"});
+
+                CHECK(parsed.get_value<T>("pos") == T('A'));
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 auto const parsed = parser.parse_args(2, cstr_arr{"prog", "42"});
 
@@ -833,7 +921,15 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
 
         SUBCASE("...yields default value if no argument is provided")
         {
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                parser.add_argument("pos").nargs(argparse::zero_or_one).default_(T('A'));
+
+                auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+
+                CHECK(parsed.get_value<T>("pos") == T('A'));
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 parser.add_argument("pos").nargs(argparse::zero_or_one).default_(T(10));
 
@@ -875,7 +971,13 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
         {
             parser.add_argument("pos").nargs(argparse::zero_or_more).template type<T>();
 
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                auto const parsed = parser.parse_args(2, cstr_arr{"prog", "A"});
+
+                CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A'});
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 auto const parsed = parser.parse_args(2, cstr_arr{"prog", "42"});
 
@@ -899,7 +1001,13 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
         {
             parser.add_argument("pos").nargs(argparse::zero_or_more).template type<T>();
 
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                auto const parsed = parser.parse_args(4, cstr_arr{"prog", "A", "G", "J"});
+
+                CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A', 'G', 'J'});
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 auto const parsed = parser.parse_args(4, cstr_arr{"prog", "42", "54", "65"});
 
@@ -933,7 +1041,13 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
         {
             parser.add_argument("pos").nargs(argparse::one_or_more).template type<T>();
 
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                auto const parsed = parser.parse_args(2, cstr_arr{"prog", "A"});
+
+                CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A'});
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 auto const parsed = parser.parse_args(2, cstr_arr{"prog", "42"});
 
@@ -957,7 +1071,13 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
         {
             parser.add_argument("pos").nargs(argparse::one_or_more).template type<T>();
 
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                auto const parsed = parser.parse_args(4, cstr_arr{"prog", "A", "G", "J"});
+
+                CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A', 'G', 'J'});
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 auto const parsed = parser.parse_args(4, cstr_arr{"prog", "42", "54", "65"});
 
@@ -991,7 +1111,11 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
             {
                 parser.add_argument("-o").nargs(1).template type<T>();
 
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "A"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "42"}));
                 }
@@ -1009,7 +1133,11 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
             {
                 parser.add_argument("-o").nargs(2).template type<T>();
 
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "A", "C"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "42", "54"}));
                 }
@@ -1027,7 +1155,11 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
             {
                 parser.add_argument("-o").nargs(3).template type<T>();
 
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "E"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"}));
                 }
@@ -1048,7 +1180,13 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
             {
                 parser.add_argument("-o").nargs(1).template type<T>();
 
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A'});
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "42"});
 
@@ -1072,7 +1210,13 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
             {
                 parser.add_argument("-o").nargs(2).template type<T>();
 
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "A", "C"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C'});
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "42", "54"});
 
@@ -1096,7 +1240,13 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
             {
                 parser.add_argument("-o").nargs(3).template type<T>();
 
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "E"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C', 'E'});
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"});
 
@@ -1130,7 +1280,11 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
             {
                 parser.add_argument("-o").nargs(2).template type<T>();
 
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "A"}), "argument -o: expected 2 arguments", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "42"}), "argument -o: expected 2 arguments", argparse::parsing_error);
                 }
@@ -1148,7 +1302,11 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
             {
                 parser.add_argument("-o").nargs(3).template type<T>();
 
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "A", "B"}), "argument -o: expected 3 arguments", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "42", "54"}), "argument -o: expected 3 arguments", argparse::parsing_error);
                 }
@@ -1170,7 +1328,13 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
         {
             parser.add_argument("-o").nargs(argparse::zero_or_one).template type<T>();
 
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+
+                CHECK(parsed.get_value<T>("o") == T('A'));
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "42"});
 
@@ -1192,7 +1356,15 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
 
         SUBCASE("...yields default value if no argument is provided")
         {
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                parser.add_argument("-o").nargs(argparse::zero_or_one).default_(T('A'));
+
+                auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+
+                CHECK(parsed.get_value<T>("o") == T('A'));
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 parser.add_argument("-o").nargs(argparse::zero_or_one).default_(T(10));
 
@@ -1220,7 +1392,15 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
 
         SUBCASE("...yields const value if option string is present and no argument is provided")
         {
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                parser.add_argument("-o").nargs(argparse::zero_or_one).const_(T('A'));
+
+                auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
+
+                CHECK(parsed.get_value<T>("o") == T('A'));
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 parser.add_argument("-o").nargs(argparse::zero_or_one).const_(T(5));
 
@@ -1262,7 +1442,13 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
         {
             parser.add_argument("-o").nargs(argparse::zero_or_more).template type<T>();
 
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+
+                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A'});
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "42"});
 
@@ -1286,7 +1472,13 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
         {
             parser.add_argument("-o").nargs(argparse::zero_or_more).template type<T>();
 
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "E"});
+
+                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C', 'E'});
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"});
 
@@ -1320,7 +1512,13 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
         {
             parser.add_argument("-o").nargs(argparse::one_or_more).template type<T>();
 
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+
+                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A'});
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "42"});
 
@@ -1344,7 +1542,13 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
         {
             parser.add_argument("-o").nargs(argparse::one_or_more).template type<T>();
 
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "E"});
+
+                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C', 'E'});
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"});
 
@@ -1376,7 +1580,14 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
         {
             SUBCASE("...for one argument")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    parser.add_argument("pos").choices({T('A'), T('C')}).nargs(1).template type<T>();
+
+                    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "A"}));
+                    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "C"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     parser.add_argument("pos").choices({T(11), T(22)}).nargs(1).template type<T>();
 
@@ -1401,7 +1612,14 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
             SUBCASE("...for two arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    parser.add_argument("pos").choices({T('A'), T('C')}).nargs(2).template type<T>();
+
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "A", "A"}));
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "C", "C"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     parser.add_argument("pos").choices({T(11), T(22)}).nargs(2).template type<T>();
 
@@ -1426,7 +1644,14 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
             SUBCASE("...for three arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    parser.add_argument("pos").choices({T('A'), T('C')}).nargs(3).template type<T>();
+
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "A", "A", "A"}));
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "C", "C", "C"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     parser.add_argument("pos").choices({T(11), T(22)}).nargs(3).template type<T>();
 
@@ -1454,7 +1679,14 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
         {
             SUBCASE("...for one argument")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::zero_or_one).template type<T>();
+
+                    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "A"}));
+                    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "C"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     parser.add_argument("pos").choices({T(11), T(22)}).nargs(argparse::zero_or_one).template type<T>();
 
@@ -1480,7 +1712,11 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
         SUBCASE("...as zero_or_more...")
         {
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::zero_or_more).template type<T>();
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 parser.add_argument("pos").choices({T(11), T(22)}).nargs(argparse::zero_or_more).template type<T>();
             }
@@ -1495,7 +1731,12 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
             SUBCASE("...for one argument")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "A"}));
+                    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "C"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "11"}));
                     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "22"}));
@@ -1514,7 +1755,12 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
             SUBCASE("...for two arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "A", "A"}));
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "C", "C"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "11", "11"}));
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "22", "22"}));
@@ -1533,7 +1779,12 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
             SUBCASE("...for three arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "A", "A", "A"}));
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "C", "C", "C"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "11", "11", "11"}));
                     CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "22", "22", "22"}));
@@ -1553,7 +1804,11 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
         SUBCASE("...as one_or_more...")
         {
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::one_or_more).template type<T>();
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 parser.add_argument("pos").choices({T(11), T(22)}).nargs(argparse::one_or_more).template type<T>();
             }
@@ -1568,7 +1823,12 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
             SUBCASE("...for one argument")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "A"}));
+                    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "C"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "11"}));
                     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "22"}));
@@ -1587,7 +1847,12 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
             SUBCASE("...for two arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "A", "A"}));
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "C", "C"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "11", "11"}));
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "22", "22"}));
@@ -1606,7 +1871,12 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
             SUBCASE("...for three arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "A", "A", "A"}));
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "C", "C", "C"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "11", "11", "11"}));
                     CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "22", "22", "22"}));
@@ -1631,7 +1901,15 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
         {
             SUBCASE("...for one argument")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    parser.add_argument("pos").choices({T('A'), T('C')}).nargs(1).template type<T>();
+
+                    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "A"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A'});
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     parser.add_argument("pos").choices({T(11), T(22)}).nargs(1).template type<T>();
 
@@ -1659,7 +1937,15 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
             SUBCASE("...for two arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    parser.add_argument("pos").choices({T('A'), T('C')}).nargs(2).template type<T>();
+
+                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "A", "C"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A', 'C'});
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     parser.add_argument("pos").choices({T(11), T(22)}).nargs(2).template type<T>();
 
@@ -1687,7 +1973,15 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
             SUBCASE("...for three arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    parser.add_argument("pos").choices({T('A'), T('C')}).nargs(3).template type<T>();
+
+                    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "A", "C", "A"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A', 'C', 'A'});
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     parser.add_argument("pos").choices({T(11), T(22)}).nargs(3).template type<T>();
 
@@ -1718,7 +2012,15 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
         {
             SUBCASE("...for one argument")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::zero_or_one).template type<T>();
+
+                    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "A"});
+
+                    CHECK(parsed.get_value<T>("pos") == T('A'));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     parser.add_argument("pos").choices({T(11), T(22)}).nargs(argparse::zero_or_one).template type<T>();
 
@@ -1747,7 +2049,11 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
         SUBCASE("...as zero_or_more...")
         {
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::zero_or_more).template type<T>();
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 parser.add_argument("pos").choices({T(11), T(22)}).nargs(argparse::zero_or_more).template type<T>();
             }
@@ -1762,7 +2068,13 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
             SUBCASE("...for one argument")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "A"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A'});
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     auto const parsed = parser.parse_args(2, cstr_arr{"prog", "11"});
 
@@ -1784,7 +2096,13 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
             SUBCASE("...for two arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "A", "A"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A', 'A'});
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     auto const parsed = parser.parse_args(3, cstr_arr{"prog", "11", "11"});
 
@@ -1806,7 +2124,13 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
             SUBCASE("...for three arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "A", "A", "A"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A', 'A', 'A'});
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     auto const parsed = parser.parse_args(4, cstr_arr{"prog", "11", "11", "11"});
 
@@ -1829,7 +2153,11 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
         SUBCASE("...as one_or_more...")
         {
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::one_or_more).template type<T>();
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 parser.add_argument("pos").choices({T(11), T(22)}).nargs(argparse::one_or_more).template type<T>();
             }
@@ -1844,7 +2172,13 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
             SUBCASE("...for one argument")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "A"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A'});
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     auto const parsed = parser.parse_args(2, cstr_arr{"prog", "11"});
 
@@ -1866,7 +2200,13 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
             SUBCASE("...for two arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "A", "A"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A', 'A'});
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     auto const parsed = parser.parse_args(3, cstr_arr{"prog", "11", "11"});
 
@@ -1888,7 +2228,13 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
             SUBCASE("...for three arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "A", "A", "A"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A', 'A', 'A'});
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     auto const parsed = parser.parse_args(4, cstr_arr{"prog", "11", "11", "11"});
 
@@ -1916,7 +2262,13 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
         {
             SUBCASE("...for one argument")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    parser.add_argument("pos").choices({T('A'), T('C')}).nargs(1).template type<T>();
+
+                    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "B"}), "argument pos: invalid choice: B (choose from A, C)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     parser.add_argument("pos").choices({T(11), T(22)}).nargs(1).template type<T>();
 
@@ -1938,7 +2290,13 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
             SUBCASE("...for two arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    parser.add_argument("pos").choices({T('A'), T('C')}).nargs(2).template type<T>();
+
+                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "A", "B"}), "argument pos: invalid choice: B (choose from A, C)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     parser.add_argument("pos").choices({T(11), T(22)}).nargs(2).template type<T>();
 
@@ -1960,7 +2318,13 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
             SUBCASE("...for three arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    parser.add_argument("pos").choices({T('A'), T('C')}).nargs(3).template type<T>();
+
+                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "A", "C", "B"}), "argument pos: invalid choice: B (choose from A, C)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     parser.add_argument("pos").choices({T(11), T(22)}).nargs(3).template type<T>();
 
@@ -1985,7 +2349,13 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
         {
             SUBCASE("...for one argument")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::zero_or_one).template type<T>();
+
+                    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "B"}), "argument pos: invalid choice: B (choose from A, C)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     parser.add_argument("pos").choices({T(11), T(22)}).nargs(argparse::zero_or_one).template type<T>();
 
@@ -2008,7 +2378,11 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
         SUBCASE("...as zero_or_more...")
         {
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::zero_or_more).template type<T>();
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 parser.add_argument("pos").choices({T(11), T(22)}).nargs(argparse::zero_or_more).template type<T>();
             }
@@ -2023,7 +2397,11 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
             SUBCASE("...for one argument")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "B"}), "argument pos: invalid choice: B (choose from A, C)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "33"}), "argument pos: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
                 }
@@ -2039,7 +2417,11 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
             SUBCASE("...for two arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "A", "B"}), "argument pos: invalid choice: B (choose from A, C)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "11", "33"}), "argument pos: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
                 }
@@ -2055,7 +2437,11 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
             SUBCASE("...for three arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "A", "C", "B"}), "argument pos: invalid choice: B (choose from A, C)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "11", "22", "33"}), "argument pos: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
                 }
@@ -2072,7 +2458,11 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
         SUBCASE("...as one_or_more...")
         {
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::one_or_more).template type<T>();
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 parser.add_argument("pos").choices({T(11), T(22)}).nargs(argparse::one_or_more).template type<T>();
             }
@@ -2087,7 +2477,11 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
             SUBCASE("...for one argument")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "B"}), "argument pos: invalid choice: B (choose from A, C)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "33"}), "argument pos: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
                 }
@@ -2103,7 +2497,11 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
             SUBCASE("...for two arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "A", "B"}), "argument pos: invalid choice: B (choose from A, C)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "11", "33"}), "argument pos: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
                 }
@@ -2119,7 +2517,11 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
 
             SUBCASE("...for three arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "A", "C", "B"}), "argument pos: invalid choice: B (choose from A, C)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "11", "22", "33"}), "argument pos: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
                 }
@@ -2146,7 +2548,14 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
         {
             SUBCASE("...for one argument")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    parser.add_argument("-o").choices({T('A'), T('C')}).nargs(1).template type<T>();
+
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "A"}));
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "C"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     parser.add_argument("-o").choices({T(11), T(22)}).nargs(1).template type<T>();
 
@@ -2171,7 +2580,14 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
             SUBCASE("...for two arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    parser.add_argument("-o").choices({T('A'), T('C')}).nargs(2).template type<T>();
+
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "A", "A"}));
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "C", "C"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     parser.add_argument("-o").choices({T(11), T(22)}).nargs(2).template type<T>();
 
@@ -2196,7 +2612,14 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
             SUBCASE("...for three arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    parser.add_argument("-o").choices({T('A'), T('C')}).nargs(3).template type<T>();
+
+                    CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "A", "A", "A"}));
+                    CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "C", "C", "C"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     parser.add_argument("-o").choices({T(11), T(22)}).nargs(3).template type<T>();
 
@@ -2224,7 +2647,14 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
         {
             SUBCASE("...for one argument")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::zero_or_one).template type<T>();
+
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "A"}));
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "C"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     parser.add_argument("-o").choices({T(11), T(22)}).nargs(argparse::zero_or_one).template type<T>();
 
@@ -2250,7 +2680,11 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
         SUBCASE("...as zero_or_more...")
         {
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::zero_or_more).template type<T>();
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 parser.add_argument("-o").choices({T(11), T(22)}).nargs(argparse::zero_or_more).template type<T>();
             }
@@ -2265,7 +2699,12 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
             SUBCASE("...for one argument")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "A"}));
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "C"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "11"}));
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "22"}));
@@ -2284,7 +2723,12 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
             SUBCASE("...for two arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "A", "A"}));
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "C", "C"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "11", "11"}));
                     CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "22", "22"}));
@@ -2303,7 +2747,12 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
             SUBCASE("...for three arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "A", "A", "A"}));
+                    CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "C", "C", "C"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "11", "11", "11"}));
                     CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "22", "22", "22"}));
@@ -2323,7 +2772,11 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
         SUBCASE("...as one_or_more...")
         {
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::one_or_more).template type<T>();
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 parser.add_argument("-o").choices({T(11), T(22)}).nargs(argparse::one_or_more).template type<T>();
             }
@@ -2338,7 +2791,12 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
             SUBCASE("...for one argument")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "A"}));
+                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "C"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "11"}));
                     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "22"}));
@@ -2357,7 +2815,12 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
             SUBCASE("...for two arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "A", "A"}));
+                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "C", "C"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "11", "11"}));
                     CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "22", "22"}));
@@ -2376,7 +2839,12 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
             SUBCASE("...for three arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "A", "A", "A"}));
+                    CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "C", "C", "C"}));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "11", "11", "11"}));
                     CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "22", "22", "22"}));
@@ -2401,7 +2869,15 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
         {
             SUBCASE("...for one argument")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    parser.add_argument("-o").choices({T('A'), T('C')}).nargs(1).template type<T>();
+
+                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A'});
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     parser.add_argument("-o").choices({T(11), T(22)}).nargs(1).template type<T>();
 
@@ -2429,7 +2905,15 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
             SUBCASE("...for two arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    parser.add_argument("-o").choices({T('A'), T('C')}).nargs(2).template type<T>();
+
+                    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "A", "C"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C'});
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     parser.add_argument("-o").choices({T(11), T(22)}).nargs(2).template type<T>();
 
@@ -2457,7 +2941,15 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
             SUBCASE("...for three arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    parser.add_argument("-o").choices({T('A'), T('C')}).nargs(3).template type<T>();
+
+                    auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "A"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C', 'A'});
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     parser.add_argument("-o").choices({T(11), T(22)}).nargs(3).template type<T>();
 
@@ -2488,7 +2980,15 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
         {
             SUBCASE("...for one argument")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::zero_or_one).template type<T>();
+
+                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+
+                    CHECK(parsed.get_value<T>("o") == T('A'));
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     parser.add_argument("-o").choices({T(11), T(22)}).nargs(argparse::zero_or_one).template type<T>();
 
@@ -2517,7 +3017,11 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
         SUBCASE("...as zero_or_more...")
         {
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::zero_or_more).template type<T>();
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 parser.add_argument("-o").choices({T(11), T(22)}).nargs(argparse::zero_or_more).template type<T>();
             }
@@ -2532,7 +3036,13 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
             SUBCASE("...for one argument")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A'});
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "11"});
 
@@ -2554,7 +3064,13 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
             SUBCASE("...for two arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "A", "A"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'A'});
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "11", "11"});
 
@@ -2576,7 +3092,13 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
             SUBCASE("...for three arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "A", "A"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'A', 'A'});
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "11", "11", "11"});
 
@@ -2599,7 +3121,11 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
         SUBCASE("...as one_or_more...")
         {
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::one_or_more).template type<T>();
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 parser.add_argument("-o").choices({T(11), T(22)}).nargs(argparse::one_or_more).template type<T>();
             }
@@ -2614,7 +3140,13 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
             SUBCASE("...for one argument")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A'});
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "11"});
 
@@ -2636,7 +3168,13 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
             SUBCASE("...for two arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "A", "A"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'A'});
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "11", "11"});
 
@@ -2658,7 +3196,13 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
             SUBCASE("...for three arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "A", "A"});
+
+                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'A', 'A'});
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "11", "11", "11"});
 
@@ -2686,7 +3230,13 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
         {
             SUBCASE("...for one argument")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    parser.add_argument("-o").choices({T('A'), T('C')}).nargs(1).template type<T>();
+
+                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "B"}), "argument -o: invalid choice: B (choose from A, C)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     parser.add_argument("-o").choices({T(11), T(22)}).nargs(1).template type<T>();
 
@@ -2708,7 +3258,13 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
             SUBCASE("...for two arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    parser.add_argument("-o").choices({T('A'), T('C')}).nargs(1).template type<T>();
+
+                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "A", "B"}), "argument -o: invalid choice: B (choose from A, C)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     parser.add_argument("-o").choices({T(11), T(22)}).nargs(2).template type<T>();
 
@@ -2730,7 +3286,13 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
             SUBCASE("...for three arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    parser.add_argument("-o").choices({T('A'), T('C')}).nargs(1).template type<T>();
+
+                    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "B"}), "argument -o: invalid choice: B (choose from A, C)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     parser.add_argument("-o").choices({T(11), T(22)}).nargs(3).template type<T>();
 
@@ -2755,7 +3317,13 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
         {
             SUBCASE("...for one argument")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::zero_or_one).template type<T>();
+
+                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "B"}), "argument -o: invalid choice: B (choose from A, C)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     parser.add_argument("-o").choices({T(11), T(22)}).nargs(argparse::zero_or_one).template type<T>();
 
@@ -2778,7 +3346,11 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
         SUBCASE("...as zero_or_more...")
         {
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::zero_or_more).template type<T>();
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 parser.add_argument("-o").choices({T(11), T(22)}).nargs(argparse::zero_or_more).template type<T>();
             }
@@ -2793,7 +3365,11 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
             SUBCASE("...for one argument")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "B"}), "argument -o: invalid choice: B (choose from A, C)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "33"}), "argument -o: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
                 }
@@ -2809,7 +3385,11 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
             SUBCASE("...for two arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "A", "B"}), "argument -o: invalid choice: B (choose from A, C)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "11", "33"}), "argument -o: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
                 }
@@ -2825,7 +3405,11 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
             SUBCASE("...for three arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "B"}), "argument -o: invalid choice: B (choose from A, C)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "11", "22", "33"}), "argument -o: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
                 }
@@ -2842,7 +3426,11 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
         SUBCASE("...as one_or_more...")
         {
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+            {
+                parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::one_or_more).template type<T>();
+            }
+            else if constexpr (std::is_integral_v<T>)
             {
                 parser.add_argument("-o").choices({T(11), T(22)}).nargs(argparse::one_or_more).template type<T>();
             }
@@ -2857,7 +3445,11 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
             SUBCASE("...for one argument")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "B"}), "argument -o: invalid choice: B (choose from A, C)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "33"}), "argument -o: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
                 }
@@ -2873,7 +3465,11 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
             SUBCASE("...for two arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "A", "B"}), "argument -o: invalid choice: B (choose from A, C)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "11", "33"}), "argument -o: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
                 }
@@ -2889,7 +3485,11 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
 
             SUBCASE("...for three arguments")
             {
-                if constexpr (std::is_integral_v<T>)
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "B"}), "argument -o: invalid choice: B (choose from A, C)", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
                 {
                     CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "11", "22", "33"}), "argument -o: invalid choice: 33 (choose from 11, 22)", argparse::parsing_error);
                 }
