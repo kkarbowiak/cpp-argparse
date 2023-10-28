@@ -755,7 +755,7 @@ namespace argparse
                                     }
                                     else
                                     {
-                                        if (it == args.end() || it->front() == '-')
+                                        if (it == args.end() || it->starts_with("-"))
                                         {
                                             throw parsing_error("argument " + join(get_names(), "/") + ": expected one argument");
                                         }
@@ -867,7 +867,7 @@ namespace argparse
                         {
                             case zero_or_one:
                             {
-                                if (it == args.end() || it->front() == '-')
+                                if (it == args.end() || it->starts_with("-"))
                                 {
                                     m_value = m_options.const_;
                                 }
