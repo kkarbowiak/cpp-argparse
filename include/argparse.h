@@ -919,7 +919,7 @@ namespace argparse
                 private:
                     auto find_pseudo_arg(tokens & args) const -> tokens::iterator
                     {
-                        return std::find(args.begin(), args.end(), "--");
+                        return std::ranges::find(args, "--");
                     }
 
                     auto find_arg(tokens::iterator begin, tokens::iterator end) const -> std::pair<tokens::iterator, std::string>
