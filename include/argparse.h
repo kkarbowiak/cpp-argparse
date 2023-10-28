@@ -87,8 +87,7 @@ namespace argparse
             class Value
             {
                 public:
-                    template<typename T>
-                    Value(T const & t)
+                    Value(auto const & t)
                       : m_value(t)
                     {
                     }
