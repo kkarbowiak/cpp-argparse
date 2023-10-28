@@ -730,7 +730,7 @@ namespace argparse
                         auto const pseudo_it = find_pseudo_arg(args);
                         if (auto [it, name] = find_arg(args.begin(), pseudo_it); it != pseudo_it)
                         {
-                            if (auto const & arg = *it; arg[0] == '-' && arg[1] == '-')
+                            if (auto const & arg = *it; arg.starts_with("--"))
                             {
                                 if (auto const pos = arg.find('='); pos != std::string::npos)
                                 {
