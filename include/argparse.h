@@ -292,8 +292,7 @@ namespace argparse
                 return tokens(&argv[1], &argv[argc]);
             }
 
-            template<typename Container>
-            static auto join(Container const & strings, std::string const & separator) -> std::string
+            static auto join(std::vector<std::string> const & strings, std::string const & separator) -> std::string
             {
                 auto result = std::string();
 
