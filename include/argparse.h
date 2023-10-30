@@ -929,7 +929,7 @@ namespace argparse
                                 it = args.erase(it);
                             }
                         }
-                        else if (arg[0] == '-' && arg[1] != '-')
+                        else
                         {
                             if (name.size() == 2)
                             {
