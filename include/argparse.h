@@ -931,31 +931,28 @@ namespace argparse
                         }
                         else
                         {
-                            if (name.size() == 2)
+                            if (it->size() != 2)
                             {
-                                if (it->size() != 2)
+                                auto const pos = it->find(name[1]);
+                                it->erase(pos, 1);
+                                if (m_options.action == store)
                                 {
-                                    auto const pos = it->find(name[1]);
-                                    it->erase(pos, 1);
-                                    if (m_options.action == store)
+                                    if (pos == 1)
                                     {
-                                        if (pos == 1)
-                                        {
-                                            it->erase(0, 1);
-                                        }
-                                        else
-                                        {
-                                            auto const prefix = it->substr(0, pos);
-                                            auto const value = it->substr(pos);
-                                            *it = prefix;
-                                            it = args.insert(it, value);
-                                        }
+                                        it->erase(0, 1);
+                                    }
+                                    else
+                                    {
+                                        auto const prefix = it->substr(0, pos);
+                                        auto const value = it->substr(pos);
+                                        *it = prefix;
+                                        it = args.insert(it, value);
                                     }
                                 }
-                                else
-                                {
-                                    it = args.erase(it);
-                                }
+                            }
+                            else
+                            {
+                                it = args.erase(it);
                             }
                         }
 
