@@ -958,10 +958,6 @@ namespace argparse
                                 }
                             }
                         }
-                        else
-                        {
-                            it = args.erase(it);
-                        }
 
                         return it;
                     }
