@@ -934,21 +934,18 @@ namespace argparse
 
                     auto find_arg(tokens::iterator begin, tokens::iterator end) const -> std::pair<tokens::iterator, std::string>
                     {
-                        for (auto const & name : m_options.names)
+                        for (auto it = begin; it != end; ++it)
                         {
-                            if (name[1] != '-')
+                            for (auto const & name : m_options.names)
                             {
-                                for (auto it = begin; it != end; ++it)
+                                if (name[1] != '-')
                                 {
                                     if ((*it)[0] == '-' && it->find(name[1]) != std::string::npos)
                                     {
                                         return {it, name};
                                     }
                                 }
-                            }
-                            else
-                            {
-                                for (auto it = begin; it != end; ++it)
+                                else
                                 {
                                     auto const [first_it, second_it] = std::mismatch(name.begin(), name.end(), it->begin(), it->end());
                                     if (first_it == name.end() && (second_it == it->end() || *second_it == '='))
