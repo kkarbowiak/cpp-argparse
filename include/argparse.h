@@ -756,7 +756,17 @@ namespace argparse
                                         it->erase(pos, 1);
                                         if (m_options.action == store)
                                         {
-                                            it->erase(0, 1);
+                                            if (pos == 1)
+                                            {
+                                                it->erase(0, 1);
+                                            }
+                                            else
+                                            {
+                                                auto const prefix = it->substr(0, pos);
+                                                auto const value = it->substr(pos);
+                                                *it = prefix;
+                                                it = args.insert(it, value);
+                                            }
                                         }
                                     }
                                 }

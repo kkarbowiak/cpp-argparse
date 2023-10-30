@@ -3849,11 +3849,26 @@ TEST_CASE("Parsing joined short options and short option joined with argument do
 TEST_CASE("Parsing joined short options and short option joined with argument yields their values")
 {
     auto parser = argparse::ArgumentParser();
-    parser.add_argument("-a").action(argparse::store_true);
-    parser.add_argument("-o");
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
+    SUBCASE("order ao")
+    {
+        parser.add_argument("-a").action(argparse::store_true);
+        parser.add_argument("-o");
 
-    CHECK(args.get_value<bool>("a") == true);
-    CHECK(args.get_value("o") == "value");
+        auto args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
+
+        CHECK(args.get_value<bool>("a") == true);
+        CHECK(args.get_value("o") == "value");
+    }
+
+    SUBCASE("order oa")
+    {
+        parser.add_argument("-o");
+        parser.add_argument("-a").action(argparse::store_true);
+
+        auto args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
+
+        CHECK(args.get_value<bool>("a") == true);
+        CHECK(args.get_value("o") == "value");
+    }
 }
