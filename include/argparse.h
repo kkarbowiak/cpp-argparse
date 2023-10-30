@@ -754,16 +754,13 @@ namespace argparse
                                     {
                                         auto const pos = it->find(name[1]);
                                         it->erase(pos, 1);
-                                        if (pos == 1)
+                                        if (m_options.action == store)
                                         {
-                                            if (m_options.action == store)
+                                            if (pos == 1)
                                             {
                                                 it->erase(0, 1);
                                             }
-                                        }
-                                        else
-                                        {
-                                            if (m_options.action == store)
+                                            else
                                             {
                                                 auto const prefix = it->substr(0, pos);
                                                 auto const value = it->substr(pos);
