@@ -34,8 +34,8 @@ jobs:
           - {
               name: "macOS latest",
               os: macos-latest,
-              cc: "clang",
-              cxx: "clang++",
+              cc: "$(brew --prefix llvm@15)/bin/clang",
+              cxx: "$(brew --prefix llvm@15)/bin/clang",
             }
     steps:
       - uses: actions/checkout@v4
