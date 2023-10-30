@@ -730,51 +730,7 @@ namespace argparse
                         auto const pseudo_it = find_pseudo_arg(args);
                         if (auto [it, name] = find_arg(args.begin(), pseudo_it); it != pseudo_it)
                         {
-                            if (auto const & arg = *it; arg[0] == '-' && arg[1] == '-')
-                            {
-                                if (auto const pos = arg.find('='); pos != std::string::npos)
-                                {
-                                    auto const value = arg.substr(pos + 1);
-                                    *it = value;
-                                }
-                                else
-                                {
-                                    it = args.erase(it);
-                                }
-                            }
-                            else if (arg[0] == '-' && arg[1] != '-')
-                            {
-                                if (name.size() == 2)
-                                {
-                                    if (it->size() == 2)
-                                    {
-                                        it = args.erase(it);
-                                    }
-                                    else
-                                    {
-                                        auto const pos = it->find(name[1]);
-                                        it->erase(pos, 1);
-                                        if (m_options.action == store)
-                                        {
-                                            if (pos == 1)
-                                            {
-                                                it->erase(0, 1);
-                                            }
-                                            else
-                                            {
-                                                auto const prefix = it->substr(0, pos);
-                                                auto const value = it->substr(pos);
-                                                *it = prefix;
-                                                it = args.insert(it, value);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                it = args.erase(it);
-                            }
+                            it = consume_name(args, it, name);
 
                             switch (m_options.action)
                             {
@@ -957,6 +913,57 @@ namespace argparse
                         }
 
                         return {end, ""};
+                    }
+
+                    auto consume_name(tokens & args, tokens::iterator it, std::string const & name) const -> tokens::iterator
+                    {
+                        if (auto const & arg = *it; arg[0] == '-' && arg[1] == '-')
+                        {
+                            if (auto const pos = arg.find('='); pos != std::string::npos)
+                            {
+                                auto const value = arg.substr(pos + 1);
+                                *it = value;
+                            }
+                            else
+                            {
+                                it = args.erase(it);
+                            }
+                        }
+                        else if (arg[0] == '-' && arg[1] != '-')
+                        {
+                            if (name.size() == 2)
+                            {
+                                if (it->size() == 2)
+                                {
+                                    it = args.erase(it);
+                                }
+                                else
+                                {
+                                    auto const pos = it->find(name[1]);
+                                    it->erase(pos, 1);
+                                    if (m_options.action == store)
+                                    {
+                                        if (pos == 1)
+                                        {
+                                            it->erase(0, 1);
+                                        }
+                                        else
+                                        {
+                                            auto const prefix = it->substr(0, pos);
+                                            auto const value = it->substr(pos);
+                                            *it = prefix;
+                                            it = args.insert(it, value);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            it = args.erase(it);
+                        }
+
+                        return it;
                     }
 
                     auto count_args(tokens::const_iterator it, tokens::const_iterator end) const -> std::size_t
