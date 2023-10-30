@@ -933,11 +933,7 @@ namespace argparse
                         {
                             if (name.size() == 2)
                             {
-                                if (it->size() == 2)
-                                {
-                                    it = args.erase(it);
-                                }
-                                else
+                                if (it->size() != 2)
                                 {
                                     auto const pos = it->find(name[1]);
                                     it->erase(pos, 1);
@@ -955,6 +951,10 @@ namespace argparse
                                             it = args.insert(it, value);
                                         }
                                     }
+                                }
+                                else
+                                {
+                                    it = args.erase(it);
                                 }
                             }
                         }
