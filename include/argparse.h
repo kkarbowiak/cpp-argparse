@@ -753,9 +753,9 @@ namespace argparse
                                     else
                                     {
                                         auto const pos = it->find(name[1]);
+                                        it->erase(pos, 1);
                                         if (pos == 1)
                                         {
-                                            it->erase(pos, 1);
                                             if (m_options.action == store)
                                             {
                                                 it->erase(0, 1);
@@ -763,7 +763,6 @@ namespace argparse
                                         }
                                         else
                                         {
-                                            it->erase(pos, 1);
                                             if (m_options.action == store)
                                             {
                                                 auto const prefix = it->substr(0, pos);
