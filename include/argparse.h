@@ -264,7 +264,7 @@ namespace argparse
             }
 
         private:
-            auto extract_filename(std::string const & path) -> std::string
+            static auto extract_filename(std::string const & path) -> std::string
             {
                 if (auto path_separator = path.find_last_of("/\\"); path_separator != path.npos)
                 {
@@ -287,7 +287,7 @@ namespace argparse
                 return get_parameters();
             }
 
-            auto get_tokens(int argc, char const * const argv[]) const -> tokens
+            static auto get_tokens(int argc, char const * const argv[]) -> tokens
             {
                 return tokens(&argv[1], &argv[argc]);
             }
@@ -334,7 +334,7 @@ namespace argparse
                 return args;
             }
 
-            auto remove_pseudo_arguments(tokens args) -> tokens
+            static auto remove_pseudo_arguments(tokens args) -> tokens
             {
                 args.erase(std::remove(args.begin(), args.end(), "--"), args.end());
 
