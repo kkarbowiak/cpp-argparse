@@ -616,9 +616,7 @@ namespace argparse
                                     }
                                     case zero_or_more:
                                     {
-                                        auto values = std::vector<std::any>(args.size());
-                                        consume_args(args, values);
-                                        m_value = m_options.type_handler->transform(values);
+                                        parse_arguments_number(args, args.size());
                                         break;
                                     }
                                     case one_or_more:
