@@ -596,10 +596,7 @@ namespace argparse
                         {
                             if (has_nargs_number())
                             {
-                                auto values = std::vector<std::any>(std::min(get_nargs_number(), args.size()));
-                                consume_args(args, values);
-
-                                m_value = m_options.type_handler->transform(values);
+                                parse_arguments_number(args, std::min(get_nargs_number(), args.size()));
                             }
                             else
                             {
@@ -690,6 +687,14 @@ namespace argparse
                     }
 
                 private:
+                    auto parse_arguments_number(tokens & args, std::size_t number) -> void
+                    {
+                        auto values = std::vector<std::any>(number);
+                        consume_args(args, values);
+
+                        m_value = m_options.type_handler->transform(values);
+                    }
+
                     auto consume_arg(tokens & args, std::any & value) const -> void
                     {
                         if (!m_options.type_handler->from_string(args.front(), value))
