@@ -91,7 +91,7 @@ namespace argparse
             {
                 public:
                     template<typename T>
-                    Value(T const & t)
+                    explicit Value(T const & t)
                       : m_value(t)
                     {
                     }
@@ -510,7 +510,7 @@ namespace argparse
             class Argument
             {
                 public:
-                    Argument(Options options)
+                    explicit Argument(Options options)
                       : m_options(std::move(options))
                     {
                     }
