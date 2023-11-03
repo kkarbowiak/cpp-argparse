@@ -310,7 +310,7 @@ namespace argparse
 
             auto parse_optional_arguments(tokens args) -> tokens
             {
-                for (auto & arg : m_arguments)
+                for (auto const & arg : m_arguments)
                 {
                     if (!arg->is_positional())
                     {
@@ -323,7 +323,7 @@ namespace argparse
 
             auto parse_positional_arguments(tokens args) -> tokens
             {
-                for (auto & arg : m_arguments)
+                for (auto const & arg : m_arguments)
                 {
                     if (arg->is_positional())
                     {
