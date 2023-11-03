@@ -747,15 +747,7 @@ namespace argparse
                                     {
                                         if (has_nargs_number())
                                         {
-                                            auto const nargs_number = get_nargs_number();
-                                            auto const args_number = count_args(it, args.end());
-                                            if (args_number < nargs_number)
-                                            {
-                                                throw parsing_error("argument " + join(get_names(), "/") + ": expected " + std::to_string(nargs_number) + " argument" + (nargs_number > 1 ? "s" : ""));
-                                            }
-                                            auto values = std::vector<std::any>(args_number);
-                                            consume_args(args, it, values);
-                                            m_value = m_options.type_handler->transform(values);
+                                            parse_arguments_number(args, it);
                                         }
                                         else
                                         {
@@ -891,6 +883,19 @@ namespace argparse
                     }
 
                 private:
+                    auto parse_arguments_number(tokens & args, tokens::iterator it) -> void
+                    {
+                        auto const nargs_number = get_nargs_number();
+                        auto const args_number = count_args(it, args.end());
+                        if (args_number < nargs_number)
+                        {
+                            throw parsing_error("argument " + join(get_names(), "/") + ": expected " + std::to_string(nargs_number) + " argument" + (nargs_number > 1 ? "s" : ""));
+                        }
+                        auto values = std::vector<std::any>(args_number);
+                        consume_args(args, it, values);
+                        m_value = m_options.type_handler->transform(values);
+                    }
+
                     auto find_pseudo_arg(tokens & args) const -> tokens::iterator
                     {
                         return std::find(args.begin(), args.end(), "--");
