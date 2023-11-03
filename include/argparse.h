@@ -600,36 +600,7 @@ namespace argparse
                             }
                             else
                             {
-                                switch (get_nargs_option())
-                                {
-                                    case zero_or_one:
-                                    {
-                                        if (!args.empty())
-                                        {
-                                            consume_arg(args, m_value);
-                                        }
-                                        else
-                                        {
-                                            m_value = m_options.default_;
-                                        }
-                                        break;
-                                    }
-                                    case zero_or_more:
-                                    {
-                                        parse_arguments_number(args, args.size());
-                                        break;
-                                    }
-                                    case one_or_more:
-                                    {
-                                        auto values = std::vector<std::any>(args.size());
-                                        consume_args(args, values);
-                                        if (!values.empty())
-                                        {
-                                            m_value = m_options.type_handler->transform(values);
-                                        }
-                                        break;
-                                    }
-                                }
+                                parse_arguments_option(args);
                             }
                         }
                         else
@@ -691,6 +662,40 @@ namespace argparse
                         consume_args(args, values);
 
                         m_value = m_options.type_handler->transform(values);
+                    }
+
+                    auto parse_arguments_option(tokens & args) -> void
+                    {
+                        switch (get_nargs_option())
+                        {
+                            case zero_or_one:
+                            {
+                                if (!args.empty())
+                                {
+                                    consume_arg(args, m_value);
+                                }
+                                else
+                                {
+                                    m_value = m_options.default_;
+                                }
+                                break;
+                            }
+                            case zero_or_more:
+                            {
+                                parse_arguments_number(args, args.size());
+                                break;
+                            }
+                            case one_or_more:
+                            {
+                                auto values = std::vector<std::any>(args.size());
+                                consume_args(args, values);
+                                if (!values.empty())
+                                {
+                                    m_value = m_options.type_handler->transform(values);
+                                }
+                                break;
+                            }
+                        }
                     }
 
                     auto consume_arg(tokens & args, std::any & value) const -> void
