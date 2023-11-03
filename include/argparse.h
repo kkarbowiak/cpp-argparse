@@ -859,7 +859,7 @@ namespace argparse
                         {
                             throw parsing_error("argument " + join(get_names(), "/") + ": expected " + std::to_string(nargs_number) + " argument" + (nargs_number > 1 ? "s" : ""));
                         }
-                        auto values = std::vector<std::any>(args_number);
+                        auto values = std::vector<std::any>(nargs_number);
                         consume_args(args, it, values);
                         m_value = m_options.type_handler->transform(values);
                     }
