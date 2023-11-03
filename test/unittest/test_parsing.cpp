@@ -1407,6 +1407,28 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, si
                     CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"}), "unrecognised arguments: bar", argparse::parsing_error);
                 }
             }
+
+            SUBCASE("...for one argument and three provided")
+            {
+                parser.add_argument("-o").nargs(1).template type<T>();
+
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "A", "B", "C"}), "unrecognised arguments: B C", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"}), "unrecognised arguments: 54 65", argparse::parsing_error);
+                }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "0.5", "1.125", "2.375"}), "unrecognised arguments: 1.125 2.375", argparse::parsing_error);
+                }
+                else
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"}), "unrecognised arguments: bar baz", argparse::parsing_error);
+                }
+            }
         }
     }
 
