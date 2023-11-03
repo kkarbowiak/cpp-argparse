@@ -137,7 +137,7 @@ namespace argparse
 
                     auto insert(std::string const & name, std::any const & value) -> void
                     {
-                        (void) m_parameters.emplace(name, value);
+                        (void) m_parameters.try_emplace(name, value);
                     }
 
                 private:
@@ -356,7 +356,7 @@ namespace argparse
                 {
                     if (arg->is_present() && arg->get_options().mutually_exclusive_group != nullptr)
                     {
-                        if (auto const [it, inserted] = exclusive_args.emplace(arg->get_options().mutually_exclusive_group, arg.get()); !inserted)
+                        if (auto const [it, inserted] = exclusive_args.try_emplace(arg->get_options().mutually_exclusive_group, arg.get()); !inserted)
                         {
                             throw parsing_error("argument " + join(arg->get_names(), "/") + ": not allowed with argument " + join(it->second->get_names(), "/"));
                         }
