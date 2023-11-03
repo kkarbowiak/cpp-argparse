@@ -751,39 +751,7 @@ namespace argparse
                                         }
                                         else
                                         {
-                                            switch (get_nargs_option())
-                                            {
-                                                case zero_or_one:
-                                                {
-                                                    if (it == args.end() || it->front() == '-')
-                                                    {
-                                                        m_value = m_options.const_;
-                                                    }
-                                                    else
-                                                    {
-                                                        consume_arg(args, it, m_value);
-                                                    }
-                                                    break;
-                                                }
-                                                case zero_or_more:
-                                                {
-                                                    auto values = std::vector<std::any>(count_args(it, args.end()));
-                                                    consume_args(args, it, values);
-                                                    m_value = m_options.type_handler->transform(values);
-                                                    break;
-                                                }
-                                                case one_or_more:
-                                                {
-                                                    auto values = std::vector<std::any>(count_args(it, args.end()));
-                                                    consume_args(args, it, values);
-                                                    if (values.empty())
-                                                    {
-                                                        throw parsing_error("argument " + join(get_names(), "/") + ": expected at least one argument");
-                                                    }
-                                                    m_value = m_options.type_handler->transform(values);
-                                                    break;
-                                                }
-                                            }
+                                            parse_arguments_option(args, it);
                                         }
                                     }
                                     else
@@ -894,6 +862,43 @@ namespace argparse
                         auto values = std::vector<std::any>(args_number);
                         consume_args(args, it, values);
                         m_value = m_options.type_handler->transform(values);
+                    }
+
+                    auto parse_arguments_option(tokens & args, tokens::iterator it) -> void
+                    {
+                        switch (get_nargs_option())
+                        {
+                            case zero_or_one:
+                            {
+                                if (it == args.end() || it->front() == '-')
+                                {
+                                    m_value = m_options.const_;
+                                }
+                                else
+                                {
+                                    consume_arg(args, it, m_value);
+                                }
+                                break;
+                            }
+                            case zero_or_more:
+                            {
+                                auto values = std::vector<std::any>(count_args(it, args.end()));
+                                consume_args(args, it, values);
+                                m_value = m_options.type_handler->transform(values);
+                                break;
+                            }
+                            case one_or_more:
+                            {
+                                auto values = std::vector<std::any>(count_args(it, args.end()));
+                                consume_args(args, it, values);
+                                if (values.empty())
+                                {
+                                    throw parsing_error("argument " + join(get_names(), "/") + ": expected at least one argument");
+                                }
+                                m_value = m_options.type_handler->transform(values);
+                                break;
+                            }
+                        }
                     }
 
                     auto find_pseudo_arg(tokens & args) const -> tokens::iterator
