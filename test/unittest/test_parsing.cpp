@@ -906,6 +906,28 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
                     CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "foo", "bar"}), "unrecognised arguments: bar", argparse::parsing_error);
                 }
             }
+
+            SUBCASE("...for two arguments and three provided")
+            {
+                parser.add_argument("pos").nargs(2).template type<T>();
+
+                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "A", "B", "C"}), "unrecognised arguments: C", argparse::parsing_error);
+                }
+                else if constexpr (std::is_integral_v<T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "42", "54", "65"}), "unrecognised arguments: 65", argparse::parsing_error);
+                }
+                else if constexpr (std::is_floating_point_v<T>)
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "0.5", "1.125", "2.375"}), "unrecognised arguments: 2.375", argparse::parsing_error);
+                }
+                else
+                {
+                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"}), "unrecognised arguments: baz", argparse::parsing_error);
+                }
+            }
         }
     }
 
