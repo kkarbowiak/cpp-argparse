@@ -690,7 +690,7 @@ namespace argparse
                     }
 
                 private:
-                    auto consume_arg(tokens & args, std::any & value) -> void
+                    auto consume_arg(tokens & args, std::any & value) const -> void
                     {
                         if (!m_options.type_handler->from_string(args.front(), value))
                         {
@@ -703,7 +703,7 @@ namespace argparse
                         args.erase(args.begin());
                     }
 
-                    auto consume_args(tokens & args, std::vector<std::any> & values) -> void
+                    auto consume_args(tokens & args, std::vector<std::any> & values) const -> void
                     {
                         for (auto & value : values)
                         {
@@ -970,7 +970,7 @@ namespace argparse
                         return result;
                     }
 
-                    auto consume_arg(tokens & args, tokens::iterator & arg_it, std::any & value) -> void
+                    auto consume_arg(tokens & args, tokens::iterator & arg_it, std::any & value) const -> void
                     {
                         if (!m_options.type_handler->from_string(*arg_it, value))
                         {
@@ -983,7 +983,7 @@ namespace argparse
                         arg_it = args.erase(arg_it);
                     }
 
-                    auto consume_args(tokens & args, tokens::iterator & arg_it, std::vector<std::any> & values) -> void
+                    auto consume_args(tokens & args, tokens::iterator & arg_it, std::vector<std::any> & values) const -> void
                     {
                         for (auto & value : values)
                         {
