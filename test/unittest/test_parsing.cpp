@@ -3288,7 +3288,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, 
             {
                 if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
                 {
-                    parser.add_argument("-o").choices({T('A'), T('C')}).nargs(1).template type<T>();
+                    parser.add_argument("-o").choices({T('A'), T('C')}).nargs(3).template type<T>();
 
                     CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "B"}), "argument -o: invalid choice: B (choose from A, C)", argparse::parsing_error);
                 }
