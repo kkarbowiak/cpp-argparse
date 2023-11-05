@@ -1064,58 +1064,8 @@ namespace argparse
                     auto format_help() const -> std::string
                     {
                         auto message = format_usage();
-                        auto positionals = std::string();
-                        auto optionals = std::string();
-
-                        for (auto const & arg : m_arguments)
-                        {
-                            if (arg->is_positional())
-                            {
-                                auto arg_line = "  " + format_arg(*arg);
-
-                                if (!arg->get_options().help.empty())
-                                {
-                                    arg_line += help_string_separation(arg_line.size());
-                                    arg_line += arg->get_options().help;
-                                }
-
-                                positionals += '\n' + arg_line;
-                            }
-                            else
-                            {
-                                auto arg_line = std::string("  ");
-
-                                for (auto name_it = arg->get_names().begin(); name_it != arg->get_names().end(); ++name_it)
-                                {
-                                    if (name_it != arg->get_names().begin())
-                                    {
-                                        arg_line += ", ";
-                                    }
-
-                                    arg_line += *name_it;
-                                    if (arg->get_options().action == store)
-                                    {
-                                        if (arg->has_nargs())
-                                        {
-                                            arg_line += format_nargs(*arg);
-                                        }
-                                        else
-                                        {
-                                            arg_line += " ";
-                                            arg_line += format_arg(*arg);
-                                        }
-                                    }
-                                }
-
-                                if (!arg->get_options().help.empty())
-                                {
-                                    arg_line += help_string_separation(arg_line.size());
-                                    arg_line += arg->get_options().help;
-                                }
-
-                                optionals += '\n' + arg_line;
-                            }
-                        }
+                        auto positionals = format_help_positionals();
+                        auto optionals = format_help_optionals();
 
                         if (m_description)
                         {
@@ -1214,6 +1164,74 @@ namespace argparse
                                 {
                                     optionals += "]";
                                 }
+                            }
+                        }
+
+                        return optionals;
+                    }
+
+                    auto format_help_positionals() const -> std::string
+                    {
+                        auto positionals = std::string();
+
+                        for (auto const & arg : m_arguments)
+                        {
+                            if (arg->is_positional())
+                            {
+                                auto arg_line = "  " + format_arg(*arg);
+
+                                if (!arg->get_options().help.empty())
+                                {
+                                    arg_line += help_string_separation(arg_line.size());
+                                    arg_line += arg->get_options().help;
+                                }
+
+                                positionals += '\n' + arg_line;
+                            }
+                        }
+
+                        return positionals;
+                    }
+
+                    auto format_help_optionals() const -> std::string
+                    {
+                        auto optionals = std::string();
+
+                        for (auto const & arg : m_arguments)
+                        {
+                            if (!arg->is_positional())
+                            {
+                                auto arg_line = std::string("  ");
+
+                                for (auto name_it = arg->get_names().begin(); name_it != arg->get_names().end(); ++name_it)
+                                {
+                                    if (name_it != arg->get_names().begin())
+                                    {
+                                        arg_line += ", ";
+                                    }
+
+                                    arg_line += *name_it;
+                                    if (arg->get_options().action == store)
+                                    {
+                                        if (arg->has_nargs())
+                                        {
+                                            arg_line += format_nargs(*arg);
+                                        }
+                                        else
+                                        {
+                                            arg_line += " ";
+                                            arg_line += format_arg(*arg);
+                                        }
+                                    }
+                                }
+
+                                if (!arg->get_options().help.empty())
+                                {
+                                    arg_line += help_string_separation(arg_line.size());
+                                    arg_line += arg->get_options().help;
+                                }
+
+                                optionals += '\n' + arg_line;
                             }
                         }
 
