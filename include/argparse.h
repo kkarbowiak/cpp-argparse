@@ -882,7 +882,8 @@ namespace argparse
                             }
                             case zero_or_more:
                             {
-                                auto values = std::vector<std::any>(count_args(it, args.end()));
+                                auto const args_number = count_args(it, args.end());
+                                auto values = std::vector<std::any>(args_number);
                                 consume_args(args, it, values);
                                 m_value = m_options.type_handler->transform(values);
                                 break;
