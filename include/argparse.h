@@ -1055,69 +1055,8 @@ namespace argparse
                         }
 
                         auto message = std::string("usage: " + *m_prog);
-                        auto optionals = std::string();
-                        auto positionals = std::string();
-
-                        for (auto it = m_arguments.cbegin(); it != m_arguments.cend(); ++it)
-                        {
-                            auto const & arg = **it;
-
-                            if (arg.is_positional())
-                            {
-                                if (arg.has_nargs())
-                                {
-                                    positionals += format_nargs(arg);
-                                }
-                                else
-                                {
-                                    positionals += " ";
-                                    positionals += format_arg(arg);
-                                }
-                            }
-                            else
-                            {
-                                if (arg.is_required())
-                                {
-                                    optionals += " ";
-                                }
-                                else if (arg.get_options().mutually_exclusive_group != nullptr && it != m_arguments.cbegin() && arg.get_options().mutually_exclusive_group == (*std::prev(it))->get_options().mutually_exclusive_group)
-                                {
-                                    optionals += " | ";
-                                }
-                                else
-                                {
-                                    optionals += " [";
-                                }
-
-                                if (arg.has_nargs())
-                                {
-                                    optionals += arg.get_name();
-                                    optionals += format_nargs(arg);
-                                }
-                                else
-                                {
-                                    optionals += arg.get_name();
-                                    if (arg.get_options().action == store)
-                                    {
-                                        optionals += " ";
-                                        optionals += format_arg(arg);
-                                    }
-                                }
-
-                                if (arg.is_required())
-                                {
-                                    // skip
-                                }
-                                else if (arg.get_options().mutually_exclusive_group != nullptr && std::next(it) != m_arguments.cend() && arg.get_options().mutually_exclusive_group == (*std::next(it))->get_options().mutually_exclusive_group)
-                                {
-                                    // skip
-                                }
-                                else
-                                {
-                                    optionals += "]";
-                                }
-                            }
-                        }
+                        auto optionals = format_usage_optionals();
+                        auto positionals = format_usage_positionals();
 
                         return message + optionals + positionals;
                     }
@@ -1202,6 +1141,85 @@ namespace argparse
                     }
 
                 private:
+                    auto format_usage_positionals() const -> std::string
+                    {
+                        auto positionals = std::string();
+
+                        for (auto const & arg : m_arguments)
+                        {
+                            if (arg->is_positional())
+                            {
+                                if (arg->has_nargs())
+                                {
+                                    positionals += format_nargs(*arg);
+                                }
+                                else
+                                {
+                                    positionals += " ";
+                                    positionals += format_arg(*arg);
+                                }
+                            }
+                        }
+
+                        return positionals;
+                    }
+
+                    auto format_usage_optionals() const -> std::string
+                    {
+                        auto optionals = std::string();
+
+                        for (auto it = m_arguments.cbegin(); it != m_arguments.cend(); ++it)
+                        {
+                            auto const & arg = **it;
+
+                            if (!arg.is_positional())
+                            {
+                                if (arg.is_required())
+                                {
+                                    optionals += " ";
+                                }
+                                else if (arg.get_options().mutually_exclusive_group != nullptr && it != m_arguments.cbegin() && arg.get_options().mutually_exclusive_group == (*std::prev(it))->get_options().mutually_exclusive_group)
+                                {
+                                    optionals += " | ";
+                                }
+                                else
+                                {
+                                    optionals += " [";
+                                }
+
+                                if (arg.has_nargs())
+                                {
+                                    optionals += arg.get_name();
+                                    optionals += format_nargs(arg);
+                                }
+                                else
+                                {
+                                    optionals += arg.get_name();
+                                    if (arg.get_options().action == store)
+                                    {
+                                        optionals += " ";
+                                        optionals += format_arg(arg);
+                                    }
+                                }
+
+                                if (arg.is_required())
+                                {
+                                    // skip
+                                }
+                                else if (arg.get_options().mutually_exclusive_group != nullptr && std::next(it) != m_arguments.cend() && arg.get_options().mutually_exclusive_group == (*std::next(it))->get_options().mutually_exclusive_group)
+                                {
+                                    // skip
+                                }
+                                else
+                                {
+                                    optionals += "]";
+                                }
+                            }
+                        }
+
+                        return optionals;
+                    }
+
                     auto format_arg(Argument const & argument) const -> std::string
                     {
                         return argument.get_options().choices.empty()
