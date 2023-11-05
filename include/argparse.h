@@ -890,12 +890,12 @@ namespace argparse
                             case one_or_more:
                             {
                                 auto const args_number = count_args(it, args.end());
-                                auto values = std::vector<std::any>(args_number);
-                                consume_args(args, it, values);
-                                if (values.empty())
+                                if (args_number == 0)
                                 {
                                     throw parsing_error("argument " + join(get_names(), "/") + ": expected at least one argument");
                                 }
+                                auto values = std::vector<std::any>(args_number);
+                                consume_args(args, it, values);
                                 m_value = m_options.type_handler->transform(values);
                                 break;
                             }
