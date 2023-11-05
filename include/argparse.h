@@ -859,9 +859,7 @@ namespace argparse
                         {
                             throw parsing_error("argument " + join(get_names(), "/") + ": expected " + std::to_string(nargs_number) + " argument" + (nargs_number > 1 ? "s" : ""));
                         }
-                        auto values = std::vector<std::any>(nargs_number);
-                        consume_args(args, it, values);
-                        m_value = m_options.type_handler->transform(values);
+                        parse_arguments_number(args, it, nargs_number);
                     }
 
                     auto parse_arguments_option(tokens & args, tokens::iterator it) -> void
@@ -883,9 +881,7 @@ namespace argparse
                             case zero_or_more:
                             {
                                 auto const args_number = count_args(it, args.end());
-                                auto values = std::vector<std::any>(args_number);
-                                consume_args(args, it, values);
-                                m_value = m_options.type_handler->transform(values);
+                                parse_arguments_number(args, it, args_number);
                                 break;
                             }
                             case one_or_more:
@@ -895,12 +891,17 @@ namespace argparse
                                 {
                                     throw parsing_error("argument " + join(get_names(), "/") + ": expected at least one argument");
                                 }
-                                auto values = std::vector<std::any>(args_number);
-                                consume_args(args, it, values);
-                                m_value = m_options.type_handler->transform(values);
+                                parse_arguments_number(args, it, args_number);
                                 break;
                             }
                         }
+                    }
+
+                    auto parse_arguments_number(tokens & args, tokens::iterator it, std::size_t args_number) -> void
+                    {
+                        auto values = std::vector<std::any>(args_number);
+                        consume_args(args, it, values);
+                        m_value = m_options.type_handler->transform(values);
                     }
 
                     auto find_pseudo_arg(tokens & args) const -> tokens::iterator
