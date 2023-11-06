@@ -838,7 +838,7 @@ namespace argparse
 
                         auto metavar = get_dest_name();
 
-                        std::for_each(metavar.begin(), metavar.end(), [](char & ch) { ch = static_cast<char>(::toupper(ch)); });
+                        std::ranges::for_each(metavar, [](char & ch) { ch = static_cast<char>(::toupper(ch)); });
 
                         return metavar;
                     }
