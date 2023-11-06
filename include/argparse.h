@@ -824,7 +824,7 @@ namespace argparse
 
                         auto dest = get_name_for_dest();
 
-                        std::replace(dest.begin(), dest.end(), '-', '_');
+                        std::ranges::replace(dest, '-', '_');
 
                         return dest;
                     }
