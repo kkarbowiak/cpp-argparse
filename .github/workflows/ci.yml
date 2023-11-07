@@ -34,8 +34,8 @@ jobs:
           - {
               name: "macOS latest",
               os: macos-latest,
-              cc: "clang",
-              cxx: "clang++",
+              cc: "xcode",
+              cxx: "xcode",
             }
     steps:
       - uses: actions/checkout@v4
