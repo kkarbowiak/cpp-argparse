@@ -42,7 +42,7 @@ jobs:
 
       - name: Use xcode
         if: runner.os == 'macOS'
-        run: sudo xcode-select -switch /Applications/Xcode_14.2.app
+        run: sudo xcode-select -switch /Applications/Xcode_15.0.app
 
       - name: CMake configure
         run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=${{ matrix.config.cc }} -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }}
