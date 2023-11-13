@@ -572,6 +572,11 @@ namespace argparse
                         return (m_options.mutually_exclusive_group != nullptr) && (m_options.mutually_exclusive_group == other.m_options.mutually_exclusive_group);
                     }
 
+                    auto has_store_action() const -> bool
+                    {
+                        return m_options.action == store;
+                    }
+
                 protected:
                     auto check_choices(std::any const & value) const -> void
                     {
@@ -1157,7 +1162,7 @@ namespace argparse
                                 else
                                 {
                                     optionals += arg->get_name();
-                                    if (arg->get_options().action == store)
+                                    if (arg->has_store_action())
                                     {
                                         optionals += " ";
                                         optionals += format_arg(*arg);
@@ -1223,7 +1228,7 @@ namespace argparse
                                     }
 
                                     arg_line += *name_it;
-                                    if (arg->get_options().action == store)
+                                    if (arg->has_store_action())
                                     {
                                         if (arg->has_nargs())
                                         {
