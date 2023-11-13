@@ -565,6 +565,11 @@ namespace argparse
                         return m_options.mutually_exclusive_group != nullptr;
                     }
 
+                    auto is_mutually_exclusive_with(Argument const & other) const -> bool
+                    {
+                        return (m_options.mutually_exclusive_group != nullptr) && (m_options.mutually_exclusive_group == other.m_options.mutually_exclusive_group);
+                    }
+
                 protected:
                     auto check_choices(std::any const & value) const -> void
                     {
@@ -1133,7 +1138,7 @@ namespace argparse
                                 {
                                     optionals += " ";
                                 }
-                                else if (arg->is_mutually_exclusive() && it != m_arguments.cbegin() && arg->get_options().mutually_exclusive_group == (*std::prev(it))->get_options().mutually_exclusive_group)
+                                else if (arg->is_mutually_exclusive() && it != m_arguments.cbegin() && arg->is_mutually_exclusive_with(**std::prev(it)))
                                 {
                                     optionals += " | ";
                                 }
@@ -1161,7 +1166,7 @@ namespace argparse
                                 {
                                     // skip
                                 }
-                                else if (arg->is_mutually_exclusive() && std::next(it) != m_arguments.cend() && arg->get_options().mutually_exclusive_group == (*std::next(it))->get_options().mutually_exclusive_group)
+                                else if (arg->is_mutually_exclusive() && std::next(it) != m_arguments.cend() && arg->is_mutually_exclusive_with(**std::next(it)))
                                 {
                                     // skip
                                 }
