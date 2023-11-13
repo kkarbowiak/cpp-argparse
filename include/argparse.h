@@ -537,11 +537,6 @@ namespace argparse
                         return m_options.names;
                     }
 
-                    auto get_options() const -> Options const &
-                    {
-                        return m_options;
-                    }
-
                     auto has_nargs() const -> bool
                     {
                         return m_options.nargs.has_value();
