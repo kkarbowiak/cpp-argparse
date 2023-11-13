@@ -354,7 +354,7 @@ namespace argparse
                 auto exclusive_args = std::map<MutuallyExclusiveGroup const *, Argument const *>();
                 for (auto const & arg : m_arguments)
                 {
-                    if (arg->is_present() && arg->get_options().mutually_exclusive_group != nullptr)
+                    if (arg->is_present() && arg->is_mutually_exclusive())
                     {
                         if (auto const [it, inserted] = exclusive_args.try_emplace(arg->get_options().mutually_exclusive_group, arg.get()); !inserted)
                         {
@@ -558,6 +558,11 @@ namespace argparse
                     auto get_nargs_option() const -> Nargs
                     {
                         return std::get<Nargs>(*m_options.nargs);
+                    }
+
+                    auto is_mutually_exclusive() const -> bool
+                    {
+                        return m_options.mutually_exclusive_group != nullptr;
                     }
 
                 protected:
@@ -1128,7 +1133,7 @@ namespace argparse
                                 {
                                     optionals += " ";
                                 }
-                                else if (arg->get_options().mutually_exclusive_group != nullptr && it != m_arguments.cbegin() && arg->get_options().mutually_exclusive_group == (*std::prev(it))->get_options().mutually_exclusive_group)
+                                else if (arg->is_mutually_exclusive() && it != m_arguments.cbegin() && arg->get_options().mutually_exclusive_group == (*std::prev(it))->get_options().mutually_exclusive_group)
                                 {
                                     optionals += " | ";
                                 }
@@ -1156,7 +1161,7 @@ namespace argparse
                                 {
                                     // skip
                                 }
-                                else if (arg->get_options().mutually_exclusive_group != nullptr && std::next(it) != m_arguments.cend() && arg->get_options().mutually_exclusive_group == (*std::next(it))->get_options().mutually_exclusive_group)
+                                else if (arg->is_mutually_exclusive() && std::next(it) != m_arguments.cend() && arg->get_options().mutually_exclusive_group == (*std::next(it))->get_options().mutually_exclusive_group)
                                 {
                                     // skip
                                 }
