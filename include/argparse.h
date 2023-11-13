@@ -1267,9 +1267,9 @@ namespace argparse
 
                     auto format_arg(Argument const & argument) const -> std::string
                     {
-                        return !argument.has_choices()
-                            ? argument.get_metavar_name()
-                            : "{" + argument.get_options().join_choices(",") + "}";
+                        return argument.has_choices()
+                            ? "{" + argument.get_options().join_choices(",") + "}"
+                            : argument.get_metavar_name();
                     }
 
                     auto format_nargs(Argument const & argument) const -> std::string
