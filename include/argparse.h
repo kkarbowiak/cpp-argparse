@@ -582,6 +582,11 @@ namespace argparse
                         return m_options.help;
                     }
 
+                    auto has_choices() const -> bool
+                    {
+                        return !m_options.choices.empty();
+                    }
+
                 protected:
                     auto check_choices(std::any const & value) const -> void
                     {
@@ -1262,7 +1267,7 @@ namespace argparse
 
                     auto format_arg(Argument const & argument) const -> std::string
                     {
-                        return argument.get_options().choices.empty()
+                        return !argument.has_choices()
                             ? argument.get_metavar_name()
                             : "{" + argument.get_options().join_choices(",") + "}";
                     }
