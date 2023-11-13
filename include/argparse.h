@@ -577,6 +577,11 @@ namespace argparse
                         return m_options.action == store;
                     }
 
+                    auto get_help_message() const -> std::string const &
+                    {
+                        return m_options.help;
+                    }
+
                 protected:
                     auto check_choices(std::any const & value) const -> void
                     {
@@ -1197,10 +1202,10 @@ namespace argparse
                             {
                                 auto arg_line = "  " + format_arg(*arg);
 
-                                if (!arg->get_options().help.empty())
+                                if (auto const & help = arg->get_help_message(); !help.empty())
                                 {
                                     arg_line += help_string_separation(arg_line.size());
-                                    arg_line += arg->get_options().help;
+                                    arg_line += help;
                                 }
 
                                 positionals += '\n' + arg_line;
@@ -1242,10 +1247,10 @@ namespace argparse
                                     }
                                 }
 
-                                if (!arg->get_options().help.empty())
+                                if (auto const & help = arg->get_help_message(); !help.empty())
                                 {
                                     arg_line += help_string_separation(arg_line.size());
-                                    arg_line += arg->get_options().help;
+                                    arg_line += help;
                                 }
 
                                 optionals += '\n' + arg_line;
