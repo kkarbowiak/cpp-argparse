@@ -351,14 +351,16 @@ namespace argparse
 
             auto ensure_no_arguments_excluded() const -> void
             {
-                auto exclusive_args = std::map<MutuallyExclusiveGroup const *, Argument const *>();
-                for (auto const & arg : m_arguments)
+                for (auto it1 = m_arguments.begin(); it1 != m_arguments.end(); ++it1)
                 {
-                    if (arg->is_present() && arg->is_mutually_exclusive())
+                    if (auto const & arg1 = **it1; arg1.is_present())
                     {
-                        if (auto const [it, inserted] = exclusive_args.try_emplace(arg->get_options().mutually_exclusive_group, arg.get()); !inserted)
+                        for (auto it2 = std::next(it1); it2 != m_arguments.end(); ++it2)
                         {
-                            throw parsing_error("argument " + join(arg->get_names(), "/") + ": not allowed with argument " + join(it->second->get_names(), "/"));
+                            if (auto const & arg2 = **it2; arg2.is_present() && arg1.is_mutually_exclusive_with(arg2))
+                            {
+                                throw parsing_error("argument " + join(arg2.get_names(), "/") + ": not allowed with argument " + join(arg1.get_names(), "/"));
+                            }
                         }
                     }
                 }
