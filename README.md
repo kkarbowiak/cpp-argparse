@@ -14,7 +14,7 @@ This is a C++ implementation of Python's `argparse` module. The aim is to cover 
 
 C++ argparse is a header-only library, so its setup is minimal. It has no external dependencies and only uses STL. Since it uses `std::optional`, `std::any`, and some other features, it requires C++17 compiler and standard library.
 
-C++ argparse uses CMake internally, but you don't have to. Just put the header somewhere and point your build system to it.
+C++ argparse uses CMake internally, but you don't have to. Just put the [argparse.h](https://github.com/kkarbowiak/cpp-argparse/releases/latest/download/argparse.h) header somewhere and point your build system to it.
 
 Unit tests use [doctest](https://github.com/onqtam/doctest) unit testing framework.
 
