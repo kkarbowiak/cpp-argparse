@@ -807,17 +807,18 @@ namespace argparse
                         }
                         else
                         {
-                            if (m_options.action == store_true || m_options.action == help)
+                            switch (m_options.action)
                             {
-                                m_value = false;
-                            }
-                            else if (m_options.action == store_false)
-                            {
-                                m_value = true;
-                            }
-                            else
-                            {
-                                m_value = m_options.default_;
+                                case store_true:
+                                case help:
+                                    m_value = false;
+                                    break;
+                                case store_false:
+                                    m_value = true;
+                                    break;
+                                default:
+                                    m_value = m_options.default_;
+                                    break;
                             }
                         }
 
