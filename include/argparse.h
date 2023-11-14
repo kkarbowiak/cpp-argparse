@@ -493,20 +493,6 @@ namespace argparse
                 std::optional<std::variant<std::size_t, Nargs>> nargs;
                 MutuallyExclusiveGroup const * mutually_exclusive_group = nullptr;
                 std::unique_ptr<TypeHandler> type_handler = std::make_unique<TypeHandlerT<std::string>>();
-
-                auto join_choices(std::string const & separator) const -> std::string
-                {
-                    auto result = std::string();
-                    for (auto i = choices.begin(); i != choices.end(); ++i)
-                    {
-                        if (i != choices.begin())
-                        {
-                            result += separator;
-                        }
-                        result += type_handler->to_string(*i);
-                    }
-                    return result;
-                }
             };
 
             class Argument
@@ -584,7 +570,7 @@ namespace argparse
 
                     auto get_joined_choices(std::string const & separator) const -> std::string
                     {
-                        return m_options.join_choices(separator);
+                        return join_choices(separator);
                     }
 
                 protected:
@@ -598,10 +584,24 @@ namespace argparse
                             std::string message = "argument " + join(m_options.names, "/") + ": invalid choice: ";
                             message += m_options.type_handler->to_string(value);
                             message += " (choose from ";
-                            message += m_options.join_choices(", ");
+                            message += join_choices(", ");
                             message += ")";
                             throw parsing_error(message);
                         }
+                    }
+
+                    auto join_choices(std::string const & separator) const -> std::string
+                    {
+                        auto result = std::string();
+                        for (auto i = m_options.choices.begin(); i != m_options.choices.end(); ++i)
+                        {
+                            if (i != m_options.choices.begin())
+                            {
+                                result += separator;
+                            }
+                            result += m_options.type_handler->to_string(*i);
+                        }
+                        return result;
                     }
 
                 protected:
