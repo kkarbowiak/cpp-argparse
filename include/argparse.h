@@ -1,7 +1,7 @@
 /*
     Copyright 2018 - 2023 Krzysztof Karbowiak
 
-    cpp-argparse v2.1.2
+    cpp-argparse v2.1.3
 
     See https://github.com/kkarbowiak/cpp-argparse
 
