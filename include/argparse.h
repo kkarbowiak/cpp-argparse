@@ -357,7 +357,7 @@ namespace argparse
                     {
                         for (auto it2 = std::next(it1); it2 != m_arguments.end(); ++it2)
                         {
-                            if (auto const & arg2 = **it2; arg2.is_present() && arg1.is_mutually_exclusive_with(arg2))
+                            if (auto const & arg2 = **it2; arg2.is_present() && arg2.is_mutually_exclusive_with(arg1))
                             {
                                 throw parsing_error("argument " + join(arg2.get_names(), "/") + ": not allowed with argument " + join(arg1.get_names(), "/"));
                             }
