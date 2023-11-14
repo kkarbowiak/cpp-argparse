@@ -1,0 +1,20 @@
+name: Release header file
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    permissions:
+      contents: write
+    name: Publish header
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Upload artifact
+        uses: softprops/action-gh-release@v1
+        with:
+          files: include/argparse.h
