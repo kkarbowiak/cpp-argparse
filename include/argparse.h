@@ -570,7 +570,16 @@ namespace argparse
 
                     auto get_joined_choices(std::string const & separator) const -> std::string
                     {
-                        return join_choices(separator);
+                        auto result = std::string();
+                        for (auto i = m_options.choices.begin(); i != m_options.choices.end(); ++i)
+                        {
+                            if (i != m_options.choices.begin())
+                            {
+                                result += separator;
+                            }
+                            result += m_options.type_handler->to_string(*i);
+                        }
+                        return result;
                     }
 
                 protected:
@@ -584,24 +593,10 @@ namespace argparse
                             std::string message = "argument " + join(m_options.names, "/") + ": invalid choice: ";
                             message += m_options.type_handler->to_string(value);
                             message += " (choose from ";
-                            message += join_choices(", ");
+                            message += get_joined_choices(", ");
                             message += ")";
                             throw parsing_error(message);
                         }
-                    }
-
-                    auto join_choices(std::string const & separator) const -> std::string
-                    {
-                        auto result = std::string();
-                        for (auto i = m_options.choices.begin(); i != m_options.choices.end(); ++i)
-                        {
-                            if (i != m_options.choices.begin())
-                            {
-                                result += separator;
-                            }
-                            result += m_options.type_handler->to_string(*i);
-                        }
-                        return result;
                     }
 
                 protected:
