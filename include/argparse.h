@@ -942,7 +942,7 @@ namespace argparse
                                 }
                                 else
                                 {
-                                    auto const [first_it, second_it] = std::mismatch(name.begin(), name.end(), it->begin(), it->end());
+                                    auto const [first_it, second_it] = std::ranges::mismatch(name, *it);
                                     if (first_it == name.end() && (second_it == it->end() || *second_it == '='))
                                     {
                                         return {it, name};
