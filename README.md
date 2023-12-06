@@ -3,7 +3,7 @@
 [![Build argparse](https://github.com/kkarbowiak/cpp-argparse/actions/workflows/ci.yml/badge.svg)](https://github.com/kkarbowiak/cpp-argparse/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/github/v/tag/kkarbowiak/cpp-argparse?sort=semver)](https://github.com/kkarbowiak/cpp-argparse/releases)
 [![Codecov](https://codecov.io/gh/kkarbowiak/cpp-argparse/branch/master/graph/badge.svg)](https://codecov.io/gh/kkarbowiak/cpp-argparse)
-![Standard](https://img.shields.io/badge/C%2B%2B-17-blue)
+![Standard](https://img.shields.io/badge/C%2B%2B-20-blue)
 [![License](https://img.shields.io/github/license/kkarbowiak/cpp-argparse)](https://github.com/kkarbowiak/cpp-argparse/blob/master/LICENSE.md)
 
 ## Overview
@@ -12,7 +12,7 @@ This is a C++ implementation of Python's `argparse` module. The aim is to cover 
 
 ## Dependencies
 
-C++ argparse is a header-only library, so its setup is minimal. It has no external dependencies and only uses STL. Since it uses `std::optional`, `std::any`, and some other features, it requires C++17 compiler and standard library.
+C++ argparse is a header-only library, so its setup is minimal. It has no external dependencies and only uses STL. Since it uses `std::ranges` and some other features, it requires C++20 compiler and standard library. If you are stuck with C++17, you can still use release [v2.1.4](https://github.com/kkarbowiak/cpp-argparse/releases/tag/v2.1.4).
 
 C++ argparse uses CMake internally, but you don't have to. Just put the [argparse.h](https://github.com/kkarbowiak/cpp-argparse/releases/latest/download/argparse.h) header somewhere and point your build system to it.
 
