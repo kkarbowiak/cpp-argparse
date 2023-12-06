@@ -60,8 +60,7 @@ namespace argparse
             using runtime_error::runtime_error;
     };
 
-    template<typename T>
-    inline auto from_string(std::string const & s, T & t) -> bool
+    inline auto from_string(std::string const & s, auto & t) -> bool
     {
         auto iss = std::istringstream(s);
         iss >> t;
@@ -69,8 +68,7 @@ namespace argparse
         return !iss.fail() && (iss.eof() || iss.peek() == std::istringstream::traits_type::eof());
     }
 
-    template<typename T>
-    inline auto to_string(T const & t) -> std::string
+    inline auto to_string(auto const & t) -> std::string
     {
         auto ostr = std::ostringstream();
         ostr << t;
@@ -78,8 +76,7 @@ namespace argparse
         return ostr.str();
     }
 
-    template<typename T>
-    inline auto are_equal(T const & lhs, T const & rhs) -> bool
+    inline auto are_equal(auto const & lhs, auto const & rhs) -> bool
     {
         return lhs == rhs;
     }
@@ -90,8 +87,7 @@ namespace argparse
             class Value
             {
                 public:
-                    template<typename T>
-                    explicit Value(T const & t)
+                    explicit Value(auto const & t)
                       : m_value(t)
                     {
                     }
@@ -336,7 +332,7 @@ namespace argparse
 
             static auto remove_pseudo_arguments(tokens args) -> tokens
             {
-                args.erase(std::remove(args.begin(), args.end(), "--"), args.end());
+                std::erase(args, "--");
 
                 return args;
             }
@@ -585,9 +581,8 @@ namespace argparse
                 protected:
                     auto check_choices(std::any const & value) const -> void
                     {
-                        if (!std::any_of(
-                            m_options.choices.begin(),
-                            m_options.choices.end(),
+                        if (!std::ranges::any_of(
+                            m_options.choices,
                             [&](auto const & rhs) { return m_options.type_handler->compare(value, rhs); }))
                         {
                             std::string message = "argument " + join(m_options.names, "/") + ": invalid choice: ";
@@ -778,7 +773,7 @@ namespace argparse
                                     }
                                     else
                                     {
-                                        if (it == args.end() || it->front() == '-')
+                                        if (it == args.end() || it->starts_with("-"))
                                         {
                                             throw parsing_error("argument " + join(get_names(), "/") + ": expected one argument");
                                         }
@@ -829,7 +824,7 @@ namespace argparse
 
                         auto dest = get_name_for_dest();
 
-                        std::replace(dest.begin(), dest.end(), '-', '_');
+                        std::ranges::replace(dest, '-', '_');
 
                         return dest;
                     }
@@ -843,7 +838,7 @@ namespace argparse
 
                         auto metavar = get_dest_name();
 
-                        std::for_each(metavar.begin(), metavar.end(), [](char & ch) { ch = static_cast<char>(::toupper(ch)); });
+                        std::ranges::for_each(metavar, [](char & ch) { ch = static_cast<char>(::toupper(ch)); });
 
                         return metavar;
                     }
@@ -891,7 +886,7 @@ namespace argparse
                         {
                             case zero_or_one:
                             {
-                                if (it == args.end() || it->front() == '-')
+                                if (it == args.end() || it->starts_with("-"))
                                 {
                                     m_value = m_options.const_;
                                 }
@@ -929,7 +924,7 @@ namespace argparse
 
                     auto find_pseudo_arg(tokens & args) const -> tokens::iterator
                     {
-                        return std::find(args.begin(), args.end(), "--");
+                        return std::ranges::find(args, "--");
                     }
 
                     auto find_arg(tokens::iterator begin, tokens::iterator end) const -> std::pair<tokens::iterator, std::string>
@@ -940,14 +935,14 @@ namespace argparse
                             {
                                 if (name[1] != '-')
                                 {
-                                    if ((*it)[0] == '-' && it->find(name[1]) != std::string::npos)
+                                    if (it->starts_with("-") && it->find(name[1]) != std::string::npos)
                                     {
                                         return {it, name};
                                     }
                                 }
                                 else
                                 {
-                                    auto const [first_it, second_it] = std::mismatch(name.begin(), name.end(), it->begin(), it->end());
+                                    auto const [first_it, second_it] = std::ranges::mismatch(name, *it);
                                     if (first_it == name.end() && (second_it == it->end() || *second_it == '='))
                                     {
                                         return {it, name};
@@ -961,7 +956,7 @@ namespace argparse
 
                     auto consume_name(tokens & args, tokens::iterator it, std::string const & name) const -> tokens::iterator
                     {
-                        if (auto const & arg = *it; arg[0] == '-' && arg[1] == '-')
+                        if (auto const & arg = *it; arg.starts_with("--"))
                         {
                             if (auto const pos = arg.find('='); pos != std::string::npos)
                             {
@@ -1006,7 +1001,7 @@ namespace argparse
                     auto count_args(tokens::const_iterator it, tokens::const_iterator end) const -> std::size_t
                     {
                         auto result = std::size_t(0);
-                        while (it != end && it->front() != '-')
+                        while (it != end && !it->starts_with('-'))
                         {
                             ++result;
                             ++it;
@@ -1039,7 +1034,7 @@ namespace argparse
                     {
                         for (auto const & name : m_options.names)
                         {
-                            if (name[0] == '-' && name[1] == '-')
+                            if (name.starts_with("--"))
                             {
                                 return name.substr(2);
                             }
@@ -1439,7 +1434,7 @@ namespace argparse
                 private:
                     auto is_positional() const -> bool
                     {
-                        return m_options.names.front().front() != '-';
+                        return !m_options.names.front().starts_with('-');
                     }
 
                 private:
