@@ -1070,7 +1070,7 @@ namespace argparse
                     {
                         if (m_usage)
                         {
-                            return "usage: " + *m_usage;
+                            return std::format("usage: {}", *m_usage);
                         }
 
                         return std::format("usage: {}{}{}", *m_prog, format_usage_optionals(), format_usage_positionals());
