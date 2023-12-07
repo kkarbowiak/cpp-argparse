@@ -1266,13 +1266,13 @@ namespace argparse
                             switch (argument.get_nargs_option())
                             {
                                 case zero_or_one:
-                                    result += " [" + formatted_arg + "]";
+                                    result += std::format(" [{0}]", formatted_arg);
                                     break;
                                 case zero_or_more:
-                                    result += " [" + formatted_arg + " [" + formatted_arg + " ...]]";
+                                    result += std::format(" [{0} [{0} ...]]", formatted_arg);
                                     break;
                                 case one_or_more:
-                                    result += " " + formatted_arg + " [" + formatted_arg + " ...]";
+                                    result += std::format(" {0} [{0} ...]", formatted_arg);
                                     break;
                             }
                         }
