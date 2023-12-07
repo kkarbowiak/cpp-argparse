@@ -1068,11 +1068,7 @@ namespace argparse
                             return "usage: " + *m_usage;
                         }
 
-                        auto message = std::string("usage: " + *m_prog);
-                        auto optionals = format_usage_optionals();
-                        auto positionals = format_usage_positionals();
-
-                        return message + optionals + positionals;
+                        return std::format("usage: {}{}{}", *m_prog, format_usage_optionals(), format_usage_positionals());
                     }
 
                     auto format_help() const -> std::string
