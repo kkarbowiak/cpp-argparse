@@ -4010,9 +4010,13 @@ TEST_CASE("Parsing long options does not affect short options")
     auto parser = argparse::ArgumentParser().add_help(false);
     parser.add_argument("-b").action(argparse::store_true);
     parser.add_argument("--bar").action(argparse::store_true);
+    parser.add_argument("-a").action(argparse::store_true);
+    parser.add_argument("-r").action(argparse::store_true);
 
     auto args = parser.parse_args(2, cstr_arr{"prog", "--bar"});
 
     CHECK(args.get_value<bool>("b") == false);
+    CHECK(args.get_value<bool>("a") == false);
+    CHECK(args.get_value<bool>("r") == false);
     CHECK(args.get_value<bool>("bar") == true);
 }
