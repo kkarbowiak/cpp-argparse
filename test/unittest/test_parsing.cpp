@@ -4036,3 +4036,19 @@ TEST_CASE("Parsing long options does not affect short options")
     CHECK(args.get_value<bool>("r") == false);
     CHECK(args.get_value("bar") == "bar");
 }
+
+TEST_CASE("Parsing joined flags does not affect long options")
+{
+    auto parser = argparse::ArgumentParser().add_help(false);
+    parser.add_argument("--bar").action(argparse::store_true);
+    parser.add_argument("-b").action(argparse::store_true);
+    parser.add_argument("-a").action(argparse::store_true);
+    parser.add_argument("-r").action(argparse::store_true);
+
+    auto args = parser.parse_args(2, cstr_arr{"prog", "-bar"});
+
+    CHECK(args.get_value<bool>("bar") == false);
+    CHECK(args.get_value<bool>("b") == true);
+    CHECK(args.get_value<bool>("a") == true);
+    CHECK(args.get_value<bool>("r") == true);
+}
