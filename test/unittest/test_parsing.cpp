@@ -4014,4 +4014,5 @@ TEST_CASE("Parsing long options does not affect short options")
     auto args = parser.parse_args(2, cstr_arr{"prog", "--bar"});
 
     CHECK(args.get_value<bool>("b") == false);
+    CHECK(args.get_value<bool>("bar") == true);
 }
