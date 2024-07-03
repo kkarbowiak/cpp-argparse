@@ -21,13 +21,13 @@ jobs:
             }
           - {
               name: "Ubuntu latest - GCC",
-              os: ubuntu-latest,
+              os: ubuntu-24.04,
               cc: "gcc",
               cxx: "g++",
             }
           - {
               name: "Ubuntu latest - Clang",
-              os: ubuntu-latest,
+              os: ubuntu-24.04,
               cc: "clang",
               cxx: "clang++",
             }
@@ -52,7 +52,7 @@ jobs:
 
   clangtidy:
     name: "clang-tidy"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -69,7 +69,7 @@ jobs:
 
   sanitisers:
     name: "sanitisers"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -81,7 +81,7 @@ jobs:
 
   valgrind:
     name: "Valgrind"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -101,7 +101,7 @@ jobs:
 
   coverage:
     name: "Coverage"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
