@@ -363,18 +363,16 @@ namespace argparse
             {
                 auto error_message = optstring();
 
-                for (auto const & arg : m_arguments)
+                for (auto const & arg : m_arguments
+                                      | std::views::filter([](auto const & arg){ return arg->is_required() && !arg->has_value(); }))
                 {
-                    if (arg->is_required() && !arg->has_value())
+                    if (!error_message)
                     {
-                        if (!error_message)
-                        {
-                            error_message = "the following arguments are required: " + join(arg->get_names(), "/");
-                        }
-                        else
-                        {
-                            *error_message += " " + join(arg->get_names(), "/");
-                        }
+                        error_message = "the following arguments are required: " + join(arg->get_names(), "/");
+                    }
+                    else
+                    {
+                        *error_message += " " + join(arg->get_names(), "/");
                     }
                 }
 
