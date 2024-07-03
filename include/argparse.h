@@ -318,12 +318,10 @@ namespace argparse
 
             auto parse_positional_arguments(tokens args) -> tokens
             {
-                for (auto const & arg : m_arguments)
+                for (auto const & arg : m_arguments
+                                      | std::views::filter([](auto && arg){ return arg->is_positional(); }))
                 {
-                    if (arg->is_positional())
-                    {
-                        args = arg->parse_args(std::move(args));
-                    }
+                    args = arg->parse_args(std::move(args));
                 }
 
                 return args;
