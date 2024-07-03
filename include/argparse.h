@@ -1108,19 +1108,17 @@ namespace argparse
                     {
                         auto positionals = std::string();
 
-                        for (auto const & arg : m_arguments)
+                        for (auto const & arg : m_arguments
+                                              | std::views::filter([](auto const & arg){ return arg->is_positional(); }))
                         {
-                            if (arg->is_positional())
+                            if (arg->has_nargs())
                             {
-                                if (arg->has_nargs())
-                                {
-                                    positionals += format_nargs(*arg);
-                                }
-                                else
-                                {
-                                    positionals += " ";
-                                    positionals += format_arg(*arg);
-                                }
+                                positionals += format_nargs(*arg);
+                            }
+                            else
+                            {
+                                positionals += " ";
+                                positionals += format_arg(*arg);
                             }
                         }
 
