@@ -1185,20 +1185,18 @@ namespace argparse
                     {
                         auto positionals = std::string();
 
-                        for (auto const & arg : m_arguments)
+                        for (auto const & arg : m_arguments
+                                              | std::views::filter([](auto const & arg){ return arg->is_positional(); }))
                         {
-                            if (arg->is_positional())
+                            auto arg_line = "  " + format_arg(*arg);
+
+                            if (auto const & help = arg->get_help_message(); !help.empty())
                             {
-                                auto arg_line = "  " + format_arg(*arg);
-
-                                if (auto const & help = arg->get_help_message(); !help.empty())
-                                {
-                                    arg_line += help_string_separation(arg_line.size());
-                                    arg_line += help;
-                                }
-
-                                positionals += '\n' + arg_line;
+                                arg_line += help_string_separation(arg_line.size());
+                                arg_line += help;
                             }
+
+                            positionals += '\n' + arg_line;
                         }
 
                         return positionals;
