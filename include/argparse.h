@@ -25,6 +25,7 @@
 #include <type_traits>
 #include <iostream>
 #include <sstream>
+#include <format>
 #include <cstdlib>
 
 
@@ -338,7 +339,7 @@ namespace argparse
             {
                 if (!args.empty())
                 {
-                    throw parsing_error("unrecognised arguments: " + join(args, " "));
+                    throw parsing_error(std::format("unrecognised arguments: {}", join(args, " ")));
                 }
             }
 
@@ -352,7 +353,7 @@ namespace argparse
                         {
                             if (auto const & arg2 = **it2; arg2.is_present() && arg2.is_mutually_exclusive_with(arg1))
                             {
-                                throw parsing_error("argument " + join(arg2.get_names(), "/") + ": not allowed with argument " + join(arg1.get_names(), "/"));
+                                throw parsing_error(std::format("argument {}: not allowed with argument {}", join(arg2.get_names(), "/"), join(arg1.get_names(), "/")));
                             }
                         }
                     }
@@ -580,11 +581,11 @@ namespace argparse
                             m_options.choices,
                             [&](auto const & rhs) { return m_options.type_handler->compare(value, rhs); }))
                         {
-                            std::string message = "argument " + join(m_options.names, "/") + ": invalid choice: ";
-                            message += m_options.type_handler->to_string(value);
-                            message += " (choose from ";
-                            message += get_joined_choices(", ");
-                            message += ")";
+                            auto const message = std::format(
+                                "argument {}: invalid choice: {} (choose from {})",
+                                join(m_options.names, "/"),
+                                m_options.type_handler->to_string(value),
+                                get_joined_choices(", "));
                             throw parsing_error(message);
                         }
                     }
@@ -714,7 +715,7 @@ namespace argparse
                     {
                         if (!m_options.type_handler->from_string(args.front(), value))
                         {
-                            throw parsing_error("argument " + get_dest_name() + ": invalid value: '" + args.front() + "'");
+                            throw parsing_error(std::format("argument {}: invalid value: '{}'", get_dest_name(), args.front()));
                         }
                         if (!m_options.choices.empty())
                         {
@@ -770,7 +771,7 @@ namespace argparse
                                     {
                                         if (it == args.end() || it->starts_with("-"))
                                         {
-                                            throw parsing_error("argument " + join(get_names(), "/") + ": expected one argument");
+                                            throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
                                         }
                                         consume_arg(args, it, m_value);
                                     }
@@ -870,7 +871,7 @@ namespace argparse
                         auto const args_number = count_args(it, args.end());
                         if (args_number < nargs_number)
                         {
-                            throw parsing_error("argument " + join(get_names(), "/") + ": expected " + std::to_string(nargs_number) + " argument" + (nargs_number > 1 ? "s" : ""));
+                            throw parsing_error(std::format("argument {}: expected {} argument{}", join(get_names(), "/"), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
                         }
                         parse_arguments_number(args, it, nargs_number);
                     }
@@ -902,7 +903,7 @@ namespace argparse
                                 auto const args_number = count_args(it, args.end());
                                 if (args_number == 0)
                                 {
-                                    throw parsing_error("argument " + join(get_names(), "/") + ": expected at least one argument");
+                                    throw parsing_error(std::format("argument {}: expected at least one argument", join(get_names(), "/")));
                                 }
                                 parse_arguments_number(args, it, args_number);
                                 break;
@@ -1008,7 +1009,7 @@ namespace argparse
                     {
                         if (!m_options.type_handler->from_string(*arg_it, value))
                         {
-                            throw parsing_error("argument " + join(get_names(), "/") + ": invalid value: '" + *arg_it + "'");
+                            throw parsing_error(std::format("argument {}: invalid value: '{}'", join(get_names(), "/"), *arg_it));
                         }
                         if (!m_options.choices.empty())
                         {
@@ -1064,14 +1065,10 @@ namespace argparse
                     {
                         if (m_usage)
                         {
-                            return "usage: " + *m_usage;
+                            return std::format("usage: {}", *m_usage);
                         }
 
-                        auto message = std::string("usage: " + *m_prog);
-                        auto optionals = format_usage_optionals();
-                        auto positionals = format_usage_positionals();
-
-                        return message + optionals + positionals;
+                        return std::format("usage: {}{}{}", *m_prog, format_usage_optionals(), format_usage_positionals());
                     }
 
                     auto format_help() const -> std::string
@@ -1269,13 +1266,13 @@ namespace argparse
                             switch (argument.get_nargs_option())
                             {
                                 case zero_or_one:
-                                    result += " [" + formatted_arg + "]";
+                                    result += std::format(" [{0}]", formatted_arg);
                                     break;
                                 case zero_or_more:
-                                    result += " [" + formatted_arg + " [" + formatted_arg + " ...]]";
+                                    result += std::format(" [{0} [{0} ...]]", formatted_arg);
                                     break;
                                 case one_or_more:
-                                    result += " " + formatted_arg + " [" + formatted_arg + " ...]";
+                                    result += std::format(" {0} [{0} ...]", formatted_arg);
                                     break;
                             }
                         }
