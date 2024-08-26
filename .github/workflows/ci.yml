@@ -32,17 +32,13 @@ jobs:
               cxx: "clang++",
             }
           - {
-              name: "macOS 13",
-              os: macos-13,
+              name: "macOS 14",
+              os: macos-14,
               cc: "clang",
               cxx: "clang++",
             }
     steps:
       - uses: actions/checkout@v4
-
-      - name: Switch to Xcode 15
-        if: runner.os == 'macOS'
-        run: sudo xcode-select -switch /Applications/Xcode_15.0.app
 
       - name: CMake configure
         run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=${{ matrix.config.cc }} -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }}
