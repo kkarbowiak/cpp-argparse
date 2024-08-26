@@ -20,13 +20,13 @@ jobs:
               cxx: "cl",
             }
           - {
-              name: "Ubuntu latest - GCC",
+              name: "Ubuntu 24.04 - GCC",
               os: ubuntu-24.04,
               cc: "gcc",
               cxx: "g++",
             }
           - {
-              name: "Ubuntu latest - Clang",
+              name: "Ubuntu 24.04 - Clang",
               os: ubuntu-24.04,
               cc: "clang",
               cxx: "clang++",
