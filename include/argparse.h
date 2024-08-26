@@ -21,6 +21,7 @@
 #include <memory>
 #include <stdexcept>
 #include <algorithm>
+#include <ranges>
 #include <type_traits>
 #include <iostream>
 #include <sstream>
@@ -306,12 +307,10 @@ namespace argparse
 
             auto parse_optional_arguments(tokens args) -> tokens
             {
-                for (auto const & arg : m_arguments)
+                for (auto const & arg : m_arguments
+                                      | std::views::filter([](auto && arg){ return !arg->is_positional(); }))
                 {
-                    if (!arg->is_positional())
-                    {
-                        args = arg->parse_args(std::move(args));
-                    }
+                    args = arg->parse_args(std::move(args));
                 }
 
                 return args;
@@ -319,12 +318,10 @@ namespace argparse
 
             auto parse_positional_arguments(tokens args) -> tokens
             {
-                for (auto const & arg : m_arguments)
+                for (auto const & arg : m_arguments
+                                      | std::views::filter([](auto && arg){ return arg->is_positional(); }))
                 {
-                    if (arg->is_positional())
-                    {
-                        args = arg->parse_args(std::move(args));
-                    }
+                    args = arg->parse_args(std::move(args));
                 }
 
                 return args;
@@ -366,18 +363,16 @@ namespace argparse
             {
                 auto error_message = optstring();
 
-                for (auto const & arg : m_arguments)
+                for (auto const & arg : m_arguments
+                                      | std::views::filter([](auto const & arg){ return arg->is_required() && !arg->has_value(); }))
                 {
-                    if (arg->is_required() && !arg->has_value())
+                    if (!error_message)
                     {
-                        if (!error_message)
-                        {
-                            error_message = "the following arguments are required: " + join(arg->get_names(), "/");
-                        }
-                        else
-                        {
-                            *error_message += " " + join(arg->get_names(), "/");
-                        }
+                        error_message = "the following arguments are required: " + join(arg->get_names(), "/");
+                    }
+                    else
+                    {
+                        *error_message += " " + join(arg->get_names(), "/");
                     }
                 }
 
@@ -1113,19 +1108,17 @@ namespace argparse
                     {
                         auto positionals = std::string();
 
-                        for (auto const & arg : m_arguments)
+                        for (auto const & arg : m_arguments
+                                              | std::views::filter([](auto const & arg){ return arg->is_positional(); }))
                         {
-                            if (arg->is_positional())
+                            if (arg->has_nargs())
                             {
-                                if (arg->has_nargs())
-                                {
-                                    positionals += format_nargs(*arg);
-                                }
-                                else
-                                {
-                                    positionals += " ";
-                                    positionals += format_arg(*arg);
-                                }
+                                positionals += format_nargs(*arg);
+                            }
+                            else
+                            {
+                                positionals += " ";
+                                positionals += format_arg(*arg);
                             }
                         }
 
@@ -1192,20 +1185,18 @@ namespace argparse
                     {
                         auto positionals = std::string();
 
-                        for (auto const & arg : m_arguments)
+                        for (auto const & arg : m_arguments
+                                              | std::views::filter([](auto const & arg){ return arg->is_positional(); }))
                         {
-                            if (arg->is_positional())
+                            auto arg_line = "  " + format_arg(*arg);
+
+                            if (auto const & help = arg->get_help_message(); !help.empty())
                             {
-                                auto arg_line = "  " + format_arg(*arg);
-
-                                if (auto const & help = arg->get_help_message(); !help.empty())
-                                {
-                                    arg_line += help_string_separation(arg_line.size());
-                                    arg_line += help;
-                                }
-
-                                positionals += '\n' + arg_line;
+                                arg_line += help_string_separation(arg_line.size());
+                                arg_line += help;
                             }
+
+                            positionals += '\n' + arg_line;
                         }
 
                         return positionals;
@@ -1215,42 +1206,40 @@ namespace argparse
                     {
                         auto optionals = std::string();
 
-                        for (auto const & arg : m_arguments)
+                        for (auto const & arg : m_arguments
+                                              | std::views::filter([](auto const & arg){ return !arg->is_positional(); }))
                         {
-                            if (!arg->is_positional())
+                            auto arg_line = std::string("  ");
+
+                            for (auto name_it = arg->get_names().begin(); name_it != arg->get_names().end(); ++name_it)
                             {
-                                auto arg_line = std::string("  ");
-
-                                for (auto name_it = arg->get_names().begin(); name_it != arg->get_names().end(); ++name_it)
+                                if (name_it != arg->get_names().begin())
                                 {
-                                    if (name_it != arg->get_names().begin())
-                                    {
-                                        arg_line += ", ";
-                                    }
-
-                                    arg_line += *name_it;
-                                    if (arg->has_store_action())
-                                    {
-                                        if (arg->has_nargs())
-                                        {
-                                            arg_line += format_nargs(*arg);
-                                        }
-                                        else
-                                        {
-                                            arg_line += " ";
-                                            arg_line += format_arg(*arg);
-                                        }
-                                    }
+                                    arg_line += ", ";
                                 }
 
-                                if (auto const & help = arg->get_help_message(); !help.empty())
+                                arg_line += *name_it;
+                                if (arg->has_store_action())
                                 {
-                                    arg_line += help_string_separation(arg_line.size());
-                                    arg_line += help;
+                                    if (arg->has_nargs())
+                                    {
+                                        arg_line += format_nargs(*arg);
+                                    }
+                                    else
+                                    {
+                                        arg_line += " ";
+                                        arg_line += format_arg(*arg);
+                                    }
                                 }
-
-                                optionals += '\n' + arg_line;
                             }
+
+                            if (auto const & help = arg->get_help_message(); !help.empty())
+                            {
+                                arg_line += help_string_separation(arg_line.size());
+                                arg_line += help;
+                            }
+
+                            optionals += '\n' + arg_line;
                         }
 
                         return optionals;
