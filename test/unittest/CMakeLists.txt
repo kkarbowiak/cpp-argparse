@@ -12,6 +12,7 @@ target_sources(unittest
     test_usage_message.cpp
     test_help_message.cpp
     test_error_message.cpp
+    test_version.cpp
     cstring_array.h
     custom_a.h
     custom_b.h)

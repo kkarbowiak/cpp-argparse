@@ -37,7 +37,8 @@ namespace argparse
         store_true,
         store_false,
         store_const,
-        help
+        help,
+        version
     };
 
     enum Nargs
@@ -147,6 +148,7 @@ namespace argparse
             using optstring = std::optional<std::string>;
 
             class HelpRequested {};
+            class VersionRequested {};
 
         public:
             template<typename ...Args>
@@ -171,6 +173,16 @@ namespace argparse
                     if (m_handle == Handle::errors_and_help || m_handle == Handle::help)
                     {
                         std::cout << format_help() << std::endl;
+                        std::exit(EXIT_SUCCESS);
+                    }
+
+                    return get_parameters();
+                }
+                catch (VersionRequested const &)
+                {
+                    if (m_handle == Handle::errors_and_help || m_handle == Handle::help)
+                    {
+                        std::cout << format_version() << std::endl;
                         std::exit(EXIT_SUCCESS);
                     }
 
@@ -249,6 +261,16 @@ namespace argparse
             {
                 auto const formatter = Formatter(m_arguments, m_prog, m_usage, m_description, m_epilog);
                 return formatter.format_help();
+            }
+
+            auto format_version() const -> std::string
+            {
+                if (auto it = std::ranges::find_if(m_arguments, [](auto && arg) { return arg->has_version_action(); }); it != m_arguments.end())
+                {
+                    return (*it)->get_version();
+                }
+
+                return "";
             }
 
             ArgumentParser()
@@ -475,6 +497,7 @@ namespace argparse
             {
                 std::vector<std::string> names;
                 std::string help;
+                std::string version;
                 std::string metavar;
                 std::string dest;
                 Action action = store;
@@ -548,6 +571,16 @@ namespace argparse
                     auto has_store_action() const -> bool
                     {
                         return m_options.action == store;
+                    }
+
+                    auto has_version_action() const -> bool
+                    {
+                        return m_options.action == version;
+                    }
+
+                    auto get_version() const -> std::string const &
+                    {
+                        return m_options.version;
                     }
 
                     auto get_help_message() const -> std::string const &
@@ -788,6 +821,9 @@ namespace argparse
                                 case help:
                                     m_value = true;
                                     throw HelpRequested();
+                                case version:
+                                    m_value = true;
+                                    throw VersionRequested();
                             }
                             m_present = true;
                         }
@@ -797,6 +833,7 @@ namespace argparse
                             {
                                 case store_true:
                                 case help:
+                                case version:
                                     m_value = false;
                                     break;
                                 case store_false:
@@ -1327,6 +1364,14 @@ namespace argparse
 
                     ~ArgumentBuilder()
                     {
+                        if (m_options.action == argparse::version)
+                        {
+                            if (m_options.help.empty())
+                            {
+                                m_options.help = "show program's version number and exit";
+                            }
+                        }
+
                         if (is_positional())
                         {
                             m_arguments.push_back(std::make_unique<PositionalArgument>(std::move(m_options)));
@@ -1340,6 +1385,12 @@ namespace argparse
                     auto help(std::string const & help) -> ArgumentBuilder &
                     {
                         m_options.help = help;
+                        return *this;
+                    }
+
+                    auto version(std::string const & version) -> ArgumentBuilder &
+                    {
+                        m_options.version = version;
                         return *this;
                     }
 

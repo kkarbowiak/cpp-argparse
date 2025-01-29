@@ -374,6 +374,27 @@ TEST_CASE("Help message contains...")
             CHECK(parser.format_help() == "usage: prog [-h]\n\noptional arguments:\n  -h, --help            show this help message and exit"s);
         }
 
+        SUBCASE("...name and automatically added help for argument with version action")
+        {
+            parser.add_argument("-v").action(argparse::version);
+
+            CHECK(parser.format_help() == "usage: prog [-v]\n\noptional arguments:\n  -v                    show program's version number and exit"s);
+        }
+
+        SUBCASE("...name, long name, and automatically added help for argument with version action")
+        {
+            parser.add_argument("-v", "--version").action(argparse::version);
+
+            CHECK(parser.format_help() == "usage: prog [-v]\n\noptional arguments:\n  -v, --version         show program's version number and exit"s);
+        }
+
+        SUBCASE("...name and help for argument with version action and help string")
+        {
+            parser.add_argument("-v").action(argparse::version).help("version1");
+
+            CHECK(parser.format_help() == "usage: prog [-v]\n\noptional arguments:\n  -v                    version1"s);
+        }
+
         SUBCASE("...name and automatic metavar")
         {
             parser.add_argument("-o");
