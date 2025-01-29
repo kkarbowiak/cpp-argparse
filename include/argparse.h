@@ -800,6 +800,7 @@ namespace argparse
                             {
                                 case store_true:
                                 case help:
+                                case version:
                                     m_value = false;
                                     break;
                                 case store_false:
