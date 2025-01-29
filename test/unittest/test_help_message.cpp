@@ -388,6 +388,13 @@ TEST_CASE("Help message contains...")
             CHECK(parser.format_help() == "usage: prog [-v]\n\noptional arguments:\n  -v, --version"s);
         }
 
+        SUBCASE("...name and help for argument with version action and help string")
+        {
+            parser.add_argument("-v").action(argparse::version).help("version1");
+
+            CHECK(parser.format_help() == "usage: prog [-v]\n\noptional arguments:\n  -v                    version1"s);
+        }
+
         SUBCASE("...name and automatic metavar")
         {
             parser.add_argument("-o");
