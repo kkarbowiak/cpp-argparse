@@ -158,6 +158,13 @@ TEST_CASE("Parsing an optional argument with help action...")
     }
 }
 
+TEST_CASE("Parser supports version action")
+{
+    auto parser = argparse::ArgumentParser();
+
+    parser.add_argument("-v").action(argparse::version);
+}
+
 TEST_CASE("Optional argument can be used with either...")
 {
     auto parser = argparse::ArgumentParser();

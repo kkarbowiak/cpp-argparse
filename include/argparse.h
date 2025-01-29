@@ -37,7 +37,8 @@ namespace argparse
         store_true,
         store_false,
         store_const,
-        help
+        help,
+        version
     };
 
     enum Nargs
@@ -788,6 +789,8 @@ namespace argparse
                                 case help:
                                     m_value = true;
                                     throw HelpRequested();
+                                case version:
+                                    break;
                             }
                             m_present = true;
                         }
