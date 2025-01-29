@@ -12,6 +12,7 @@ target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     enable_testing()
     add_subdirectory(test/unittest)
+    add_subdirectory(test/manual)
     add_subdirectory(thirdparty/doctest)
 
     add_subdirectory(tutorial)
