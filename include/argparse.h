@@ -148,6 +148,7 @@ namespace argparse
             using optstring = std::optional<std::string>;
 
             class HelpRequested {};
+            class VersionRequested {};
 
         public:
             template<typename ...Args>
@@ -172,6 +173,16 @@ namespace argparse
                     if (m_handle == Handle::errors_and_help || m_handle == Handle::help)
                     {
                         std::cout << format_help() << std::endl;
+                        std::exit(EXIT_SUCCESS);
+                    }
+
+                    return get_parameters();
+                }
+                catch (VersionRequested const &)
+                {
+                    if (m_handle == Handle::errors_and_help || m_handle == Handle::help)
+                    {
+                        std::cout << format_version() << std::endl;
                         std::exit(EXIT_SUCCESS);
                     }
 
@@ -812,7 +823,7 @@ namespace argparse
                                     throw HelpRequested();
                                 case version:
                                     m_value = true;
-                                    break;
+                                    throw VersionRequested();
                             }
                             m_present = true;
                         }
