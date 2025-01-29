@@ -1332,6 +1332,14 @@ namespace argparse
 
                     ~ArgumentBuilder()
                     {
+                        if (m_options.action == version)
+                        {
+                            if (m_options.help.empty())
+                            {
+                                m_options.help = "show program's version number and exit";
+                            }
+                        }
+
                         if (is_positional())
                         {
                             m_arguments.push_back(std::make_unique<PositionalArgument>(std::move(m_options)));
