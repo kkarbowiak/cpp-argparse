@@ -165,6 +165,13 @@ TEST_CASE("Parser supports version action")
     parser.add_argument("-v").action(argparse::version);
 }
 
+TEST_CASE("Parser supports version number")
+{
+    auto parser = argparse::ArgumentParser();
+
+    parser.add_argument("-v").action(argparse::version).version("0.0.1");
+}
+
 TEST_CASE("Parsing an optional argument with version action yields false when it's missing")
 {
     auto parser = argparse::ArgumentParser();

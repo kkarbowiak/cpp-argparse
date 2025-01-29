@@ -1332,7 +1332,7 @@ namespace argparse
 
                     ~ArgumentBuilder()
                     {
-                        if (m_options.action == version)
+                        if (m_options.action == argparse::version)
                         {
                             if (m_options.help.empty())
                             {
@@ -1353,6 +1353,11 @@ namespace argparse
                     auto help(std::string const & help) -> ArgumentBuilder &
                     {
                         m_options.help = help;
+                        return *this;
+                    }
+
+                    auto version(std::string const & /* version */) -> ArgumentBuilder &
+                    {
                         return *this;
                     }
 
