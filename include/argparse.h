@@ -790,6 +790,7 @@ namespace argparse
                                     m_value = true;
                                     throw HelpRequested();
                                 case version:
+                                    m_value = true;
                                     break;
                             }
                             m_present = true;

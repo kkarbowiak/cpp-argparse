@@ -175,6 +175,16 @@ TEST_CASE("Parsing an optional argument with version action yields false when it
     CHECK(parsed.get_value<bool>("v") == false);
 }
 
+TEST_CASE("Parsing an optional argument with version action yields true when it's present")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-v").action(argparse::version);
+
+    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-v"});
+
+    CHECK(parsed.get_value<bool>("v") == true);
+}
+
 TEST_CASE("Optional argument can be used with either...")
 {
     auto parser = argparse::ArgumentParser();
