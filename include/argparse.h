@@ -252,6 +252,16 @@ namespace argparse
                 return formatter.format_help();
             }
 
+            auto format_version() const -> std::string
+            {
+                if (auto it = std::ranges::find_if(m_arguments, [](auto && arg) { return arg->has_version_action(); }); it != m_arguments.end())
+                {
+                    return (*it)->get_version();
+                }
+
+                return "";
+            }
+
             ArgumentParser()
               : m_arguments()
               , m_prog()
@@ -476,6 +486,7 @@ namespace argparse
             {
                 std::vector<std::string> names;
                 std::string help;
+                std::string version;
                 std::string metavar;
                 std::string dest;
                 Action action = store;
@@ -549,6 +560,16 @@ namespace argparse
                     auto has_store_action() const -> bool
                     {
                         return m_options.action == store;
+                    }
+
+                    auto has_version_action() const -> bool
+                    {
+                        return m_options.action == version;
+                    }
+
+                    auto get_version() const -> std::string const &
+                    {
+                        return m_options.version;
                     }
 
                     auto get_help_message() const -> std::string const &
@@ -1356,8 +1377,9 @@ namespace argparse
                         return *this;
                     }
 
-                    auto version(std::string const & /* version */) -> ArgumentBuilder &
+                    auto version(std::string const & version) -> ArgumentBuilder &
                     {
+                        m_options.version = version;
                         return *this;
                     }
 
