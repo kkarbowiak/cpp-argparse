@@ -18,3 +18,5 @@ set_property(TEST version-test PROPERTY PASS_REGULAR_EXPRESSION "1\.0\.0")
 add_custom_target(run_version_test ALL
     COMMAND ${CMAKE_CTEST_COMMAND} -C debug --output-on-failure
     DEPENDS app)
+
+add_test(NAME help-test COMMAND app --help)
