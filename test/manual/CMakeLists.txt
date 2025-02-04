@@ -15,3 +15,6 @@ target_link_libraries(app PRIVATE cpp-argparse)
 
 add_test(NAME version-test COMMAND app --version)
 set_property(TEST version-test PROPERTY PASS_REGULAR_EXPRESSION "1\.0\.0")
+add_custom_target(run_version_test ALL
+    COMMAND ${CMAKE_CTEST_COMMAND} -C debug --output-on-failure
+    DEPENDS app)
