@@ -13,6 +13,8 @@ target_compile_options(app PRIVATE
         /W4 /WX /permissive->)
 target_link_libraries(app PRIVATE cpp-argparse)
 
+add_test(NAME help-test COMMAND app --help)
+
 add_test(NAME version-test COMMAND app --version)
 set_property(TEST version-test PROPERTY PASS_REGULAR_EXPRESSION "1\.0\.0")
 
