@@ -12,3 +12,5 @@ target_compile_options(app PRIVATE
     $<$<CXX_COMPILER_ID:MSVC>:
         /W4 /WX /permissive->)
 target_link_libraries(app PRIVATE cpp-argparse)
+
+add_test(NAME version-test COMMAND app --version)
