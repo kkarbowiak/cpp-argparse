@@ -21,6 +21,7 @@ set_property(TEST version-test PROPERTY PASS_REGULAR_EXPRESSION "1\.0\.0")
 
 add_test(NAME error-test COMMAND app)
 set_property(TEST error-test PROPERTY WILL_FAIL true)
+#set_property(TEST error-test PROPERTY PASS_REGULAR_EXPRESSION "the following arguments are required: positional\nusage: app \\[-h\\] \\[--optional OPTIONAL\\] \\[-v\\] positional\n\npositional arguments:\n  positional\n\noptional arguments:\n  -h, --help            show this help message and exit\n  --optional OPTIONAL\n  -v, --version         show program's version number and exit\n")
 
 add_custom_target(run_exit_test ALL
     COMMAND ${CMAKE_CTEST_COMMAND} -C debug --output-on-failure
