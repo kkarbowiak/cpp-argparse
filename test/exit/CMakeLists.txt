@@ -14,6 +14,7 @@ target_compile_options(app PRIVATE
 target_link_libraries(app PRIVATE cpp-argparse)
 
 add_test(NAME normal-test COMMAND app arg --optional opt)
+set_property(TEST normal-test PROPERTY PASS_REGULAR_EXPRESSION "positional: arg\noptional: opt")
 
 add_test(NAME help-test COMMAND app --help)
 set_property(TEST help-test PROPERTY PASS_REGULAR_EXPRESSION "usage: app \\[-h\\] \\[--optional OPTIONAL\\] \\[-v\\] positional\n\npositional arguments:\n  positional\n\noptional arguments:\n  -h, --help            show this help message and exit\n  --optional OPTIONAL\n  -v, --version         show program's version number and exit\n")
