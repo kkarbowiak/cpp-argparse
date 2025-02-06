@@ -106,6 +106,16 @@ TEST_CASE("ArgumentParser does not handle parsing errors when requested to...")
     }
 }
 
+TEST_CASE("ArgumentParser does not handle version when requested to handle nothing")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-v").action(argparse::version);
+
+    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-v"});
+
+    CHECK(parsed.get_value<bool>("v") == true);
+}
+
 TEST_CASE("ArgumentParser uses first command-line parameter as its name...")
 {
     auto parser = argparse::ArgumentParser().add_help(false);
