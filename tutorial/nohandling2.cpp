@@ -1,7 +1,7 @@
 #include "argparse.h"
 #include <iostream>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::errors_and_help);
     parser.add_argument("--version").action(argparse::version);
