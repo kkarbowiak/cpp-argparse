@@ -50,10 +50,10 @@ namespace argparse
 
     enum class Handle
     {
-        errors_and_help,
-        errors,
-        help,
-        none
+        none = 0,
+        errors = 1,
+        help = 2,
+        errors_and_help = errors | help
     };
 
     class parsing_error
@@ -62,6 +62,11 @@ namespace argparse
         public:
             using runtime_error::runtime_error;
     };
+
+    inline auto operator&(Handle lhs, Handle rhs) -> int
+    {
+        return static_cast<int>(lhs) & static_cast<int>(rhs);
+    }
 
     inline auto from_string(std::string const & s, auto & t) -> bool
     {
@@ -170,7 +175,7 @@ namespace argparse
                 }
                 catch (HelpRequested const &)
                 {
-                    if (m_handle == Handle::errors_and_help || m_handle == Handle::help)
+                    if (m_handle & Handle::help)
                     {
                         std::cout << format_help() << std::endl;
                         std::exit(EXIT_SUCCESS);
@@ -180,7 +185,7 @@ namespace argparse
                 }
                 catch (VersionRequested const &)
                 {
-                    if (m_handle == Handle::errors_and_help || m_handle == Handle::help)
+                    if (m_handle & Handle::help)
                     {
                         std::cout << format_version() << std::endl;
                         std::exit(EXIT_SUCCESS);
@@ -190,7 +195,7 @@ namespace argparse
                 }
                 catch (parsing_error const & e)
                 {
-                    if (m_handle == Handle::errors_and_help || m_handle == Handle::errors)
+                    if (m_handle & Handle::errors)
                     {
                         std::cout << e.what() << '\n';
                         std::cout << format_help() << std::endl;
