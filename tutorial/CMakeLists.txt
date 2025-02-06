@@ -20,6 +20,7 @@ set(targets
     undesired
     nohandling
     nohandling1
+    nohandling2
     custom
     custom1
     custom2
