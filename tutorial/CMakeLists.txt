@@ -20,6 +20,8 @@ set(targets
     undesired
     nohandling
     nohandling1
+    nohandling2
+    version
     custom
     custom1
     custom2

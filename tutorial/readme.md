@@ -966,7 +966,7 @@ optional arguments:
   -h, --help            show this help message and exit
 ```
 
-### Help and error handling
+### Help, version, and error handling
 
 As you have noticed, the parser automatically adds the `-h/--help` optional argument and handles help requests and parsing errors. There are some cases, when this may be undesirable.
 
@@ -986,7 +986,7 @@ $ nohelp --help
 unrecognised arguments: --help
 usage: nohelp
 ```
-The automatic help and error handling consists of printing a relevant message and exiting the program by a call to `std::exit`. The reason this may be undesirable is that `std::exit` does not ensure cleanup of local variables (`undesired.cpp`):
+The automatic help, version, and error handling consists of printing a relevant message and exiting the program by a call to `std::exit`. The reason this may be undesirable is that `std::exit` does not ensure cleanup of local variables (`undesired.cpp`):
 ```c++
 #include "argparse.h"
 #include <iostream>
@@ -1031,7 +1031,7 @@ usage: undesired [-h]
 optional arguments:
   -h, --help            show this help message and exit
 ```
-To improve this situation, you may tell the logger not to handle help and errors (`nohandling.cpp`):
+To improve this situation, you may tell the logger not to handle help, version, and errors (`nohandling.cpp`):
 ```c++
 #include "argparse.h"
 #include <iostream>
@@ -1057,7 +1057,7 @@ int main(int argc, char * argv[])
     parser.parse_args(argc, argv);
 }
 ```
-In such a case, you'll most likely want to handle help requests yourself. Also, you will now **need** to handle errors, otherwise you will encounter unhandled exceptions. Let's extend the program (`nohandling1.cpp`):
+In such a case, you'll most likely want to handle help and version requests yourself. Also, you will now **need** to handle errors, otherwise you will encounter unhandled exceptions. Let's extend the program (`nohandling1.cpp`):
 ```c++
 #include "argparse.h"
 #include <iostream>
@@ -1113,13 +1113,63 @@ Log started
 unrecognised arguments: foo
 Log ended
 ```
+The following example illustrates handling version requests (`nohandling2.cpp`):
+```c++
+#include "argparse.h"
+#include <iostream>
+
+int main(int argc, char * argv[])
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::errors_and_help);
+    parser.add_argument("--version").action(argparse::version);
+    auto parsed = parser.parse_args(argc, argv);
+    if (parsed.get_value<bool>("version"))
+    {
+        std::cout << "This is program version 1.0.0\n";
+    }
+    return 0;
+}
+```
+Its automatically generated help message looks like this:
+```
+$ nohandling2 --help
+usage: nohandling2 [-h] [--version]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --version             show program's version number and exit
+```
+Let's see how it prints version:
+```
+$ nohandling2 --version
+This is program version 1.0.0
+```
+Of course, handling version requests can be fully automatic (`version.cpp`):
+```c++
+#include "argparse.h"
+
+int main(int argc, char * argv[])
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("--version").action(argparse::version).version("1.0.0-rc1");
+    parser.parse_args(argc, argv);
+}
+```
+Let's see how it works:
+```
+$ version --version
+1.0.0-rc1
+```
+
 Some things to note here:
  * You can use parser's `format_help` and `format_usage` functions to generate the messages for you.
  * In case of error, parser throws an exception of type `argparse::parsing_error` (or type derived from it), which derives from `std::runtime_error`.
  * The control is more granular; you can tell the parser to handle:
    * only help (`argparse::Handle::help`),
+   * only version (`argparse::Handle::version`),
    * only errors (`argparse::Handle::errors`),
-   * both help and errors (`argparse::Handle::errors_and_help`), which is the default.
+   * both help and errors (`argparse::Handle::errors_and_help`),
+   * help, version, and errors (`argparse::Handle::errors_help_version`) which is the default.
 
 ## Conclusion
 
