@@ -1169,6 +1169,7 @@ Some things to note here:
    * only version (`argparse::Handle::version`),
    * only errors (`argparse::Handle::errors`),
    * both help and errors (`argparse::Handle::errors_and_help`),
+   * any combination just like with bit masks (`argparse::Handle::errors | argparse::Handle::help`),
    * help, version, and errors (`argparse::Handle::errors_help_version`) which is the default.
 
 ## Conclusion
