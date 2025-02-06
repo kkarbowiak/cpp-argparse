@@ -53,7 +53,9 @@ namespace argparse
         none = 0,
         errors = 1,
         help = 2,
-        errors_and_help = errors | help
+        version = 4,
+        errors_and_help = errors | help,
+        errors_help_version = errors | help | version
     };
 
     class parsing_error
@@ -185,7 +187,7 @@ namespace argparse
                 }
                 catch (VersionRequested const &)
                 {
-                    if (m_handle & Handle::help)
+                    if (m_handle & Handle::version)
                     {
                         std::cout << format_version() << std::endl;
                         std::exit(EXIT_SUCCESS);
@@ -283,7 +285,7 @@ namespace argparse
               , m_prog()
               , m_description()
               , m_epilog()
-              , m_handle(Handle::errors_and_help)
+              , m_handle(Handle::errors_help_version)
             {
                 add_argument("-h", "--help").action(help).help("show this help message and exit");
             }
