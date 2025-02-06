@@ -104,6 +104,14 @@ TEST_CASE("ArgumentParser does not handle parsing errors when requested to...")
 
         CHECK_THROWS_AS(parser.parse_args(1, cstr_arr{"prog"}), argparse::parsing_error);
     }
+
+    SUBCASE("...handle version")
+    {
+        auto parser = argparse::ArgumentParser().handle(argparse::Handle::version);
+        parser.add_argument("pos");
+
+        CHECK_THROWS_AS(parser.parse_args(1, cstr_arr{"prog"}), argparse::parsing_error);
+    }
 }
 
 TEST_CASE("ArgumentParser does not handle version when requested to handle nothing")
