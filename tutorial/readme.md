@@ -1144,6 +1144,22 @@ Let's see how it prints version:
 $ nohandling2 --version
 This is program version 1.0.0
 ```
+Of course, handling version requests can be fully automatic (`version.cpp`):
+```c++
+#include "argparse.h"
+
+int main(int argc, char * argv[])
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("--version").action(argparse::version).version("1.0.0-rc1");
+    parser.parse_args(argc, argv);
+}
+```
+Let's see how it works:
+```
+$ version --version
+1.0.0-rc1
+```
 
 Some things to note here:
  * You can use parser's `format_help` and `format_usage` functions to generate the messages for you.
