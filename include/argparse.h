@@ -50,10 +50,10 @@ namespace argparse
 
     enum class Handle
     {
-        errors_and_help,
-        errors,
-        help,
-        none
+        none = 0,
+        errors = 1,
+        help = 2,
+        errors_and_help = errors | help
     };
 
     class parsing_error
