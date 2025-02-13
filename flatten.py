@@ -18,7 +18,7 @@ def process_file(file_name, line):
     with open(file_name) as f:
         lines = f.readlines()
         test_case_lines = extract_test_case(lines, line)
-        print(test_case_lines)
+        test_case_tree = process_test_case_lines(test_case_lines)
 
 
 def extract_test_case(lines, line):
@@ -32,6 +32,15 @@ def extract_test_case(lines, line):
             line += 1
 
     return result
+
+
+def process_test_case_lines(lines):
+    root = None
+    level = 0
+    for line in lines:
+        if line.startswith('TEST_CASE'):
+            name = line.split('"')
+            print(name[1])
 
 
 if __name__ == '__main__':
