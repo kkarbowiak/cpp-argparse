@@ -11,21 +11,21 @@
 #ifndef CPP_ARGPARSE_H__DDK
 #define CPP_ARGPARSE_H__DDK
 
+#include <algorithm>
+#include <any>
+#include <format>
+#include <iostream>
+#include <map>
+#include <memory>
+#include <optional>
+#include <ranges>
+#include <sstream>
+#include <stdexcept>
 #include <string>
 #include <string_view>
-#include <vector>
-#include <map>
-#include <optional>
-#include <any>
-#include <variant>
-#include <memory>
-#include <stdexcept>
-#include <algorithm>
-#include <ranges>
 #include <type_traits>
-#include <iostream>
-#include <sstream>
-#include <format>
+#include <variant>
+#include <vector>
 #include <cstdlib>
 
 
