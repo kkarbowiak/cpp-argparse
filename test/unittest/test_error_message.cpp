@@ -4,6 +4,8 @@
 
 #include "doctest.h"
 
+#include <string>
+
 
 using namespace std::string_literals;
 
