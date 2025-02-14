@@ -52,8 +52,8 @@ def extract_test_case(lines, line):
 
 def process_test_case_lines(lines):
     root = None
-
-    for line_no in range(len(lines)):
+    line_no = 0
+    while line_no < len(lines):
         line = lines[line_no]
         if line.count('TEST_CASE') > 0:
             name = line.split('"')
@@ -66,6 +66,7 @@ def process_test_case_lines(lines):
             return root
         else:
             root.lines.append(line)
+        line_no += 1
 
 
 def process_subcase_lines(start_no, lines, parent):
@@ -75,7 +76,8 @@ def process_subcase_lines(start_no, lines, parent):
     node = TestNode(name[1])
     node.parent = parent
 
-    for line_no in range(start_no + 1, len(lines)):
+    line_no = start_no + 1
+    while line_no < len(lines):
         line = lines[line_no]
         if line.count('SUBCASE') > 0:
             line_no = process_subcase_lines(line_no, lines, node)
@@ -84,6 +86,7 @@ def process_subcase_lines(start_no, lines, parent):
             return line_no
         else:
             node.lines.append(line)
+        line_no += 1
 
 
 def process_tree(tree):
