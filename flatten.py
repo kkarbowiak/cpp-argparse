@@ -1,5 +1,5 @@
 import argparse
-from anytree import Node, PreOrderIter, Walker, RenderTree
+from anytree import AnyNode, PreOrderIter, Walker, RenderTree
 
 # anytree is installed in a virtual environment
 # I created the virtual environment with this command:
@@ -9,9 +9,9 @@ from anytree import Node, PreOrderIter, Walker, RenderTree
 # I am now using this command to run this script:
 # `cpp-argparse-venv/bin/python3 flatten.py`
 
-class TestNode(Node):
+class TestNode(AnyNode):
     def __init__(self, text):
-        super(TestNode, self).__init__(text)
+        super(TestNode, self).__init__()
         self.text = text
         self.lines = []
         self.indent = 0
