@@ -93,7 +93,6 @@ def process_subcase_lines(start_no, lines, parent):
 
 
 def process_tree(tree):
-    #print(RenderTree(tree))
     output_lines = []
     walker = Walker()
     for node in PreOrderIter(tree):
