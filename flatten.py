@@ -96,9 +96,10 @@ def process_tree(tree):
     for node in PreOrderIter(tree):
         if node.is_leaf:
             nodes = walker.walk(tree, node)
-            output_lines.extend(nodes[1].lines)
+            output_lines.extend(nodes[1].lines[:-1])  # all test case lines except for closing brace
             for subnode in nodes[2]:
-                output_lines.extend(subnode.lines)
+                output_lines.extend(subnode.lines[1:-1])  # all subcase lines except for opening and closing brace
+            output_lines.extend(nodes[1].lines[-1])
     for line in output_lines:
         print(line, end='')
 
