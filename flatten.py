@@ -9,6 +9,12 @@ from anytree import Node, RenderTree
 # I am now using this command to run this script:
 # `cpp-argparse-venv/bin/python3 flatten.py`
 
+class TestNode(Node):
+    def __init__(self, text):
+        super(TestNode, self).__init__(text)
+        self.text = text
+        self.lines = []
+
 
 def main():
     parser = get_args_parser()
@@ -28,6 +34,7 @@ def process_file(file_name, line):
         lines = f.readlines()
         test_case_lines = extract_test_case(lines, line)
         test_case_tree = process_test_case_lines(test_case_lines)
+        process_tree(test_case_tree)
 
 
 def extract_test_case(lines, line):
@@ -45,11 +52,42 @@ def extract_test_case(lines, line):
 
 def process_test_case_lines(lines):
     root = None
-    level = 0
-    for line in lines:
-        if line.startswith('TEST_CASE'):
+
+    for line_no in range(len(lines)):
+        line = lines[line_no]
+        if line.count('TEST_CASE') > 0:
             name = line.split('"')
-            print(name[1])
+            root = TestNode(name[1])
+            root.lines.append(line)
+        elif line.count('SUBCASE') > 0:
+            line_no = process_subcase_lines(line_no, lines, root)
+        elif line.startswith('}'):
+            root.lines.append(line)
+            return root
+        else:
+            root.lines.append(line)
+
+
+def process_subcase_lines(start_no, lines, parent):
+    start_line = lines[start_no]
+    indent = start_line.find('SUBCASE')
+    name = start_line.split('"')
+    node = TestNode(name[1])
+    node.parent = parent
+
+    for line_no in range(start_no + 1, len(lines)):
+        line = lines[line_no]
+        if line.count('SUBCASE') > 0:
+            line_no = process_subcase_lines(line_no, lines, node)
+        elif line.find('}') == indent:
+            node.lines.append(line)
+            return line_no
+        else:
+            node.lines.append(line)
+
+
+def process_tree(tree):
+    print(RenderTree(tree))
 
 
 if __name__ == '__main__':
