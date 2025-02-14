@@ -75,6 +75,7 @@ def process_subcase_lines(start_no, lines, parent):
     name = start_line.split('"')
     node = TestNode(name[1])
     node.parent = parent
+    node.lines.append(start_line)
 
     line_no = start_no + 1
     while line_no < len(lines):
@@ -98,8 +99,8 @@ def process_tree(tree):
             nodes = walker.walk(tree, node)
             output_lines.extend(nodes[1].lines[:-1])  # all test case lines except for closing brace
             for subnode in nodes[2]:
-                output_lines.extend(subnode.lines[1:-1])  # all subcase lines except for opening and closing brace
-            output_lines.extend(nodes[1].lines[-1])
+                output_lines.extend(subnode.lines[2:-1])  # all subcase lines except for subcase and its opening and closing brace
+            output_lines.extend(nodes[1].lines[-1]) # test case closing brace
     for line in output_lines:
         print(line, end='')
 
