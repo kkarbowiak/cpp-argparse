@@ -93,18 +93,19 @@ def process_subcase_lines(start_no, lines, parent):
 
 
 def process_tree(tree):
-    output_lines = []
+    flattened_lines = []
     walker = Walker()
     for node in PreOrderIter(tree):
         if node.is_leaf:
             walk = walker.walk(tree, node)
-            output_lines.extend(walk[1].lines[:-1])  # all test case lines except for closing brace
+            flattened_lines.extend(walk[1].lines[:-1])  # all test case lines except for closing brace
             for subnode in walk[2]:
                 sublines = subnode.lines[2:-1]  # all subcase lines except for subcase and its opening and closing brace
-                output_lines.extend([subline[subnode.indent:] for subline in sublines])
-            output_lines.extend(walk[1].lines[-1]) # test case closing brace
-    for line in output_lines:
+                flattened_lines.extend([subline[subnode.indent:] for subline in sublines])
+            flattened_lines.extend(walk[1].lines[-1]) # test case closing brace
+    for line in flattened_lines:
         print(line, end='')
+    return flattened_lines
 
 
 if __name__ == '__main__':
