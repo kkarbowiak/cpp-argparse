@@ -101,7 +101,7 @@ def process_tree(tree):
             flattened_lines.extend(walk[1].lines[:-1])  # all test case lines except for closing brace
             for subnode in walk[2]:
                 sublines = subnode.lines[2:-1]  # all subcase lines except for subcase and its opening and closing brace
-                flattened_lines.extend([subline[subnode.indent:] for subline in sublines])
+                flattened_lines.extend([subline if subline.startswith('\n') else subline[subnode.indent:] for subline in sublines])
             flattened_lines.extend(walk[1].lines[-1]) # test case closing brace
     for line in flattened_lines:
         print(line, end='')
