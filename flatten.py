@@ -1,5 +1,5 @@
 import argparse
-from anytree import Node, RenderTree
+from anytree import Node, PreOrderIter, Walker, RenderTree
 
 # anytree is installed in a virtual environment
 # I created the virtual environment with this command:
@@ -87,7 +87,17 @@ def process_subcase_lines(start_no, lines, parent):
 
 
 def process_tree(tree):
-    print(RenderTree(tree))
+    #print(RenderTree(tree))
+    output_lines = []
+    walker = Walker()
+    for node in PreOrderIter(tree):
+        if node.is_leaf:
+            nodes = walker.walk(tree, node)
+            output_lines.extend(nodes[1].lines)
+            for subnode in nodes[2]:
+                output_lines.extend(subnode.lines)
+    for line in output_lines:
+        print(line, end='')
 
 
 if __name__ == '__main__':
