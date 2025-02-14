@@ -1,4 +1,13 @@
 import argparse
+from anytree import Node, RenderTree
+
+# anytree is installed in a virtual environment
+# I created the virtual environment with this command:
+# `python3 -m venv cpp-argparse-venv`
+# and then installed anytree:
+# `cpp-argparse-venv/bin/pip install anytree`
+# I am now using this command to run this script:
+# `cpp-argparse-venv/bin/python3 flatten.py`
 
 
 def main():
