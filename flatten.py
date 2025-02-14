@@ -61,6 +61,7 @@ def process_test_case_lines(lines):
             root = TestNode(name[1])
             root.lines.append(line)
         elif line.count('SUBCASE') > 0:
+            root.lines.pop()
             line_no = process_subcase_lines(line_no, lines, root)
         elif line.startswith('}'):
             root.lines.append(line)
@@ -83,6 +84,7 @@ def process_subcase_lines(start_no, lines, parent):
     while line_no < len(lines):
         line = lines[line_no]
         if line.count('SUBCASE') > 0:
+            node.lines.pop()
             line_no = process_subcase_lines(line_no, lines, node)
         elif line.find('}') == indent:
             node.lines.append(line)
