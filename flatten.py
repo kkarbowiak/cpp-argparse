@@ -31,11 +31,14 @@ def get_args_parser():
 
 
 def process_file(file_name, line):
-    with open(file_name) as f:
+    with open(file_name, 'r+') as f:
         lines = f.readlines()
         test_case_lines = extract_test_case(lines, line)
         test_case_tree = process_test_case_lines(test_case_lines)
-        process_tree(test_case_tree)
+        flat_lines = process_tree(test_case_tree)
+        lines[line:line+len(test_case_lines)] = flat_lines
+        f.seek(0)
+        f.writelines(lines)
 
 
 def extract_test_case(lines, line):
