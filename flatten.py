@@ -1,5 +1,5 @@
 import argparse
-from anytree import AnyNode, PreOrderIter, Walker, RenderTree
+from anytree import AnyNode, PreOrderIter, Walker
 
 # anytree is installed in a virtual environment
 # I created the virtual environment with this command:
