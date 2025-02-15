@@ -10,6 +10,7 @@ using namespace std::string_literals;
 TEST_CASE("ArgumentParser provides usage message with prog name")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+
     CHECK(parser.format_usage() == "usage: prog"s);
 }
 
