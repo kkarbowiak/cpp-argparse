@@ -30,29 +30,29 @@ TEST_CASE("Parsing a positional argument yields its value")
     CHECK(parsed.get_value("p1") == "v1");
 }
 
-TEST_CASE("Parsing an optional argument...")
+TEST_CASE("Parsing an optional argument yields false when it's missing")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("-o");
+    auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
-    SUBCASE("...yields false when it's missing")
-    {
-        auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+    CHECK(!parsed.get("o"));
+}
 
-        CHECK(!parsed.get("o"));
-    }
+TEST_CASE("Parsing an optional argument throws an exception when it's missing argument")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o");
+    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o: expected one argument", argparse::parsing_error);
+}
 
-    SUBCASE("...throws an exception when it's missing argument")
-    {
-        CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o: expected one argument", argparse::parsing_error);
-    }
+TEST_CASE("Parsing an optional argument yields its value")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o");
+    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "v1"});
 
-    SUBCASE("...yields its value")
-    {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "v1"});
-
-        CHECK(parsed.get_value("o") == "v1");
-    }
+    CHECK(parsed.get_value("o") == "v1");
 }
 
 TEST_CASE("Parsing an optional argument with store true action yields false when it's missing")
