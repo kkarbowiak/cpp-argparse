@@ -394,25 +394,25 @@ TEST_CASE("Parsing arguments with help requested disregards parsing errors...")
     }
 }
 
-TEST_CASE("Parsing unrecognised positional argument throws an exception...")
+TEST_CASE("Parsing unrecognised positional argument throws an exception for one unrecognised argument")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("p1");
+    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "v1", "v2"}), "unrecognised arguments: v2", argparse::parsing_error);
+}
 
-    SUBCASE("...for one unrecognised argument")
-    {
-        CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "v1", "v2"}), "unrecognised arguments: v2", argparse::parsing_error);
-    }
+TEST_CASE("Parsing unrecognised positional argument throws an exception for two unrecognised arguments")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("p1");
+    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "v1", "v2", "v3"}), "unrecognised arguments: v2 v3", argparse::parsing_error);
+}
 
-    SUBCASE("...for two unrecognised arguments")
-    {
-        CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "v1", "v2", "v3"}), "unrecognised arguments: v2 v3", argparse::parsing_error);
-    }
-
-    SUBCASE("...for three unrecognised arguments")
-    {
-        CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "v1", "v2", "v3", "v4"}), "unrecognised arguments: v2 v3 v4", argparse::parsing_error);
-    }
+TEST_CASE("Parsing unrecognised positional argument throws an exception for three unrecognised arguments")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("p1");
+    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "v1", "v2", "v3", "v4"}), "unrecognised arguments: v2 v3 v4", argparse::parsing_error);
 }
 
 TEST_CASE("Parsing unrecognised optional argument throws an exception for one unrecognised argument")
