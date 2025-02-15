@@ -153,123 +153,102 @@ TEST_CASE("ArgumentParser does not handle version when requested to handle help"
     CHECK(parsed.get_value<bool>("v") == true);
 }
 
-TEST_CASE("ArgumentParser uses first command-line parameter as its name...")
+TEST_CASE("ArgumentParser uses first command-line parameter as its name when executed from current directory using no separators in usage message")
 {
     auto parser = argparse::ArgumentParser().add_help(false);
+    parser.parse_args(1, cstr_arr{"prog"});
+    CHECK(parser.format_usage() == "usage: prog"s);
+}
 
-    SUBCASE("...when executed from current directory...")
-    {
-        SUBCASE("...using no separators...")
-        {
-            parser.parse_args(1, cstr_arr{"prog"});
+TEST_CASE("ArgumentParser uses first command-line parameter as its name when executed from current directory using no separators in help message")
+{
+    auto parser = argparse::ArgumentParser().add_help(false);
+    parser.parse_args(1, cstr_arr{"prog"});
+    CHECK(parser.format_help() == "usage: prog"s);
+}
 
-            SUBCASE("...in usage message")
-            {
-                CHECK(parser.format_usage() == "usage: prog"s);
-            }
+TEST_CASE("ArgumentParser uses first command-line parameter as its name when executed from current directory using slash separators in usage message")
+{
+    auto parser = argparse::ArgumentParser().add_help(false);
+    parser.parse_args(1, cstr_arr{"./prog"});
+    CHECK(parser.format_usage() == "usage: prog"s);
+}
 
-            SUBCASE("...in help message")
-            {
-                CHECK(parser.format_help() == "usage: prog"s);
-            }
-        }
+TEST_CASE("ArgumentParser uses first command-line parameter as its name when executed from current directory using slash separators in help message")
+{
+    auto parser = argparse::ArgumentParser().add_help(false);
+    parser.parse_args(1, cstr_arr{"./prog"});
+    CHECK(parser.format_help() == "usage: prog"s);
+}
 
-        SUBCASE("...using slash separators...")
-        {
-            parser.parse_args(1, cstr_arr{"./prog"});
+TEST_CASE("ArgumentParser uses first command-line parameter as its name when executed from current directory using backslash separators in usage message")
+{
+    auto parser = argparse::ArgumentParser().add_help(false);
+    parser.parse_args(1, cstr_arr{".\\prog"});
+    CHECK(parser.format_usage() == "usage: prog"s);
+}
 
-            SUBCASE("...in usage message")
-            {
-                CHECK(parser.format_usage() == "usage: prog"s);
-            }
+TEST_CASE("ArgumentParser uses first command-line parameter as its name when executed from current directory using backslash separators in help message")
+{
+    auto parser = argparse::ArgumentParser().add_help(false);
+    parser.parse_args(1, cstr_arr{".\\prog"});
+    CHECK(parser.format_help() == "usage: prog"s);
+}
 
-            SUBCASE("...in help message")
-            {
-                CHECK(parser.format_help() == "usage: prog"s);
-            }
-        }
+TEST_CASE("ArgumentParser uses first command-line parameter as its name without preceding path when executed from nested directory using slash separators in usage message")
+{
+    auto parser = argparse::ArgumentParser().add_help(false);
+    parser.parse_args(1, cstr_arr{"./utils/prog"});
+    CHECK(parser.format_usage() == "usage: prog"s);
+}
 
-        SUBCASE("...using backslash separators...")
-        {
-            parser.parse_args(1, cstr_arr{".\\prog"});
+TEST_CASE("ArgumentParser uses first command-line parameter as its name without preceding path when executed from nested directory using slash separators in help message")
+{
+    auto parser = argparse::ArgumentParser().add_help(false);
+    parser.parse_args(1, cstr_arr{"./utils/prog"});
+    CHECK(parser.format_help() == "usage: prog"s);
+}
 
-            SUBCASE("...in usage message")
-            {
-                CHECK(parser.format_usage() == "usage: prog"s);
-            }
+TEST_CASE("ArgumentParser uses first command-line parameter as its name without preceding path when executed from nested directory using backslash separators in usage message")
+{
+    auto parser = argparse::ArgumentParser().add_help(false);
+    parser.parse_args(1, cstr_arr{".\\utils\\prog"});
+    CHECK(parser.format_usage() == "usage: prog"s);
+}
 
-            SUBCASE("...in help message")
-            {
-                CHECK(parser.format_help() == "usage: prog"s);
-            }
-        }
-    }
+TEST_CASE("ArgumentParser uses first command-line parameter as its name without preceding path when executed from nested directory using backslash separators in help message")
+{
+    auto parser = argparse::ArgumentParser().add_help(false);
+    parser.parse_args(1, cstr_arr{".\\utils\\prog"});
+    CHECK(parser.format_help() == "usage: prog"s);
+}
 
-    SUBCASE("...without preceding path when executed from nested directory...")
-    {
-        SUBCASE("...using slash separators...")
-        {
-            parser.parse_args(1, cstr_arr{"./utils/prog"});
+TEST_CASE("ArgumentParser uses first command-line parameter as its name without preceding path when executed from upper directory using slash separators in usage message")
+{
+    auto parser = argparse::ArgumentParser().add_help(false);
+    parser.parse_args(1, cstr_arr{"../prog"});
+    CHECK(parser.format_usage() == "usage: prog"s);
+}
 
-            SUBCASE("...in usage message")
-            {
-                CHECK(parser.format_usage() == "usage: prog"s);
-            }
+TEST_CASE("ArgumentParser uses first command-line parameter as its name without preceding path when executed from upper directory using slash separators in help message")
+{
+    auto parser = argparse::ArgumentParser().add_help(false);
+    parser.parse_args(1, cstr_arr{"../prog"});
+    CHECK(parser.format_help() == "usage: prog"s);
+}
 
-            SUBCASE("...in help message")
-            {
-                CHECK(parser.format_help() == "usage: prog"s);
-            }
-        }
+TEST_CASE("ArgumentParser uses first command-line parameter as its name without preceding path when executed from upper directory using backslash separators in usage message")
+{
+    auto parser = argparse::ArgumentParser().add_help(false);
+    parser.parse_args(1, cstr_arr{"..\\prog"});
+    CHECK(parser.format_usage() == "usage: prog"s);
+}
 
-        SUBCASE("...using backslash separators...")
-        {
-            parser.parse_args(1, cstr_arr{".\\utils\\prog"});
-
-            SUBCASE("...in usage message")
-            {
-                CHECK(parser.format_usage() == "usage: prog"s);
-            }
-
-            SUBCASE("...in help message")
-            {
-                CHECK(parser.format_help() == "usage: prog"s);
-            }
-        }
-    }
-
-    SUBCASE("...without preceding path when executed from upper directory...")
-    {
-        SUBCASE("...using slash separators...")
-        {
-            parser.parse_args(1, cstr_arr{"../prog"});
-
-            SUBCASE("...in usage message")
-            {
-                CHECK(parser.format_usage() == "usage: prog"s);
-            }
-
-            SUBCASE("...in help message")
-            {
-                CHECK(parser.format_help() == "usage: prog"s);
-            }
-        }
-
-        SUBCASE("...using backslash separators...")
-        {
-            parser.parse_args(1, cstr_arr{"..\\prog"});
-
-            SUBCASE("...in usage message")
-            {
-                CHECK(parser.format_usage() == "usage: prog"s);
-            }
-
-            SUBCASE("...in help message")
-            {
-                CHECK(parser.format_help() == "usage: prog"s);
-            }
-        }
-    }
+TEST_CASE("ArgumentParser uses first command-line parameter as its name without preceding path when executed from upper directory using backslash separators in help message")
+{
+    auto parser = argparse::ArgumentParser().add_help(false);
+    parser.parse_args(1, cstr_arr{"..\\prog"});
+    CHECK(parser.format_help() == "usage: prog"s);
 }
 
 TEST_CASE("ArgumentParser uses prog parameter as its name in usage message")
