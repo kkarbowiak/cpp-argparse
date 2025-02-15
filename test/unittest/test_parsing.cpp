@@ -1185,540 +1185,535 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set...", T, char, s
     }
 }
 
-TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set...", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
+TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as a number consumes the number of arguments for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(1).template type<T>();
 
-    SUBCASE("...as a number...")
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        SUBCASE("...consumes the number of arguments...")
-        {
-            SUBCASE("...for one argument")
-            {
-                parser.add_argument("-o").nargs(1).template type<T>();
-
-                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
-                {
-                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "A"}));
-                }
-                else if constexpr (std::is_integral_v<T>)
-                {
-                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "42"}));
-                }
-                else if constexpr (std::is_floating_point_v<T>)
-                {
-                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"}));
-                }
-                else
-                {
-                    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
-                }
-            }
-
-            SUBCASE("...for two arguments")
-            {
-                parser.add_argument("-o").nargs(2).template type<T>();
-
-                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
-                {
-                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "A", "C"}));
-                }
-                else if constexpr (std::is_integral_v<T>)
-                {
-                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "42", "54"}));
-                }
-                else if constexpr (std::is_floating_point_v<T>)
-                {
-                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "0.5", "1.125"}));
-                }
-                else
-                {
-                    CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"}));
-                }
-            }
-
-            SUBCASE("...for three arguments")
-            {
-                parser.add_argument("-o").nargs(3).template type<T>();
-
-                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
-                {
-                    CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "E"}));
-                }
-                else if constexpr (std::is_integral_v<T>)
-                {
-                    CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"}));
-                }
-                else if constexpr (std::is_floating_point_v<T>)
-                {
-                    CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "0.5", "1.125", "2.375"}));
-                }
-                else
-                {
-                    CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"}));
-                }
-            }
-        }
-
-        SUBCASE("...yields a list of arguments...")
-        {
-            SUBCASE("...for one argument")
-            {
-                parser.add_argument("-o").nargs(1).template type<T>();
-
-                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
-                {
-                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
-
-                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A'});
-                }
-                else if constexpr (std::is_integral_v<T>)
-                {
-                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "42"});
-
-                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42});
-                }
-                else if constexpr (std::is_floating_point_v<T>)
-                {
-                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"});
-
-                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5});
-                }
-                else
-                {
-                    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
-
-                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
-                }
-            }
-
-            SUBCASE("...for two arguments")
-            {
-                parser.add_argument("-o").nargs(2).template type<T>();
-
-                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
-                {
-                    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "A", "C"});
-
-                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C'});
-                }
-                else if constexpr (std::is_integral_v<T>)
-                {
-                    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "42", "54"});
-
-                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42, 54});
-                }
-                else if constexpr (std::is_floating_point_v<T>)
-                {
-                    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "0.5", "1.125"});
-
-                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5, 1.125});
-                }
-                else
-                {
-                    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"});
-
-                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar"});
-                }
-            }
-
-            SUBCASE("...for three arguments")
-            {
-                parser.add_argument("-o").nargs(3).template type<T>();
-
-                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
-                {
-                    auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "E"});
-
-                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C', 'E'});
-                }
-                else if constexpr (std::is_integral_v<T>)
-                {
-                    auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"});
-
-                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42, 54, 65});
-                }
-                else if constexpr (std::is_floating_point_v<T>)
-                {
-                    auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "0.5", "1.125", "2.375"});
-
-                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5, 1.125, 2.375});
-                }
-                else
-                {
-                    auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"});
-
-                    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar", "baz"});
-                }
-            }
-        }
-
-        SUBCASE("...throws an exception for incorrect arguments number...")
-        {
-            SUBCASE("...for one argument and no provided")
-            {
-                parser.add_argument("-o").nargs(1).template type<T>();
-
-                CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o: expected 1 argument", argparse::parsing_error);
-            }
-
-            SUBCASE("...for two arguments and one provided")
-            {
-                parser.add_argument("-o").nargs(2).template type<T>();
-
-                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
-                {
-                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "A"}), "argument -o: expected 2 arguments", argparse::parsing_error);
-                }
-                else if constexpr (std::is_integral_v<T>)
-                {
-                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "42"}), "argument -o: expected 2 arguments", argparse::parsing_error);
-                }
-                else if constexpr (std::is_floating_point_v<T>)
-                {
-                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"}), "argument -o: expected 2 arguments", argparse::parsing_error);
-                }
-                else
-                {
-                    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}), "argument -o: expected 2 arguments", argparse::parsing_error);
-                }
-            }
-
-            SUBCASE("...for three arguments and two provided")
-            {
-                parser.add_argument("-o").nargs(3).template type<T>();
-
-                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
-                {
-                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "A", "B"}), "argument -o: expected 3 arguments", argparse::parsing_error);
-                }
-                else if constexpr (std::is_integral_v<T>)
-                {
-                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "42", "54"}), "argument -o: expected 3 arguments", argparse::parsing_error);
-                }
-                else if constexpr (std::is_floating_point_v<T>)
-                {
-                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "0.5", "1.125"}), "argument -o: expected 3 arguments", argparse::parsing_error);
-                }
-                else
-                {
-                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"}), "argument -o: expected 3 arguments", argparse::parsing_error);
-                }
-            }
-
-            SUBCASE("...for one argument and two provided")
-            {
-                parser.add_argument("-o").nargs(1).template type<T>();
-
-                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
-                {
-                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "A", "B"}), "unrecognised arguments: B", argparse::parsing_error);
-                }
-                else if constexpr (std::is_integral_v<T>)
-                {
-                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "42", "54"}), "unrecognised arguments: 54", argparse::parsing_error);
-                }
-                else if constexpr (std::is_floating_point_v<T>)
-                {
-                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "0.5", "1.125"}), "unrecognised arguments: 1.125", argparse::parsing_error);
-                }
-                else
-                {
-                    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"}), "unrecognised arguments: bar", argparse::parsing_error);
-                }
-            }
-
-            SUBCASE("...for one argument and three provided")
-            {
-                parser.add_argument("-o").nargs(1).template type<T>();
-
-                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
-                {
-                    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "A", "B", "C"}), "unrecognised arguments: B C", argparse::parsing_error);
-                }
-                else if constexpr (std::is_integral_v<T>)
-                {
-                    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"}), "unrecognised arguments: 54 65", argparse::parsing_error);
-                }
-                else if constexpr (std::is_floating_point_v<T>)
-                {
-                    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "0.5", "1.125", "2.375"}), "unrecognised arguments: 1.125 2.375", argparse::parsing_error);
-                }
-                else
-                {
-                    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"}), "unrecognised arguments: bar baz", argparse::parsing_error);
-                }
-            }
-
-            SUBCASE("...for two arguments and three provided")
-            {
-                parser.add_argument("-o").nargs(2).template type<T>();
-
-                if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
-                {
-                    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "A", "B", "C"}), "unrecognised arguments: C", argparse::parsing_error);
-                }
-                else if constexpr (std::is_integral_v<T>)
-                {
-                    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"}), "unrecognised arguments: 65", argparse::parsing_error);
-                }
-                else if constexpr (std::is_floating_point_v<T>)
-                {
-                    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "0.5", "1.125", "2.375"}), "unrecognised arguments: 2.375", argparse::parsing_error);
-                }
-                else
-                {
-                    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"}), "unrecognised arguments: baz", argparse::parsing_error);
-                }
-            }
-        }
+        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "A"}));
     }
-
-    SUBCASE("...as zero_or_one...")
+    else if constexpr (std::is_integral_v<T>)
     {
-        SUBCASE("...consumes single argument and yields it as a single item")
-        {
-            parser.add_argument("-o").nargs(argparse::zero_or_one).template type<T>();
-
-            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
-            {
-                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
-
-                CHECK(parsed.get_value<T>("o") == T('A'));
-            }
-            else if constexpr (std::is_integral_v<T>)
-            {
-                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "42"});
-
-                CHECK(parsed.get_value<T>("o") == T(42));
-            }
-            else if constexpr (std::is_floating_point_v<T>)
-            {
-                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"});
-
-                CHECK(parsed.get_value<T>("o") == T(0.5));
-            }
-            else
-            {
-                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
-
-                CHECK(parsed.get_value<T>("o") == T("foo"));
-            }
-        }
-
-        SUBCASE("...yields default value if no argument is provided")
-        {
-            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
-            {
-                parser.add_argument("-o").nargs(argparse::zero_or_one).default_(T('A'));
-
-                auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
-
-                CHECK(parsed.get_value<T>("o") == T('A'));
-            }
-            else if constexpr (std::is_integral_v<T>)
-            {
-                parser.add_argument("-o").nargs(argparse::zero_or_one).default_(T(10));
-
-                auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
-
-                CHECK(parsed.get_value<T>("o") == T(10));
-            }
-            else if constexpr (std::is_floating_point_v<T>)
-            {
-                parser.add_argument("-o").nargs(argparse::zero_or_one).default_(T(0.0625));
-
-                auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
-
-                CHECK(parsed.get_value<T>("o") == T(0.0625));
-            }
-            else
-            {
-                parser.add_argument("-o").nargs(argparse::zero_or_one).default_("foo"s);
-
-                auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
-
-                CHECK(parsed.get_value<T>("o") == "foo");
-            }
-        }
-
-        SUBCASE("...yields const value if option string is present and no argument is provided")
-        {
-            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
-            {
-                parser.add_argument("-o").nargs(argparse::zero_or_one).const_(T('A'));
-
-                auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
-
-                CHECK(parsed.get_value<T>("o") == T('A'));
-            }
-            else if constexpr (std::is_integral_v<T>)
-            {
-                parser.add_argument("-o").nargs(argparse::zero_or_one).const_(T(5));
-
-                auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
-
-                CHECK(parsed.get_value<T>("o") == T(5));
-            }
-            else if constexpr (std::is_floating_point_v<T>)
-            {
-                parser.add_argument("-o").nargs(argparse::zero_or_one).const_(T(0.875));
-
-                auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
-
-                CHECK(parsed.get_value<T>("o") == T(0.875));
-            }
-            else
-            {
-                parser.add_argument("-o").nargs(argparse::zero_or_one).const_("foo"s);
-
-                auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
-
-                CHECK(parsed.get_value<T>("o") == "foo");
-            }
-        }
+        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "42"}));
     }
-
-    SUBCASE("...as zero_or_more...")
+    else if constexpr (std::is_floating_point_v<T>)
     {
-        SUBCASE("...yields an empty list if no arguments provided")
-        {
-            parser.add_argument("-o").nargs(argparse::zero_or_more).template type<T>();
-
-            auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
-
-            CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>());
-        }
-
-        SUBCASE("...consumes single argument and yields it as a list")
-        {
-            parser.add_argument("-o").nargs(argparse::zero_or_more).template type<T>();
-
-            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
-            {
-                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
-
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A'});
-            }
-            else if constexpr (std::is_integral_v<T>)
-            {
-                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "42"});
-
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42});
-            }
-            else if constexpr (std::is_floating_point_v<T>)
-            {
-                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"});
-
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5});
-            }
-            else
-            {
-                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
-
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
-            }
-        }
-
-        SUBCASE("...consumes all available arguments and yields them as a list")
-        {
-            parser.add_argument("-o").nargs(argparse::zero_or_more).template type<T>();
-
-            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
-            {
-                auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "E"});
-
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C', 'E'});
-            }
-            else if constexpr (std::is_integral_v<T>)
-            {
-                auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"});
-
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42, 54, 65});
-            }
-            else if constexpr (std::is_floating_point_v<T>)
-            {
-                auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "0.5", "1.125", "2.375"});
-
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5, 1.125, 2.375});
-            }
-            else
-            {
-                auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"});
-
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar", "baz"});
-            }
-        }
+        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"}));
     }
-
-    SUBCASE("...as one_or_more...")
+    else
     {
-        SUBCASE("...throws an exception if no arguments provided")
-        {
-            parser.add_argument("-o").nargs(argparse::one_or_more).template type<T>();
+        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
+    }
+}
 
-            CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o: expected at least one argument", argparse::parsing_error);
-        }
+TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as a number consumes the number of arguments for two arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(2).template type<T>();
 
-        SUBCASE("...consumes single argument and yields it as a list")
-        {
-            parser.add_argument("-o").nargs(argparse::one_or_more).template type<T>();
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "A", "C"}));
+    }
+    else if constexpr (std::is_integral_v<T>)
+    {
+        CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "42", "54"}));
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "0.5", "1.125"}));
+    }
+    else
+    {
+        CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"}));
+    }
+}
 
-            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
-            {
-                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as a number consumes the number of arguments for three arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(3).template type<T>();
 
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A'});
-            }
-            else if constexpr (std::is_integral_v<T>)
-            {
-                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "42"});
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "E"}));
+    }
+    else if constexpr (std::is_integral_v<T>)
+    {
+        CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"}));
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "0.5", "1.125", "2.375"}));
+    }
+    else
+    {
+        CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"}));
+    }
+}
 
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42});
-            }
-            else if constexpr (std::is_floating_point_v<T>)
-            {
-                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"});
+TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as a number yields a list of arguments for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(1).template type<T>();
 
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5});
-            }
-            else
-            {
-                auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
 
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
-            }
-        }
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A'});
+    }
+    else if constexpr (std::is_integral_v<T>)
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "42"});
 
-        SUBCASE("...consumes all available arguments and yields them as a list")
-        {
-            parser.add_argument("-o").nargs(argparse::one_or_more).template type<T>();
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42});
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"});
 
-            if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
-            {
-                auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "E"});
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5});
+    }
+    else
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
 
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C', 'E'});
-            }
-            else if constexpr (std::is_integral_v<T>)
-            {
-                auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"});
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
+    }
+}
 
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42, 54, 65});
-            }
-            else if constexpr (std::is_floating_point_v<T>)
-            {
-                auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "0.5", "1.125", "2.375"});
+TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as a number yields a list of arguments for two arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(2).template type<T>();
 
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5, 1.125, 2.375});
-            }
-            else
-            {
-                auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"});
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "A", "C"});
 
-                CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar", "baz"});
-            }
-        }
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C'});
+    }
+    else if constexpr (std::is_integral_v<T>)
+    {
+        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "42", "54"});
+
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42, 54});
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "0.5", "1.125"});
+
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5, 1.125});
+    }
+    else
+    {
+        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"});
+
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar"});
+    }
+}
+
+TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as a number yields a list of arguments for three arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(3).template type<T>();
+
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "E"});
+
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C', 'E'});
+    }
+    else if constexpr (std::is_integral_v<T>)
+    {
+        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"});
+
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42, 54, 65});
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "0.5", "1.125", "2.375"});
+
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5, 1.125, 2.375});
+    }
+    else
+    {
+        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"});
+
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar", "baz"});
+    }
+}
+
+TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as a number throws an exception for incorrect arguments number for one argument and no provided", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(1).template type<T>();
+
+    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o: expected 1 argument", argparse::parsing_error);
+}
+
+TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as a number throws an exception for incorrect arguments number for two arguments and one provided", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(2).template type<T>();
+
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "A"}), "argument -o: expected 2 arguments", argparse::parsing_error);
+    }
+    else if constexpr (std::is_integral_v<T>)
+    {
+        CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "42"}), "argument -o: expected 2 arguments", argparse::parsing_error);
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"}), "argument -o: expected 2 arguments", argparse::parsing_error);
+    }
+    else
+    {
+        CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}), "argument -o: expected 2 arguments", argparse::parsing_error);
+    }
+}
+
+TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as a number throws an exception for incorrect arguments number for three arguments and two provided", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(3).template type<T>();
+
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "A", "B"}), "argument -o: expected 3 arguments", argparse::parsing_error);
+    }
+    else if constexpr (std::is_integral_v<T>)
+    {
+        CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "42", "54"}), "argument -o: expected 3 arguments", argparse::parsing_error);
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "0.5", "1.125"}), "argument -o: expected 3 arguments", argparse::parsing_error);
+    }
+    else
+    {
+        CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"}), "argument -o: expected 3 arguments", argparse::parsing_error);
+    }
+}
+
+TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as a number throws an exception for incorrect arguments number for one argument and two provided", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(1).template type<T>();
+
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "A", "B"}), "unrecognised arguments: B", argparse::parsing_error);
+    }
+    else if constexpr (std::is_integral_v<T>)
+    {
+        CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "42", "54"}), "unrecognised arguments: 54", argparse::parsing_error);
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "0.5", "1.125"}), "unrecognised arguments: 1.125", argparse::parsing_error);
+    }
+    else
+    {
+        CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"}), "unrecognised arguments: bar", argparse::parsing_error);
+    }
+}
+
+TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as a number throws an exception for incorrect arguments number for one argument and three provided", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(1).template type<T>();
+
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "A", "B", "C"}), "unrecognised arguments: B C", argparse::parsing_error);
+    }
+    else if constexpr (std::is_integral_v<T>)
+    {
+        CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"}), "unrecognised arguments: 54 65", argparse::parsing_error);
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "0.5", "1.125", "2.375"}), "unrecognised arguments: 1.125 2.375", argparse::parsing_error);
+    }
+    else
+    {
+        CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"}), "unrecognised arguments: bar baz", argparse::parsing_error);
+    }
+}
+
+TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as a number throws an exception for incorrect arguments number for two arguments and three provided", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(2).template type<T>();
+
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "A", "B", "C"}), "unrecognised arguments: C", argparse::parsing_error);
+    }
+    else if constexpr (std::is_integral_v<T>)
+    {
+        CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"}), "unrecognised arguments: 65", argparse::parsing_error);
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "0.5", "1.125", "2.375"}), "unrecognised arguments: 2.375", argparse::parsing_error);
+    }
+    else
+    {
+        CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"}), "unrecognised arguments: baz", argparse::parsing_error);
+    }
+}
+
+TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as zero_or_one consumes single argument and yields it as a single item", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(argparse::zero_or_one).template type<T>();
+
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+
+        CHECK(parsed.get_value<T>("o") == T('A'));
+    }
+    else if constexpr (std::is_integral_v<T>)
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "42"});
+
+        CHECK(parsed.get_value<T>("o") == T(42));
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"});
+
+        CHECK(parsed.get_value<T>("o") == T(0.5));
+    }
+    else
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
+
+        CHECK(parsed.get_value<T>("o") == T("foo"));
+    }
+}
+
+TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as zero_or_one yields default value if no argument is provided", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        parser.add_argument("-o").nargs(argparse::zero_or_one).default_(T('A'));
+
+        auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+
+        CHECK(parsed.get_value<T>("o") == T('A'));
+    }
+    else if constexpr (std::is_integral_v<T>)
+    {
+        parser.add_argument("-o").nargs(argparse::zero_or_one).default_(T(10));
+
+        auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+
+        CHECK(parsed.get_value<T>("o") == T(10));
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        parser.add_argument("-o").nargs(argparse::zero_or_one).default_(T(0.0625));
+
+        auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+
+        CHECK(parsed.get_value<T>("o") == T(0.0625));
+    }
+    else
+    {
+        parser.add_argument("-o").nargs(argparse::zero_or_one).default_("foo"s);
+
+        auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+
+        CHECK(parsed.get_value<T>("o") == "foo");
+    }
+}
+
+TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as zero_or_one yields const value if option string is present and no argument is provided", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        parser.add_argument("-o").nargs(argparse::zero_or_one).const_(T('A'));
+
+        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
+
+        CHECK(parsed.get_value<T>("o") == T('A'));
+    }
+    else if constexpr (std::is_integral_v<T>)
+    {
+        parser.add_argument("-o").nargs(argparse::zero_or_one).const_(T(5));
+
+        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
+
+        CHECK(parsed.get_value<T>("o") == T(5));
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        parser.add_argument("-o").nargs(argparse::zero_or_one).const_(T(0.875));
+
+        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
+
+        CHECK(parsed.get_value<T>("o") == T(0.875));
+    }
+    else
+    {
+        parser.add_argument("-o").nargs(argparse::zero_or_one).const_("foo"s);
+
+        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
+
+        CHECK(parsed.get_value<T>("o") == "foo");
+    }
+}
+
+TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as zero_or_more yields an empty list if no arguments provided", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(argparse::zero_or_more).template type<T>();
+
+    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
+
+    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>());
+}
+
+TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as zero_or_more consumes single argument and yields it as a list", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(argparse::zero_or_more).template type<T>();
+
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A'});
+    }
+    else if constexpr (std::is_integral_v<T>)
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "42"});
+
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42});
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"});
+
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5});
+    }
+    else
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
+
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
+    }
+}
+
+TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as zero_or_more consumes all available arguments and yields them as a list", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(argparse::zero_or_more).template type<T>();
+
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "E"});
+
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C', 'E'});
+    }
+    else if constexpr (std::is_integral_v<T>)
+    {
+        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"});
+
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42, 54, 65});
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "0.5", "1.125", "2.375"});
+
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5, 1.125, 2.375});
+    }
+    else
+    {
+        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"});
+
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar", "baz"});
+    }
+}
+
+TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as one_or_more throws an exception if no arguments provided", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(argparse::one_or_more).template type<T>();
+
+    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o: expected at least one argument", argparse::parsing_error);
+}
+
+TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as one_or_more consumes single argument and yields it as a list", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(argparse::one_or_more).template type<T>();
+
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A'});
+    }
+    else if constexpr (std::is_integral_v<T>)
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "42"});
+
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42});
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"});
+
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5});
+    }
+    else
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
+
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
+    }
+}
+
+TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as one_or_more consumes all available arguments and yields them as a list", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(argparse::one_or_more).template type<T>();
+
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "E"});
+
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C', 'E'});
+    }
+    else if constexpr (std::is_integral_v<T>)
+    {
+        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"});
+
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42, 54, 65});
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "0.5", "1.125", "2.375"});
+
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5, 1.125, 2.375});
+    }
+    else
+    {
+        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"});
+
+        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar", "baz"});
     }
 }
 
