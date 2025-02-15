@@ -3687,68 +3687,67 @@ TEST_CASE("Parsing missing positional argument with nargs set throws an exceptio
     }
 }
 
-TEST_CASE("An optional argument does not consume another optional argument...")
+TEST_CASE("An optional argument does not consume another optional argument for simple argument")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o");
+    parser.add_argument("-p");
 
-    SUBCASE("...for simple argument")
-    {
-        parser.add_argument("-o");
-        parser.add_argument("-p");
+    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}), "argument -o: expected one argument", argparse::parsing_error);
+}
 
-        CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}), "argument -o: expected one argument", argparse::parsing_error);
-    }
+TEST_CASE("An optional argument does not consume another optional argument for argument with nargs set as number 1")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(1);
+    parser.add_argument("-p");
 
-    SUBCASE("...for argument with nargs set as number...")
-    {
-        SUBCASE("...1")
-        {
-            parser.add_argument("-o").nargs(1);
-            parser.add_argument("-p");
+    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}), "argument -o: expected 1 argument", argparse::parsing_error);
+}
 
-            CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}), "argument -o: expected 1 argument", argparse::parsing_error);
-        }
+TEST_CASE("An optional argument does not consume another optional argument for argument with nargs set as number 2")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(2);
+    parser.add_argument("-p");
 
-        SUBCASE("...2")
-        {
-            parser.add_argument("-o").nargs(2);
-            parser.add_argument("-p");
+    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "-p"}), "argument -o: expected 2 arguments", argparse::parsing_error);
+}
 
-            CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "-p"}), "argument -o: expected 2 arguments", argparse::parsing_error);
-        }
+TEST_CASE("An optional argument does not consume another optional argument for argument with nargs set as number 3")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(3);
+    parser.add_argument("-p");
 
-        SUBCASE("...3")
-        {
-            parser.add_argument("-o").nargs(3);
-            parser.add_argument("-p");
+    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "-p"}), "argument -o: expected 3 arguments", argparse::parsing_error);
+}
 
-            CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "-p"}), "argument -o: expected 3 arguments", argparse::parsing_error);
-        }
-    }
+TEST_CASE("An optional argument does not consume another optional argument for argument with nargs set as zero_or_one")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(argparse::zero_or_one);
+    parser.add_argument("-p");
 
-    SUBCASE("...for argument with nargs set as zero_or_one")
-    {
-        parser.add_argument("-o").nargs(argparse::zero_or_one);
-        parser.add_argument("-p");
+    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}), "argument -p: expected one argument", argparse::parsing_error);
+}
 
-        CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}), "argument -p: expected one argument", argparse::parsing_error);
-    }
+TEST_CASE("An optional argument does not consume another optional argument for argument with nargs set as zero_or_more")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(argparse::zero_or_more);
+    parser.add_argument("-p");
 
-    SUBCASE("...for argument with nargs set as zero_or_more")
-    {
-        parser.add_argument("-o").nargs(argparse::zero_or_more);
-        parser.add_argument("-p");
+    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}), "argument -p: expected one argument", argparse::parsing_error);
+}
 
-        CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}), "argument -p: expected one argument", argparse::parsing_error);
-    }
+TEST_CASE("An optional argument does not consume another optional argument for argument with nargs set as one_or_more")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(argparse::one_or_more);
+    parser.add_argument("-p");
 
-    SUBCASE("...for argument with nargs set as one_or_more")
-    {
-        parser.add_argument("-o").nargs(argparse::one_or_more);
-        parser.add_argument("-p");
-
-        CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}), "argument -o: expected at least one argument", argparse::parsing_error);
-    }
+    CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "-p"}), "argument -o: expected at least one argument", argparse::parsing_error);
 }
 
 TEST_CASE("Parsing -- pseudo argument does not throw")
