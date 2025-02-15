@@ -415,25 +415,25 @@ TEST_CASE("Parsing unrecognised positional argument throws an exception...")
     }
 }
 
-TEST_CASE("Parsing unrecognised optional argument throws an exception...")
+TEST_CASE("Parsing unrecognised optional argument throws an exception for one unrecognised argument")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("-a");
+    CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-a", "v1", "-b"}), "unrecognised arguments: -b", argparse::parsing_error);
+}
 
-    SUBCASE("...for one unrecognised argument")
-    {
-        CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-a", "v1", "-b"}), "unrecognised arguments: -b", argparse::parsing_error);
-    }
+TEST_CASE("Parsing unrecognised optional argument throws an exception for two unrecognised arguments")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-a");
+    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-a", "v1", "-b", "-c"}), "unrecognised arguments: -b -c", argparse::parsing_error);
+}
 
-    SUBCASE("...for two unrecognised arguments")
-    {
-        CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-a", "v1", "-b", "-c"}), "unrecognised arguments: -b -c", argparse::parsing_error);
-    }
-
-    SUBCASE("...for three unrecognised arguments")
-    {
-        CHECK_THROWS_WITH_AS(parser.parse_args(6, cstr_arr{"prog", "-a", "v1", "-b", "-c", "-d"}), "unrecognised arguments: -b -c -d", argparse::parsing_error);
-    }
+TEST_CASE("Parsing unrecognised optional argument throws an exception for three unrecognised arguments")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-a");
+    CHECK_THROWS_WITH_AS(parser.parse_args(6, cstr_arr{"prog", "-a", "v1", "-b", "-c", "-d"}), "unrecognised arguments: -b -c -d", argparse::parsing_error);
 }
 
 TEST_CASE("Parsing mixed positional and optional arguments give same result no matter the order for positional and optional")
