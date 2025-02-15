@@ -523,23 +523,20 @@ TEST_CASE("The resulting attribute name is based on...")
     }
 }
 
-TEST_CASE("Parsing a missing optional argument with required...")
+TEST_CASE("Parsing a missing optional argument with required true throws an exception")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").required(true);
 
-    SUBCASE("...true throws an exception")
-    {
-        parser.add_argument("-o").required(true);
+    CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: -o", argparse::parsing_error);
+}
 
-        CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: -o", argparse::parsing_error);
-    }
+TEST_CASE("Parsing a missing optional argument with required false does not throw")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").required(false);
 
-    SUBCASE("...false does not throw")
-    {
-        parser.add_argument("-o").required(false);
-
-        CHECK_NOTHROW(parser.parse_args(1, cstr_arr{"prog"}));
-    }
+    CHECK_NOTHROW(parser.parse_args(1, cstr_arr{"prog"}));
 }
 
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set accepts one of the values", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
