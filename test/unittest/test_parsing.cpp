@@ -278,7 +278,7 @@ TEST_CASE("Parsing an optional argument with invalid value throws an exception")
     CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "10gibberish"}), "argument -o: invalid value: '10gibberish'", argparse::parsing_error);
 }
 
-TEST_CASE_TEMPLATE("Parsing an optional argument with default value...", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
+TEST_CASE_TEMPLATE("Parsing an optional argument with default value yields the default value when it's missing", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
 {
     auto parser = argparse::ArgumentParser();
 
@@ -294,51 +294,61 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with default value...", T, char
     {
         parser.add_argument("-o").default_(T("foo")).template type<T>();
     }
+    auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
-    SUBCASE("...yields the default value when it's missing")
+    if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
-
-        if constexpr (std::is_integral_v<T>)
-        {
-            CHECK(parsed.get_value<T>("o") == T(54));
-        }
-        else if constexpr (std::is_floating_point_v<T>)
-        {
-            CHECK(parsed.get_value<T>("o") == T(0.125));
-        }
-        else
-        {
-            CHECK(parsed.get_value<T>("o") == T("foo"));
-        }
+        CHECK(parsed.get_value<T>("o") == T(54));
     }
-
-    SUBCASE("...yields value of the argument's type")
+    else if constexpr (std::is_floating_point_v<T>)
     {
-        if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
-        {
-            auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+        CHECK(parsed.get_value<T>("o") == T(0.125));
+    }
+    else
+    {
+        CHECK(parsed.get_value<T>("o") == T("foo"));
+    }
+}
 
-            CHECK(parsed.get_value<T>("o") == T(65));
-        }
-        else if constexpr (std::is_integral_v<T>)
-        {
-            auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "65"});
+TEST_CASE_TEMPLATE("Parsing an optional argument with default value yields value of the argument's type", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
+{
+    auto parser = argparse::ArgumentParser();
 
-            CHECK(parsed.get_value<T>("o") == T(65));
-        }
-        else if constexpr (std::is_floating_point_v<T>)
-        {
-            auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "1.125"});
+    if constexpr (std::is_integral_v<T>)
+    {
+        parser.add_argument("-o").default_(T(54)).template type<T>();
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        parser.add_argument("-o").default_(T(0.125)).template type<T>();
+    }
+    else
+    {
+        parser.add_argument("-o").default_(T("foo")).template type<T>();
+    }
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
 
-            CHECK(parsed.get_value<T>("o") == T(1.125));
-        }
-        else
-        {
-            auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "bar"});
+        CHECK(parsed.get_value<T>("o") == T(65));
+    }
+    else if constexpr (std::is_integral_v<T>)
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "65"});
 
-            CHECK(parsed.get_value<T>("o") == T("bar"));
-        }
+        CHECK(parsed.get_value<T>("o") == T(65));
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "1.125"});
+
+        CHECK(parsed.get_value<T>("o") == T(1.125));
+    }
+    else
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "bar"});
+
+        CHECK(parsed.get_value<T>("o") == T("bar"));
     }
 }
 
