@@ -3851,33 +3851,31 @@ TEST_CASE("An optional argument does not consume arguments past the -- pseudo ar
     }
 }
 
-TEST_CASE("Parsing joined short options does not throw...")
+TEST_CASE("Parsing joined short options does not throw for arguments with store true action")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-a").action(argparse::store_true);
+    parser.add_argument("-b").action(argparse::store_true);
 
-    SUBCASE("...for arguments with store true action")
-    {
-        parser.add_argument("-a").action(argparse::store_true);
-        parser.add_argument("-b").action(argparse::store_true);
+    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-ab"}));
+}
 
-        CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-ab"}));
-    }
+TEST_CASE("Parsing joined short options does not throw for arguments with store false action")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-a").action(argparse::store_false);
+    parser.add_argument("-b").action(argparse::store_false);
 
-    SUBCASE("...for arguments with store false action")
-    {
-        parser.add_argument("-a").action(argparse::store_false);
-        parser.add_argument("-b").action(argparse::store_false);
+    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-ab"}));
+}
 
-        CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-ab"}));
-    }
+TEST_CASE("Parsing joined short options does not throw for arguments with store const action")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-a").action(argparse::store_const).const_(10);
+    parser.add_argument("-b").action(argparse::store_const).const_(20);
 
-    SUBCASE("...for arguments with store const action")
-    {
-        parser.add_argument("-a").action(argparse::store_const).const_(10);
-        parser.add_argument("-b").action(argparse::store_const).const_(20);
-
-        CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-ab"}));
-    }
+    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-ab"}));
 }
 
 TEST_CASE("Parsing joined short options with store true action yields true for each of them")
