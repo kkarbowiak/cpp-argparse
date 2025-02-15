@@ -178,24 +178,22 @@ TEST_CASE("Parsing an optional argument with version action yields true when it'
     CHECK(parsed.get_value<bool>("v") == true);
 }
 
-TEST_CASE("Optional argument can be used with either...")
+TEST_CASE("Optional argument can be used with either short name")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o", "--option");
+    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "val"});
 
-    SUBCASE("...short name")
-    {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "val"});
+    CHECK(parsed.get_value("option") == "val");
+}
 
-        CHECK(parsed.get_value("option") == "val");
-    }
+TEST_CASE("Optional argument can be used with either long name")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-o", "--option");
+    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "--option", "val"});
 
-    SUBCASE("...long name")
-    {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "--option", "val"});
-
-        CHECK(parsed.get_value("option") == "val");
-    }
+    CHECK(parsed.get_value("option") == "val");
 }
 
 TEST_CASE_TEMPLATE("Parsing a positional argument yields its requested type", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom, bar::Custom)
