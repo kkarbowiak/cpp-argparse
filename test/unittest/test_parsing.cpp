@@ -138,24 +138,22 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with store const action...", T,
     }
 }
 
-TEST_CASE("Parsing an optional argument with help action...")
+TEST_CASE("Parsing an optional argument with help action yields false when it's missing")
 {
     auto parser = argparse::ArgumentParser().add_help(false).handle(argparse::Handle::none);
     parser.add_argument("-h").action(argparse::help);
+    auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
-    SUBCASE("...yields false when it's missing")
-    {
-        auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+    CHECK(parsed.get_value<bool>("h") == false);
+}
 
-        CHECK(parsed.get_value<bool>("h") == false);
-    }
+TEST_CASE("Parsing an optional argument with help action yields true when it's present")
+{
+    auto parser = argparse::ArgumentParser().add_help(false).handle(argparse::Handle::none);
+    parser.add_argument("-h").action(argparse::help);
+    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-h"});
 
-    SUBCASE("...yields true when it's present")
-    {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-h"});
-
-        CHECK(parsed.get_value<bool>("h") == true);
-    }
+    CHECK(parsed.get_value<bool>("h") == true);
 }
 
 TEST_CASE("Parsing an optional argument with version action yields false when it's missing")
