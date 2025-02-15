@@ -100,7 +100,11 @@ def process_tree(tree):
     for node in PreOrderIter(tree):
         if node.is_leaf:
             walk = walker.walk(tree, node)
-            flattened_lines.extend(walk[1].lines[:-1])  # all test case lines except for closing brace
+            root_node = walk[1]
+            tc_line = root_node.lines[0]
+            new_tc_line = tc_line.replace(root_node.text, join_texts(root_node, walk[2]))
+            flattened_lines.append(new_tc_line)
+            flattened_lines.extend(walk[1].lines[1:-1])  # all test case lines except for closing brace
             for subnode in walk[2]:
                 sublines = subnode.lines[2:-1]  # all subcase lines except for subcase and its opening and closing brace
                 flattened_lines.extend([subline if subline.startswith('\n') else subline[subnode.indent:] for subline in sublines])
@@ -109,6 +113,13 @@ def process_tree(tree):
     for line in flattened_lines:
         print(line, end='')
     return flattened_lines
+
+
+def join_texts(root, nodes):
+    text = root.text
+    for node in nodes:
+        text += node.text
+    return text
 
 
 if __name__ == '__main__':
