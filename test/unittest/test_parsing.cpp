@@ -436,7 +436,7 @@ TEST_CASE("Parsing unrecognised optional argument throws an exception...")
     }
 }
 
-TEST_CASE("Parsing mixed positional and optional arguments give same result no matter the order...")
+TEST_CASE("Parsing mixed positional and optional arguments give same result no matter the order for positional and optional")
 {
     auto parser1 = argparse::ArgumentParser();
     parser1.add_argument("pos1");
@@ -445,26 +445,29 @@ TEST_CASE("Parsing mixed positional and optional arguments give same result no m
     auto parser2 = argparse::ArgumentParser();
     parser2.add_argument("-f");
     parser2.add_argument("pos1");
+    auto const argv = cstr_arr{"prog", "val1", "-f", "a"};
+    auto const parsed1 = parser1.parse_args(4, argv);
+    auto const parsed2 = parser2.parse_args(4, argv);
 
-    SUBCASE("...for positional and optional")
-    {
-        auto const argv = cstr_arr{"prog", "val1", "-f", "a"};
-        auto const parsed1 = parser1.parse_args(4, argv);
-        auto const parsed2 = parser2.parse_args(4, argv);
+    CHECK(parsed1.get_value("pos1") == parsed2.get_value("pos1"));
+    CHECK(parsed1.get_value("f") == parsed2.get_value("f"));
+}
 
-        CHECK(parsed1.get_value("pos1") == parsed2.get_value("pos1"));
-        CHECK(parsed1.get_value("f") == parsed2.get_value("f"));
-    }
+TEST_CASE("Parsing mixed positional and optional arguments give same result no matter the order for optional and positional")
+{
+    auto parser1 = argparse::ArgumentParser();
+    parser1.add_argument("pos1");
+    parser1.add_argument("-f");
 
-    SUBCASE("...for optional and positional")
-    {
-        auto const argv = cstr_arr{"prog", "-f", "a", "val1"};
-        auto const parsed1 = parser1.parse_args(4, argv);
-        auto const parsed2 = parser2.parse_args(4, argv);
+    auto parser2 = argparse::ArgumentParser();
+    parser2.add_argument("-f");
+    parser2.add_argument("pos1");
+    auto const argv = cstr_arr{"prog", "-f", "a", "val1"};
+    auto const parsed1 = parser1.parse_args(4, argv);
+    auto const parsed2 = parser2.parse_args(4, argv);
 
-        CHECK(parsed1.get_value("pos1") == parsed2.get_value("pos1"));
-        CHECK(parsed1.get_value("f") == parsed2.get_value("f"));
-    }
+    CHECK(parsed1.get_value("pos1") == parsed2.get_value("pos1"));
+    CHECK(parsed1.get_value("f") == parsed2.get_value("f"));
 }
 
 TEST_CASE("The resulting attribute name is based on for positional argument on its name")
