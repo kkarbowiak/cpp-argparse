@@ -118,7 +118,7 @@ def process_tree(tree):
 def join_texts(root, nodes):
     text = root.text.removesuffix('...')
     for node in nodes:
-        text += node.text.removeprefix('...').removesuffix('...')
+        text += ' ' + node.text.removeprefix('...').removesuffix('...')
     return text
 
 
