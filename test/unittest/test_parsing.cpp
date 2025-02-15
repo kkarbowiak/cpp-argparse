@@ -342,33 +342,31 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with default value...", T, char
     }
 }
 
-TEST_CASE("Parsing missing positional argument throws an exception...")
+TEST_CASE("Parsing missing positional argument throws an exception for one missing argument")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("p1");
 
-    SUBCASE("...for one missing argument")
-    {
-        parser.add_argument("p1");
+    CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: p1", argparse::parsing_error);
+}
 
-        CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: p1", argparse::parsing_error);
-    }
+TEST_CASE("Parsing missing positional argument throws an exception for two missing arguments")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("p1");
+    parser.add_argument("p2");
 
-    SUBCASE("...for two missing arguments")
-    {
-        parser.add_argument("p1");
-        parser.add_argument("p2");
+    CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: p1 p2", argparse::parsing_error);
+}
 
-        CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: p1 p2", argparse::parsing_error);
-    }
+TEST_CASE("Parsing missing positional argument throws an exception for three missing arguments")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("p1");
+    parser.add_argument("p2");
+    parser.add_argument("p3");
 
-    SUBCASE("...for three missing arguments")
-    {
-        parser.add_argument("p1");
-        parser.add_argument("p2");
-        parser.add_argument("p3");
-
-        CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: p1 p2 p3", argparse::parsing_error);
-    }
+    CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: p1 p2 p3", argparse::parsing_error);
 }
 
 TEST_CASE("Parsing arguments with help requested disregards parsing errors for missing positional argument")
