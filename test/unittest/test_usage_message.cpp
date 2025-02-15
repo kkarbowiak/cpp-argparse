@@ -7,133 +7,144 @@
 
 using namespace std::string_literals;
 
-TEST_CASE("ArgumentParser provides usage message...")
+TEST_CASE("ArgumentParser provides usage message with prog name")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    CHECK(parser.format_usage() == "usage: prog"s);
+}
 
-    SUBCASE("...with prog name")
-    {
-        CHECK(parser.format_usage() == "usage: prog"s);
-    }
+TEST_CASE("ArgumentParser provides usage message with prog name and list of positional arguments for one positional argument")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("p1");
 
-    SUBCASE("...with prog name and list of positional arguments for one positional argument")
-    {
-        parser.add_argument("p1");
+    CHECK(parser.format_usage() == "usage: prog p1"s);
+}
 
-        CHECK(parser.format_usage() == "usage: prog p1"s);
-    }
+TEST_CASE("ArgumentParser provides usage message with prog name and list of positional arguments for two positional arguments")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("p1");
+    parser.add_argument("p2");
 
-    SUBCASE("...with prog name and list of positional arguments for two positional arguments")
-    {
-        parser.add_argument("p1");
-        parser.add_argument("p2");
+    CHECK(parser.format_usage() == "usage: prog p1 p2"s);
+}
 
-        CHECK(parser.format_usage() == "usage: prog p1 p2"s);
-    }
+TEST_CASE("ArgumentParser provides usage message with prog name and list of positional arguments for three positional arguments")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("p1");
+    parser.add_argument("p2");
+    parser.add_argument("p3");
 
-    SUBCASE("...with prog name and list of positional arguments for three positional arguments")
-    {
-        parser.add_argument("p1");
-        parser.add_argument("p2");
-        parser.add_argument("p3");
+    CHECK(parser.format_usage() == "usage: prog p1 p2 p3"s);
+}
 
-        CHECK(parser.format_usage() == "usage: prog p1 p2 p3"s);
-    }
+TEST_CASE("ArgumentParser provides usage message with prog name and list of optional arguments for one optional argument")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("-o");
 
-    SUBCASE("...with prog name and list of optional arguments for one optional argument")
-    {
-        parser.add_argument("-o");
+    CHECK(parser.format_usage() == "usage: prog [-o O]"s);
+}
 
-        CHECK(parser.format_usage() == "usage: prog [-o O]"s);
-    }
+TEST_CASE("ArgumentParser provides usage message with prog name and list of optional arguments for two optional arguments")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("-o");
+    parser.add_argument("--option");
 
-    SUBCASE("...with prog name and list of optional arguments for two optional arguments")
-    {
-        parser.add_argument("-o");
-        parser.add_argument("--option");
+    CHECK(parser.format_usage() == "usage: prog [-o O] [--option OPTION]"s);
+}
 
-        CHECK(parser.format_usage() == "usage: prog [-o O] [--option OPTION]"s);
-    }
+TEST_CASE("ArgumentParser provides usage message with prog name and list of optional arguments for three optional arguments")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("-o");
+    parser.add_argument("--option");
+    parser.add_argument("--very-long-name");
 
-    SUBCASE("...with prog name and list of optional arguments for three optional arguments")
-    {
-        parser.add_argument("-o");
-        parser.add_argument("--option");
-        parser.add_argument("--very-long-name");
+    CHECK(parser.format_usage() == "usage: prog [-o O] [--option OPTION] [--very-long-name VERY_LONG_NAME]"s);
+}
 
-        CHECK(parser.format_usage() == "usage: prog [-o O] [--option OPTION] [--very-long-name VERY_LONG_NAME]"s);
-    }
+TEST_CASE("ArgumentParser provides usage message for one optional argument with short and long name")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("-f", "--foo");
 
-    SUBCASE("...for one optional argument with short and long name")
-    {
-        parser.add_argument("-f", "--foo");
+    CHECK(parser.format_usage() == "usage: prog [-f FOO]"s);
+}
 
-        CHECK(parser.format_usage() == "usage: prog [-f FOO]"s);
-    }
+TEST_CASE("ArgumentParser provides usage message  for one optional argument with store true action")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("-o").action(argparse::store_true);
 
-    SUBCASE("... for one optional argument with store true action")
-    {
-        parser.add_argument("-o").action(argparse::store_true);
+    CHECK(parser.format_usage() == "usage: prog [-o]"s);
+}
 
-        CHECK(parser.format_usage() == "usage: prog [-o]"s);
-    }
+TEST_CASE("ArgumentParser provides usage message for two optional arguments with store true action")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("-o").action(argparse::store_true);
+    parser.add_argument("--option").action(argparse::store_true);
 
-    SUBCASE("...for two optional arguments with store true action")
-    {
-        parser.add_argument("-o").action(argparse::store_true);
-        parser.add_argument("--option").action(argparse::store_true);
+    CHECK(parser.format_usage() == "usage: prog [-o] [--option]"s);
+}
 
-        CHECK(parser.format_usage() == "usage: prog [-o] [--option]"s);
-    }
+TEST_CASE("ArgumentParser provides usage message for one optional argument with store false action")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("-o").action(argparse::store_false);
 
-    SUBCASE("...for one optional argument with store false action")
-    {
-        parser.add_argument("-o").action(argparse::store_false);
+    CHECK(parser.format_usage() == "usage: prog [-o]"s);
+}
 
-        CHECK(parser.format_usage() == "usage: prog [-o]"s);
-    }
+TEST_CASE("ArgumentParser provides usage message for two optional arguments with store false action")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("-o").action(argparse::store_false);
+    parser.add_argument("--option").action(argparse::store_false);
 
-    SUBCASE("...for two optional arguments with store false action")
-    {
-        parser.add_argument("-o").action(argparse::store_false);
-        parser.add_argument("--option").action(argparse::store_false);
+    CHECK(parser.format_usage() == "usage: prog [-o] [--option]"s);
+}
 
-        CHECK(parser.format_usage() == "usage: prog [-o] [--option]"s);
-    }
+TEST_CASE("ArgumentParser provides usage message for one optional argument with store const action")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("-o").action(argparse::store_const);
 
-    SUBCASE("...for one optional argument with store const action")
-    {
-        parser.add_argument("-o").action(argparse::store_const);
+    CHECK(parser.format_usage() == "usage: prog [-o]"s);
+}
 
-        CHECK(parser.format_usage() == "usage: prog [-o]"s);
-    }
+TEST_CASE("ArgumentParser provides usage message for one optional argument with help action")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("-h").action(argparse::help);
 
-    SUBCASE("...for one optional argument with help action")
-    {
-        parser.add_argument("-h").action(argparse::help);
+    CHECK(parser.format_usage() == "usage: prog [-h]"s);
+}
 
-        CHECK(parser.format_usage() == "usage: prog [-h]"s);
-    }
+TEST_CASE("ArgumentParser provides usage message for one positional and one optional argument")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("p1");
+    parser.add_argument("-o");
 
-    SUBCASE("...for one positional and one optional argument")
-    {
-        parser.add_argument("p1");
-        parser.add_argument("-o");
+    CHECK(parser.format_usage() == "usage: prog [-o O] p1"s);
+}
 
-        CHECK(parser.format_usage() == "usage: prog [-o O] p1"s);
-    }
+TEST_CASE("ArgumentParser provides usage message for three positional and three optional arguments")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("p1");
+    parser.add_argument("-o");
+    parser.add_argument("p2");
+    parser.add_argument("-a");
+    parser.add_argument("p3");
+    parser.add_argument("-z");
 
-    SUBCASE("...for three positional and three optional arguments")
-    {
-        parser.add_argument("p1");
-        parser.add_argument("-o");
-        parser.add_argument("p2");
-        parser.add_argument("-a");
-        parser.add_argument("p3");
-        parser.add_argument("-z");
-
-        CHECK(parser.format_usage() == "usage: prog [-o O] [-a A] [-z Z] p1 p2 p3"s);
-    }
+    CHECK(parser.format_usage() == "usage: prog [-o O] [-a A] [-z Z] p1 p2 p3"s);
 }
 
 TEST_CASE("Usage message contains for positional argument its name")
