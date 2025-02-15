@@ -15,6 +15,7 @@ using namespace std::string_literals;
 TEST_CASE("ArgumentParser provides help message with usage section")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+
     CHECK(parser.format_help() == "usage: prog"s);
 }
 
