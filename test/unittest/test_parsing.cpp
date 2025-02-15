@@ -75,24 +75,22 @@ TEST_CASE("Parsing an optional argument with store true action...")
     }
 }
 
-TEST_CASE("Parsing an optional argument with store false action...")
+TEST_CASE("Parsing an optional argument with store false action yields true when it's missing")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o").action(argparse::store_false);
+    auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
-    SUBCASE("...yields true when it's missing")
-    {
-        auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+    CHECK(parsed.get_value<bool>("o") == true);
+}
 
-        CHECK(parsed.get_value<bool>("o") == true);
-    }
+TEST_CASE("Parsing an optional argument with store false action yields false when it's present")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-o").action(argparse::store_false);
+    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
 
-    SUBCASE("...yields false when it's present")
-    {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
-
-        CHECK(parsed.get_value<bool>("o") == false);
-    }
+    CHECK(parsed.get_value<bool>("o") == false);
 }
 
 TEST_CASE_TEMPLATE("Parsing an optional argument with store const action yields false when it's missing", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
