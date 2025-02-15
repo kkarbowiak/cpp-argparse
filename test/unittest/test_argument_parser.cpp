@@ -96,31 +96,28 @@ TEST_CASE("ArgumentParser does not handle help when requested to...")
     }
 }
 
-TEST_CASE("ArgumentParser does not handle parsing errors when requested to...")
+TEST_CASE("ArgumentParser does not handle parsing errors when requested to handle nothing")
 {
-    SUBCASE("...handle nothing")
-    {
-        auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
-        parser.add_argument("pos");
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("pos");
 
-        CHECK_THROWS_AS(parser.parse_args(1, cstr_arr{"prog"}), argparse::parsing_error);
-    }
+    CHECK_THROWS_AS(parser.parse_args(1, cstr_arr{"prog"}), argparse::parsing_error);
+}
 
-    SUBCASE("...handle help")
-    {
-        auto parser = argparse::ArgumentParser().handle(argparse::Handle::help);
-        parser.add_argument("pos");
+TEST_CASE("ArgumentParser does not handle parsing errors when requested to handle help")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::help);
+    parser.add_argument("pos");
 
-        CHECK_THROWS_AS(parser.parse_args(1, cstr_arr{"prog"}), argparse::parsing_error);
-    }
+    CHECK_THROWS_AS(parser.parse_args(1, cstr_arr{"prog"}), argparse::parsing_error);
+}
 
-    SUBCASE("...handle version")
-    {
-        auto parser = argparse::ArgumentParser().handle(argparse::Handle::version);
-        parser.add_argument("pos");
+TEST_CASE("ArgumentParser does not handle parsing errors when requested to handle version")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::version);
+    parser.add_argument("pos");
 
-        CHECK_THROWS_AS(parser.parse_args(1, cstr_arr{"prog"}), argparse::parsing_error);
-    }
+    CHECK_THROWS_AS(parser.parse_args(1, cstr_arr{"prog"}), argparse::parsing_error);
 }
 
 TEST_CASE("ArgumentParser does not handle version when requested to handle nothing")
