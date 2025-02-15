@@ -7,7 +7,8 @@ def main():
     parser = get_args_parser()
     args = parser.parse_args()
     line_nos = get_test_case_line_numbers(args.file)
-    process_file(args.file, line_nos.reverse(), args.expected)
+    line_nos.reverse()
+    process_file(args.file, line_nos, args.expected)
 
 
 def get_args_parser():
