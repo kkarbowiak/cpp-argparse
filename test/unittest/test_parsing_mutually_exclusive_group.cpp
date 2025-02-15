@@ -22,14 +22,17 @@ TEST_CASE("Parsing mutually exclusive group of arguments with store action does 
     group.add_argument("-a");
     group.add_argument("-b");
 
-    SUBCASE("")
-    {
-        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-a", "a"}));
-    }
-    SUBCASE("")
-    {
-        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-b", "b"}));
-    }
+    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-a", "a"}));
+}
+
+TEST_CASE("Parsing mutually exclusive group of arguments with store action does not throw for a single argument")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    auto group = parser.add_mutually_exclusive_group();
+    group.add_argument("-a");
+    group.add_argument("-b");
+
+    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-b", "b"}));
 }
 
 TEST_CASE("Parsing mutually exclusive group of arguments with store action does not throw for arguments in separate groups")
