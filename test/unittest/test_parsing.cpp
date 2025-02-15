@@ -34,6 +34,7 @@ TEST_CASE("Parsing an optional argument yields false when it's missing")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("-o");
+
     auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
     CHECK(!parsed.get("o"));
@@ -43,6 +44,7 @@ TEST_CASE("Parsing an optional argument throws an exception when it's missing ar
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("-o");
+
     CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o: expected one argument", argparse::parsing_error);
 }
 
@@ -50,6 +52,7 @@ TEST_CASE("Parsing an optional argument yields its value")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("-o");
+
     auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "v1"});
 
     CHECK(parsed.get_value("o") == "v1");
@@ -59,6 +62,7 @@ TEST_CASE("Parsing an optional argument with store true action yields false when
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o").action(argparse::store_true);
+
     auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
     CHECK(parsed.get_value<bool>("o") == false);
@@ -68,6 +72,7 @@ TEST_CASE("Parsing an optional argument with store true action yields true when 
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o").action(argparse::store_true);
+
     auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
 
     CHECK(parsed.get_value<bool>("o") == true);
@@ -77,6 +82,7 @@ TEST_CASE("Parsing an optional argument with store false action yields true when
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o").action(argparse::store_false);
+
     auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
     CHECK(parsed.get_value<bool>("o") == true);
@@ -86,6 +92,7 @@ TEST_CASE("Parsing an optional argument with store false action yields false whe
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o").action(argparse::store_false);
+
     auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
 
     CHECK(parsed.get_value<bool>("o") == false);
@@ -107,6 +114,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with store const action yields 
     {
         parser.add_argument("-o").action(argparse::store_const).const_(T("bar"));
     }
+
     auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
     CHECK(!parsed.get("o"));
@@ -128,6 +136,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with store const action yields 
     {
         parser.add_argument("-o").action(argparse::store_const).const_(T("bar"));
     }
+
     auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
 
     if constexpr (std::is_integral_v<T>)
@@ -148,6 +157,7 @@ TEST_CASE("Parsing an optional argument with help action yields false when it's 
 {
     auto parser = argparse::ArgumentParser().add_help(false).handle(argparse::Handle::none);
     parser.add_argument("-h").action(argparse::help);
+
     auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
     CHECK(parsed.get_value<bool>("h") == false);
@@ -157,6 +167,7 @@ TEST_CASE("Parsing an optional argument with help action yields true when it's p
 {
     auto parser = argparse::ArgumentParser().add_help(false).handle(argparse::Handle::none);
     parser.add_argument("-h").action(argparse::help);
+
     auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-h"});
 
     CHECK(parsed.get_value<bool>("h") == true);
@@ -186,6 +197,7 @@ TEST_CASE("Optional argument can be used with either short name")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o", "--option");
+
     auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "val"});
 
     CHECK(parsed.get_value("option") == "val");
@@ -195,6 +207,7 @@ TEST_CASE("Optional argument can be used with either long name")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o", "--option");
+
     auto const parsed = parser.parse_args(3, cstr_arr{"prog", "--option", "val"});
 
     CHECK(parsed.get_value("option") == "val");
@@ -296,6 +309,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with default value yields the d
     {
         parser.add_argument("-o").default_(T("foo")).template type<T>();
     }
+
     auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
     if constexpr (std::is_integral_v<T>)
@@ -328,6 +342,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with default value yields value
     {
         parser.add_argument("-o").default_(T("foo")).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
@@ -394,6 +409,7 @@ TEST_CASE("Parsing arguments with help requested disregards parsing errors for u
 {
     auto parser = argparse::ArgumentParser().add_help(false).handle(argparse::Handle::none);
     parser.add_argument("-h").action(argparse::help);
+
     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "p1", "-h"}));
 }
 
@@ -401,6 +417,7 @@ TEST_CASE("Parsing arguments with help requested disregards parsing errors for u
 {
     auto parser = argparse::ArgumentParser().add_help(false).handle(argparse::Handle::none);
     parser.add_argument("-h").action(argparse::help);
+
     CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-a", "-h"}));
 }
 
@@ -408,6 +425,7 @@ TEST_CASE("Parsing unrecognised positional argument throws an exception for one 
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("p1");
+
     CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "v1", "v2"}), "unrecognised arguments: v2", argparse::parsing_error);
 }
 
@@ -415,6 +433,7 @@ TEST_CASE("Parsing unrecognised positional argument throws an exception for two 
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("p1");
+
     CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "v1", "v2", "v3"}), "unrecognised arguments: v2 v3", argparse::parsing_error);
 }
 
@@ -429,6 +448,7 @@ TEST_CASE("Parsing unrecognised optional argument throws an exception for one un
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("-a");
+
     CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-a", "v1", "-b"}), "unrecognised arguments: -b", argparse::parsing_error);
 }
 
@@ -436,6 +456,7 @@ TEST_CASE("Parsing unrecognised optional argument throws an exception for two un
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("-a");
+
     CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-a", "v1", "-b", "-c"}), "unrecognised arguments: -b -c", argparse::parsing_error);
 }
 
@@ -443,6 +464,7 @@ TEST_CASE("Parsing unrecognised optional argument throws an exception for three 
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("-a");
+
     CHECK_THROWS_WITH_AS(parser.parse_args(6, cstr_arr{"prog", "-a", "v1", "-b", "-c", "-d"}), "unrecognised arguments: -b -c -d", argparse::parsing_error);
 }
 
@@ -549,6 +571,7 @@ TEST_CASE("Parsing a missing optional argument with required false does not thro
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set accepts one of the values", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).template type<T>();
@@ -582,6 +605,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set accepts one o
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exception on incorrect value", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).template type<T>();
@@ -617,6 +641,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exc
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set accepts one of the values", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).template type<T>();
@@ -650,6 +675,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set accepts one of
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exception on incorrect value", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).template type<T>();
@@ -1001,6 +1027,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set as zero_or_one 
 TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set as zero_or_one yields default value if no argument is provided", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").nargs(argparse::zero_or_one).default_(T('A'));
@@ -1496,6 +1523,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as zero_or_one c
 TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as zero_or_one yields default value if no argument is provided", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").nargs(argparse::zero_or_one).default_(T('A'));
@@ -1533,6 +1561,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as zero_or_one y
 TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as zero_or_one yields const value if option string is present and no argument is provided", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").nargs(argparse::zero_or_one).const_(T('A'));
@@ -1712,6 +1741,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as one_or_more c
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the number of arguments for nargs set as a number for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(1).template type<T>();
@@ -1745,6 +1775,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the 
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the number of arguments for nargs set as a number for two arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(2).template type<T>();
@@ -1778,6 +1809,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the 
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the number of arguments for nargs set as a number for three arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(3).template type<T>();
@@ -1811,6 +1843,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the 
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the number of arguments for nargs set as zero_or_one for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::zero_or_one).template type<T>();
@@ -1844,6 +1877,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the 
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the number of arguments for nargs set as zero_or_more for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::zero_or_more).template type<T>();
@@ -1860,6 +1894,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the 
     {
         parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::zero_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "A"}));
@@ -1885,6 +1920,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the 
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the number of arguments for nargs set as zero_or_more for two arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::zero_or_more).template type<T>();
@@ -1901,6 +1937,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the 
     {
         parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::zero_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "A", "A"}));
@@ -1926,6 +1963,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the 
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the number of arguments for nargs set as zero_or_more for three arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::zero_or_more).template type<T>();
@@ -1942,6 +1980,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the 
     {
         parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::zero_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "A", "A", "A"}));
@@ -1967,6 +2006,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the 
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the number of arguments for nargs set as one_or_more for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::one_or_more).template type<T>();
@@ -1983,6 +2023,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the 
     {
         parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::one_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "A"}));
@@ -2008,6 +2049,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the 
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the number of arguments for nargs set as one_or_more for two arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::one_or_more).template type<T>();
@@ -2024,6 +2066,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the 
     {
         parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::one_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "A", "A"}));
@@ -2049,6 +2092,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the 
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the number of arguments for nargs set as one_or_more for three arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::one_or_more).template type<T>();
@@ -2065,6 +2109,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the 
     {
         parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::one_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "A", "A", "A"}));
@@ -2090,6 +2135,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set consumes the 
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the arguments for nargs set as a number for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(1).template type<T>();
@@ -2127,6 +2173,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the arguments for nargs set as a number for two arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(2).template type<T>();
@@ -2164,6 +2211,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the arguments for nargs set as a number for three arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(3).template type<T>();
@@ -2201,6 +2249,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the arguments for nargs set as zero_or_one for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::zero_or_one).template type<T>();
@@ -2238,6 +2287,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the arguments for nargs set as zero_or_more for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::zero_or_more).template type<T>();
@@ -2254,6 +2304,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
     {
         parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::zero_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         auto const parsed = parser.parse_args(2, cstr_arr{"prog", "A"});
@@ -2283,6 +2334,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the arguments for nargs set as zero_or_more for two arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::zero_or_more).template type<T>();
@@ -2299,6 +2351,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
     {
         parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::zero_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         auto const parsed = parser.parse_args(3, cstr_arr{"prog", "A", "A"});
@@ -2328,6 +2381,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the arguments for nargs set as zero_or_more for three arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::zero_or_more).template type<T>();
@@ -2344,6 +2398,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
     {
         parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::zero_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         auto const parsed = parser.parse_args(4, cstr_arr{"prog", "A", "A", "A"});
@@ -2373,6 +2428,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the arguments for nargs set as one_or_more for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::one_or_more).template type<T>();
@@ -2389,6 +2445,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
     {
         parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::one_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         auto const parsed = parser.parse_args(2, cstr_arr{"prog", "A"});
@@ -2418,6 +2475,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the arguments for nargs set as one_or_more for two arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::one_or_more).template type<T>();
@@ -2434,6 +2492,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
     {
         parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::one_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         auto const parsed = parser.parse_args(3, cstr_arr{"prog", "A", "A"});
@@ -2463,6 +2522,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the arguments for nargs set as one_or_more for three arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::one_or_more).template type<T>();
@@ -2479,6 +2539,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
     {
         parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::one_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         auto const parsed = parser.parse_args(4, cstr_arr{"prog", "A", "A", "A"});
@@ -2508,6 +2569,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exception on incorrect value for nargs set as a number for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(1).template type<T>();
@@ -2537,6 +2599,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exc
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exception on incorrect value for nargs set as a number for two arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(2).template type<T>();
@@ -2566,6 +2629,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exc
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exception on incorrect value for nargs set as a number for three arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(3).template type<T>();
@@ -2595,6 +2659,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exc
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exception on incorrect value for nargs set as zero_or_one for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::zero_or_one).template type<T>();
@@ -2624,6 +2689,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exc
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exception on incorrect value for nargs set as zero_or_more for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::zero_or_more).template type<T>();
@@ -2640,6 +2706,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exc
     {
         parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::zero_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "B"}), "argument pos: invalid choice: B (choose from A, C)", argparse::parsing_error);
@@ -2661,6 +2728,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exc
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exception on incorrect value for nargs set as zero_or_more for two arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::zero_or_more).template type<T>();
@@ -2677,6 +2745,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exc
     {
         parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::zero_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "A", "B"}), "argument pos: invalid choice: B (choose from A, C)", argparse::parsing_error);
@@ -2698,6 +2767,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exc
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exception on incorrect value for nargs set as zero_or_more for three arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::zero_or_more).template type<T>();
@@ -2714,6 +2784,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exc
     {
         parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::zero_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "A", "C", "B"}), "argument pos: invalid choice: B (choose from A, C)", argparse::parsing_error);
@@ -2735,6 +2806,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exc
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exception on incorrect value for nargs set as one_or_more for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::one_or_more).template type<T>();
@@ -2751,6 +2823,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exc
     {
         parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::one_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "B"}), "argument pos: invalid choice: B (choose from A, C)", argparse::parsing_error);
@@ -2772,6 +2845,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exc
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exception on incorrect value for nargs set as one_or_more for two arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::one_or_more).template type<T>();
@@ -2788,6 +2862,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exc
     {
         parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::one_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "A", "B"}), "argument pos: invalid choice: B (choose from A, C)", argparse::parsing_error);
@@ -2809,6 +2884,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exc
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exception on incorrect value for nargs set as one_or_more for three arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::one_or_more).template type<T>();
@@ -2825,6 +2901,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exc
     {
         parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::one_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "A", "C", "B"}), "argument pos: invalid choice: B (choose from A, C)", argparse::parsing_error);
@@ -2846,6 +2923,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exc
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the number of arguments for nargs set as a number for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(1).template type<T>();
@@ -2879,6 +2957,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the n
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the number of arguments for nargs set as a number for two arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(2).template type<T>();
@@ -2912,6 +2991,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the n
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the number of arguments for nargs set as a number for three arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(3).template type<T>();
@@ -2945,6 +3025,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the n
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the number of arguments for nargs set as zero_or_one for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::zero_or_one).template type<T>();
@@ -2978,6 +3059,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the n
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the number of arguments for nargs set as zero_or_more for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::zero_or_more).template type<T>();
@@ -2994,6 +3076,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the n
     {
         parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "A"}));
@@ -3019,6 +3102,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the n
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the number of arguments for nargs set as zero_or_more for two arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::zero_or_more).template type<T>();
@@ -3035,6 +3119,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the n
     {
         parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "A", "A"}));
@@ -3060,6 +3145,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the n
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the number of arguments for nargs set as zero_or_more for three arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::zero_or_more).template type<T>();
@@ -3076,6 +3162,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the n
     {
         parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "A", "A", "A"}));
@@ -3101,6 +3188,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the n
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the number of arguments for nargs set as one_or_more for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::one_or_more).template type<T>();
@@ -3117,6 +3205,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the n
     {
         parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::one_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "A"}));
@@ -3142,6 +3231,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the n
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the number of arguments for nargs set as one_or_more for two arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::one_or_more).template type<T>();
@@ -3158,6 +3248,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the n
     {
         parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::one_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         CHECK_NOTHROW(parser.parse_args(4, cstr_arr{"prog", "-o", "A", "A"}));
@@ -3183,6 +3274,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the n
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the number of arguments for nargs set as one_or_more for three arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::one_or_more).template type<T>();
@@ -3199,6 +3291,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the n
     {
         parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::one_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         CHECK_NOTHROW(parser.parse_args(5, cstr_arr{"prog", "-o", "A", "A", "A"}));
@@ -3224,6 +3317,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set consumes the n
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arguments for nargs set as a number for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(1).template type<T>();
@@ -3261,6 +3355,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arguments for nargs set as a number for two arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(2).template type<T>();
@@ -3298,6 +3393,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arguments for nargs set as a number for three arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(3).template type<T>();
@@ -3335,6 +3431,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arguments for nargs set as zero_or_one for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::zero_or_one).template type<T>();
@@ -3372,6 +3469,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arguments for nargs set as zero_or_more for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::zero_or_more).template type<T>();
@@ -3388,6 +3486,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
     {
         parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
@@ -3417,6 +3516,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arguments for nargs set as zero_or_more for two arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::zero_or_more).template type<T>();
@@ -3433,6 +3533,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
     {
         parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "A", "A"});
@@ -3462,6 +3563,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arguments for nargs set as zero_or_more for three arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::zero_or_more).template type<T>();
@@ -3478,6 +3580,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
     {
         parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "A", "A"});
@@ -3507,6 +3610,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arguments for nargs set as one_or_more for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::one_or_more).template type<T>();
@@ -3523,6 +3627,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
     {
         parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::one_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
@@ -3552,6 +3657,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arguments for nargs set as one_or_more for two arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::one_or_more).template type<T>();
@@ -3568,6 +3674,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
     {
         parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::one_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "A", "A"});
@@ -3597,6 +3704,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arguments for nargs set as one_or_more for three arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::one_or_more).template type<T>();
@@ -3613,6 +3721,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
     {
         parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::one_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "A", "A"});
@@ -3642,6 +3751,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exception on incorrect value for nargs set as a number for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(1).template type<T>();
@@ -3671,6 +3781,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exce
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exception on incorrect value for nargs set as a number for two arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(2).template type<T>();
@@ -3700,6 +3811,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exce
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exception on incorrect value for nargs set as a number for three arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(3).template type<T>();
@@ -3729,6 +3841,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exce
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exception on incorrect value for nargs set as zero_or_one for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::zero_or_one).template type<T>();
@@ -3758,6 +3871,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exce
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exception on incorrect value for nargs set as zero_or_more for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::zero_or_more).template type<T>();
@@ -3774,6 +3888,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exce
     {
         parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "B"}), "argument -o: invalid choice: B (choose from A, C)", argparse::parsing_error);
@@ -3795,6 +3910,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exce
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exception on incorrect value for nargs set as zero_or_more for two arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::zero_or_more).template type<T>();
@@ -3811,6 +3927,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exce
     {
         parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "A", "B"}), "argument -o: invalid choice: B (choose from A, C)", argparse::parsing_error);
@@ -3832,6 +3949,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exce
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exception on incorrect value for nargs set as zero_or_more for three arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::zero_or_more).template type<T>();
@@ -3848,6 +3966,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exce
     {
         parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "B"}), "argument -o: invalid choice: B (choose from A, C)", argparse::parsing_error);
@@ -3869,6 +3988,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exce
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exception on incorrect value for nargs set as one_or_more for one argument", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::one_or_more).template type<T>();
@@ -3885,6 +4005,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exce
     {
         parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::one_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "B"}), "argument -o: invalid choice: B (choose from A, C)", argparse::parsing_error);
@@ -3906,6 +4027,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exce
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exception on incorrect value for nargs set as one_or_more for two arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::one_or_more).template type<T>();
@@ -3922,6 +4044,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exce
     {
         parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::one_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         CHECK_THROWS_WITH_AS(parser.parse_args(4, cstr_arr{"prog", "-o", "A", "B"}), "argument -o: invalid choice: B (choose from A, C)", argparse::parsing_error);
@@ -3943,6 +4066,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exce
 TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exception on incorrect value for nargs set as one_or_more for three arguments", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::one_or_more).template type<T>();
@@ -3959,6 +4083,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exce
     {
         parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::one_or_more).template type<T>();
     }
+
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
         CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "B"}), "argument -o: invalid choice: B (choose from A, C)", argparse::parsing_error);
