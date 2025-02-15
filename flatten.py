@@ -110,8 +110,6 @@ def process_tree(tree):
                 flattened_lines.extend([subline if subline.startswith('\n') else subline[subnode.indent:] for subline in sublines])
             flattened_lines.extend(walk[1].lines[-1]) # test case closing brace
             flattened_lines.append('\n')
-    for line in flattened_lines:
-        print(line, end='')
     return flattened_lines
 
 
