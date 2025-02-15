@@ -1,5 +1,5 @@
 import argparse
-from anytree import AnyNode, PreOrderIter, Walker
+import anytree
 
 # anytree is installed in a virtual environment
 # I created the virtual environment with this command:
@@ -9,7 +9,7 @@ from anytree import AnyNode, PreOrderIter, Walker
 # I am now using this command to run this script:
 # `cpp-argparse-venv/bin/python3 flatten.py`
 
-class TestNode(AnyNode):
+class TestNode(anytree.AnyNode):
     def __init__(self, text):
         super(TestNode, self).__init__()
         self.text = text
@@ -96,8 +96,8 @@ def process_subcase_lines(start_no, lines, parent):
 
 def process_tree(tree):
     flattened_lines = []
-    walker = Walker()
-    for node in PreOrderIter(tree):
+    walker = anytree.Walker()
+    for node in anytree.PreOrderIter(tree):
         if node.is_leaf:
             walk = walker.walk(tree, node)
             root_node = walk[1]
