@@ -371,27 +371,27 @@ TEST_CASE("Parsing missing positional argument throws an exception...")
     }
 }
 
-TEST_CASE("Parsing arguments with help requested disregards parsing errors...")
+TEST_CASE("Parsing arguments with help requested disregards parsing errors for missing positional argument")
 {
     auto parser = argparse::ArgumentParser().add_help(false).handle(argparse::Handle::none);
     parser.add_argument("-h").action(argparse::help);
+    parser.add_argument("p1");
 
-    SUBCASE("...for missing positional argument")
-    {
-        parser.add_argument("p1");
+    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-h"}));
+}
 
-        CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-h"}));
-    }
+TEST_CASE("Parsing arguments with help requested disregards parsing errors for unrecognised positional argument")
+{
+    auto parser = argparse::ArgumentParser().add_help(false).handle(argparse::Handle::none);
+    parser.add_argument("-h").action(argparse::help);
+    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "p1", "-h"}));
+}
 
-    SUBCASE("...for unrecognised positional argument")
-    {
-        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "p1", "-h"}));
-    }
-
-    SUBCASE("...for unrecognised optional argument")
-    {
-        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-a", "-h"}));
-    }
+TEST_CASE("Parsing arguments with help requested disregards parsing errors for unrecognised optional argument")
+{
+    auto parser = argparse::ArgumentParser().add_help(false).handle(argparse::Handle::none);
+    parser.add_argument("-h").action(argparse::help);
+    CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-a", "-h"}));
 }
 
 TEST_CASE("Parsing unrecognised positional argument throws an exception for one unrecognised argument")
