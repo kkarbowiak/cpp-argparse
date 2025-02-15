@@ -95,7 +95,7 @@ TEST_CASE("Parsing an optional argument with store false action...")
     }
 }
 
-TEST_CASE_TEMPLATE("Parsing an optional argument with store const action...", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
+TEST_CASE_TEMPLATE("Parsing an optional argument with store const action yields false when it's missing", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
 {
     auto parser = argparse::ArgumentParser();
 
@@ -111,30 +111,40 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with store const action...", T,
     {
         parser.add_argument("-o").action(argparse::store_const).const_(T("bar"));
     }
+    auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
 
-    SUBCASE("...yields false when it's missing")
+    CHECK(!parsed.get("o"));
+}
+
+TEST_CASE_TEMPLATE("Parsing an optional argument with store const action yields const value", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
+{
+    auto parser = argparse::ArgumentParser();
+
+    if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
-
-        CHECK(!parsed.get("o"));
+        parser.add_argument("-o").action(argparse::store_const).const_(T(65));
     }
-
-    SUBCASE("...yields const value")
+    else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
+        parser.add_argument("-o").action(argparse::store_const).const_(T(1.125));
+    }
+    else
+    {
+        parser.add_argument("-o").action(argparse::store_const).const_(T("bar"));
+    }
+    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
 
-        if constexpr (std::is_integral_v<T>)
-        {
-            CHECK(parsed.get_value<T>("o") == T(65));
-        }
-        else if constexpr (std::is_floating_point_v<T>)
-        {
-            CHECK(parsed.get_value<T>("o") == T(1.125));
-        }
-        else
-        {
-            CHECK(parsed.get_value<T>("o") == T("bar"));
-        }
+    if constexpr (std::is_integral_v<T>)
+    {
+        CHECK(parsed.get_value<T>("o") == T(65));
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        CHECK(parsed.get_value<T>("o") == T(1.125));
+    }
+    else
+    {
+        CHECK(parsed.get_value<T>("o") == T("bar"));
     }
 }
 
