@@ -467,60 +467,54 @@ TEST_CASE("Parsing mixed positional and optional arguments give same result no m
     }
 }
 
-TEST_CASE("The resulting attribute name is based on...")
+TEST_CASE("The resulting attribute name is based on for positional argument on its name")
 {
     auto parser = argparse::ArgumentParser();
+    parser.add_argument("foo");
 
-    SUBCASE("...for positional argument...")
-    {
-        SUBCASE("...on its name")
-        {
-            parser.add_argument("foo");
+    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "val"});
 
-            auto const parsed = parser.parse_args(2, cstr_arr{"prog", "val"});
+    CHECK(parsed.get("foo"));
+}
 
-            CHECK(parsed.get("foo"));
-        }
+TEST_CASE("The resulting attribute name is based on for positional argument on dest parameter")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("foo").dest("bar");
 
-        SUBCASE("...on dest parameter")
-        {
-            parser.add_argument("foo").dest("bar");
+    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "val"});
 
-            auto const parsed = parser.parse_args(2, cstr_arr{"prog", "val"});
+    CHECK(parsed.get("bar"));
+}
 
-            CHECK(parsed.get("bar"));
-        }
-    }
+TEST_CASE("The resulting attribute name is based on for optional argument on its long name")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-f", "--foo");
 
-    SUBCASE("...for optional argument...")
-    {
-        SUBCASE("...on its long name")
-        {
-            parser.add_argument("-f", "--foo");
+    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-f", "val"});
 
-            auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-f", "val"});
+    CHECK(parsed.get("foo"));
+}
 
-            CHECK(parsed.get("foo"));
-        }
+TEST_CASE("The resulting attribute name is based on for optional argument on its short name")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-f");
 
-        SUBCASE("...on its short name")
-        {
-            parser.add_argument("-f");
+    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-f", "val"});
 
-            auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-f", "val"});
+    CHECK(parsed.get("f"));
+}
 
-            CHECK(parsed.get("f"));
-        }
+TEST_CASE("The resulting attribute name is based on for optional argument on dest parameter")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-f", "--foo").dest("bar");
 
-        SUBCASE("...on dest parameter")
-        {
-            parser.add_argument("-f", "--foo").dest("bar");
+    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-f", "val"});
 
-            auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-f", "val"});
-
-            CHECK(parsed.get("bar"));
-        }
-    }
+    CHECK(parsed.get("bar"));
 }
 
 TEST_CASE("Parsing a missing optional argument with required true throws an exception")
