@@ -87,7 +87,8 @@ def process_subcase_lines(start_no, lines, parent):
     while line_no < len(lines):
         line = lines[line_no]
         if line.count('SUBCASE') > 0:
-            node.lines.pop()
+            if node.lines[-1] == '\n':
+                node.lines.pop()
             line_no = process_subcase_lines(line_no, lines, node)
         elif line.find('}') == indent:
             node.lines.append(line)
