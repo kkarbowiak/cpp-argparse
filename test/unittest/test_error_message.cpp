@@ -117,30 +117,28 @@ TEST_CASE("Expected number of arguments message lists all optional argument's na
     }
 }
 
-TEST_CASE("Expected at least one argument message lists all optional argument's names...")
+TEST_CASE("Expected at least one argument message lists all optional argument's names for argument with one name")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").nargs(argparse::one_or_more);
 
-    SUBCASE("...for argument with one name")
-    {
-        parser.add_argument("-o").nargs(argparse::one_or_more);
+    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o: expected at least one argument", argparse::parsing_error);
+}
 
-        CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o: expected at least one argument", argparse::parsing_error);
-    }
+TEST_CASE("Expected at least one argument message lists all optional argument's names for argument with two names")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o", "--option").nargs(argparse::one_or_more);
 
-    SUBCASE("...for argument with two names")
-    {
-        parser.add_argument("-o", "--option").nargs(argparse::one_or_more);
+    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o/--option: expected at least one argument", argparse::parsing_error);
+}
 
-        CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o/--option: expected at least one argument", argparse::parsing_error);
-    }
+TEST_CASE("Expected at least one argument message lists all optional argument's names for argument with three names")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o", "--option", "--long-option").nargs(argparse::one_or_more);
 
-    SUBCASE("...for argument with three names")
-    {
-        parser.add_argument("-o", "--option", "--long-option").nargs(argparse::one_or_more);
-
-        CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o/--option/--long-option: expected at least one argument", argparse::parsing_error);
-    }
+    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "argument -o/--option/--long-option: expected at least one argument", argparse::parsing_error);
 }
 
 TEST_CASE("Expected one argument message lists all optional argument's names for argument with one name")
