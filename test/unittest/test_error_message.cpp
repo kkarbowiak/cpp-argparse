@@ -169,32 +169,32 @@ TEST_CASE("Expected one argument message lists all optional argument's names..."
     }
 }
 
-TEST_CASE("Argument not allowed with argument message lists all optional argument's names...")
+TEST_CASE("Argument not allowed with argument message lists all optional argument's names for arguments with one name")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     auto group = parser.add_mutually_exclusive_group();
+    group.add_argument("-a");
+    group.add_argument("-b");
 
-    SUBCASE("...for arguments with one name")
-    {
-        group.add_argument("-a");
-        group.add_argument("-b");
+    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-a", "a", "-b", "b"}), "argument -b: not allowed with argument -a", argparse::parsing_error);
+}
 
-        CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-a", "a", "-b", "b"}), "argument -b: not allowed with argument -a", argparse::parsing_error);
-    }
+TEST_CASE("Argument not allowed with argument message lists all optional argument's names for arguments with two names")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    auto group = parser.add_mutually_exclusive_group();
+    group.add_argument("-a", "--aaa");
+    group.add_argument("-b", "--bbb");
 
-    SUBCASE("...for arguments with two names")
-    {
-        group.add_argument("-a", "--aaa");
-        group.add_argument("-b", "--bbb");
+    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-a", "a", "-b", "b"}), "argument -b/--bbb: not allowed with argument -a/--aaa", argparse::parsing_error);
+}
 
-        CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-a", "a", "-b", "b"}), "argument -b/--bbb: not allowed with argument -a/--aaa", argparse::parsing_error);
-    }
+TEST_CASE("Argument not allowed with argument message lists all optional argument's names for arguments with three names")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    auto group = parser.add_mutually_exclusive_group();
+    group.add_argument("-a", "--aaa", "--more-aaa");
+    group.add_argument("-b", "--bbb", "--more-bbb");
 
-    SUBCASE("...for arguments with three names")
-    {
-        group.add_argument("-a", "--aaa", "--more-aaa");
-        group.add_argument("-b", "--bbb", "--more-bbb");
-
-        CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-a", "a", "-b", "b"}), "argument -b/--bbb/--more-bbb: not allowed with argument -a/--aaa/--more-aaa", argparse::parsing_error);
-    }
+    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "-a", "a", "-b", "b"}), "argument -b/--bbb/--more-bbb: not allowed with argument -a/--aaa/--more-aaa", argparse::parsing_error);
 }
