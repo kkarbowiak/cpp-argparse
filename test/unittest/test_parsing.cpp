@@ -3998,31 +3998,28 @@ TEST_CASE("Parsing joined short options and short option joined with argument do
     }
 }
 
-TEST_CASE("Parsing joined short options and short option joined with argument yields their values")
+TEST_CASE("Parsing joined short options and short option joined with argument yields their values order ao")
 {
     auto parser = argparse::ArgumentParser();
+    parser.add_argument("-a").action(argparse::store_true);
+    parser.add_argument("-o");
 
-    SUBCASE("order ao")
-    {
-        parser.add_argument("-a").action(argparse::store_true);
-        parser.add_argument("-o");
+    auto args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
 
-        auto args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
+    CHECK(args.get_value<bool>("a") == true);
+    CHECK(args.get_value("o") == "value");
+}
 
-        CHECK(args.get_value<bool>("a") == true);
-        CHECK(args.get_value("o") == "value");
-    }
+TEST_CASE("Parsing joined short options and short option joined with argument yields their values order oa")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-o");
+    parser.add_argument("-a").action(argparse::store_true);
 
-    SUBCASE("order oa")
-    {
-        parser.add_argument("-o");
-        parser.add_argument("-a").action(argparse::store_true);
+    auto args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
 
-        auto args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
-
-        CHECK(args.get_value<bool>("a") == true);
-        CHECK(args.get_value("o") == "value");
-    }
+    CHECK(args.get_value<bool>("a") == true);
+    CHECK(args.get_value("o") == "value");
 }
 
 TEST_CASE("Parsing long options does not affect short options")
