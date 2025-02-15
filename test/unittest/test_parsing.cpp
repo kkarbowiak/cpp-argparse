@@ -613,74 +613,71 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set...", T, char,
     }
 }
 
-TEST_CASE_TEMPLATE("Parsing an optional argument with choices set...", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
+TEST_CASE_TEMPLATE("Parsing an optional argument with choices set accepts one of the values", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
-
-    SUBCASE("...accepts one of the values...")
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
-        {
-            parser.add_argument("-o").choices({T('A'), T('C')}).template type<T>();
+        parser.add_argument("-o").choices({T('A'), T('C')}).template type<T>();
 
-            CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "A"}));
-            CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "C"}));
-        }
-        else if constexpr (std::is_integral_v<T>)
-        {
-            parser.add_argument("-o").choices({T(23), T(34)}).template type<T>();
-
-            CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "23"}));
-            CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "34"}));
-        }
-        else if constexpr (std::is_floating_point_v<T>)
-        {
-            parser.add_argument("-o").choices({T(0.125), T(1.5)}).template type<T>();
-
-            CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "0.125"}));
-            CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "1.5"}));
-        }
-        else
-        {
-            parser.add_argument("-o").choices({T("foo"), T("bar")}).template type<T>();
-
-            CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
-            CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "bar"}));
-        }
+        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "A"}));
+        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "C"}));
     }
-
-    SUBCASE("...throws an exception on incorrect value...")
+    else if constexpr (std::is_integral_v<T>)
     {
-        if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
-        {
-            parser.add_argument("-o").choices({T('A'), T('C')}).template type<T>();
+        parser.add_argument("-o").choices({T(23), T(34)}).template type<T>();
 
-            CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "B"}), "argument -o: invalid choice: B (choose from A, C)", argparse::parsing_error);
-        }
-        else if constexpr (std::is_integral_v<T>)
-        {
-            parser.add_argument("-o").choices({T(23), T(34)}).template type<T>();
+        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "23"}));
+        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "34"}));
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        parser.add_argument("-o").choices({T(0.125), T(1.5)}).template type<T>();
 
-            CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "3"}), "argument -o: invalid choice: 3 (choose from 23, 34)", argparse::parsing_error);
-        }
-        else if constexpr (std::is_floating_point_v<T>)
-        {
-            parser.add_argument("-o").choices({T(0.125), T(1.5)}).template type<T>();
+        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "0.125"}));
+        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "1.5"}));
+    }
+    else
+    {
+        parser.add_argument("-o").choices({T("foo"), T("bar")}).template type<T>();
 
-            CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"}), "argument -o: invalid choice: 0.5 (choose from 0.125, 1.5)", argparse::parsing_error);
-        }
-        else if constexpr (std::is_same_v<std::string, T>)
-        {
-            parser.add_argument("-o").choices({T("foo"), T("bar")}).template type<T>();
+        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "foo"}));
+        CHECK_NOTHROW(parser.parse_args(3, cstr_arr{"prog", "-o", "bar"}));
+    }
+}
 
-            CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
-        }
-        else
-        {
-            parser.add_argument("-o").choices({T("foo"), T("bar")}).template type<T>();
+TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exception on incorrect value", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        parser.add_argument("-o").choices({T('A'), T('C')}).template type<T>();
 
-            CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "baz"}), "argument -o: invalid choice: <Custom: baz> (choose from <Custom: foo>, <Custom: bar>)", argparse::parsing_error);
-        }
+        CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "B"}), "argument -o: invalid choice: B (choose from A, C)", argparse::parsing_error);
+    }
+    else if constexpr (std::is_integral_v<T>)
+    {
+        parser.add_argument("-o").choices({T(23), T(34)}).template type<T>();
+
+        CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "3"}), "argument -o: invalid choice: 3 (choose from 23, 34)", argparse::parsing_error);
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        parser.add_argument("-o").choices({T(0.125), T(1.5)}).template type<T>();
+
+        CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"}), "argument -o: invalid choice: 0.5 (choose from 0.125, 1.5)", argparse::parsing_error);
+    }
+    else if constexpr (std::is_same_v<std::string, T>)
+    {
+        parser.add_argument("-o").choices({T("foo"), T("bar")}).template type<T>();
+
+        CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "baz"}), "argument -o: invalid choice: \"baz\" (choose from \"foo\", \"bar\")", argparse::parsing_error);
+    }
+    else
+    {
+        parser.add_argument("-o").choices({T("foo"), T("bar")}).template type<T>();
+
+        CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "baz"}), "argument -o: invalid choice: <Custom: baz> (choose from <Custom: foo>, <Custom: bar>)", argparse::parsing_error);
     }
 }
 
