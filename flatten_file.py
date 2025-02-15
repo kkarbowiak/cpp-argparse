@@ -36,11 +36,13 @@ def process_file(file_name, line_nos, expected):
 
 def build_and_commit(file_name, expected):
     subprocess.check_call(['cmake', '--build', '.', '-j'])
-    output = subprocess.check_output(['./test/unittest/unittest'])
-    if expected.encode() not in output:
+    test_output = subprocess.check_output(['./test/unittest/unittest'])
+    if expected.encode() not in test_output:
         raise RuntimeError('Expected text not found in output')
-    subprocess.check_call(['git', 'add', file_name.encode()])
-    subprocess.check_call(['git', 'commit', '-m', 'Flatten test case'])
+    diff_output = subprocess.check_output(['git', 'diff'])
+    if diff_output:
+        subprocess.check_call(['git', 'add', file_name.encode()])
+        subprocess.check_call(['git', 'commit', '-m', 'Flatten test case'])
 
 
 if __name__ == '__main__':
