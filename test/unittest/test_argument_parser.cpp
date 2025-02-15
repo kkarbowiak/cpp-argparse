@@ -66,34 +66,31 @@ TEST_CASE("ArgumentParser does not add help argument when requested not to")
     CHECK_THROWS(parser.parse_args(2, cstr_arr{"prog", "-h"}));
 }
 
-TEST_CASE("ArgumentParser does not handle help when requested to...")
+TEST_CASE("ArgumentParser does not handle help when requested to handle nothing")
 {
-    SUBCASE("...handle nothing")
-    {
-        auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-h"});
+    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-h"});
 
-        CHECK(parsed.get_value<bool>("help") == true);
-    }
+    CHECK(parsed.get_value<bool>("help") == true);
+}
 
-    SUBCASE("...handle parsing errors")
-    {
-        auto parser = argparse::ArgumentParser().handle(argparse::Handle::errors);
+TEST_CASE("ArgumentParser does not handle help when requested to handle parsing errors")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::errors);
 
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-h"});
+    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-h"});
 
-        CHECK(parsed.get_value<bool>("help") == true);
-    }
+    CHECK(parsed.get_value<bool>("help") == true);
+}
 
-    SUBCASE("...handle version")
-    {
-        auto parser = argparse::ArgumentParser().handle(argparse::Handle::version);
+TEST_CASE("ArgumentParser does not handle help when requested to handle version")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::version);
 
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-h"});
+    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-h"});
 
-        CHECK(parsed.get_value<bool>("help") == true);
-    }
+    CHECK(parsed.get_value<bool>("help") == true);
 }
 
 TEST_CASE("ArgumentParser does not handle parsing errors when requested to handle nothing")
