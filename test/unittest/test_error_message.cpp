@@ -9,60 +9,55 @@
 
 using namespace std::string_literals;
 
-TEST_CASE("Missing required arguments message lists all optional argument's names...")
+TEST_CASE("Missing required arguments message lists all optional argument's names for one argument with one name")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").required(true);
 
-    SUBCASE("...for one argument...")
-    {
-        SUBCASE("...with one name")
-        {
-            parser.add_argument("-o").required(true);
+    CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: -o", argparse::parsing_error);
+}
 
-            CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: -o", argparse::parsing_error);
-        }
+TEST_CASE("Missing required arguments message lists all optional argument's names for one argument with two names")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o", "--option").required(true);
 
-        SUBCASE("...with two names")
-        {
-            parser.add_argument("-o", "--option").required(true);
+    CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: -o/--option", argparse::parsing_error);
+}
 
-            CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: -o/--option", argparse::parsing_error);
-        }
+TEST_CASE("Missing required arguments message lists all optional argument's names for one argument with three names")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o", "--option", "--long-option").required(true);
 
-        SUBCASE("...with three names")
-        {
-            parser.add_argument("-o", "--option", "--long-option").required(true);
+    CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: -o/--option/--long-option", argparse::parsing_error);
+}
 
-            CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: -o/--option/--long-option", argparse::parsing_error);
-        }
-    }
+TEST_CASE("Missing required arguments message lists all optional argument's names for two arguments with one name")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").required(true);
+    parser.add_argument("-r").required(true);
 
-    SUBCASE("...for two arguments...")
-    {
-        SUBCASE("...with one name")
-        {
-            parser.add_argument("-o").required(true);
-            parser.add_argument("-r").required(true);
+    CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: -o -r", argparse::parsing_error);
+}
 
-            CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: -o -r", argparse::parsing_error);
-        }
+TEST_CASE("Missing required arguments message lists all optional argument's names for two arguments with two names")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o", "--option").required(true);
+    parser.add_argument("-r", "--required").required(true);
 
-        SUBCASE("...with two names")
-        {
-            parser.add_argument("-o", "--option").required(true);
-            parser.add_argument("-r", "--required").required(true);
+    CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: -o/--option -r/--required", argparse::parsing_error);
+}
 
-            CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: -o/--option -r/--required", argparse::parsing_error);
-        }
+TEST_CASE("Missing required arguments message lists all optional argument's names for two arguments with three names")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o", "--option", "--long-option").required(true);
+    parser.add_argument("-r", "--required", "--really-required").required(true);
 
-        SUBCASE("...with three names")
-        {
-            parser.add_argument("-o", "--option", "--long-option").required(true);
-            parser.add_argument("-r", "--required", "--really-required").required(true);
-
-            CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: -o/--option/--long-option -r/--required/--really-required", argparse::parsing_error);
-        }
-    }
+    CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: -o/--option/--long-option -r/--required/--really-required", argparse::parsing_error);
 }
 
 TEST_CASE("Invalid choice message lists all optional argument's names for argument with one name")
