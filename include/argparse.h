@@ -692,11 +692,11 @@ namespace argparse
                         {
                             if (has_nargs_number())
                             {
-                                parse_arguments_number(args, std::min(get_nargs_number(), args.size()));
+                                parse_arguments_number(consumable, get_nargs_number());
                             }
                             else
                             {
-                                parse_arguments_option(args);
+                                parse_arguments_option(consumable);
                             }
                         }
                         else
@@ -752,14 +752,14 @@ namespace argparse
                     }
 
                 private:
-                    auto parse_arguments_number(tokens & args, std::size_t number) -> void
+                    auto parse_arguments_number(std::ranges::view auto args, std::size_t number) -> void
                     {
-                        auto values = consume_args(args, number);
+                        auto values = consume_args(args | std::views::take(number));
 
                         m_value = m_options.type_handler->transform(values);
                     }
 
-                    auto parse_arguments_option(tokens & args) -> void
+                    auto parse_arguments_option(std::ranges::view auto args) -> void
                     {
                         switch (get_nargs_option())
                         {
@@ -782,7 +782,7 @@ namespace argparse
                             }
                             case one_or_more:
                             {
-                                auto values = consume_args(args, args.size());
+                                auto values = consume_args(args);
                                 if (!values.empty())
                                 {
                                     m_value = m_options.type_handler->transform(values);
@@ -807,12 +807,12 @@ namespace argparse
                         return value;
                     }
 
-                    auto consume_args(tokens & args, std::size_t number) const -> std::vector<std::any>
+                    auto consume_args(std::ranges::view auto args) const -> std::vector<std::any>
                     {
                         std::vector<std::any> values;
-                        for (std::size_t i = 0; i < number; ++i)
+                        for (auto & arg : args)
                         {
-                            values.push_back(consume_arg(args[i]));
+                            values.push_back(consume_arg(arg));
                         }
                         return values;
                     }
