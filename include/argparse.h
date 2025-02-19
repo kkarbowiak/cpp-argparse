@@ -491,9 +491,8 @@ namespace argparse
 
                     auto transform(std::vector<std::any> const & values) const -> std::any override
                     {
-                        auto result = std::vector<T>();
-                        std::ranges::copy(std::views::transform(values, [](auto const & value) { return std::any_cast<T>(value); }), std::back_inserter(result));
-                        return std::any(result);
+                        auto const transformation = std::views::transform(values, [](auto const & value) { return std::any_cast<T>(value); });
+                        return std::any(std::vector<T>(transformation.begin(), transformation.end()));
                     }
 
                     auto size(std::any const & value) const -> std::size_t override
