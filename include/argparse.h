@@ -364,6 +364,22 @@ namespace argparse
                 return result;
             }
 
+            static auto join(std::ranges::view auto strings, std::string const & separator) -> std::string
+            {
+                auto result = std::string();
+
+                for (auto it = strings.begin(); it != strings.end(); ++it)
+                {
+                    if (it != strings.begin())
+                    {
+                        result += separator;
+                    }
+                    result += *it;
+                }
+
+                return result;
+            }
+
             auto parse_optional_arguments(tokens args) -> tokens
             {
                 for (auto const & arg : m_arguments
@@ -395,9 +411,10 @@ namespace argparse
 
             auto ensure_no_unrecognised_arguments(tokens const & args) const -> void
             {
-                if (!args.empty())
+                auto unconsumed = std::ranges::filter_view(args, [](auto const & token) { return !token.m_consumed; });
+                if (!unconsumed.empty())
                 {
-                    throw parsing_error(std::format("unrecognised arguments: {}", join(args, " ")));
+                    throw parsing_error(std::format("unrecognised arguments: {}", join(unconsumed | std::views::transform([](auto const & token) { return token.m_token; }), " ")));
                 }
             }
 
@@ -670,6 +687,7 @@ namespace argparse
 
                     auto parse_args(tokens args) -> tokens override
                     {
+                        auto consumable = std::ranges::drop_while_view(args, [](auto const & token) { return token.m_consumed; });
                         if (has_nargs())
                         {
                             if (has_nargs_number())
@@ -683,9 +701,9 @@ namespace argparse
                         }
                         else
                         {
-                            if (!args.empty())
+                            if (!consumable.empty())
                             {
-                                m_value = consume_arg(args);
+                                m_value = consume_arg(consumable.front());
                             }
                         }
 
@@ -749,7 +767,7 @@ namespace argparse
                             {
                                 if (!args.empty())
                                 {
-                                    m_value = consume_arg(args);
+                                    m_value = consume_arg(args.front());
                                 }
                                 else
                                 {
@@ -774,18 +792,18 @@ namespace argparse
                         }
                     }
 
-                    auto consume_arg(tokens & args) const -> std::any
+                    auto consume_arg(Token & arg) const -> std::any
                     {
                         std::any value;
-                        if (!m_options.type_handler->from_string(args.front().m_token, value))
+                        if (!m_options.type_handler->from_string(arg.m_token, value))
                         {
-                            throw parsing_error(std::format("argument {}: invalid value: '{}'", get_dest_name(), args.front().m_token));
+                            throw parsing_error(std::format("argument {}: invalid value: '{}'", get_dest_name(), arg.m_token));
                         }
                         if (!m_options.choices.empty())
                         {
                             check_choices(value);
                         }
-                        args.erase(args.begin());
+                        arg.m_consumed = true;
                         return value;
                     }
 
@@ -794,7 +812,7 @@ namespace argparse
                         std::vector<std::any> values;
                         for (std::size_t i = 0; i < number; ++i)
                         {
-                            values.push_back(consume_arg(args));
+                            values.push_back(consume_arg(args[i]));
                         }
                         return values;
                     }
