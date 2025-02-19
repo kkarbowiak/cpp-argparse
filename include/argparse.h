@@ -685,7 +685,7 @@ namespace argparse
                         {
                             if (!args.empty())
                             {
-                                consume_arg(args, m_value);
+                                m_value = consume_arg(args);
                             }
                         }
 
@@ -736,8 +736,7 @@ namespace argparse
                 private:
                     auto parse_arguments_number(tokens & args, std::size_t number) -> void
                     {
-                        auto values = std::vector<std::any>(number);
-                        consume_args(args, values);
+                        auto values = consume_args(args, number);
 
                         m_value = m_options.type_handler->transform(values);
                     }
@@ -750,7 +749,7 @@ namespace argparse
                             {
                                 if (!args.empty())
                                 {
-                                    consume_arg(args, m_value);
+                                    m_value = consume_arg(args);
                                 }
                                 else
                                 {
@@ -765,8 +764,7 @@ namespace argparse
                             }
                             case one_or_more:
                             {
-                                auto values = std::vector<std::any>(args.size());
-                                consume_args(args, values);
+                                auto values = consume_args(args, args.size());
                                 if (!values.empty())
                                 {
                                     m_value = m_options.type_handler->transform(values);
@@ -776,8 +774,9 @@ namespace argparse
                         }
                     }
 
-                    auto consume_arg(tokens & args, std::any & value) const -> void
+                    auto consume_arg(tokens & args) const -> std::any
                     {
+                        std::any value;
                         if (!m_options.type_handler->from_string(args.front().m_token, value))
                         {
                             throw parsing_error(std::format("argument {}: invalid value: '{}'", get_dest_name(), args.front().m_token));
@@ -787,14 +786,17 @@ namespace argparse
                             check_choices(value);
                         }
                         args.erase(args.begin());
+                        return value;
                     }
 
-                    auto consume_args(tokens & args, std::vector<std::any> & values) const -> void
+                    auto consume_args(tokens & args, std::size_t number) const -> std::vector<std::any>
                     {
-                        for (auto & value : values)
+                        std::vector<std::any> values;
+                        for (std::size_t i = 0; i < number; ++i)
                         {
-                            consume_arg(args, value);
+                            values.push_back(consume_arg(args));
                         }
+                        return values;
                     }
 
                 private:
