@@ -692,7 +692,7 @@ namespace argparse
                         {
                             if (has_nargs_number())
                             {
-                                parse_arguments_number(consumable, get_nargs_number());
+                                parse_arguments_number(consumable | std::views::take(get_nargs_number()));
                             }
                             else
                             {
@@ -752,9 +752,9 @@ namespace argparse
                     }
 
                 private:
-                    auto parse_arguments_number(std::ranges::view auto args, std::size_t number) -> void
+                    auto parse_arguments_number(std::ranges::view auto args) -> void
                     {
-                        auto values = consume_args(args | std::views::take(number));
+                        auto values = consume_args(args);
 
                         m_value = m_options.type_handler->transform(values);
                     }
@@ -777,7 +777,7 @@ namespace argparse
                             }
                             case zero_or_more:
                             {
-                                parse_arguments_number(args, args.size());
+                                parse_arguments_number(args);
                                 break;
                             }
                             case one_or_more:
