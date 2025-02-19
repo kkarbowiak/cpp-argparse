@@ -492,10 +492,7 @@ namespace argparse
                     auto transform(std::vector<std::any> const & values) const -> std::any override
                     {
                         auto result = std::vector<T>();
-                        for (auto const & value : values)
-                        {
-                            result.push_back(std::any_cast<T>(value));
-                        }
+                        std::ranges::copy(std::views::transform(values, [](auto const & value) { return std::any_cast<T>(value); }), std::back_inserter(result));
                         return std::any(result);
                     }
 
