@@ -73,7 +73,7 @@ jobs:
         run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS=-fsanitize=address,undefined,alignment,array-bounds -DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address,undefined,alignment,array-bounds
 
       - name: CMake build
-        run: cmake --build build --parallel --target run_unit_test
+        run: cmake --build build --parallel --target run-unit-test
 
   valgrind:
     name: "Valgrind"
@@ -112,7 +112,7 @@ jobs:
         run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_EXE_LINKER_FLAGS=--coverage
 
       - name: CMake build
-        run: cmake --build build --parallel --target run_unit_test
+        run: cmake --build build --parallel --target run-unit-test
 
       - name: Generate coverage
         run: |

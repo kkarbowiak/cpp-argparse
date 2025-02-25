@@ -28,6 +28,6 @@ set_property(TEST error-test-1 PROPERTY WILL_FAIL true)
 add_test(NAME error-test-2 COMMAND app)
 set_property(TEST error-test-2 PROPERTY PASS_REGULAR_EXPRESSION "the following arguments are required: positional\nusage: app \\[-h\\] \\[--optional OPTIONAL\\] \\[-v\\] positional\n\npositional arguments:\n  positional\n\noptional arguments:\n  -h, --help            show this help message and exit\n  --optional OPTIONAL\n  -v, --version         show program's version number and exit\n")
 
-add_custom_target(run_exit_test ALL
+add_custom_target(run-exit-test ALL
     COMMAND ${CMAKE_CTEST_COMMAND} -C debug --output-on-failure
     DEPENDS app)
