@@ -33,6 +33,6 @@ target_compile_options(unittest PRIVATE
 target_link_options(unittest PRIVATE $ENV{LINKER_OPTIONS})
 
 add_test(NAME unit-test COMMAND unittest)
-add_custom_target(run_unit_test ALL
+add_custom_target(run-unit-test ALL
     COMMAND ${CMAKE_CTEST_COMMAND} -C debug --output-on-failure
     DEPENDS unittest)
