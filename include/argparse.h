@@ -855,7 +855,7 @@ namespace argparse
                                         {
                                             throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
                                         }
-                                        consume_arg(args, it, m_value);
+                                        m_value = consume_arg(args, it);
                                     }
                                     break;
                                 case store_true:
@@ -974,7 +974,7 @@ namespace argparse
                                 }
                                 else
                                 {
-                                    consume_arg(args, it, m_value);
+                                    m_value = consume_arg(args, it);
                                 }
                                 break;
                             }
@@ -999,8 +999,7 @@ namespace argparse
 
                     auto parse_arguments_number(tokens & args, tokens::iterator it, std::size_t args_number) -> void
                     {
-                        auto values = std::vector<std::any>(args_number);
-                        consume_args(args, it, values);
+                        auto values = consume_args(args, it, args_number);
                         m_value = m_options.type_handler->transform(values);
                     }
 
@@ -1091,8 +1090,9 @@ namespace argparse
                         return result;
                     }
 
-                    auto consume_arg(tokens & args, tokens::iterator & arg_it, std::any & value) const -> void
+                    auto consume_arg(tokens & args, tokens::iterator & arg_it) const -> std::any
                     {
+                        std::any value;
                         if (!m_options.type_handler->from_string(arg_it->m_token, value))
                         {
                             throw parsing_error(std::format("argument {}: invalid value: '{}'", join(get_names(), "/"), arg_it->m_token));
@@ -1102,14 +1102,17 @@ namespace argparse
                             check_choices(value);
                         }
                         arg_it = args.erase(arg_it);
+                        return value;
                     }
 
-                    auto consume_args(tokens & args, tokens::iterator & arg_it, std::vector<std::any> & values) const -> void
+                    auto consume_args(tokens & args, tokens::iterator & arg_it, std::size_t number) const -> std::vector<std::any>
                     {
-                        for (auto & value : values)
+                        std::vector<std::any> values;
+                        for (std::size_t i = 0; i < number; ++i)
                         {
-                            consume_arg(args, arg_it, value);
+                            values.push_back(consume_arg(args, arg_it));
                         }
+                        return values;
                     }
 
                     auto get_name_for_dest() const -> std::string
