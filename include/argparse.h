@@ -1111,17 +1111,8 @@ namespace argparse
 
                     auto consume_arg(Token & arg) const -> std::any
                     {
-                        std::any value;
-                        if (!m_options.type_handler->from_string(arg.m_token, value))
-                        {
-                            throw parsing_error(std::format("argument {}: invalid value: '{}'", join(get_names(), "/"), arg.m_token));
-                        }
-                        if (!m_options.choices.empty())
-                        {
-                            check_choices(value);
-                        }
                         arg.m_consumed = true;
-                        return value;
+                        return consume_arg(arg.m_token);
                     }
 
                     auto consume_arg(std::string const & arg) const -> std::any
