@@ -316,9 +316,9 @@ namespace argparse
 
             auto parse_args(tokens args) -> Parameters
             {
-                args = parse_optional_arguments(std::move(args));
-                args = remove_pseudo_arguments(std::move(args));
-                args = parse_positional_arguments(std::move(args));
+                parse_optional_arguments(args);
+                remove_pseudo_arguments(args);
+                parse_positional_arguments(args);
 
                 ensure_no_unrecognised_arguments(args);
                 ensure_no_arguments_excluded();
@@ -380,33 +380,27 @@ namespace argparse
                 return result;
             }
 
-            auto parse_optional_arguments(tokens args) -> tokens
+            auto parse_optional_arguments(tokens & args) -> void
             {
                 for (auto const & arg : m_arguments
                                       | std::views::filter([](auto && arg){ return !arg->is_positional(); }))
                 {
                     arg->parse_args(args);
                 }
-
-                return args;
             }
 
-            auto parse_positional_arguments(tokens args) -> tokens
+            auto parse_positional_arguments(tokens & args) -> void
             {
                 for (auto const & arg : m_arguments
                                       | std::views::filter([](auto && arg){ return arg->is_positional(); }))
                 {
                     arg->parse_args(args);
                 }
-
-                return args;
             }
 
-            static auto remove_pseudo_arguments(tokens args) -> tokens
+            static auto remove_pseudo_arguments(tokens & args) -> void
             {
                 std::erase(args, Token{"--"});
-
-                return args;
             }
 
             auto ensure_no_unrecognised_arguments(tokens const & args) const -> void
