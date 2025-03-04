@@ -1101,13 +1101,7 @@ namespace argparse
 
                     auto count_args(auto it, auto end) const -> std::size_t
                     {
-                        auto result = std::size_t(0);
-                        while (it != end && !it->m_token.starts_with('-'))
-                        {
-                            ++result;
-                            ++it;
-                        }
-                        return result;
+                        return std::ranges::distance(std::ranges::subrange(it, end) | std::views::take_while([](auto const & arg) { return !arg.m_token.starts_with('-'); }));
                     }
 
                     auto consume_arg(Token & arg) const -> std::any
