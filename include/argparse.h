@@ -687,7 +687,7 @@ namespace argparse
 
                     auto parse_args(tokens args) -> tokens override
                     {
-                        auto consumable = std::ranges::drop_while_view(args, [](auto const & token) { return token.m_consumed; });
+                        auto consumable = args | std::views::drop_while([](auto const & token) { return token.m_consumed; });
                         if (has_nargs())
                         {
                             if (has_nargs_number())
