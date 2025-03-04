@@ -385,7 +385,7 @@ namespace argparse
                 for (auto const & arg : m_arguments
                                       | std::views::filter([](auto && arg){ return !arg->is_positional(); }))
                 {
-                    args = arg->parse_args(std::move(args));
+                    arg->parse_args(args);
                 }
 
                 return args;
@@ -396,7 +396,7 @@ namespace argparse
                 for (auto const & arg : m_arguments
                                       | std::views::filter([](auto && arg){ return arg->is_positional(); }))
                 {
-                    args = arg->parse_args(std::move(args));
+                    arg->parse_args(args);
                 }
 
                 return args;
@@ -568,7 +568,7 @@ namespace argparse
                     }
                     virtual ~Argument() = default;
 
-                    virtual auto parse_args(tokens args) -> tokens = 0;
+                    virtual auto parse_args(tokens & args) -> void = 0;
                     virtual auto get_dest_name() const -> std::string = 0;
                     virtual auto get_metavar_name() const -> std::string = 0;
                     virtual auto has_value() const -> bool = 0;
@@ -685,7 +685,7 @@ namespace argparse
                     {
                     }
 
-                    auto parse_args(tokens args) -> tokens override
+                    auto parse_args(tokens & args) -> void override
                     {
                         auto consumable = args | std::views::drop_while([](auto const & token) { return token.m_consumed; });
                         if (has_nargs())
@@ -706,8 +706,6 @@ namespace argparse
                                 m_value = consume_arg(consumable.front());
                             }
                         }
-
-                        return args;
                     }
 
                     auto get_dest_name() const -> std::string override
@@ -827,7 +825,7 @@ namespace argparse
                     {
                     }
 
-                    auto parse_args(tokens args) -> tokens override
+                    auto parse_args(tokens & args) -> void override
                     {
                         auto consumable = args
                                         | std::views::drop_while([](auto const & token) { return token.m_consumed; })
@@ -910,8 +908,6 @@ namespace argparse
                                     break;
                             }
                         }
-
-                        return args;
                     }
 
                     auto get_dest_name() const -> std::string override
