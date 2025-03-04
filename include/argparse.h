@@ -687,7 +687,7 @@ namespace argparse
 
                     auto parse_args(tokens args) -> tokens override
                     {
-                        auto consumable = std::ranges::drop_while_view(args, [](auto const & token) { return token.m_consumed; });
+                        auto consumable = args | std::views::drop_while([](auto const & token) { return token.m_consumed; });
                         if (has_nargs())
                         {
                             if (has_nargs_number())
@@ -829,7 +829,8 @@ namespace argparse
 
                     auto parse_args(tokens args) -> tokens override
                     {
-                        auto consumable = std::ranges::drop_while_view(args, [](auto const & token) { return token.m_consumed; })
+                        auto consumable = args
+                                        | std::views::drop_while([](auto const & token) { return token.m_consumed; })
                                         | std::views::take_while([](auto const & token) { return token.m_token != "--"; })
                                         | std::views::common;
                         for (auto it = consumable.begin(); it != consumable.end(); ++it)
@@ -1100,13 +1101,7 @@ namespace argparse
 
                     auto count_args(auto it, auto end) const -> std::size_t
                     {
-                        auto result = std::size_t(0);
-                        while (it != end && !it->m_token.starts_with('-'))
-                        {
-                            ++result;
-                            ++it;
-                        }
-                        return result;
+                        return std::ranges::distance(std::ranges::subrange(it, end) | std::views::take_while([](auto const & arg) { return !arg.m_token.starts_with('-'); }));
                     }
 
                     auto consume_arg(Token & arg) const -> std::any
