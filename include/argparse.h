@@ -809,9 +809,8 @@ namespace argparse
 
                     auto consume_args(std::ranges::view auto args) const -> std::vector<std::any>
                     {
-                        std::vector<std::any> values;
-                        std::ranges::copy(std::views::transform(args, [this](auto & arg) { return consume_arg(arg); }), std::back_inserter(values));
-                        return values;
+                        auto transformation = std::views::transform(args, [this](auto & arg) { return consume_arg(arg); }) | std::views::common;
+                        return std::vector(transformation.begin(), transformation.end());
                     }
 
                 private:
@@ -830,53 +829,70 @@ namespace argparse
 
                     auto parse_args(tokens args) -> tokens override
                     {
-                        auto const pseudo_it = find_pseudo_arg(args);
-                        if (auto [it, name] = find_arg(args.begin(), pseudo_it); it != pseudo_it)
+                        auto consumable = std::ranges::drop_while_view(args, [](auto const & token) { return token.m_consumed; })
+                                        | std::views::take_while([](auto const & token) { return token.m_token != "--"; })
+                                        | std::views::common;
+                        for (auto it = consumable.begin(); it != consumable.end(); ++it)
                         {
-                            it = consume_name(args, it, name);
-
-                            switch (m_options.action)
+                            if (auto [found, name] = has_arg(it); found)
                             {
-                                case store:
-                                    if (has_nargs())
-                                    {
-                                        if (has_nargs_number())
+                                auto const value = consume_name(it, name);
+
+                                switch (m_options.action)
+                                {
+                                    case store:
+                                        if (has_nargs())
                                         {
-                                            parse_arguments_number(args, it);
+                                            if (has_nargs_number())
+                                            {
+                                                parse_arguments_number(consumable, std::next(it));
+                                            }
+                                            else
+                                            {
+                                                parse_arguments_option(consumable, std::next(it));
+                                            }
                                         }
                                         else
                                         {
-                                            parse_arguments_option(args, it);
+                                            if (value.empty())
+                                            {
+                                                if (auto nit = std::next(it); (nit == consumable.end()) || nit->m_token.starts_with("-"))
+                                                {
+                                                    throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
+                                                }
+                                                else
+                                                {
+                                                    m_value = consume_arg(*nit);
+                                                }
+                                            }
+                                            else
+                                            {
+                                                m_value = consume_arg(value);
+                                            }
                                         }
-                                    }
-                                    else
-                                    {
-                                        if (it == args.end() || it->m_token.starts_with("-"))
-                                        {
-                                            throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
-                                        }
-                                        consume_arg(args, it, m_value);
-                                    }
-                                    break;
-                                case store_true:
-                                    m_value = true;
-                                    break;
-                                case store_false:
-                                    m_value = false;
-                                    break;
-                                case store_const:
-                                    m_value = m_options.const_;
-                                    break;
-                                case help:
-                                    m_value = true;
-                                    throw HelpRequested();
-                                case version:
-                                    m_value = true;
-                                    throw VersionRequested();
+                                        break;
+                                    case store_true:
+                                        m_value = true;
+                                        break;
+                                    case store_false:
+                                        m_value = false;
+                                        break;
+                                    case store_const:
+                                        m_value = m_options.const_;
+                                        break;
+                                    case help:
+                                        m_value = true;
+                                        throw HelpRequested();
+                                    case version:
+                                        m_value = true;
+                                        throw VersionRequested();
+                                }
+
+                                m_present = true;
                             }
-                            m_present = true;
                         }
-                        else
+
+                        if (!m_present)
                         {
                             switch (m_options.action)
                             {
@@ -951,7 +967,7 @@ namespace argparse
                     }
 
                 private:
-                    auto parse_arguments_number(tokens & args, tokens::iterator it) -> void
+                    auto parse_arguments_number(std::ranges::view auto args, auto it) -> void
                     {
                         auto const nargs_number = get_nargs_number();
                         auto const args_number = count_args(it, args.end());
@@ -959,10 +975,10 @@ namespace argparse
                         {
                             throw parsing_error(std::format("argument {}: expected {} argument{}", join(get_names(), "/"), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
                         }
-                        parse_arguments_number(args, it, nargs_number);
+                        parse_arguments_number(it, nargs_number);
                     }
 
-                    auto parse_arguments_option(tokens & args, tokens::iterator it) -> void
+                    auto parse_arguments_option(std::ranges::view auto args, auto it) -> void
                     {
                         switch (get_nargs_option())
                         {
@@ -974,14 +990,14 @@ namespace argparse
                                 }
                                 else
                                 {
-                                    consume_arg(args, it, m_value);
+                                    m_value = consume_arg(*it);
                                 }
                                 break;
                             }
                             case zero_or_more:
                             {
                                 auto const args_number = count_args(it, args.end());
-                                parse_arguments_number(args, it, args_number);
+                                parse_arguments_number(it, args_number);
                                 break;
                             }
                             case one_or_more:
@@ -991,16 +1007,15 @@ namespace argparse
                                 {
                                     throw parsing_error(std::format("argument {}: expected at least one argument", join(get_names(), "/")));
                                 }
-                                parse_arguments_number(args, it, args_number);
+                                parse_arguments_number(it, args_number);
                                 break;
                             }
                         }
                     }
 
-                    auto parse_arguments_number(tokens & args, tokens::iterator it, std::size_t args_number) -> void
+                    auto parse_arguments_number(auto it, std::size_t args_number) -> void
                     {
-                        auto values = std::vector<std::any>(args_number);
-                        consume_args(args, it, values);
+                        auto values = consume_args(it, args_number);
                         m_value = m_options.type_handler->transform(values);
                     }
 
@@ -1009,45 +1024,44 @@ namespace argparse
                         return std::ranges::find(args, Token{"--"});
                     }
 
-                    auto find_arg(tokens::iterator begin, tokens::iterator end) const -> std::pair<tokens::iterator, std::string>
+                    auto has_arg(auto it) const -> std::pair<bool, std::string>
                     {
-                        for (auto it = begin; it != end; ++it)
+                        for (auto const & name: m_options.names)
                         {
-                            for (auto const & name : m_options.names)
+                            if (name[1] != '-')
                             {
-                                if (name[1] != '-')
+                                if (it->m_token.starts_with("-") && !it->m_token.starts_with("--") && it->m_token.find(name[1]) != std::string::npos)
                                 {
-                                    if (it->m_token.starts_with("-") && !it->m_token.starts_with("--") && it->m_token.find(name[1]) != std::string::npos)
-                                    {
-                                        return {it, name};
-                                    }
+                                    return {true, name};
                                 }
-                                else
+                            }
+                            else
+                            {
+                                auto const [first_it, second_it] = std::ranges::mismatch(name, it->m_token);
+                                if (first_it == name.end() && (second_it == it->m_token.end() || *second_it == '='))
                                 {
-                                    auto const [first_it, second_it] = std::ranges::mismatch(name, it->m_token);
-                                    if (first_it == name.end() && (second_it == it->m_token.end() || *second_it == '='))
-                                    {
-                                        return {it, name};
-                                    }
+                                    return {true, name};
                                 }
                             }
                         }
 
-                        return {end, ""};
+                        return {false, ""};
                     }
 
-                    auto consume_name(tokens & args, tokens::iterator it, std::string const & name) const -> tokens::iterator
+                    auto consume_name(auto it, std::string const & name) const -> std::string
                     {
                         if (auto const & arg = *it; arg.m_token.starts_with("--"))
                         {
                             if (auto const pos = arg.m_token.find('='); pos != std::string::npos)
                             {
                                 auto const value = arg.m_token.substr(pos + 1);
-                                *it = Token{value};
+                                it->m_consumed = true;
+                                return value;
                             }
                             else
                             {
-                                it = args.erase(it);
+                                it->m_consumed = true;
+                                return "";
                             }
                         }
                         else
@@ -1060,27 +1074,31 @@ namespace argparse
                                 {
                                     if (pos == 1)
                                     {
-                                        it->m_token.erase(0, 1);
+                                        it->m_consumed = true;
+                                        return it->m_token.substr(pos);
                                     }
                                     else
                                     {
                                         auto const prefix = it->m_token.substr(0, pos);
                                         auto const value = it->m_token.substr(pos);
                                         *it = Token{prefix};
-                                        it = args.insert(it, Token{value});
+                                        return value;
                                     }
+                                }
+                                else
+                                {
+                                    return "";
                                 }
                             }
                             else
                             {
-                                it = args.erase(it);
+                                it->m_consumed = true;
+                                return "";
                             }
                         }
-
-                        return it;
                     }
 
-                    auto count_args(tokens::const_iterator it, tokens::const_iterator end) const -> std::size_t
+                    auto count_args(auto it, auto end) const -> std::size_t
                     {
                         auto result = std::size_t(0);
                         while (it != end && !it->m_token.starts_with('-'))
@@ -1091,25 +1109,34 @@ namespace argparse
                         return result;
                     }
 
-                    auto consume_arg(tokens & args, tokens::iterator & arg_it, std::any & value) const -> void
+                    auto consume_arg(Token & arg) const -> std::any
                     {
-                        if (!m_options.type_handler->from_string(arg_it->m_token, value))
+                        arg.m_consumed = true;
+                        return consume_arg(arg.m_token);
+                    }
+
+                    auto consume_arg(std::string const & arg) const -> std::any
+                    {
+                        std::any value;
+                        if (!m_options.type_handler->from_string(arg, value))
                         {
-                            throw parsing_error(std::format("argument {}: invalid value: '{}'", join(get_names(), "/"), arg_it->m_token));
+                            throw parsing_error(std::format("argument {}: invalid value: '{}'", join(get_names(), "/"), arg));
                         }
                         if (!m_options.choices.empty())
                         {
                             check_choices(value);
                         }
-                        arg_it = args.erase(arg_it);
+                        return value;
                     }
 
-                    auto consume_args(tokens & args, tokens::iterator & arg_it, std::vector<std::any> & values) const -> void
+                    auto consume_args(auto arg_it, std::size_t number) const -> std::vector<std::any>
                     {
-                        for (auto & value : values)
+                        std::vector<std::any> values;
+                        for (std::size_t i = 0; i < number; ++i)
                         {
-                            consume_arg(args, arg_it, value);
+                            values.push_back(consume_arg(*arg_it++));
                         }
+                        return values;
                     }
 
                     auto get_name_for_dest() const -> std::string
