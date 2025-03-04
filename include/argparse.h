@@ -1010,11 +1010,6 @@ namespace argparse
                         m_value = m_options.type_handler->transform(values);
                     }
 
-                    auto find_pseudo_arg(tokens & args) const -> tokens::iterator
-                    {
-                        return std::ranges::find(args, Token{"--"});
-                    }
-
                     auto has_arg(auto it) const -> std::pair<bool, std::string>
                     {
                         for (auto const & name: m_options.names)
