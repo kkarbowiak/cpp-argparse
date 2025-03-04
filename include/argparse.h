@@ -1109,7 +1109,7 @@ namespace argparse
                         std::vector<std::any> values;
                         for (std::size_t i = 0; i < number; ++i)
                         {
-                            values.push_back(consume_arg(*(arg_it + i)));
+                            values.push_back(consume_arg(*arg_it++));
                         }
                         return values;
                     }
