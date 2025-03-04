@@ -316,9 +316,9 @@ namespace argparse
 
             auto parse_args(tokens args) -> Parameters
             {
-                args = parse_optional_arguments(std::move(args));
-                args = remove_pseudo_arguments(std::move(args));
-                args = parse_positional_arguments(std::move(args));
+                parse_optional_arguments(args);
+                remove_pseudo_arguments(args);
+                parse_positional_arguments(args);
 
                 ensure_no_unrecognised_arguments(args);
                 ensure_no_arguments_excluded();
@@ -380,33 +380,27 @@ namespace argparse
                 return result;
             }
 
-            auto parse_optional_arguments(tokens args) -> tokens
+            auto parse_optional_arguments(tokens & args) -> void
             {
                 for (auto const & arg : m_arguments
                                       | std::views::filter([](auto && arg){ return !arg->is_positional(); }))
                 {
-                    args = arg->parse_args(std::move(args));
+                    arg->parse_args(args);
                 }
-
-                return args;
             }
 
-            auto parse_positional_arguments(tokens args) -> tokens
+            auto parse_positional_arguments(tokens & args) -> void
             {
                 for (auto const & arg : m_arguments
                                       | std::views::filter([](auto && arg){ return arg->is_positional(); }))
                 {
-                    args = arg->parse_args(std::move(args));
+                    arg->parse_args(args);
                 }
-
-                return args;
             }
 
-            static auto remove_pseudo_arguments(tokens args) -> tokens
+            static auto remove_pseudo_arguments(tokens & args) -> void
             {
                 std::erase(args, Token{"--"});
-
-                return args;
             }
 
             auto ensure_no_unrecognised_arguments(tokens const & args) const -> void
@@ -568,7 +562,7 @@ namespace argparse
                     }
                     virtual ~Argument() = default;
 
-                    virtual auto parse_args(tokens args) -> tokens = 0;
+                    virtual auto parse_args(tokens & args) -> void = 0;
                     virtual auto get_dest_name() const -> std::string = 0;
                     virtual auto get_metavar_name() const -> std::string = 0;
                     virtual auto has_value() const -> bool = 0;
@@ -685,7 +679,7 @@ namespace argparse
                     {
                     }
 
-                    auto parse_args(tokens args) -> tokens override
+                    auto parse_args(tokens & args) -> void override
                     {
                         auto consumable = args | std::views::drop_while([](auto const & token) { return token.m_consumed; });
                         if (has_nargs())
@@ -706,8 +700,6 @@ namespace argparse
                                 m_value = consume_arg(consumable.front());
                             }
                         }
-
-                        return args;
                     }
 
                     auto get_dest_name() const -> std::string override
@@ -827,7 +819,7 @@ namespace argparse
                     {
                     }
 
-                    auto parse_args(tokens args) -> tokens override
+                    auto parse_args(tokens & args) -> void override
                     {
                         auto consumable = args
                                         | std::views::drop_while([](auto const & token) { return token.m_consumed; })
@@ -910,8 +902,6 @@ namespace argparse
                                     break;
                             }
                         }
-
-                        return args;
                     }
 
                     auto get_dest_name() const -> std::string override
