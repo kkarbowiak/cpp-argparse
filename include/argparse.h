@@ -1124,7 +1124,7 @@ namespace argparse
                         return value;
                     }
 
-                    auto consume_arg(std::string const & arg) -> std::any
+                    auto consume_arg(std::string const & arg) const -> std::any
                     {
                         std::any value;
                         if (!m_options.type_handler->from_string(arg, value))
