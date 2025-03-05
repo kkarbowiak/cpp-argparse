@@ -12,14 +12,6 @@
 
 using namespace std::string_literals;
 
-namespace bar
-{
-inline auto operator==(Custom const & lhs, Custom const & rhs) -> bool
-{
-    return lhs.m_text == rhs.m_text;
-}
-}
-
 TEST_CASE("Parsing arguments with help requested disregards parsing errors for missing positional argument")
 {
     auto parser = argparse::ArgumentParser().add_help(false).handle(argparse::Handle::none);
