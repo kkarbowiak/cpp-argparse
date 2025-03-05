@@ -343,7 +343,7 @@ TEST_CASE("Parsing unrecognised optional argument throws an exception for three 
     CHECK_THROWS_WITH_AS(parser.parse_args(6, cstr_arr{"prog", "-a", "v1", "-b", "-c", "-d"}), "unrecognised arguments: -b -c -d", argparse::parsing_error);
 }
 
-TEST_CASE("The resulting attribute name is based on for optional argument on its long name")
+TEST_CASE("The resulting attribute name for optional argument is based on its long name")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-f", "--foo");
@@ -353,7 +353,7 @@ TEST_CASE("The resulting attribute name is based on for optional argument on its
     CHECK(parsed.get("foo"));
 }
 
-TEST_CASE("The resulting attribute name is based on for optional argument on its short name")
+TEST_CASE("The resulting attribute name for optional argument is based on its short name")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-f");
@@ -363,7 +363,7 @@ TEST_CASE("The resulting attribute name is based on for optional argument on its
     CHECK(parsed.get("f"));
 }
 
-TEST_CASE("The resulting attribute name is based on for optional argument on dest parameter")
+TEST_CASE("The resulting attribute name for optional argument is based on dest parameter")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-f", "--foo").dest("bar");
