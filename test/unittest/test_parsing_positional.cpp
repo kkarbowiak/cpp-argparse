@@ -120,7 +120,7 @@ TEST_CASE("Parsing unrecognised positional argument throws an exception for thre
     CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "v1", "v2", "v3", "v4"}), "unrecognised arguments: v2 v3 v4", argparse::parsing_error);
 }
 
-TEST_CASE("The resulting attribute name is based on for positional argument on its name")
+TEST_CASE("The resulting attribute name for positional argument is based on its name")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("foo");
@@ -130,7 +130,7 @@ TEST_CASE("The resulting attribute name is based on for positional argument on i
     CHECK(parsed.get("foo"));
 }
 
-TEST_CASE("The resulting attribute name is based on for positional argument on dest parameter")
+TEST_CASE("The resulting attribute name for positional argument is based on dest parameter")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("foo").dest("bar");
