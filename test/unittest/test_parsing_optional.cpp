@@ -183,7 +183,7 @@ TEST_CASE("Parsing an optional argument with version action yields true when it'
     CHECK(parsed.get_value<bool>("v") == true);
 }
 
-TEST_CASE("Optional argument can be used with either short name")
+TEST_CASE("Optional argument can be used with its short name")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o", "--option");
@@ -193,7 +193,7 @@ TEST_CASE("Optional argument can be used with either short name")
     CHECK(parsed.get_value("option") == "val");
 }
 
-TEST_CASE("Optional argument can be used with either long name")
+TEST_CASE("Optional argument can be used with its long name")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o", "--option");
