@@ -91,3 +91,11 @@ TEST_CASE("Arguments past the -- pseudo argument are treated as positional for p
 
     CHECK(parsed.get_value("pos") == "-o");
 }
+
+TEST_CASE("Positional argument does not consume unrecognised optional argument")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("pos");
+
+    CHECK_THROWS(parser.parse_args(2, cstr_arr{"prog", "-o"}));
+}

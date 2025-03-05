@@ -317,7 +317,7 @@ namespace argparse
             auto parse_args(tokens args) -> Parameters
             {
                 parse_optional_arguments(args);
-                remove_pseudo_arguments(args);
+                consume_pseudo_arguments(args);
                 parse_positional_arguments(args);
 
                 ensure_no_unrecognised_arguments(args);
@@ -398,9 +398,12 @@ namespace argparse
                 }
             }
 
-            static auto remove_pseudo_arguments(tokens & args) -> void
+            static auto consume_pseudo_arguments(tokens & args) -> void
             {
-                std::erase(args, Token{"--"});
+                for (auto & arg : args | std::views::filter([](auto const & arg) { return arg.m_token == "--"; }))
+                {
+                    arg.m_consumed = true;
+                }
             }
 
             auto ensure_no_unrecognised_arguments(tokens const & args) const -> void
@@ -681,7 +684,29 @@ namespace argparse
 
                     auto parse_args(tokens & args) -> void override
                     {
-                        auto consumable = args | std::views::drop_while([](auto const & token) { return token.m_consumed; });
+                        bool past_pseudo_arg = false;
+                        auto consumable = args
+                                        | std::views::drop_while([](auto const & token)
+                                          {
+                                              if (token.m_token == "--")
+                                              {
+                                                  return false;
+                                              }
+                                              return token.m_consumed;
+                                          })
+                                        | std::views::filter([&past_pseudo_arg](auto const & token)
+                                          {
+                                              if (past_pseudo_arg)
+                                              {
+                                                  return true;
+                                              }
+                                              if (token.m_token == "--")
+                                              {
+                                                  past_pseudo_arg = true;
+                                                  return false;
+                                              }
+                                              return !token.m_token.starts_with("-");
+                                          });
                         if (has_nargs())
                         {
                             if (has_nargs_number())
