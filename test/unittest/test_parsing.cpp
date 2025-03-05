@@ -1,8 +1,6 @@
 #include "argparse.h"
 
 #include "cstring_array.h"
-#include "custom_a.h"
-#include "custom_b.h"
 
 #include "doctest.h"
 
