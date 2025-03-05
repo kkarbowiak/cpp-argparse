@@ -47,6 +47,7 @@ jobs:
         run: cmake --build build --parallel
 
   clangtidy:
+    if: false # disable as it takes way too much time
     name: "clang-tidy"
     runs-on: ubuntu-24.04
     steps:
