@@ -8,8 +8,6 @@
 #include <type_traits>
 
 
-using namespace std::string_literals;
-
 TEST_CASE("Parsing arguments with help requested disregards parsing errors for missing positional argument")
 {
     auto parser = argparse::ArgumentParser().add_help(false).handle(argparse::Handle::none);
