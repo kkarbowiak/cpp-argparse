@@ -91,3 +91,59 @@ TEST_CASE("Arguments past the -- pseudo argument are treated as positional for p
 
     CHECK(parsed.get_value("pos") == "-o");
 }
+
+TEST_CASE("Positional argument does not consume unrecognised optional argument")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("pos");
+
+    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "unrecognised arguments: -o", argparse::parsing_error);
+}
+
+TEST_CASE("Positional argument does not consume unrecognised optional argument")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("pos");
+
+    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "--option"}), "unrecognised arguments: --option", argparse::parsing_error);
+}
+
+TEST_CASE("Positional argument does not consume unrecognised optional argument")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("pos").nargs(1);
+
+    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "unrecognised arguments: -o", argparse::parsing_error);
+}
+
+TEST_CASE("Positional argument does not consume unrecognised optional argument")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("pos").nargs(2);
+
+    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "unrecognised arguments: -o", argparse::parsing_error);
+}
+
+TEST_CASE("Positional argument does not consume unrecognised optional argument")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("pos").nargs(argparse::zero_or_one);
+
+    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "unrecognised arguments: -o", argparse::parsing_error);
+}
+
+TEST_CASE("Positional argument does not consume unrecognised optional argument")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("pos").nargs(argparse::zero_or_more);
+
+    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "unrecognised arguments: -o", argparse::parsing_error);
+}
+
+TEST_CASE("Positional argument does not consume unrecognised optional argument")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("pos").nargs(argparse::one_or_more);
+
+    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "unrecognised arguments: -o", argparse::parsing_error);
+}
