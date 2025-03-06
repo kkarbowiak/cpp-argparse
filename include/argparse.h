@@ -696,7 +696,7 @@ namespace argparse
                                           })
                                         | std::views::filter([&past_pseudo_arg](auto const & token)
                                           {
-                                              if (past_pseudo_arg)
+                                              if (past_pseudo_arg && (token.m_token != "--"))
                                               {
                                                   return true;
                                               }
