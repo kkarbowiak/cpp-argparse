@@ -408,7 +408,7 @@ namespace argparse
 
             auto ensure_no_unrecognised_arguments(tokens const & args) const -> void
             {
-                auto unconsumed = std::ranges::filter_view(args, [](auto const & token) { return !token.m_consumed; });
+                auto unconsumed = args | std::views::filter([](auto const & token) { return !token.m_consumed; });
                 if (!unconsumed.empty())
                 {
                     throw parsing_error(std::format("unrecognised arguments: {}", join(unconsumed | std::views::transform([](auto const & token) { return token.m_token; }), " ")));
