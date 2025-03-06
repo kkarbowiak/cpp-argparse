@@ -529,7 +529,7 @@ namespace argparse
 
                     auto transform(std::vector<std::any> const & values) const -> std::any override
                     {
-                        auto const transformation = std::views::transform(values, [](auto const & value) { return std::any_cast<T>(value); });
+                        auto const transformation = values | std::views::transform([](auto const & value) { return std::any_cast<T>(value); });
                         return std::any(std::vector(transformation.begin(), transformation.end()));
                     }
 
