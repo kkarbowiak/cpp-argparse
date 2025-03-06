@@ -5,7 +5,6 @@
 #include "doctest.h"
 
 #include <string>
-#include <type_traits>
 
 
 using namespace std::string_literals;
