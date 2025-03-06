@@ -872,7 +872,7 @@ namespace argparse
                                             }
                                             else
                                             {
-                                                parse_arguments_option(consumable, std::next(it));
+                                                parse_arguments_option(std::next(it), consumable.end());
                                             }
                                         }
                                         else
@@ -999,13 +999,13 @@ namespace argparse
                         parse_arguments_number(it, nargs_number);
                     }
 
-                    auto parse_arguments_option(std::ranges::view auto args, auto it) -> void
+                    auto parse_arguments_option(auto it, auto end) -> void
                     {
                         switch (get_nargs_option())
                         {
                             case zero_or_one:
                             {
-                                if (it == args.end() || it->m_token.starts_with("-"))
+                                if (it == end || it->m_token.starts_with("-"))
                                 {
                                     m_value = m_options.const_;
                                 }
@@ -1017,13 +1017,13 @@ namespace argparse
                             }
                             case zero_or_more:
                             {
-                                auto const args_number = count_args(it, args.end());
+                                auto const args_number = count_args(it, end);
                                 parse_arguments_number(it, args_number);
                                 break;
                             }
                             case one_or_more:
                             {
-                                auto const args_number = count_args(it, args.end());
+                                auto const args_number = count_args(it, end);
                                 if (args_number == 0)
                                 {
                                     throw parsing_error(std::format("argument {}: expected at least one argument", join(get_names(), "/")));
