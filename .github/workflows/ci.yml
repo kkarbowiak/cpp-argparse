@@ -64,14 +64,26 @@ jobs:
       - name: CMake build
         run: cmake --build build --parallel
 
-  sanitisers:
-    name: "sanitisers"
+  clang-sanitisers:
+    name: "clang-sanitisers"
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
       - name: CMake configure
         run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS=-fsanitize=address,undefined,alignment,array-bounds -DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address,undefined,alignment,array-bounds
+
+      - name: CMake build
+        run: cmake --build build --parallel --target run-unit-test
+
+  msvc-sanitisers:
+    name: "msvc-sanitisers"
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: CMake configure
+        run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_CXX_FLAGS="/fsanitize=address /EHsc"
 
       - name: CMake build
         run: cmake --build build --parallel --target run-unit-test
