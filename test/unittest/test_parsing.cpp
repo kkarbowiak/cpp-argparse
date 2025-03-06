@@ -147,3 +147,19 @@ TEST_CASE("Positional argument does not consume unrecognised optional argument")
 
     CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-o"}), "unrecognised arguments: -o", argparse::parsing_error);
 }
+
+TEST_CASE("Parsing")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("pos1");
+    parser.add_argument("pos2");
+    parser.add_argument("--opt1");
+    parser.add_argument("--opt2");
+
+    auto args = parser.parse_args(6, cstr_arr{"prog", "p1", "--opt1", "o1", "--", "--opt2"});
+
+    CHECK(args.get_value("pos1") == "p1");
+    CHECK(args.get_value("pos2") == "--opt2");
+    CHECK(args.get_value("opt1") == "o1");
+    CHECK(!args.get("opt2"));
+}
