@@ -826,7 +826,9 @@ namespace argparse
 
                     auto consume_args(std::ranges::view auto args) const -> std::vector<std::any>
                     {
-                        auto transformation = args | std::views::transform([this](auto & arg) { return consume_arg(arg); }) | std::views::common;
+                        auto transformation = args
+                                            | std::views::transform([this](auto & arg) { return consume_arg(arg); })
+                                            | std::views::common;
                         return std::vector(transformation.begin(), transformation.end());
                     }
 
