@@ -64,8 +64,8 @@ jobs:
       - name: CMake build
         run: cmake --build build --parallel
 
-  sanitisers:
-    name: "sanitisers"
+  clang-sanitisers:
+    name: "clang-sanitisers"
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
