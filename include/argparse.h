@@ -400,7 +400,8 @@ namespace argparse
 
             static auto consume_pseudo_arguments(tokens & args) -> void
             {
-                for (auto & arg : args | std::views::filter([](auto const & arg) { return arg.m_token == "--"; }))
+                for (auto & arg : args
+                                | std::views::filter([](auto const & arg) { return arg.m_token == "--"; }))
                 {
                     arg.m_consumed = true;
                 }
@@ -408,7 +409,8 @@ namespace argparse
 
             auto ensure_no_unrecognised_arguments(tokens const & args) const -> void
             {
-                auto unconsumed = std::ranges::filter_view(args, [](auto const & token) { return !token.m_consumed; });
+                auto unconsumed = args
+                                | std::views::filter([](auto const & token) { return !token.m_consumed; });
                 if (!unconsumed.empty())
                 {
                     throw parsing_error(std::format("unrecognised arguments: {}", join(unconsumed | std::views::transform([](auto const & token) { return token.m_token; }), " ")));
@@ -529,7 +531,8 @@ namespace argparse
 
                     auto transform(std::vector<std::any> const & values) const -> std::any override
                     {
-                        auto const transformation = std::views::transform(values, [](auto const & value) { return std::any_cast<T>(value); });
+                        auto const transformation = values
+                                                  | std::views::transform([](auto const & value) { return std::any_cast<T>(value); });
                         return std::any(std::vector(transformation.begin(), transformation.end()));
                     }
 
@@ -826,7 +829,9 @@ namespace argparse
 
                     auto consume_args(std::ranges::view auto args) const -> std::vector<std::any>
                     {
-                        auto transformation = std::views::transform(args, [this](auto & arg) { return consume_arg(arg); }) | std::views::common;
+                        auto transformation = args
+                                            | std::views::transform([this](auto & arg) { return consume_arg(arg); })
+                                            | std::views::common;
                         return std::vector(transformation.begin(), transformation.end());
                     }
 
