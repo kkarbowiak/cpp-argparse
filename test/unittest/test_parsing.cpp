@@ -181,5 +181,5 @@ TEST_CASE("Parsing")
     parser.add_argument("pos").nargs(argparse::zero_or_more);
     parser.add_argument("-f").action(argparse::store_true);
 
-    auto args = parser.parse_args(5, cstr_arr{"prog", "p1", "p2", "-f", "p3"});
+    CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "p1", "p2", "-f", "p3"}), "unrecognised arguments: p3", argparse::parsing_error);
 }

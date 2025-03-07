@@ -683,7 +683,7 @@ namespace argparse
                                           {
                                               return token.m_consumed;
                                           })
-                                        | std::views::take_while([](auto const& token)
+                                        | std::views::take_while([](auto const & token)
                                           {
                                               return !token.m_consumed;
                                           })
