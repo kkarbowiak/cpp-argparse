@@ -860,7 +860,8 @@ namespace argparse
                             if (auto [found, name] = has_arg(it); found)
                             {
                                 auto const value = consume_name(it, name);
-                                auto consumable_args = std::ranges::subrange(std::next(it), consumable.end());
+                                auto consumable_args = std::ranges::subrange(std::next(it), consumable.end())
+                                                     | std::views::take_while([](auto const & token) { return !token.m_token.starts_with("-"); });
 
                                 switch (m_options.action)
                                 {
@@ -880,7 +881,7 @@ namespace argparse
                                         {
                                             if (value.empty())
                                             {
-                                                if (consumable_args.empty() || consumable_args.front().m_token.starts_with("-"))
+                                                if (consumable_args.empty())
                                                 {
                                                     throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
                                                 }
@@ -1006,7 +1007,7 @@ namespace argparse
                         {
                             case zero_or_one:
                             {
-                                if (args.empty() || args.front().m_token.starts_with("-"))
+                                if (args.empty())
                                 {
                                     m_value = m_options.const_;
                                 }
@@ -1117,7 +1118,7 @@ namespace argparse
 
                     auto count_args(std::ranges::view auto args) const -> std::size_t
                     {
-                        return std::ranges::distance(args | std::views::take_while([](auto const & arg) { return !arg.m_token.starts_with('-'); }));
+                        return std::ranges::distance(args);
                     }
 
                     auto consume_arg(Token & arg) const -> std::any
