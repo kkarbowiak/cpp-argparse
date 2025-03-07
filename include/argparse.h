@@ -681,10 +681,6 @@ namespace argparse
                         auto consumable = args
                                         | std::views::drop_while([](auto const & token)
                                           {
-                                              if (token.m_token == "--")
-                                              {
-                                                  return false;
-                                              }
                                               return token.m_consumed;
                                           })
                                         | std::views::filter([&past_pseudo_arg](auto const & token)
