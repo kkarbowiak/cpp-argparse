@@ -868,7 +868,7 @@ namespace argparse
                                         {
                                             if (has_nargs_number())
                                             {
-                                                parse_arguments_number(std::next(it), consumable.end());
+                                                parse_arguments_number(std::ranges::subrange(std::next(it), consumable.end()));
                                             }
                                             else
                                             {
@@ -988,15 +988,15 @@ namespace argparse
                     }
 
                 private:
-                    auto parse_arguments_number(auto it, auto end) -> void
+                    auto parse_arguments_number(std::ranges::view auto args) -> void
                     {
                         auto const nargs_number = get_nargs_number();
-                        auto const args_number = count_args(std::ranges::subrange(it, end));
+                        auto const args_number = count_args(args);
                         if (args_number < nargs_number)
                         {
                             throw parsing_error(std::format("argument {}: expected {} argument{}", join(get_names(), "/"), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
                         }
-                        parse_arguments_number(it, nargs_number);
+                        parse_arguments_number(args.begin(), nargs_number);
                     }
 
                     auto parse_arguments_option(auto it, auto end) -> void
