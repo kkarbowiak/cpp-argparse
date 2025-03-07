@@ -774,7 +774,7 @@ namespace argparse
                 private:
                     auto parse_arguments(std::ranges::view auto args) -> void
                     {
-                        auto values = consume_args(args);
+                        auto const values = consume_args(args);
 
                         m_value = m_options.type_handler->transform(values);
                     }
@@ -802,7 +802,7 @@ namespace argparse
                             }
                             case one_or_more:
                             {
-                                auto values = consume_args(args);
+                                auto const values = consume_args(args);
                                 if (!values.empty())
                                 {
                                     m_value = m_options.type_handler->transform(values);
@@ -1037,7 +1037,7 @@ namespace argparse
 
                     auto parse_arguments(std::ranges::view auto args) -> void
                     {
-                        auto values = consume_args(args);
+                        auto const values = consume_args(args);
                         m_value = m_options.type_handler->transform(values);
                     }
 
