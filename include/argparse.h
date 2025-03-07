@@ -993,12 +993,12 @@ namespace argparse
                     auto parse_arguments_number(std::ranges::view auto args) -> void
                     {
                         auto const nargs_number = get_nargs_number();
-                        auto const args_number = count_args(args);
-                        if (args_number < nargs_number)
+                        auto const values = consume_args(args | std::views::take(nargs_number));
+                        if (values.size() < nargs_number)
                         {
                             throw parsing_error(std::format("argument {}: expected {} argument{}", join(get_names(), "/"), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
                         }
-                        parse_arguments(args | std::views::take(nargs_number));
+                        m_value = m_options.type_handler->transform(values);
                     }
 
                     auto parse_arguments_option(std::ranges::view auto args) -> void
