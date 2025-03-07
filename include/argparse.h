@@ -683,6 +683,10 @@ namespace argparse
                                           {
                                               return token.m_consumed;
                                           })
+                                        | std::views::take_while([](auto const & token)
+                                          {
+                                              return !token.m_consumed;
+                                          })
                                         | std::views::filter([&past_pseudo_arg](auto const & token)
                                           {
                                               if (past_pseudo_arg && (token.m_token != "--"))
