@@ -996,7 +996,7 @@ namespace argparse
                         {
                             throw parsing_error(std::format("argument {}: expected {} argument{}", join(get_names(), "/"), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
                         }
-                        parse_arguments_number(args.begin(), nargs_number);
+                        parse_arguments(args.begin(), nargs_number);
                     }
 
                     auto parse_arguments_option(std::ranges::view auto args) -> void
@@ -1018,7 +1018,7 @@ namespace argparse
                             case zero_or_more:
                             {
                                 auto const args_number = count_args(args);
-                                parse_arguments_number(args.begin(), args_number);
+                                parse_arguments(args.begin(), args_number);
                                 break;
                             }
                             case one_or_more:
@@ -1028,13 +1028,13 @@ namespace argparse
                                 {
                                     throw parsing_error(std::format("argument {}: expected at least one argument", join(get_names(), "/")));
                                 }
-                                parse_arguments_number(args.begin(), args_number);
+                                parse_arguments(args.begin(), args_number);
                                 break;
                             }
                         }
                     }
 
-                    auto parse_arguments_number(auto it, std::size_t args_number) -> void
+                    auto parse_arguments(auto it, std::size_t args_number) -> void
                     {
                         auto values = consume_args(it, args_number);
                         m_value = m_options.type_handler->transform(values);
