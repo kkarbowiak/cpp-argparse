@@ -1115,11 +1115,6 @@ namespace argparse
                         }
                     }
 
-                    auto count_args(std::ranges::view auto args) const -> std::size_t
-                    {
-                        return std::ranges::distance(args);
-                    }
-
                     auto consume_arg(Token & arg) const -> std::any
                     {
                         arg.m_consumed = true;
