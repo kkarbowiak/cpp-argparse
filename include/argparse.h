@@ -996,7 +996,7 @@ namespace argparse
                         {
                             throw parsing_error(std::format("argument {}: expected {} argument{}", join(get_names(), "/"), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
                         }
-                        parse_arguments(args.begin(), nargs_number);
+                        parse_arguments(args | std::views::take(nargs_number));
                     }
 
                     auto parse_arguments_option(std::ranges::view auto args) -> void
@@ -1018,7 +1018,7 @@ namespace argparse
                             case zero_or_more:
                             {
                                 auto const args_number = count_args(args);
-                                parse_arguments(args.begin(), args_number);
+                                parse_arguments(args | std::views::take(args_number));
                                 break;
                             }
                             case one_or_more:
@@ -1028,15 +1028,15 @@ namespace argparse
                                 {
                                     throw parsing_error(std::format("argument {}: expected at least one argument", join(get_names(), "/")));
                                 }
-                                parse_arguments(args.begin(), args_number);
+                                parse_arguments(args | std::views::take(args_number));
                                 break;
                             }
                         }
                     }
 
-                    auto parse_arguments(auto it, std::size_t args_number) -> void
+                    auto parse_arguments(std::ranges::view auto args) -> void
                     {
-                        auto values = consume_args(it, args_number);
+                        auto values = consume_args(args);
                         m_value = m_options.type_handler->transform(values);
                     }
 
@@ -1139,12 +1139,12 @@ namespace argparse
                         return value;
                     }
 
-                    auto consume_args(auto arg_it, std::size_t number) const -> std::vector<std::any>
+                    auto consume_args(std::ranges::view auto args) const -> std::vector<std::any>
                     {
                         std::vector<std::any> values;
-                        for (std::size_t i = 0; i < number; ++i)
+                        for (auto & arg : args)
                         {
-                            values.push_back(consume_arg(*arg_it++));
+                            values.push_back(consume_arg(arg));
                         }
                         return values;
                     }
