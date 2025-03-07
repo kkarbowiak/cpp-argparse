@@ -348,22 +348,6 @@ namespace argparse
                 return result;
             }
 
-            static auto join(tokens const & tokens, std::string const & separator) -> std::string
-            {
-                auto result = std::string();
-
-                for (auto it = tokens.begin(); it != tokens.end(); ++it)
-                {
-                    if (it != tokens.begin())
-                    {
-                        result += separator;
-                    }
-                    result += it->m_token;
-                }
-
-                return result;
-            }
-
             static auto join(std::ranges::view auto strings, std::string const & separator) -> std::string
             {
                 auto result = std::string();
