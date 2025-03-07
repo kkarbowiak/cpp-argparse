@@ -880,7 +880,7 @@ namespace argparse
                                         {
                                             if (value.empty())
                                             {
-                                                if (auto nit = consumable_args.begin(); (nit == consumable_args.end()) || nit->m_token.starts_with("-"))
+                                                if (auto nit = consumable_args.begin(); consumable_args.empty() || nit->m_token.starts_with("-"))
                                                 {
                                                     throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
                                                 }
