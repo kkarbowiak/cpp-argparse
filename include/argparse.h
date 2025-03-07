@@ -991,7 +991,7 @@ namespace argparse
                     auto parse_arguments_number(auto it, auto end) -> void
                     {
                         auto const nargs_number = get_nargs_number();
-                        auto const args_number = count_args(it, end);
+                        auto const args_number = count_args(std::ranges::subrange(it, end));
                         if (args_number < nargs_number)
                         {
                             throw parsing_error(std::format("argument {}: expected {} argument{}", join(get_names(), "/"), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
@@ -1017,13 +1017,13 @@ namespace argparse
                             }
                             case zero_or_more:
                             {
-                                auto const args_number = count_args(it, end);
+                                auto const args_number = count_args(std::ranges::subrange(it, end));
                                 parse_arguments_number(it, args_number);
                                 break;
                             }
                             case one_or_more:
                             {
-                                auto const args_number = count_args(it, end);
+                                auto const args_number = count_args(std::ranges::subrange(it, end));
                                 if (args_number == 0)
                                 {
                                     throw parsing_error(std::format("argument {}: expected at least one argument", join(get_names(), "/")));
@@ -1114,9 +1114,9 @@ namespace argparse
                         }
                     }
 
-                    auto count_args(auto it, auto end) const -> std::size_t
+                    auto count_args(std::ranges::view auto args) const -> std::size_t
                     {
-                        return std::ranges::distance(std::ranges::subrange(it, end) | std::views::take_while([](auto const & arg) { return !arg.m_token.starts_with('-'); }));
+                        return std::ranges::distance(args | std::views::take_while([](auto const & arg) { return !arg.m_token.starts_with('-'); }));
                     }
 
                     auto consume_arg(Token & arg) const -> std::any
