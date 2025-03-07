@@ -860,6 +860,7 @@ namespace argparse
                             if (auto [found, name] = has_arg(it); found)
                             {
                                 auto const value = consume_name(it, name);
+                                auto consumable_args = std::ranges::subrange(std::next(it), consumable.end());
 
                                 switch (m_options.action)
                                 {
@@ -868,18 +869,18 @@ namespace argparse
                                         {
                                             if (has_nargs_number())
                                             {
-                                                parse_arguments_number(std::ranges::subrange(std::next(it), consumable.end()));
+                                                parse_arguments_number(consumable_args);
                                             }
                                             else
                                             {
-                                                parse_arguments_option(std::ranges::subrange(std::next(it), consumable.end()));
+                                                parse_arguments_option(consumable_args);
                                             }
                                         }
                                         else
                                         {
                                             if (value.empty())
                                             {
-                                                if (auto nit = std::next(it); (nit == consumable.end()) || nit->m_token.starts_with("-"))
+                                                if (auto nit = consumable_args.begin(); (nit == consumable_args.end()) || nit->m_token.starts_with("-"))
                                                 {
                                                     throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
                                                 }
