@@ -45,7 +45,7 @@ jobs:
 
       - name: CMake build
         if: runner.os == 'macOS'
-        run: cmake --build build --parallel 2
+        run: cmake --build build
 
       - name: CMake build
         if: runner.os != 'macOS'
