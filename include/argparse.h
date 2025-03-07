@@ -868,11 +868,11 @@ namespace argparse
                                         {
                                             if (has_nargs_number())
                                             {
-                                                parse_arguments_number(consumable, std::next(it));
+                                                parse_arguments_number(std::ranges::subrange(std::next(it), consumable.end()));
                                             }
                                             else
                                             {
-                                                parse_arguments_option(consumable, std::next(it));
+                                                parse_arguments_option(std::ranges::subrange(std::next(it), consumable.end()));
                                             }
                                         }
                                         else
@@ -988,55 +988,55 @@ namespace argparse
                     }
 
                 private:
-                    auto parse_arguments_number(std::ranges::view auto args, auto it) -> void
+                    auto parse_arguments_number(std::ranges::view auto args) -> void
                     {
                         auto const nargs_number = get_nargs_number();
-                        auto const args_number = count_args(it, args.end());
+                        auto const args_number = count_args(args);
                         if (args_number < nargs_number)
                         {
                             throw parsing_error(std::format("argument {}: expected {} argument{}", join(get_names(), "/"), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
                         }
-                        parse_arguments_number(it, nargs_number);
+                        parse_arguments(args | std::views::take(nargs_number));
                     }
 
-                    auto parse_arguments_option(std::ranges::view auto args, auto it) -> void
+                    auto parse_arguments_option(std::ranges::view auto args) -> void
                     {
                         switch (get_nargs_option())
                         {
                             case zero_or_one:
                             {
-                                if (it == args.end() || it->m_token.starts_with("-"))
+                                if (args.empty() || args.front().m_token.starts_with("-"))
                                 {
                                     m_value = m_options.const_;
                                 }
                                 else
                                 {
-                                    m_value = consume_arg(*it);
+                                    m_value = consume_arg(args.front());
                                 }
                                 break;
                             }
                             case zero_or_more:
                             {
-                                auto const args_number = count_args(it, args.end());
-                                parse_arguments_number(it, args_number);
+                                auto const args_number = count_args(args);
+                                parse_arguments(args | std::views::take(args_number));
                                 break;
                             }
                             case one_or_more:
                             {
-                                auto const args_number = count_args(it, args.end());
+                                auto const args_number = count_args(args);
                                 if (args_number == 0)
                                 {
                                     throw parsing_error(std::format("argument {}: expected at least one argument", join(get_names(), "/")));
                                 }
-                                parse_arguments_number(it, args_number);
+                                parse_arguments(args | std::views::take(args_number));
                                 break;
                             }
                         }
                     }
 
-                    auto parse_arguments_number(auto it, std::size_t args_number) -> void
+                    auto parse_arguments(std::ranges::view auto args) -> void
                     {
-                        auto values = consume_args(it, args_number);
+                        auto values = consume_args(args);
                         m_value = m_options.type_handler->transform(values);
                     }
 
@@ -1114,9 +1114,9 @@ namespace argparse
                         }
                     }
 
-                    auto count_args(auto it, auto end) const -> std::size_t
+                    auto count_args(std::ranges::view auto args) const -> std::size_t
                     {
-                        return std::ranges::distance(std::ranges::subrange(it, end) | std::views::take_while([](auto const & arg) { return !arg.m_token.starts_with('-'); }));
+                        return std::ranges::distance(args | std::views::take_while([](auto const & arg) { return !arg.m_token.starts_with('-'); }));
                     }
 
                     auto consume_arg(Token & arg) const -> std::any
@@ -1139,14 +1139,12 @@ namespace argparse
                         return value;
                     }
 
-                    auto consume_args(auto arg_it, std::size_t number) const -> std::vector<std::any>
+                    auto consume_args(std::ranges::view auto args) const -> std::vector<std::any>
                     {
-                        std::vector<std::any> values;
-                        for (std::size_t i = 0; i < number; ++i)
-                        {
-                            values.push_back(consume_arg(*arg_it++));
-                        }
-                        return values;
+                        auto transformation = args
+                                            | std::views::transform([this](auto & arg) { return this->consume_arg(arg); })
+                                            | std::views::common;
+                        return std::vector(transformation.begin(), transformation.end());
                     }
 
                     auto get_name_for_dest() const -> std::string
