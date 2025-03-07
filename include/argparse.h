@@ -774,7 +774,7 @@ namespace argparse
                 private:
                     auto parse_arguments(std::ranges::view auto args) -> void
                     {
-                        auto values = consume_args(args);
+                        auto const values = consume_args(args);
 
                         m_value = m_options.type_handler->transform(values);
                     }
@@ -802,7 +802,7 @@ namespace argparse
                             }
                             case one_or_more:
                             {
-                                auto values = consume_args(args);
+                                auto const values = consume_args(args);
                                 if (!values.empty())
                                 {
                                     m_value = m_options.type_handler->transform(values);
@@ -860,6 +860,8 @@ namespace argparse
                             if (auto [found, name] = has_arg(it); found)
                             {
                                 auto const value = consume_name(it, name);
+                                auto consumable_args = std::ranges::subrange(std::next(it), consumable.end())
+                                                     | std::views::take_while([](auto const & token) { return !token.m_token.starts_with("-"); });
 
                                 switch (m_options.action)
                                 {
@@ -868,24 +870,24 @@ namespace argparse
                                         {
                                             if (has_nargs_number())
                                             {
-                                                parse_arguments_number(std::ranges::subrange(std::next(it), consumable.end()));
+                                                parse_arguments_number(consumable_args);
                                             }
                                             else
                                             {
-                                                parse_arguments_option(std::ranges::subrange(std::next(it), consumable.end()));
+                                                parse_arguments_option(consumable_args);
                                             }
                                         }
                                         else
                                         {
                                             if (value.empty())
                                             {
-                                                if (auto nit = std::next(it); (nit == consumable.end()) || nit->m_token.starts_with("-"))
+                                                if (consumable_args.empty())
                                                 {
                                                     throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
                                                 }
                                                 else
                                                 {
-                                                    m_value = consume_arg(*nit);
+                                                    m_value = consume_arg(consumable_args.front());
                                                 }
                                             }
                                             else
@@ -991,12 +993,12 @@ namespace argparse
                     auto parse_arguments_number(std::ranges::view auto args) -> void
                     {
                         auto const nargs_number = get_nargs_number();
-                        auto const args_number = count_args(args);
-                        if (args_number < nargs_number)
+                        auto const values = consume_args(args | std::views::take(nargs_number));
+                        if (values.size() < nargs_number)
                         {
                             throw parsing_error(std::format("argument {}: expected {} argument{}", join(get_names(), "/"), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
                         }
-                        parse_arguments(args | std::views::take(nargs_number));
+                        m_value = m_options.type_handler->transform(values);
                     }
 
                     auto parse_arguments_option(std::ranges::view auto args) -> void
@@ -1005,7 +1007,7 @@ namespace argparse
                         {
                             case zero_or_one:
                             {
-                                if (args.empty() || args.front().m_token.starts_with("-"))
+                                if (args.empty())
                                 {
                                     m_value = m_options.const_;
                                 }
@@ -1017,18 +1019,17 @@ namespace argparse
                             }
                             case zero_or_more:
                             {
-                                auto const args_number = count_args(args);
-                                parse_arguments(args | std::views::take(args_number));
+                                parse_arguments(args);
                                 break;
                             }
                             case one_or_more:
                             {
-                                auto const args_number = count_args(args);
-                                if (args_number == 0)
+                                auto const values = consume_args(args);
+                                if (values.empty())
                                 {
                                     throw parsing_error(std::format("argument {}: expected at least one argument", join(get_names(), "/")));
                                 }
-                                parse_arguments(args | std::views::take(args_number));
+                                m_value = m_options.type_handler->transform(values);
                                 break;
                             }
                         }
@@ -1036,7 +1037,7 @@ namespace argparse
 
                     auto parse_arguments(std::ranges::view auto args) -> void
                     {
-                        auto values = consume_args(args);
+                        auto const values = consume_args(args);
                         m_value = m_options.type_handler->transform(values);
                     }
 
@@ -1112,11 +1113,6 @@ namespace argparse
                                 return "";
                             }
                         }
-                    }
-
-                    auto count_args(std::ranges::view auto args) const -> std::size_t
-                    {
-                        return std::ranges::distance(args | std::views::take_while([](auto const & arg) { return !arg.m_token.starts_with('-'); }));
                     }
 
                     auto consume_arg(Token & arg) const -> std::any
