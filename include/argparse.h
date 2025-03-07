@@ -317,8 +317,9 @@ namespace argparse
             auto parse_args(tokens args) -> Parameters
             {
                 parse_optional_arguments(args);
-                consume_pseudo_arguments(args);
                 parse_positional_arguments(args);
+
+                consume_pseudo_arguments(args);
 
                 ensure_no_unrecognised_arguments(args);
                 ensure_no_arguments_excluded();
@@ -680,10 +681,6 @@ namespace argparse
                         auto consumable = args
                                         | std::views::drop_while([](auto const & token)
                                           {
-                                              if (token.m_token == "--")
-                                              {
-                                                  return false;
-                                              }
                                               return token.m_consumed;
                                           })
                                         | std::views::filter([&past_pseudo_arg](auto const & token)
