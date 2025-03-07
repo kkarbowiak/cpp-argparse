@@ -1024,12 +1024,12 @@ namespace argparse
                             }
                             case one_or_more:
                             {
-                                auto const args_number = count_args(args);
-                                if (args_number == 0)
+                                auto const values = consume_args(args);
+                                if (values.empty())
                                 {
                                     throw parsing_error(std::format("argument {}: expected at least one argument", join(get_names(), "/")));
                                 }
-                                parse_arguments(args | std::views::take(args_number));
+                                m_value = m_options.type_handler->transform(values);
                                 break;
                             }
                         }
