@@ -872,7 +872,7 @@ namespace argparse
                                             }
                                             else
                                             {
-                                                parse_arguments_option(std::next(it), consumable.end());
+                                                parse_arguments_option(std::ranges::subrange(std::next(it), consumable.end()));
                                             }
                                         }
                                         else
@@ -999,36 +999,36 @@ namespace argparse
                         parse_arguments_number(args.begin(), nargs_number);
                     }
 
-                    auto parse_arguments_option(auto it, auto end) -> void
+                    auto parse_arguments_option(std::ranges::view auto args) -> void
                     {
                         switch (get_nargs_option())
                         {
                             case zero_or_one:
                             {
-                                if (it == end || it->m_token.starts_with("-"))
+                                if (args.empty() || args.front().m_token.starts_with("-"))
                                 {
                                     m_value = m_options.const_;
                                 }
                                 else
                                 {
-                                    m_value = consume_arg(*it);
+                                    m_value = consume_arg(args.front());
                                 }
                                 break;
                             }
                             case zero_or_more:
                             {
-                                auto const args_number = count_args(std::ranges::subrange(it, end));
-                                parse_arguments_number(it, args_number);
+                                auto const args_number = count_args(args);
+                                parse_arguments_number(args.begin(), args_number);
                                 break;
                             }
                             case one_or_more:
                             {
-                                auto const args_number = count_args(std::ranges::subrange(it, end));
+                                auto const args_number = count_args(args);
                                 if (args_number == 0)
                                 {
                                     throw parsing_error(std::format("argument {}: expected at least one argument", join(get_names(), "/")));
                                 }
-                                parse_arguments_number(it, args_number);
+                                parse_arguments_number(args.begin(), args_number);
                                 break;
                             }
                         }
