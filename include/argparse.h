@@ -1141,12 +1141,10 @@ namespace argparse
 
                     auto consume_args(std::ranges::view auto args) const -> std::vector<std::any>
                     {
-                        std::vector<std::any> values;
-                        for (auto & arg : args)
-                        {
-                            values.push_back(consume_arg(arg));
-                        }
-                        return values;
+                        auto transformation = args
+                                            | std::views::transform([this](auto & arg) { return consume_arg(arg); })
+                                            | std::views::common;
+                        return std::vector(transformation.begin(), transformation.end());
                     }
 
                     auto get_name_for_dest() const -> std::string
