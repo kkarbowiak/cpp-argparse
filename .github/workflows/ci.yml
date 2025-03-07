@@ -44,7 +44,12 @@ jobs:
         run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=${{ matrix.config.cc }} -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }}
 
       - name: CMake build
+        if: runner.os == 'macOS'
         run: cmake --build build --parallel 4
+
+      - name: CMake build
+        if: runner.os != 'macOS'
+        run: cmake --build build --parallel
 
   clangtidy:
     if: false # disable as it takes way too much time
