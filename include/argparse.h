@@ -1019,8 +1019,7 @@ namespace argparse
                             }
                             case zero_or_more:
                             {
-                                auto const args_number = count_args(args);
-                                parse_arguments(args | std::views::take(args_number));
+                                parse_arguments(args);
                                 break;
                             }
                             case one_or_more:
