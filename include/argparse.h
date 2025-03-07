@@ -643,6 +643,11 @@ namespace argparse
                 protected:
                     auto check_choices(std::any const & value) const -> void
                     {
+                        if (m_options.choices.empty())
+                        {
+                            return;
+                        }
+
                         if (!std::ranges::any_of(
                             m_options.choices,
                             [&](auto const & rhs) { return m_options.type_handler->compare(value, rhs); }))
@@ -803,10 +808,7 @@ namespace argparse
                         {
                             throw parsing_error(std::format("argument {}: invalid value: '{}'", get_dest_name(), arg.m_token));
                         }
-                        if (!m_options.choices.empty())
-                        {
-                            check_choices(value);
-                        }
+                        check_choices(value);
                         arg.m_consumed = true;
                         return value;
                     }
@@ -1112,10 +1114,7 @@ namespace argparse
                         {
                             throw parsing_error(std::format("argument {}: invalid value: '{}'", join(get_names(), "/"), arg));
                         }
-                        if (!m_options.choices.empty())
-                        {
-                            check_choices(value);
-                        }
+                        check_choices(value);
                         return value;
                     }
 
