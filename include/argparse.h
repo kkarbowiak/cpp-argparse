@@ -803,13 +803,18 @@ namespace argparse
 
                     auto consume_arg(Token & arg) const -> std::any
                     {
+                        arg.m_consumed = true;
+                        return process_arg(arg.m_token);
+                    }
+
+                    auto process_arg(std::string const & arg) const -> std::any
+                    {
                         std::any value;
-                        if (!m_options.type_handler->from_string(arg.m_token, value))
+                        if (!m_options.type_handler->from_string(arg, value))
                         {
-                            throw parsing_error(std::format("argument {}: invalid value: '{}'", get_dest_name(), arg.m_token));
+                            throw parsing_error(std::format("argument {}: invalid value: '{}'", get_dest_name(), arg));
                         }
                         check_choices(value);
-                        arg.m_consumed = true;
                         return value;
                     }
 
