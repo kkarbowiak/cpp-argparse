@@ -803,22 +803,32 @@ namespace argparse
 
                     auto consume_arg(Token & arg) const -> std::any
                     {
+                        arg.m_consumed = true;
+                        return process_arg(arg.m_token);
+                    }
+
+                    auto process_arg(std::string const & arg) const -> std::any
+                    {
                         std::any value;
-                        if (!m_options.type_handler->from_string(arg.m_token, value))
+                        if (!m_options.type_handler->from_string(arg, value))
                         {
-                            throw parsing_error(std::format("argument {}: invalid value: '{}'", get_dest_name(), arg.m_token));
+                            throw parsing_error(std::format("argument {}: invalid value: '{}'", get_dest_name(), arg));
                         }
                         check_choices(value);
-                        arg.m_consumed = true;
                         return value;
                     }
 
                     auto consume_args(std::ranges::view auto args) const -> std::vector<std::any>
                     {
-                        auto transformation = args
-                                            | std::views::transform([&](auto & arg) { return consume_arg(arg); })
-                                            | std::views::common;
-                        return std::vector(transformation.begin(), transformation.end());
+                        auto result = std::vector<std::any>();
+                        auto consumed = std::vector<Token *>();
+                        for (auto & arg : args)
+                        {
+                            result.push_back(process_arg(arg.m_token));
+                            consumed.push_back(&arg);
+                        }
+                        std::ranges::for_each(consumed, [](auto arg) { arg->m_consumed = true; });
+                        return result;
                     }
 
                 private:
@@ -878,7 +888,7 @@ namespace argparse
                                             }
                                             else
                                             {
-                                                m_value = consume_arg(value);
+                                                m_value = process_arg(value);
                                             }
                                         }
                                         break;
@@ -1104,10 +1114,10 @@ namespace argparse
                     auto consume_arg(Token & arg) const -> std::any
                     {
                         arg.m_consumed = true;
-                        return consume_arg(arg.m_token);
+                        return process_arg(arg.m_token);
                     }
 
-                    auto consume_arg(std::string const & arg) const -> std::any
+                    auto process_arg(std::string const & arg) const -> std::any
                     {
                         std::any value;
                         if (!m_options.type_handler->from_string(arg, value))
@@ -1120,10 +1130,15 @@ namespace argparse
 
                     auto consume_args(std::ranges::view auto args) const -> std::vector<std::any>
                     {
-                        auto transformation = args
-                                            | std::views::transform([&](auto & arg) { return consume_arg(arg); })
-                                            | std::views::common;
-                        return std::vector(transformation.begin(), transformation.end());
+                        auto result = std::vector<std::any>();
+                        auto consumed = std::vector<Token *>();
+                        for (auto & arg : args)
+                        {
+                            result.push_back(process_arg(arg.m_token));
+                            consumed.push_back(&arg);
+                        }
+                        std::ranges::for_each(consumed, [](auto arg) { arg->m_consumed = true; });
+                        return result;
                     }
 
                     auto get_name_for_dest() const -> std::string
