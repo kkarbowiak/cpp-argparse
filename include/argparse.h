@@ -335,31 +335,21 @@ namespace argparse
 
             static auto join(std::vector<std::string> const & strings, std::string const & separator) -> std::string
             {
-                auto result = std::string();
-
-                for (auto it = strings.begin(); it != strings.end(); ++it)
-                {
-                    if (it != strings.begin())
-                    {
-                        result += separator;
-                    }
-                    result += *it;
-                }
-
-                return result;
+                return join(strings | std::views::all, separator);
             }
 
             static auto join(std::ranges::view auto strings, std::string const & separator) -> std::string
             {
                 auto result = std::string();
 
-                for (auto it = strings.begin(); it != strings.end(); ++it)
+                for (auto const & string : strings | std::views::take(1))
                 {
-                    if (it != strings.begin())
-                    {
-                        result += separator;
-                    }
-                    result += *it;
+                    result += string;
+                }
+                for (auto const & string : strings | std::views::drop(1))
+                {
+                    result += separator;
+                    result += string;
                 }
 
                 return result;
