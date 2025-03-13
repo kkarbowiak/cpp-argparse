@@ -883,7 +883,7 @@ namespace argparse
                                             }
                                             else
                                             {
-                                                m_value = consume_arg(value);
+                                                m_value = process_arg(value);
                                             }
                                         }
                                         break;
@@ -1109,10 +1109,10 @@ namespace argparse
                     auto consume_arg(Token & arg) const -> std::any
                     {
                         arg.m_consumed = true;
-                        return consume_arg(arg.m_token);
+                        return process_arg(arg.m_token);
                     }
 
-                    auto consume_arg(std::string const & arg) const -> std::any
+                    auto process_arg(std::string const & arg) const -> std::any
                     {
                         std::any value;
                         if (!m_options.type_handler->from_string(arg, value))
