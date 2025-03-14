@@ -634,6 +634,36 @@ namespace argparse
                 protected:
                     virtual auto get_name_for_error() const -> std::string = 0;
 
+                    auto consume_arg(Token & arg) const -> std::any
+                    {
+                        arg.m_consumed = true;
+                        return process_arg(arg.m_token);
+                    }
+
+                    auto process_arg(std::string const & arg) const -> std::any
+                    {
+                        std::any value;
+                        if (!m_options.type_handler->from_string(arg, value))
+                        {
+                            throw parsing_error(std::format("argument {}: invalid value: '{}'", get_name_for_error(), arg));
+                        }
+                        check_choices(value);
+                        return value;
+                    }
+
+                    auto consume_args(std::ranges::view auto args) const -> std::vector<std::any>
+                    {
+                        auto result = std::vector<std::any>();
+                        auto consumed = std::vector<Token *>();
+                        for (auto & arg : args)
+                        {
+                            result.push_back(process_arg(arg.m_token));
+                            consumed.push_back(&arg);
+                        }
+                        std::ranges::for_each(consumed, [](auto arg) { arg->m_consumed = true; });
+                        return result;
+                    }
+
                     auto check_choices(std::any const & value) const -> void
                     {
                         if (m_options.choices.empty())
@@ -792,36 +822,6 @@ namespace argparse
                                 break;
                             }
                         }
-                    }
-
-                    auto consume_arg(Token & arg) const -> std::any
-                    {
-                        arg.m_consumed = true;
-                        return process_arg(arg.m_token);
-                    }
-
-                    auto process_arg(std::string const & arg) const -> std::any
-                    {
-                        std::any value;
-                        if (!m_options.type_handler->from_string(arg, value))
-                        {
-                            throw parsing_error(std::format("argument {}: invalid value: '{}'", get_name_for_error(), arg));
-                        }
-                        check_choices(value);
-                        return value;
-                    }
-
-                    auto consume_args(std::ranges::view auto args) const -> std::vector<std::any>
-                    {
-                        auto result = std::vector<std::any>();
-                        auto consumed = std::vector<Token *>();
-                        for (auto & arg : args)
-                        {
-                            result.push_back(process_arg(arg.m_token));
-                            consumed.push_back(&arg);
-                        }
-                        std::ranges::for_each(consumed, [](auto arg) { arg->m_consumed = true; });
-                        return result;
                     }
 
                     auto get_name_for_error() const -> std::string override
@@ -1107,36 +1107,6 @@ namespace argparse
                                 return "";
                             }
                         }
-                    }
-
-                    auto consume_arg(Token & arg) const -> std::any
-                    {
-                        arg.m_consumed = true;
-                        return process_arg(arg.m_token);
-                    }
-
-                    auto process_arg(std::string const & arg) const -> std::any
-                    {
-                        std::any value;
-                        if (!m_options.type_handler->from_string(arg, value))
-                        {
-                            throw parsing_error(std::format("argument {}: invalid value: '{}'", get_name_for_error(), arg));
-                        }
-                        check_choices(value);
-                        return value;
-                    }
-
-                    auto consume_args(std::ranges::view auto args) const -> std::vector<std::any>
-                    {
-                        auto result = std::vector<std::any>();
-                        auto consumed = std::vector<Token *>();
-                        for (auto & arg : args)
-                        {
-                            result.push_back(process_arg(arg.m_token));
-                            consumed.push_back(&arg);
-                        }
-                        std::ranges::for_each(consumed, [](auto arg) { arg->m_consumed = true; });
-                        return result;
                     }
 
                     auto get_name_for_dest() const -> std::string
