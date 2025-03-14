@@ -635,6 +635,12 @@ namespace argparse
                 protected:
                     virtual auto get_name_for_error() const -> std::string = 0;
 
+                    auto parse_arguments(std::ranges::view auto args) -> void
+                    {
+                        auto const values = consume_args(args);
+                        m_value = m_options.type_handler->transform(values);
+                    }
+
                     auto consume_arg(Token & arg) const -> std::any
                     {
                         arg.m_consumed = true;
@@ -687,6 +693,7 @@ namespace argparse
 
                 protected:
                     Options const m_options;
+                    std::any m_value;
             };
 
             class PositionalArgument final : public Argument
@@ -694,7 +701,6 @@ namespace argparse
                 public:
                     explicit PositionalArgument(Options options)
                       : Argument(std::move(options))
-                      , m_value()
                     {
                     }
 
@@ -785,13 +791,6 @@ namespace argparse
                     }
 
                 private:
-                    auto parse_arguments(std::ranges::view auto args) -> void
-                    {
-                        auto const values = consume_args(args);
-
-                        m_value = m_options.type_handler->transform(values);
-                    }
-
                     auto parse_arguments_option(std::ranges::view auto args) -> void
                     {
                         switch (get_nargs_option())
@@ -829,9 +828,6 @@ namespace argparse
                     {
                         return get_dest_name();
                     }
-
-                private:
-                    std::any m_value;
             };
 
             class OptionalArgument final : public Argument
@@ -839,7 +835,6 @@ namespace argparse
                 public:
                     explicit OptionalArgument(Options options)
                       : Argument(std::move(options))
-                      , m_value()
                       , m_present(false)
                     {
                     }
@@ -1029,12 +1024,6 @@ namespace argparse
                         }
                     }
 
-                    auto parse_arguments(std::ranges::view auto args) -> void
-                    {
-                        auto const values = consume_args(args);
-                        m_value = m_options.type_handler->transform(values);
-                    }
-
                     auto has_arg(auto it) const -> std::pair<bool, std::string>
                     {
                         for (auto const & name: m_options.names)
@@ -1128,7 +1117,6 @@ namespace argparse
                     }
 
                 private:
-                    std::any m_value;
                     bool m_present;
             };
 
