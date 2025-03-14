@@ -805,7 +805,7 @@ namespace argparse
                         std::any value;
                         if (!m_options.type_handler->from_string(arg, value))
                         {
-                            throw parsing_error(std::format("argument {}: invalid value: '{}'", get_dest_name(), arg));
+                            throw parsing_error(std::format("argument {}: invalid value: '{}'", get_name_for_error(), arg));
                         }
                         check_choices(value);
                         return value;
@@ -1120,7 +1120,7 @@ namespace argparse
                         std::any value;
                         if (!m_options.type_handler->from_string(arg, value))
                         {
-                            throw parsing_error(std::format("argument {}: invalid value: '{}'", join(get_names(), "/"), arg));
+                            throw parsing_error(std::format("argument {}: invalid value: '{}'", get_name_for_error(), arg));
                         }
                         check_choices(value);
                         return value;
