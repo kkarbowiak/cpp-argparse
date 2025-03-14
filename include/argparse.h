@@ -632,6 +632,8 @@ namespace argparse
                     }
 
                 protected:
+                    virtual auto get_name_for_error() const -> std::string = 0;
+
                     auto check_choices(std::any const & value) const -> void
                     {
                         if (m_options.choices.empty())
@@ -820,6 +822,11 @@ namespace argparse
                         }
                         std::ranges::for_each(consumed, [](auto arg) { arg->m_consumed = true; });
                         return result;
+                    }
+
+                    auto get_name_for_error() const -> std::string override
+                    {
+                        return get_dest_name();
                     }
 
                 private:
@@ -1143,6 +1150,11 @@ namespace argparse
                         }
 
                         return m_options.names.front().substr(1);
+                    }
+
+                    auto get_name_for_error() const -> std::string override
+                    {
+                        return join(get_names(), "/");
                     }
 
                 private:
