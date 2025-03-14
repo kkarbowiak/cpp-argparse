@@ -160,8 +160,6 @@ namespace argparse
             {
                 std::string m_token;
                 bool m_consumed = false;
-
-                bool operator==(Token const &) const = default;
             };
 
             using tokens = std::vector<Token>;
