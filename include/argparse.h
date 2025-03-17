@@ -37,6 +37,7 @@ namespace argparse
         store_true,
         store_false,
         store_const,
+        count,
         help,
         version
     };
@@ -899,6 +900,8 @@ namespace argparse
                                         break;
                                     case store_const:
                                         m_value = m_options.const_;
+                                        break;
+                                    case count:
                                         break;
                                     case help:
                                         m_value = true;
