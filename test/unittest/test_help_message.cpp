@@ -363,25 +363,25 @@ TEST_CASE("Help message contains for optional argument name and help for argumen
 TEST_CASE("Help message contains for optional argument name for argument with count action")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
-    parser.add_argument("-o").action(argparse::count);
+    parser.add_argument("-c").action(argparse::count);
 
-    CHECK(parser.format_help() == "usage: prog [-o]\n\noptional arguments:\n  -o"s);
+    CHECK(parser.format_help() == "usage: prog [-c]\n\noptional arguments:\n  -c"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and long name for argument with count action")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
-    parser.add_argument("-o", "--option").action(argparse::count);
+    parser.add_argument("-c", "--count").action(argparse::count);
 
-    CHECK(parser.format_help() == "usage: prog [-o]\n\noptional arguments:\n  -o, --option"s);
+    CHECK(parser.format_help() == "usage: prog [-c]\n\noptional arguments:\n  -c, --count"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and help for argument with count action and help string")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
-    parser.add_argument("-o").action(argparse::count).help("help1");
+    parser.add_argument("-c").action(argparse::count).help("help1");
 
-    CHECK(parser.format_help() == "usage: prog [-o]\n\noptional arguments:\n  -o                    help1"s);
+    CHECK(parser.format_help() == "usage: prog [-c]\n\noptional arguments:\n  -c                    help1"s);
 }
 
 TEST_CASE("Help message contains for optional argument name for argument with help action")
