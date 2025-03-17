@@ -902,6 +902,7 @@ namespace argparse
                                         m_value = m_options.const_;
                                         break;
                                     case count:
+                                        m_value = 1;
                                         break;
                                     case help:
                                         m_value = true;
