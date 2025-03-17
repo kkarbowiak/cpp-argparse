@@ -902,7 +902,14 @@ namespace argparse
                                         m_value = m_options.const_;
                                         break;
                                     case count:
-                                        m_value = 1;
+                                        if (!m_value.has_value())
+                                        {
+                                            m_value = 1;
+                                        }
+                                        else
+                                        {
+                                            m_value = std::any_cast<int>(m_value) + 1;
+                                        }
                                         break;
                                     case help:
                                         m_value = true;

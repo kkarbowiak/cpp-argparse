@@ -173,6 +173,16 @@ TEST_CASE("Parsing an optional argument with count action yields the argument co
     CHECK(parsed.get_value<int>("c") == 1);
 }
 
+TEST_CASE("Parsing an optional argument with count action yields the argument count for two arguments")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-c").action(argparse::count);
+
+    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-c", "-c"});
+
+    CHECK(parsed.get_value<int>("c") == 2);
+}
+
 TEST_CASE("Parsing an optional argument with help action yields false when it's missing")
 {
     auto parser = argparse::ArgumentParser().add_help(false).handle(argparse::Handle::none);
