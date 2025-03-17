@@ -2396,6 +2396,14 @@ TEST_CASE("Parsing joined short options does not throw for arguments with count 
     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-ab"}));
 }
 
+TEST_CASE("Parsing joined short options does not throw for argument with count action")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-a").action(argparse::count);
+
+    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-aa"}));
+}
+
 TEST_CASE("Parsing joined short options with store true action yields true for each of them")
 {
     auto parser = argparse::ArgumentParser();

@@ -851,7 +851,7 @@ namespace argparse
                         auto consumable = args
                                         | std::views::drop_while([](auto const & token) { return token.m_consumed; })
                                         | std::views::take_while([](auto const & token) { return token.m_token != "--"; });
-                        for (auto it = consumable.begin(); it != consumable.end(); ++it)
+                        for (auto it = consumable.begin(); it != consumable.end();)
                         {
                             if (auto [found, name] = has_arg(it); found)
                             {
@@ -920,6 +920,15 @@ namespace argparse
                                 }
 
                                 m_present = true;
+
+                                if (it->m_consumed)
+                                {
+                                    ++it;
+                                }
+                            }
+                            else
+                            {
+                                ++it;
                             }
                         }
 
