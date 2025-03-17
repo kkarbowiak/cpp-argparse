@@ -326,6 +326,14 @@ TEST_CASE("Usage message contains for optional argument name for argument with s
     CHECK(parser.format_usage() == "usage: prog [-o]"s);
 }
 
+TEST_CASE("Usage message contains for optional argument name for argument with count action")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("-o").action(argparse::count);
+
+    CHECK(parser.format_usage() == "usage: prog [-o]"s);
+}
+
 TEST_CASE("Usage message contains for optional argument name for argument with help action")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
