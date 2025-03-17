@@ -143,6 +143,56 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with store const action yields 
     }
 }
 
+TEST_CASE("Parsing an optional argument with count action yields false when it's missing")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-c").action(argparse::count);
+
+    auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+
+    CHECK(!parsed.get("c"));
+}
+
+TEST_CASE("Parsing an optional argument with count action yields default value when it's missing")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-c").action(argparse::count).default_(0);
+
+    auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+
+    CHECK(parsed.get_value<int>("c") == 0);
+}
+
+TEST_CASE("Parsing an optional argument with count action yields the argument count for one argument")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-c").action(argparse::count);
+
+    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-c"});
+
+    CHECK(parsed.get_value<int>("c") == 1);
+}
+
+TEST_CASE("Parsing an optional argument with count action yields the argument count for two arguments")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-c").action(argparse::count);
+
+    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-c", "-c"});
+
+    CHECK(parsed.get_value<int>("c") == 2);
+}
+
+TEST_CASE("Parsing an optional argument with count action yields the argument count for three arguments")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-c").action(argparse::count);
+
+    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-c", "-c", "-c"});
+
+    CHECK(parsed.get_value<int>("c") == 3);
+}
+
 TEST_CASE("Parsing an optional argument with help action yields false when it's missing")
 {
     auto parser = argparse::ArgumentParser().add_help(false).handle(argparse::Handle::none);
@@ -2337,6 +2387,23 @@ TEST_CASE("Parsing joined short options does not throw for arguments with store 
     CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-ab"}));
 }
 
+TEST_CASE("Parsing joined short options does not throw for arguments with count action")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-a").action(argparse::count);
+    parser.add_argument("-b").action(argparse::count);
+
+    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-ab"}));
+}
+
+TEST_CASE("Parsing joined short options does not throw for argument with count action")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-a").action(argparse::count);
+
+    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-aa"}));
+}
+
 TEST_CASE("Parsing joined short options with store true action yields true for each of them")
 {
     auto parser = argparse::ArgumentParser();
@@ -2371,6 +2438,30 @@ TEST_CASE("Parsing joined short options with store const action yields const val
 
     CHECK(args.get_value<int>("a") == 10);
     CHECK(args.get_value<int>("b") == 20);
+}
+
+TEST_CASE("Parsing joined short options with count action yields their count")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-a").action(argparse::count);
+    parser.add_argument("-b").action(argparse::count);
+
+    auto args = parser.parse_args(2, cstr_arr{"prog", "-ababa"});
+
+    CHECK(args.get_value<int>("a") == 3);
+    CHECK(args.get_value<int>("b") == 2);
+}
+
+TEST_CASE("Parsing joined short options with count action yields their count")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-a").action(argparse::count);
+    parser.add_argument("-b").action(argparse::count);
+
+    auto args = parser.parse_args(2, cstr_arr{"prog", "-abbaa"});
+
+    CHECK(args.get_value<int>("a") == 3);
+    CHECK(args.get_value<int>("b") == 2);
 }
 
 TEST_CASE("Parsing long option with joined argument does not throw")

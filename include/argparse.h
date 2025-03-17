@@ -37,6 +37,7 @@ namespace argparse
         store_true,
         store_false,
         store_const,
+        count,
         help,
         version
     };
@@ -850,7 +851,7 @@ namespace argparse
                         auto consumable = args
                                         | std::views::drop_while([](auto const & token) { return token.m_consumed; })
                                         | std::views::take_while([](auto const & token) { return token.m_token != "--"; });
-                        for (auto it = consumable.begin(); it != consumable.end(); ++it)
+                        for (auto it = consumable.begin(); it != consumable.end();)
                         {
                             if (auto [found, name] = has_arg(it); found)
                             {
@@ -900,6 +901,16 @@ namespace argparse
                                     case store_const:
                                         m_value = m_options.const_;
                                         break;
+                                    case count:
+                                        if (!m_value.has_value())
+                                        {
+                                            m_value = 1;
+                                        }
+                                        else
+                                        {
+                                            m_value = std::any_cast<int>(m_value) + 1;
+                                        }
+                                        break;
                                     case help:
                                         m_value = true;
                                         throw HelpRequested();
@@ -909,6 +920,15 @@ namespace argparse
                                 }
 
                                 m_present = true;
+
+                                if (it->m_consumed)
+                                {
+                                    ++it;
+                                }
+                            }
+                            else
+                            {
+                                ++it;
                             }
                         }
 
