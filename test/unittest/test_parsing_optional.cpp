@@ -2452,6 +2452,18 @@ TEST_CASE("Parsing joined short options with count action yields their count")
     CHECK(args.get_value<int>("b") == 2);
 }
 
+TEST_CASE("Parsing joined short options with count action yields their count")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-a").action(argparse::count);
+    parser.add_argument("-b").action(argparse::count);
+
+    auto args = parser.parse_args(2, cstr_arr{"prog", "-abbaa"});
+
+    CHECK(args.get_value<int>("a") == 3);
+    CHECK(args.get_value<int>("b") == 2);
+}
+
 TEST_CASE("Parsing long option with joined argument does not throw")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
