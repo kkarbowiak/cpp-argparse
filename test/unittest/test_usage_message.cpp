@@ -76,7 +76,7 @@ TEST_CASE("ArgumentParser provides usage message for one optional argument with 
     CHECK(parser.format_usage() == "usage: prog [-f FOO]"s);
 }
 
-TEST_CASE("ArgumentParser provides usage message  for one optional argument with store true action")
+TEST_CASE("ArgumentParser provides usage message for one optional argument with store true action")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").action(argparse::store_true);
