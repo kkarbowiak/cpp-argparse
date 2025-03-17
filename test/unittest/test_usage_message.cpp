@@ -76,7 +76,7 @@ TEST_CASE("ArgumentParser provides usage message for one optional argument with 
     CHECK(parser.format_usage() == "usage: prog [-f FOO]"s);
 }
 
-TEST_CASE("ArgumentParser provides usage message  for one optional argument with store true action")
+TEST_CASE("ArgumentParser provides usage message for one optional argument with store true action")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").action(argparse::store_true);
@@ -118,12 +118,29 @@ TEST_CASE("ArgumentParser provides usage message for one optional argument with 
     CHECK(parser.format_usage() == "usage: prog [-o]"s);
 }
 
+TEST_CASE("ArgumentParser provides usage message for two optional arguments with store const action")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("-o").action(argparse::store_const);
+    parser.add_argument("--option").action(argparse::store_const);
+
+    CHECK(parser.format_usage() == "usage: prog [-o] [--option]"s);
+}
+
 TEST_CASE("ArgumentParser provides usage message for one optional argument with help action")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-h").action(argparse::help);
 
     CHECK(parser.format_usage() == "usage: prog [-h]"s);
+}
+
+TEST_CASE("ArgumentParser provides usage message for one optional argument with version action")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("-v").action(argparse::version);
+
+    CHECK(parser.format_usage() == "usage: prog [-v]"s);
 }
 
 TEST_CASE("ArgumentParser provides usage message for one positional and one optional argument")
@@ -298,6 +315,14 @@ TEST_CASE("Usage message contains for optional argument name for argument with h
     parser.add_argument("-h").action(argparse::store_false);
 
     CHECK(parser.format_usage() == "usage: prog [-h]"s);
+}
+
+TEST_CASE("Usage message contains for optional argument name for argument with version action")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("-v").action(argparse::version);
+
+    CHECK(parser.format_usage() == "usage: prog [-v]"s);
 }
 
 TEST_CASE("Usage message contains for optional argument name and automatic metavar")
