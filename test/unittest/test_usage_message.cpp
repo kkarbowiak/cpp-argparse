@@ -317,6 +317,14 @@ TEST_CASE("Usage message contains for optional argument name for argument with h
     CHECK(parser.format_usage() == "usage: prog [-h]"s);
 }
 
+TEST_CASE("Usage message contains for optional argument name for argument with version action")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("-v").action(argparse::version);
+
+    CHECK(parser.format_usage() == "usage: prog [-v]"s);
+}
+
 TEST_CASE("Usage message contains for optional argument name and automatic metavar")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
