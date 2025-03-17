@@ -135,6 +135,14 @@ TEST_CASE("ArgumentParser provides usage message for one optional argument with 
     CHECK(parser.format_usage() == "usage: prog [-h]"s);
 }
 
+TEST_CASE("ArgumentParser provides usage message for one optional argument with version action")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("-v").action(argparse::version);
+
+    CHECK(parser.format_usage() == "usage: prog [-v]"s);
+}
+
 TEST_CASE("ArgumentParser provides usage message for one positional and one optional argument")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
