@@ -118,6 +118,15 @@ TEST_CASE("ArgumentParser provides usage message for one optional argument with 
     CHECK(parser.format_usage() == "usage: prog [-o]"s);
 }
 
+TEST_CASE("ArgumentParser provides usage message for two optional arguments with store const action")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("-o").action(argparse::store_const);
+    parser.add_argument("--option").action(argparse::store_const);
+
+    CHECK(parser.format_usage() == "usage: prog [-o] [--option]"s);
+}
+
 TEST_CASE("ArgumentParser provides usage message for one optional argument with help action")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
