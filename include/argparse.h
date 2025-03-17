@@ -356,7 +356,15 @@ namespace argparse
             auto parse_optional_arguments(tokens & args) -> void
             {
                 for (auto const & arg : m_arguments
-                                      | std::views::filter([](auto && arg){ return !arg->is_positional(); }))
+                                      | std::views::filter([](auto && arg){ return !arg->is_positional(); })
+                                      | std::views::filter([](auto && arg){ return arg->has_store_action(); }))
+                {
+                    arg->parse_args(args);
+                }
+
+                for (auto const & arg : m_arguments
+                                      | std::views::filter([](auto && arg){ return !arg->is_positional(); })
+                                      | std::views::filter([](auto && arg){ return !arg->has_store_action(); }))
                 {
                     arg->parse_args(args);
                 }

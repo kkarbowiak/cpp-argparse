@@ -2487,6 +2487,20 @@ TEST_CASE("Parsing joined short optiona and short option joined with argument do
     CHECK(args.get_value("o") == "value");
 }
 
+TEST_CASE("Parsing joined short optiona and short option joined with argument does not confuse values order vao")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-v").action(argparse::store_true);
+    parser.add_argument("-a").action(argparse::store_true);
+    parser.add_argument("-o");
+
+    auto args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
+
+    CHECK(args.get_value<bool>("a") == true);
+    CHECK(args.get_value<bool>("v") == false);
+    CHECK(args.get_value("o") == "value");
+}
+
 TEST_CASE("Parsing long options does not affect short options")
 {
     auto parser = argparse::ArgumentParser().add_help(false);
