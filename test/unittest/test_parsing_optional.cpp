@@ -2473,7 +2473,7 @@ TEST_CASE("Parsing joined short options and short option joined with argument yi
     CHECK(args.get_value("o") == "value");
 }
 
-TEST_CASE("Parsing joined short optiona and short option joined with argument does not confuse values")
+TEST_CASE("Parsing joined short optiona and short option joined with argument does not confuse values order oav")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o");
