@@ -195,7 +195,7 @@ optional arguments:
 ```
 Here is what is happening:
  * The program is written so as to display something when `--verbosity` is specified and display nothing when not.
- * To show that the option is actually optional, there is no error when running the program without it. Note that by default, it an optional argument isn't used, the object holding the relevant value (the one retrieved using `parsed.get("verbosity")`) is empty and in a boolean context (in an `if` statement) yields `false`.
+ * To show that the option is actually optional, there is no error when running the program without it. Note that by default, if an optional argument isn't used, the object holding the relevant value (the one retrieved using `parsed.get("verbosity")`) is empty and in a boolean context (in an `if` statement) yields `false`.
  * The help message is a bit different.
  * When using the `--verbosity` option, one must specify some arbitrary value.
 
