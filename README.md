@@ -12,7 +12,7 @@ This is a C++ implementation of Python's `argparse` module. The aim is to cover 
 
 ## Dependencies
 
-C++ argparse is a header-only library, so its setup is minimal. It has no external dependencies and only uses STL. Since it uses `std::ranges` and some other features, it requires C++20 compiler and standard library. If your compiler struggles, you can switch to [v2.2.0](https://github.com/kkarbowiak/cpp-argparse/releases/tag/v2.2.0), or if you are stuck with C++17, you can still use release [v2.1.4](https://github.com/kkarbowiak/cpp-argparse/releases/tag/v2.1.4).
+C++ argparse is a header-only library, so its setup is minimal. It has no external dependencies and only uses STL. Since it uses `std::ranges` and some other features, it requires C++20 compiler and standard library.
 
 C++ argparse uses CMake internally, but you don't have to. Just put the [argparse.h](https://github.com/kkarbowiak/cpp-argparse/releases/latest/download/argparse.h) header somewhere and point your build system to it.
 
