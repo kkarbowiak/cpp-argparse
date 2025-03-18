@@ -413,6 +413,67 @@ optional arguments:
 ```
 Note that the change reflects in both the error message and the help string.
 
+Let us now try out a different approach of playing with verbosity, which is pretty common (`count.cpp`):
+```c++
+#include "argparse.h"
+#include <iostream>
+
+int main(int argc, char * argv[])
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("square").help("display a square of a given number").type<int>();
+    parser.add_argument("-v", "--verbosity").help("increase output verbosity").action(argparse::count);
+    auto parsed = parser.parse_args(argc, argv);
+    auto value = parsed.get_value<int>("square");
+    auto answer = value * value;
+    auto verbosity = parsed.get("verbosity");
+    if (verbosity && verbosity.get<int>() == 2)
+    {
+        std::cout << "the square of " << value << " equals " << answer << '\n';
+    }
+    else if (verbosity && verbosity.get<int>() == 1)
+    {
+        std::cout << value << "^2 == " << answer << '\n';
+    }
+    else
+    {
+        std::cout << answer << '\n';
+    }
+}
+```
+We have introduced another action, “count”, to count the number of occurrences of specific options.
+
+And the output:
+```
+$ count 4
+16
+$ count 4 -v
+4^2 == 16
+$ count 4 -vv
+the square of 4 equals 16
+$ count 4 --verbosity --verbosity
+the square of 4 equals 16
+$ count 4 -v 1
+unrecognised arguments: 1
+usage: count [-h] [-v] square
+
+positional arguments:
+  square                display a square of a given number
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --verbosity       increase output verbosity
+$ count 4 -vvv
+16
+```
+ * The option is more of a flag now (similar to `action(argparse::store_true)` in the previous version of the program). This is where the complaint comes from.
+ * It also behaves similar to `store_true` action.
+ * I think you know what the `count` action does and have seen this sort of usage before.
+ * If you don't specify the `-v` flag, the corresponding argument has no value.
+ * As should be expected, specifying the long form of the flag, we should get the same output.
+ * Sadly, the help output isn't very informative on the new ability of the program, but this can always be fixed by improving the documentation of the program or option's help message.
+ * The last output exposes a bug in our program.
+
 ### Default values
 
 One way to remove the need of getting the value object and doing a boolean test before extracting the value is to give the option a default value (`complex3.cpp`):

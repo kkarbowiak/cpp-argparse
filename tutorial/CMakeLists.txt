@@ -12,6 +12,7 @@ set(targets
     complex1
     complex2
     complex3
+    count
     advanced
     advanced1
     conflicting
