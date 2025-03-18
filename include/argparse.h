@@ -357,15 +357,15 @@ namespace argparse
             auto parse_optional_arguments(tokens & args) -> void
             {
                 for (auto const & arg : m_arguments
-                                      | std::views::filter([](auto && arg){ return !arg->is_positional(); })
-                                      | std::views::filter([](auto && arg){ return arg->has_store_action(); }))
+                    | std::views::filter([](auto && arg){ return !arg->is_positional(); })
+                    | std::views::filter([](auto && arg){ return arg->has_store_action(); }))
                 {
                     arg->parse_args(args);
                 }
 
                 for (auto const & arg : m_arguments
-                                      | std::views::filter([](auto && arg){ return !arg->is_positional(); })
-                                      | std::views::filter([](auto && arg){ return !arg->has_store_action(); }))
+                    | std::views::filter([](auto && arg){ return !arg->is_positional(); })
+                    | std::views::filter([](auto && arg){ return !arg->has_store_action(); }))
                 {
                     arg->parse_args(args);
                 }
@@ -374,7 +374,7 @@ namespace argparse
             auto parse_positional_arguments(tokens & args) -> void
             {
                 for (auto const & arg : m_arguments
-                                      | std::views::filter([](auto && arg){ return arg->is_positional(); }))
+                    | std::views::filter([](auto && arg){ return arg->is_positional(); }))
                 {
                     arg->parse_args(args);
                 }
@@ -383,7 +383,7 @@ namespace argparse
             static auto consume_pseudo_arguments(tokens & args) -> void
             {
                 for (auto & arg : args
-                                | std::views::filter([](auto const & arg) { return arg.m_token == "--"; }))
+                    | std::views::filter([](auto const & arg) { return arg.m_token == "--"; }))
                 {
                     arg.m_consumed = true;
                 }
@@ -392,7 +392,7 @@ namespace argparse
             auto ensure_no_unrecognised_arguments(tokens const & args) const -> void
             {
                 auto unconsumed = args
-                                | std::views::filter([](auto const & token) { return !token.m_consumed; });
+                    | std::views::filter([](auto const & token) { return !token.m_consumed; });
                 if (!unconsumed.empty())
                 {
                     throw parsing_error(std::format("unrecognised arguments: {}", join(unconsumed | std::views::transform([](auto const & token) { return token.m_token; }), " ")));
@@ -421,7 +421,7 @@ namespace argparse
                 auto error_message = optstring();
 
                 for (auto const & arg : m_arguments
-                                      | std::views::filter([](auto const & arg){ return arg->is_required() && !arg->has_value(); }))
+                    | std::views::filter([](auto const & arg){ return arg->is_required() && !arg->has_value(); }))
                 {
                     if (!error_message)
                     {
@@ -514,7 +514,7 @@ namespace argparse
                     auto transform(std::vector<std::any> const & values) const -> std::any override
                     {
                         auto const transformation = values
-                                                  | std::views::transform([](auto const & value) { return std::any_cast<T>(value); });
+                            | std::views::transform([](auto const & value) { return std::any_cast<T>(value); });
                         return std::any(std::vector(transformation.begin(), transformation.end()));
                     }
 
@@ -715,27 +715,27 @@ namespace argparse
                     {
                         bool past_pseudo_arg = false;
                         auto consumable = args
-                                        | std::views::drop_while([](auto const & token)
-                                          {
-                                              return token.m_consumed;
-                                          })
-                                        | std::views::take_while([](auto const & token)
-                                          {
-                                              return !token.m_consumed;
-                                          })
-                                        | std::views::filter([&past_pseudo_arg](auto const & token)
-                                          {
-                                              if (past_pseudo_arg && (token.m_token != "--"))
-                                              {
-                                                  return true;
-                                              }
-                                              if (token.m_token == "--")
-                                              {
-                                                  past_pseudo_arg = true;
-                                                  return false;
-                                              }
-                                              return !token.m_token.starts_with("-");
-                                          });
+                            | std::views::drop_while([](auto const & token)
+                                {
+                                    return token.m_consumed;
+                                })
+                            | std::views::take_while([](auto const & token)
+                                {
+                                    return !token.m_consumed;
+                                })
+                            | std::views::filter([&past_pseudo_arg](auto const & token)
+                                {
+                                    if (past_pseudo_arg && (token.m_token != "--"))
+                                    {
+                                        return true;
+                                    }
+                                    if (token.m_token == "--")
+                                    {
+                                        past_pseudo_arg = true;
+                                        return false;
+                                    }
+                                    return !token.m_token.starts_with("-");
+                                });
                         if (has_nargs())
                         {
                             if (has_nargs_number())
@@ -849,15 +849,15 @@ namespace argparse
                     auto parse_args(tokens & args) -> void override
                     {
                         auto consumable = args
-                                        | std::views::drop_while([](auto const & token) { return token.m_consumed; })
-                                        | std::views::take_while([](auto const & token) { return token.m_token != "--"; });
+                            | std::views::drop_while([](auto const & token) { return token.m_consumed; })
+                            | std::views::take_while([](auto const & token) { return token.m_token != "--"; });
                         for (auto it = consumable.begin(); it != consumable.end();)
                         {
                             if (auto [found, name] = has_arg(it); found)
                             {
                                 auto const value = consume_name(it, name);
                                 auto consumable_args = std::ranges::subrange(std::next(it), consumable.end())
-                                                     | std::views::take_while([](auto const & token) { return !token.m_token.starts_with("-"); });
+                                    | std::views::take_while([](auto const & token) { return !token.m_token.starts_with("-"); });
 
                                 switch (m_options.action)
                                 {
@@ -908,7 +908,7 @@ namespace argparse
                                         }
                                         else
                                         {
-                                            m_value = std::any_cast<int>(m_value) + 1;
+                                            ++std::any_cast<int &>(m_value);
                                         }
                                         break;
                                     case help:
@@ -1208,7 +1208,7 @@ namespace argparse
                         auto positionals = std::string();
 
                         for (auto const & arg : m_arguments
-                                              | std::views::filter([](auto const & arg){ return arg->is_positional(); }))
+                            | std::views::filter([](auto const & arg){ return arg->is_positional(); }))
                         {
                             if (arg->has_nargs())
                             {
@@ -1285,7 +1285,7 @@ namespace argparse
                         auto positionals = std::string();
 
                         for (auto const & arg : m_arguments
-                                              | std::views::filter([](auto const & arg){ return arg->is_positional(); }))
+                            | std::views::filter([](auto const & arg){ return arg->is_positional(); }))
                         {
                             auto arg_line = "  " + format_arg(*arg);
 
@@ -1306,7 +1306,7 @@ namespace argparse
                         auto optionals = std::string();
 
                         for (auto const & arg : m_arguments
-                                              | std::views::filter([](auto const & arg){ return !arg->is_positional(); }))
+                            | std::views::filter([](auto const & arg){ return !arg->is_positional(); }))
                         {
                             auto arg_line = std::string("  ");
 
