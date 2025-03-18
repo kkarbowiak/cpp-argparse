@@ -474,6 +474,46 @@ $ count 4 -vvv
  * Sadly, the help output isn't very informative on the new ability of the program, but this can always be fixed by improving the documentation of the program or option's help message.
  * The last output exposes a bug in our program.
 
+Let's fix it (`count2.cpp`):
+```c++
+#include "argparse.h"
+#include <iostream>
+
+int main(int argc, char * argv[])
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("square").help("display a square of a given number").type<int>();
+    parser.add_argument("-v", "--verbosity").help("increase output verbosity").action(argparse::count);
+    auto parsed = parser.parse_args(argc, argv);
+    auto value = parsed.get_value<int>("square");
+    auto answer = value * value;
+    auto verbosity = parsed.get("verbosity");
+    if (verbosity.get<int>() >= 2)
+    {
+        std::cout << "the square of " << value << " equals " << answer << '\n';
+    }
+    else if (verbosity.get<int>() >= 1)
+    {
+        std::cout << value << "^2 == " << answer << '\n';
+    }
+    else
+    {
+        std::cout << answer << '\n';
+    }
+}
+```
+And the output:
+```
+$ count2 4 -vvv
+the square of 4 equals 16
+$ count2 4 -vvvv
+the square of 4 equals 16
+$ count2 4
+terminate called after throwing an instance of 'std::bad_any_cast'
+```
+ * First output went well. The second illustrates we fixed the bug we had before. Now, any value >= 2 is as verbose as possible.
+ * The third execution crashed. Yikes!
+
 ### Default values
 
 One way to remove the need of getting the value object and doing a boolean test before extracting the value is to give the option a default value (`complex3.cpp`):
