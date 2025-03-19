@@ -1,5 +1,7 @@
 #include "argparse.h"
 
+#include "cstring_array.h"
+
 #include "doctest.h"
 
 #include <string>
@@ -691,4 +693,15 @@ TEST_CASE("ArgumentParser replaces '{prog}' with program name in optional argume
     parser.add_argument("-o").help("option of the {prog} itself");
 
     CHECK(parser.format_help() == "usage: program [-o O]\n\noptional arguments:\n  -o O                  option of the program itself");
+}
+
+TEST_CASE("ArgumentParser replaces '{prog}' with program name taken from first command-line parameter")
+{
+    auto parser = argparse::ArgumentParser().add_help(false).description("This is {prog}.").epilog("This was {prog}.");
+    parser.add_argument("pos").help("this is {prog}'s positional argument");
+    parser.add_argument("-o").help("this is {prog}'s optional argument");
+
+    parser.parse_args(2, cstr_arr{"program", "p"});
+
+    CHECK(parser.format_help() == "usage: program [-o O] pos\n\nThis is program.\n\npositional arguments:\n  pos                   this is program's positional argument\n\noptional arguments:\n  -o O                  this is program's optional argument\n\nThis was program."s);
 }
