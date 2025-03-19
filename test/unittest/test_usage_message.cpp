@@ -486,7 +486,7 @@ TEST_CASE("Usage message contains for optional argument its name and choices rep
     CHECK(parser.format_usage() == "usage: prog [-o {\"foo\",\"bar\"} {\"foo\",\"bar\"} {\"foo\",\"bar\"}]"s);
 }
 
-TEST_CASE("Usage message contains for optional argument is name and automatic metavar in brackets for argument with nargs set as zero_or_one")
+TEST_CASE("Usage message contains for optional argument its name and automatic metavar in brackets for argument with nargs set as zero_or_one")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").nargs(argparse::zero_or_one);
@@ -494,7 +494,7 @@ TEST_CASE("Usage message contains for optional argument is name and automatic me
     CHECK(parser.format_usage() == "usage: prog [-o [O]]"s);
 }
 
-TEST_CASE("Usage message contains for optional argument is name and metavar in brackets for argument with metavar set and nargs set as zero_or_one")
+TEST_CASE("Usage message contains for optional argument its name and metavar in brackets for argument with metavar set and nargs set as zero_or_one")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").metavar("METAVARO").nargs(argparse::zero_or_one);
@@ -502,7 +502,7 @@ TEST_CASE("Usage message contains for optional argument is name and metavar in b
     CHECK(parser.format_usage() == "usage: prog [-o [METAVARO]]"s);
 }
 
-TEST_CASE("Usage message contains for optional argument is name and choices in brackets for argument with choices set and nargs set as zero_or_one")
+TEST_CASE("Usage message contains for optional argument its name and choices in brackets for argument with choices set and nargs set as zero_or_one")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_one);
