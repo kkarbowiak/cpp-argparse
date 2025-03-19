@@ -1,5 +1,7 @@
 #include "argparse.h"
 
+#include "cstring_array.h"
+
 #include "doctest.h"
 
 #include <string>
@@ -661,4 +663,45 @@ TEST_CASE("Help string starts on 25th column of the next line for optional argum
     parser.add_argument("--abcdefghijklmnopq").metavar("A").help("help");
 
     CHECK(parser.format_help() == "usage: prog [--abcdefghijklmnopq A]\n\noptional arguments:\n  --abcdefghijklmnopq A\n                        help");
+}
+
+TEST_CASE("ArgumentParser replaces '{prog}' with program name in description text")
+{
+    auto parser = argparse::ArgumentParser().prog("program").description("A {prog} that bars").add_help(false);
+
+    CHECK(parser.format_help() == "usage: program\n\nA program that bars"s);
+}
+
+TEST_CASE("ArgumentParser replaces '{prog}' with program name in epilog text")
+{
+    auto parser = argparse::ArgumentParser().prog("program").epilog("And that's how you'd foo a bar using {prog}").add_help(false);
+
+    CHECK(parser.format_help() == "usage: program\n\nAnd that's how you'd foo a bar using program"s);
+}
+
+TEST_CASE("ArgumentParser replaces '{prog}' with program name in positional argument help message")
+{
+    auto parser = argparse::ArgumentParser().prog("program").add_help(false);
+    parser.add_argument("p1").help("p1 of the {prog} itself");
+
+    CHECK(parser.format_help() == "usage: program p1\n\npositional arguments:\n  p1                    p1 of the program itself"s);
+}
+
+TEST_CASE("ArgumentParser replaces '{prog}' with program name in optional argument help message")
+{
+    auto parser = argparse::ArgumentParser().prog("program").add_help(false);
+    parser.add_argument("-o").help("option of the {prog} itself");
+
+    CHECK(parser.format_help() == "usage: program [-o O]\n\noptional arguments:\n  -o O                  option of the program itself");
+}
+
+TEST_CASE("ArgumentParser replaces '{prog}' with program name taken from first command-line parameter")
+{
+    auto parser = argparse::ArgumentParser().add_help(false).description("This is {prog}.").epilog("This was {prog}.");
+    parser.add_argument("pos").help("this is {prog}'s positional argument");
+    parser.add_argument("-o").help("this is {prog}'s optional argument");
+
+    parser.parse_args(2, cstr_arr{"program", "p"});
+
+    CHECK(parser.format_help() == "usage: program [-o O] pos\n\nThis is program.\n\npositional arguments:\n  pos                   this is program's positional argument\n\noptional arguments:\n  -o O                  this is program's optional argument\n\nThis was program."s);
 }

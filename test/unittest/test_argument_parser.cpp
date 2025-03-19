@@ -299,6 +299,20 @@ TEST_CASE("ArgumentParser uses usage parameter as its usage in help message")
     CHECK(parser.format_help() == "usage: program [options]"s);
 }
 
+TEST_CASE("ArgumentParser replaces '{prog}' with program name in usage text")
+{
+    auto parser = argparse::ArgumentParser().prog("program").add_help(false).usage("{prog} [options]");
+
+    CHECK(parser.format_usage() == "usage: program [options]"s);
+}
+
+TEST_CASE("ArgumentParser replaces '{prog}' with program name in usage text")
+{
+    auto parser = argparse::ArgumentParser().prog("program").add_help(false).usage("{prog} [options]");
+
+    CHECK(parser.format_help() == "usage: program [options]"s);
+}
+
 TEST_CASE("Adding a positional argument with required option set results in error")
 {
     auto parser = argparse::ArgumentParser();
