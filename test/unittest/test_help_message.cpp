@@ -676,3 +676,11 @@ TEST_CASE("ArgumentParser replaces '{prog}' with program name in epilog text")
 
     CHECK(parser.format_help() == "usage: program\n\nAnd that's how you'd foo a bar using program"s);
 }
+
+TEST_CASE("ArgumentParser replaces '{prog}' with program name in positional argument help message")
+{
+    auto parser = argparse::ArgumentParser().prog("program").add_help(false);
+    parser.add_argument("p1").help("p1 of the {prog} itself");
+
+    CHECK(parser.format_help() == "usage: program p1\n\npositional arguments:\n  p1                    p1 of the program itself"s);
+}
