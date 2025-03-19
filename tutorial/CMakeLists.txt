@@ -1,35 +1,35 @@
 cmake_minimum_required(VERSION 3.15)
 
 set(targets
+    advanced
+    advanced1
     basic
-    positional
-    positional1
-    positional3
-    optional
-    optional1
-    optional2
     complex
     complex1
     complex2
     complex3
+    conflicting
+    conflicting1
     count
     count2
     count3
-    advanced
-    advanced1
-    conflicting
-    conflicting1
-    nohelp
-    undesired
-    nohandling
-    nohandling1
-    nohandling2
-    version
     custom
     custom1
     custom2
+    nohandling
+    nohandling1
+    nohandling2
+    nohelp
+    optional
+    optional1
+    optional2
+    positional
+    positional1
+    positional3
+    string
     types
-    string)
+    undesired
+    version)
 
 foreach(target ${targets})
         add_executable(${target})
