@@ -139,7 +139,7 @@ The below lists features of the `argparse` module that this implementation suppo
       * [x] `count`
       * [x] `help`
       * [x] `version`
-   * [x] `nargs` (except for `REMAINDER`)
+   * [x] `nargs`
    * [x] `const` (renamed to `const_` due to keyword clash)
    * [x] `default` (renamed to `default_` due to keyword clash; only for optional arguments and with no string parsing)
    * [x] `type` (built-in (except for `bool`) and user-defined types (via overloading `from_string` function))
