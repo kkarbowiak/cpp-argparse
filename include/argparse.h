@@ -286,7 +286,7 @@ namespace argparse
             {
                 if (auto it = std::ranges::find_if(m_arguments, [](auto && arg) { return arg->has_version_action(); }); it != m_arguments.end())
                 {
-                    return (*it)->get_version();
+                    return replace_prog((*it)->get_version(), *m_prog);
                 }
 
                 return "";
