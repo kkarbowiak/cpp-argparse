@@ -458,7 +458,7 @@ namespace argparse
                     return text;
                 }
 
-                auto const pattern = std::string_view("{prog}");
+                constexpr auto pattern = std::string_view("{prog}");
                 auto pos = text.find(pattern);
                 if (pos != std::string::npos)
                 {
