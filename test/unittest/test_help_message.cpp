@@ -684,3 +684,11 @@ TEST_CASE("ArgumentParser replaces '{prog}' with program name in positional argu
 
     CHECK(parser.format_help() == "usage: program p1\n\npositional arguments:\n  p1                    p1 of the program itself"s);
 }
+
+TEST_CASE("ArgumentParser replaces '{prog}' with program name in optional argument help message")
+{
+    auto parser = argparse::ArgumentParser().prog("program").add_help(false);
+    parser.add_argument("-o").help("option of the {prog} itself");
+
+    CHECK(parser.format_help() == "usage: program [-o O]\n\noptional arguments:\n  -o O                  option of the program itself");
+}

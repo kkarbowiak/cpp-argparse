@@ -1335,7 +1335,7 @@ namespace argparse
                             if (auto const & help = arg->get_help_message(); !help.empty())
                             {
                                 arg_line += help_string_separation(arg_line.size());
-                                arg_line += help;
+                                arg_line += replace_prog(help);
                             }
 
                             optionals += '\n' + arg_line;
