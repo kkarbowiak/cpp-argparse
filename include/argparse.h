@@ -451,6 +451,17 @@ namespace argparse
                 return result;
             }
 
+            static auto replace_prog(std::string text, std::string const & replacement) -> std::string
+            {
+                auto const pattern = std::string_view("{prog}");
+                auto pos = text.find(pattern);
+                if (pos != std::string::npos)
+                {
+                    text.replace(pos, pattern.size(), replacement);
+                }
+                return text;
+            }
+
         private:
             class MutuallyExclusiveGroup;
 
@@ -1181,7 +1192,7 @@ namespace argparse
 
                         if (m_description)
                         {
-                            message += "\n\n" + replace_prog(*m_description);
+                            message += "\n\n" + replace_prog(*m_description, *m_prog);
                         }
 
                         if (!positionals.empty())
@@ -1196,7 +1207,7 @@ namespace argparse
 
                         if (m_epilog)
                         {
-                            message += "\n\n" + replace_prog(*m_epilog);
+                            message += "\n\n" + replace_prog(*m_epilog, *m_prog);
                         }
 
                         return message;
@@ -1292,7 +1303,7 @@ namespace argparse
                             if (auto const & help = arg->get_help_message(); !help.empty())
                             {
                                 arg_line += help_string_separation(arg_line.size());
-                                arg_line += replace_prog(help);
+                                arg_line += replace_prog(help, *m_prog);
                             }
 
                             positionals += '\n' + arg_line;
@@ -1335,7 +1346,7 @@ namespace argparse
                             if (auto const & help = arg->get_help_message(); !help.empty())
                             {
                                 arg_line += help_string_separation(arg_line.size());
-                                arg_line += replace_prog(help);
+                                arg_line += replace_prog(help, *m_prog);
                             }
 
                             optionals += '\n' + arg_line;
@@ -1388,17 +1399,6 @@ namespace argparse
                         return arg_line_length < 23
                             ? fill.substr(arg_line_length + 1)
                             : fill;
-                    }
-
-                    auto replace_prog(std::string text) const -> std::string
-                    {
-                        auto const pattern = std::string_view("{prog}");
-                        auto pos = text.find(pattern);
-                        if (pos != std::string::npos)
-                        {
-                            text.replace(pos, pattern.size(), *m_prog);
-                        }
-                        return text;
                     }
 
                 private:
