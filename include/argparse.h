@@ -1181,7 +1181,7 @@ namespace argparse
 
                         if (m_description)
                         {
-                            message += "\n\n" + *m_description;
+                            message += "\n\n" + replace_prog(*m_description);
                         }
 
                         if (!positionals.empty())
@@ -1388,6 +1388,17 @@ namespace argparse
                         return arg_line_length < 23
                             ? fill.substr(arg_line_length + 1)
                             : fill;
+                    }
+
+                    auto replace_prog(std::string text) const -> std::string
+                    {
+                        auto const pattern = std::string_view("{prog}");
+                        auto pos = text.find(pattern);
+                        if (pos != std::string::npos)
+                        {
+                            text.replace(pos, pattern.size(), *m_prog);
+                        }
+                        return text;
                     }
 
                 private:

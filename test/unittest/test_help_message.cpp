@@ -662,3 +662,10 @@ TEST_CASE("Help string starts on 25th column of the next line for optional argum
 
     CHECK(parser.format_help() == "usage: prog [--abcdefghijklmnopq A]\n\noptional arguments:\n  --abcdefghijklmnopq A\n                        help");
 }
+
+TEST_CASE("ArgumentParser replaces '{prog}' with program name in description text")
+{
+    auto parser = argparse::ArgumentParser().prog("program").description("A {prog} that bars").add_help(false);
+
+    CHECK(parser.format_help() == "usage: program\n\nA program that bars"s);
+}
