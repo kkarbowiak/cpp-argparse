@@ -33,7 +33,7 @@ parser = argparse.ArgumentParser(prog='app', usage='%(prog)s', description='Show
 in C++ you need something else. C++ argparse uses Named Parameter Idiom to achieve similar functionality:
 
 ```c++
-auto parser = argparse::ArgumentParser().prog("app").usage("%(prog)s").description("Showcase app");
+auto parser = argparse::ArgumentParser().prog("app").usage("{prog}").description("Showcase app");
 ```
 
 It is a bit more verbose and a bit less convenient, but I believe it is still usable.
