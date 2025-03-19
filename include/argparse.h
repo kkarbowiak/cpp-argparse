@@ -286,7 +286,7 @@ namespace argparse
             {
                 if (auto it = std::ranges::find_if(m_arguments, [](auto && arg) { return arg->has_version_action(); }); it != m_arguments.end())
                 {
-                    return replace_prog((*it)->get_version(), *m_prog);
+                    return replace_prog((*it)->get_version(), m_prog);
                 }
 
                 return "";
@@ -451,13 +451,18 @@ namespace argparse
                 return result;
             }
 
-            static auto replace_prog(std::string text, std::string const & replacement) -> std::string
+            static auto replace_prog(std::string text, optstring const & replacement) -> std::string
             {
+                if (!replacement)
+                {
+                    return text;
+                }
+
                 auto const pattern = std::string_view("{prog}");
                 auto pos = text.find(pattern);
                 if (pos != std::string::npos)
                 {
-                    text.replace(pos, pattern.size(), replacement);
+                    text.replace(pos, pattern.size(), *replacement);
                 }
                 return text;
             }
@@ -1178,7 +1183,7 @@ namespace argparse
                     {
                         if (m_usage)
                         {
-                            return std::format("usage: {}", replace_prog(*m_usage, *m_prog));
+                            return std::format("usage: {}", replace_prog(*m_usage, m_prog));
                         }
 
                         return std::format("usage: {}{}{}", *m_prog, format_usage_optionals(), format_usage_positionals());
@@ -1192,7 +1197,7 @@ namespace argparse
 
                         if (m_description)
                         {
-                            message += "\n\n" + replace_prog(*m_description, *m_prog);
+                            message += "\n\n" + replace_prog(*m_description, m_prog);
                         }
 
                         if (!positionals.empty())
@@ -1207,7 +1212,7 @@ namespace argparse
 
                         if (m_epilog)
                         {
-                            message += "\n\n" + replace_prog(*m_epilog, *m_prog);
+                            message += "\n\n" + replace_prog(*m_epilog, m_prog);
                         }
 
                         return message;
@@ -1303,7 +1308,7 @@ namespace argparse
                             if (auto const & help = arg->get_help_message(); !help.empty())
                             {
                                 arg_line += help_string_separation(arg_line.size());
-                                arg_line += replace_prog(help, *m_prog);
+                                arg_line += replace_prog(help, m_prog);
                             }
 
                             positionals += '\n' + arg_line;
@@ -1346,7 +1351,7 @@ namespace argparse
                             if (auto const & help = arg->get_help_message(); !help.empty())
                             {
                                 arg_line += help_string_separation(arg_line.size());
-                                arg_line += replace_prog(help, *m_prog);
+                                arg_line += replace_prog(help, m_prog);
                             }
 
                             optionals += '\n' + arg_line;
