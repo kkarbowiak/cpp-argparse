@@ -5,19 +5,19 @@ include(CTest)
 add_executable(unittest)
 target_sources(unittest
     PRIVATE
-    main.cpp
-    test_argument_parser.cpp
-    test_parsing.cpp
-    test_parsing_positional.cpp
-    test_parsing_optional.cpp
-    test_parsing_mutually_exclusive_group.cpp
-    test_usage_message.cpp
-    test_help_message.cpp
-    test_error_message.cpp
-    test_version.cpp
     cstring_array.h
     custom_a.h
-    custom_b.h)
+    custom_b.h
+    main.cpp
+    test_argument_parser.cpp
+    test_error_message.cpp
+    test_help_message.cpp
+    test_parsing.cpp
+    test_parsing_mutually_exclusive_group.cpp
+    test_parsing_optional.cpp
+    test_parsing_positional.cpp
+    test_usage_message.cpp
+    test_version.cpp)
 
 target_include_directories(unittest
     PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>)
