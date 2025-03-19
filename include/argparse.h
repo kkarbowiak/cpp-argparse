@@ -1196,7 +1196,7 @@ namespace argparse
 
                         if (m_epilog)
                         {
-                            message += "\n\n" + *m_epilog;
+                            message += "\n\n" + replace_prog(*m_epilog);
                         }
 
                         return message;
