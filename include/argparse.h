@@ -38,6 +38,7 @@ namespace argparse
         store_false,
         store_const,
         count,
+        append,
         help,
         version
     };
@@ -927,6 +928,8 @@ namespace argparse
                                         {
                                             ++std::any_cast<int &>(m_value);
                                         }
+                                        break;
+                                    case append:
                                         break;
                                     case help:
                                         m_value = true;
