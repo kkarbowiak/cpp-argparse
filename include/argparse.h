@@ -460,9 +460,10 @@ namespace argparse
 
                 constexpr auto pattern = std::string_view("{prog}");
                 auto pos = text.find(pattern);
-                if (pos != std::string::npos)
+                while (pos != std::string::npos)
                 {
                     text.replace(pos, pattern.size(), *replacement);
+                    pos = text.find(pattern, pos + replacement->size());
                 }
                 return text;
             }
