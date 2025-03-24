@@ -537,7 +537,7 @@ namespace argparse
 
                     auto size(std::any const & value) const -> std::size_t override
                     {
-                        return std::any_cast<std::vector<T>>(value).size();
+                        return std::any_cast<std::vector<T> const &>(value).size();
                     }
             };
 
