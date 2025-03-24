@@ -949,8 +949,8 @@ namespace argparse
                                             }
                                             else
                                             {
-                                                auto const value = consume_arg(consumable_args.front());
-                                                m_options.type_handler->append(value, m_value);
+                                                auto const val = consume_arg(consumable_args.front());
+                                                m_options.type_handler->append(val, m_value);
                                             }
                                         }
                                         break;
