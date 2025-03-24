@@ -351,6 +351,14 @@ TEST_CASE("Usage message contains for optional argument name for argument with c
     CHECK(parser.format_usage() == "usage: prog [-c]"s);
 }
 
+TEST_CASE("Usage message contains for optional argument name and automatic metavar for argument with append action")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("-a").action(argparse::append);
+
+    CHECK(parser.format_usage() == "usage: prog [-a A]"s);
+}
+
 TEST_CASE("Usage message contains for optional argument name for argument with help action")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
