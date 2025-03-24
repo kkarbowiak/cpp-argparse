@@ -208,7 +208,7 @@ TEST_CASE("Parsing an optional argument with append action throws an exception w
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("-a").action(argparse::append);
 
-    CHECK_THROWS(parser.parse_args(2, cstr_arr{"prog", "-a"}));
+    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-a"}), "argument -a: expected one argument", argparse::parsing_error);
 }
 
 TEST_CASE("Parsing an optional argument with append action yields a list of arguments for one argument")
