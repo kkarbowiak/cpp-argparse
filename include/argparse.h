@@ -936,15 +936,22 @@ namespace argparse
                                         }
                                         break;
                                     case append:
-                                        if (!m_value.has_value())
+                                        if (consumable_args.empty())
                                         {
-                                            auto const values = consume_args(consumable_args | std::views::take(1));
-                                            m_value = m_options.type_handler->transform(values);
+                                            throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
                                         }
                                         else
                                         {
-                                            auto const value = consume_arg(consumable_args.front());
-                                            m_options.type_handler->append(value, m_value);
+                                            if (!m_value.has_value())
+                                            {
+                                                auto const values = consume_args(consumable_args | std::views::take(1));
+                                                m_value = m_options.type_handler->transform(values);
+                                            }
+                                            else
+                                            {
+                                                auto const value = consume_arg(consumable_args.front());
+                                                m_options.type_handler->append(value, m_value);
+                                            }
                                         }
                                         break;
                                     case help:

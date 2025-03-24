@@ -203,6 +203,14 @@ TEST_CASE("Parsing an optional argument with append action yields false when it'
     CHECK(!parsed.get("a"));
 }
 
+TEST_CASE("Parsing an optional argument with append action throws an exception when it's missing argument")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-a").action(argparse::append);
+
+    CHECK_THROWS(parser.parse_args(2, cstr_arr{"prog", "-a"}));
+}
+
 TEST_CASE("Parsing an optional argument with append action yields a list of arguments for one argument")
 {
     auto parser = argparse::ArgumentParser();
