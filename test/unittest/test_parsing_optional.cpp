@@ -213,6 +213,16 @@ TEST_CASE("Parsing an optional argument with append action yields a list of argu
     CHECK(parsed.get_value<std::vector<std::string>>("a") == std::vector<std::string>{"one"});
 }
 
+TEST_CASE("Parsing an optional argument with append action yields a list of arguments for two arguments")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-a").action(argparse::append);
+
+    auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-a", "one", "-a", "two"});
+
+    CHECK(parsed.get_value<std::vector<std::string>>("a") == std::vector<std::string>{"one", "two"});
+}
+
 TEST_CASE("Parsing an optional argument with help action yields false when it's missing")
 {
     auto parser = argparse::ArgumentParser().add_help(false).handle(argparse::Handle::none);
