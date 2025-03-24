@@ -152,6 +152,15 @@ TEST_CASE("ArgumentParser provides usage message for one optional argument with 
     CHECK(parser.format_usage() == "usage: prog [-a A]"s);
 }
 
+TEST_CASE("ArgumentParser provides usage message for two optional arguments with append action")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("-a").action(argparse::append);
+    parser.add_argument("--append").action(argparse::append);
+
+    CHECK(parser.format_usage() == "usage: prog [-a A] [--append APPEND]"s);
+}
+
 TEST_CASE("ArgumentParser provides usage message for one optional argument with help action")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
