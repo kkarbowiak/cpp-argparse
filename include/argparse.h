@@ -358,14 +358,14 @@ namespace argparse
             {
                 for (auto const & arg : m_arguments
                     | std::views::filter([](auto && arg){ return !arg->is_positional(); })
-                    | std::views::filter([](auto && arg){ return arg->has_store_action(); }))
+                    | std::views::filter([](auto && arg){ return arg->expects_argument(); }))
                 {
                     arg->parse_args(args);
                 }
 
                 for (auto const & arg : m_arguments
                     | std::views::filter([](auto && arg){ return !arg->is_positional(); })
-                    | std::views::filter([](auto && arg){ return !arg->has_store_action(); }))
+                    | std::views::filter([](auto && arg){ return !arg->expects_argument(); }))
                 {
                     arg->parse_args(args);
                 }
@@ -616,7 +616,7 @@ namespace argparse
                         return (m_options.mutually_exclusive_group != nullptr) && (m_options.mutually_exclusive_group == other.m_options.mutually_exclusive_group);
                     }
 
-                    auto has_store_action() const -> bool
+                    auto expects_argument() const -> bool
                     {
                         return m_options.action == store;
                     }
@@ -1272,7 +1272,7 @@ namespace argparse
                                 else
                                 {
                                     optionals += arg->get_name();
-                                    if (arg->has_store_action())
+                                    if (arg->expects_argument())
                                     {
                                         optionals += " ";
                                         optionals += format_arg(*arg);
@@ -1335,7 +1335,7 @@ namespace argparse
                                 }
 
                                 arg_line += *name_it;
-                                if (arg->has_store_action())
+                                if (arg->expects_argument())
                                 {
                                     if (arg->has_nargs())
                                     {
