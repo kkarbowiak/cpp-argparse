@@ -193,10 +193,14 @@ TEST_CASE("Parsing an optional argument with count action yields the argument co
     CHECK(parsed.get_value<int>("c") == 3);
 }
 
-TEST_CASE("Parser accepts append action")
+TEST_CASE("Parsing an optional argument with append action yields false when it's missing")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-a").action(argparse::append);
+
+    auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+
+    CHECK(!parsed.get("a"));
 }
 
 TEST_CASE("Parsing an optional argument with help action yields false when it's missing")
