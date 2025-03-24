@@ -672,6 +672,13 @@ TEST_CASE("ArgumentParser replaces '{prog}' with program name in description tex
     CHECK(parser.format_help() == "usage: program\n\nA program that bars"s);
 }
 
+TEST_CASE("ArgumentParser replaces '{prog}' with program name in description text")
+{
+    auto parser = argparse::ArgumentParser().prog("program").description("A {prog} that {prog}s").add_help(false);
+
+    CHECK(parser.format_help() == "usage: program\n\nA program that programs"s);
+}
+
 TEST_CASE("ArgumentParser replaces '{prog}' with program name in epilog text")
 {
     auto parser = argparse::ArgumentParser().prog("program").epilog("And that's how you'd foo a bar using {prog}").add_help(false);
