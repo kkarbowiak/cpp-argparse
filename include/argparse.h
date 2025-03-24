@@ -625,7 +625,7 @@ namespace argparse
 
                     auto expects_argument() const -> bool
                     {
-                        return m_options.action == store;
+                        return m_options.action == store || m_options.action == append;
                     }
 
                     auto has_version_action() const -> bool
