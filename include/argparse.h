@@ -930,6 +930,7 @@ namespace argparse
                                         }
                                         break;
                                     case append:
+                                        parse_arguments(consumable_args);
                                         break;
                                     case help:
                                         m_value = true;
