@@ -943,8 +943,8 @@ namespace argparse
                                         }
                                         else
                                         {
-                                            auto const values = consume_args(consumable_args | std::views::take(1));
-                                            m_options.type_handler->append(values.front(), m_value);
+                                            auto const value = consume_arg(consumable_args.front());
+                                            m_options.type_handler->append(value, m_value);
                                         }
                                         break;
                                     case help:
