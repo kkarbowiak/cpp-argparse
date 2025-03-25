@@ -2561,7 +2561,7 @@ TEST_CASE("Parsing long option with joined argument yields its value")
     CHECK(args.get_value("long") == "value");
 }
 
-TEST_CASE_TEMPLATE("Parsing long option with joined argument yields its value", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int)
+TEST_CASE_TEMPLATE("Parsing long option with joined argument yields its value", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double)
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("--long").type<T>();
@@ -2577,6 +2577,12 @@ TEST_CASE_TEMPLATE("Parsing long option with joined argument yields its value", 
         auto args = parser.parse_args(2, cstr_arr{"prog", "--long=65"});
 
         CHECK(args.get_value<T>("long") == T(65));
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        auto args = parser.parse_args(2, cstr_arr{"prog", "--long=1.125"});
+
+        CHECK(args.get_value<T>("long") == T(1.125));
     }
 }
 
