@@ -913,15 +913,35 @@ namespace argparse
                                         }
                                         break;
                                     case store_true:
+                                        if (!value.empty())
+                                        {
+                                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", join(get_names(), "/"), value));
+                                        }
+
                                         m_value = true;
                                         break;
                                     case store_false:
+                                        if (!value.empty())
+                                        {
+                                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", join(get_names(), "/"), value));
+                                        }
+
                                         m_value = false;
                                         break;
                                     case store_const:
+                                        if (!value.empty())
+                                        {
+                                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", join(get_names(), "/"), value));
+                                        }
+
                                         m_value = m_options.const_;
                                         break;
                                     case count:
+                                        if (!value.empty())
+                                        {
+                                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", join(get_names(), "/"), value));
+                                        }
+
                                         if (!m_value.has_value())
                                         {
                                             m_value = 1;
