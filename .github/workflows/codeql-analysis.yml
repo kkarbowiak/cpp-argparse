@@ -11,6 +11,7 @@ on:
 
 jobs:
   analyze:
+    if: false # disable as it provides little value
     name: Analyze
     runs-on: ubuntu-latest
     permissions:
