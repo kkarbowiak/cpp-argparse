@@ -556,7 +556,7 @@ namespace argparse
                 Action action = store;
                 std::any const_;
                 std::any default_;
-                bool required;
+                bool required = false;
                 std::vector<std::any> choices;
                 std::optional<std::variant<std::size_t, Nargs>> nargs;
                 MutuallyExclusiveGroup const * mutually_exclusive_group = nullptr;
