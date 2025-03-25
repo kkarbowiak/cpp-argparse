@@ -956,6 +956,11 @@ namespace argparse
                                                 }
                                             }
                                         }
+                                        else
+                                        {
+                                            auto const values = consume_args(std::views::single(Token{value}));
+                                            m_value = m_options.type_handler->transform(values);
+                                        }
                                         break;
                                     case help:
                                         m_value = true;
