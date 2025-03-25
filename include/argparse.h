@@ -917,6 +917,7 @@ namespace argparse
                                         {
                                             throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", join(get_names(), "/"), value));
                                         }
+
                                         m_value = true;
                                         break;
                                     case store_false:
@@ -924,6 +925,7 @@ namespace argparse
                                         {
                                             throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", join(get_names(), "/"), value));
                                         }
+
                                         m_value = false;
                                         break;
                                     case store_const:
@@ -931,6 +933,7 @@ namespace argparse
                                         {
                                             throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", join(get_names(), "/"), value));
                                         }
+
                                         m_value = m_options.const_;
                                         break;
                                     case count:
