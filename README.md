@@ -137,6 +137,7 @@ The below lists features of the `argparse` module that this implementation suppo
       * [x] `store_false`
       * [x] `store_const`
       * [x] `count`
+      * [x] `append`
       * [x] `help`
       * [x] `version`
    * [x] `nargs`
