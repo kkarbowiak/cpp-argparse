@@ -920,6 +920,10 @@ namespace argparse
                                         m_value = true;
                                         break;
                                     case store_false:
+                                        if (!value.empty())
+                                        {
+                                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", join(get_names(), "/"), value));
+                                        }
                                         m_value = false;
                                         break;
                                     case store_const:
