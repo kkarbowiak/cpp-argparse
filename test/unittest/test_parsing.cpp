@@ -183,3 +183,35 @@ TEST_CASE("Parsing")
 
     CHECK_THROWS_WITH_AS(parser.parse_args(5, cstr_arr{"prog", "p1", "p2", "-f", "p3"}), "unrecognised arguments: p3", argparse::parsing_error);
 }
+
+TEST_CASE("Optional argument does not consume unexpected joined value")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").action(argparse::store_true);
+
+    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-oval"}), "unrecognised arguments: -val", argparse::parsing_error);
+}
+
+TEST_CASE("Optional argument does not consume unexpected joined value")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").action(argparse::store_false);
+
+    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-oval"}), "unrecognised arguments: -val", argparse::parsing_error);
+}
+
+TEST_CASE("Optional argument does not consume unexpected joined value")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").action(argparse::store_const).const_("foo"s);
+
+    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-oval"}), "unrecognised arguments: -val", argparse::parsing_error);
+}
+
+TEST_CASE("Optional argument does not consume unexpected joined value")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-o").action(argparse::count);
+
+    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-oval"}), "unrecognised arguments: -val", argparse::parsing_error);
+}
