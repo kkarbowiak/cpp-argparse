@@ -938,18 +938,16 @@ namespace argparse
                                             {
                                                 throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
                                             }
+
+                                            if (!m_value.has_value())
+                                            {
+                                                auto const values = consume_args(consumable_args | std::views::take(1));
+                                                m_value = m_options.type_handler->transform(values);
+                                            }
                                             else
                                             {
-                                                if (!m_value.has_value())
-                                                {
-                                                    auto const values = consume_args(consumable_args | std::views::take(1));
-                                                    m_value = m_options.type_handler->transform(values);
-                                                }
-                                                else
-                                                {
-                                                    auto const val = consume_arg(consumable_args.front());
-                                                    m_options.type_handler->append(val, m_value);
-                                                }
+                                                auto const val = consume_arg(consumable_args.front());
+                                                m_options.type_handler->append(val, m_value);
                                             }
                                         }
                                         else
