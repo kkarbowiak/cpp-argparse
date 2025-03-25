@@ -883,6 +883,18 @@ namespace argparse
 
                                 switch (m_options.action)
                                 {
+                                    case store_true:
+                                        if (!value.empty())
+                                        {
+                                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", join(get_names(), "/"), value));
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+
+                                switch (m_options.action)
+                                {
                                     case store:
                                         if (has_nargs())
                                         {
@@ -913,11 +925,6 @@ namespace argparse
                                         }
                                         break;
                                     case store_true:
-                                        if (!value.empty())
-                                        {
-                                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", join(get_names(), "/"), value));
-                                        }
-
                                         m_value = true;
                                         break;
                                     case store_false:
