@@ -241,6 +241,37 @@ TEST_CASE("Parsing an optional argument with append action yields a list of argu
     CHECK(parsed.get_value<std::vector<std::string>>("a") == std::vector<std::string>{"one", "two", "three"});
 }
 
+TEST_CASE_TEMPLATE("Parsing an optional argument with append action yields its requested type", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom, bar::Custom)
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-a").action(argparse::append).type<T>();
+
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-a", "A"});
+
+        CHECK(parsed.get_value<std::vector<T>>("a") == std::vector{T(65)});
+    }
+    else if constexpr (std::is_integral_v<T>)
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-a", "65"});
+
+        CHECK(parsed.get_value<std::vector<T>>("a") == std::vector{T(65)});
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-a", "1.125"});
+
+        CHECK(parsed.get_value<std::vector<T>>("a") == std::vector{T(1.125)});
+    }
+    else
+    {
+        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-a", "bar"});
+
+        CHECK(parsed.get_value<std::vector<T>>("a") == std::vector{T("bar")});
+    }
+}
+
 TEST_CASE("Parsing an optional argument with help action yields false when it's missing")
 {
     auto parser = argparse::ArgumentParser().add_help(false).handle(argparse::Handle::none);
