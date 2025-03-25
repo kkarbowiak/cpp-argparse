@@ -884,6 +884,32 @@ namespace argparse
                                 switch (m_options.action)
                                 {
                                     case store:
+                                        if (!has_nargs() && value.empty() && consumable_args.empty())
+                                        {
+                                            throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
+                                        }
+                                        break;
+                                    case store_true:
+                                    case store_false:
+                                    case store_const:
+                                    case count:
+                                        if (!value.empty())
+                                        {
+                                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", join(get_names(), "/"), value));
+                                        }
+                                        break;
+                                    case append:
+                                        if (value.empty() && consumable_args.empty())
+                                        {
+                                            throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
+                                        }
+                                    default:
+                                        break;
+                                }
+
+                                switch (m_options.action)
+                                {
+                                    case store:
                                         if (has_nargs())
                                         {
                                             if (has_nargs_number())
@@ -899,11 +925,6 @@ namespace argparse
                                         {
                                             if (value.empty())
                                             {
-                                                if (consumable_args.empty())
-                                                {
-                                                    throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
-                                                }
-
                                                 m_value = consume_arg(consumable_args.front());
                                             }
                                             else
@@ -913,35 +934,15 @@ namespace argparse
                                         }
                                         break;
                                     case store_true:
-                                        if (!value.empty())
-                                        {
-                                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", join(get_names(), "/"), value));
-                                        }
-
                                         m_value = true;
                                         break;
                                     case store_false:
-                                        if (!value.empty())
-                                        {
-                                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", join(get_names(), "/"), value));
-                                        }
-
                                         m_value = false;
                                         break;
                                     case store_const:
-                                        if (!value.empty())
-                                        {
-                                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", join(get_names(), "/"), value));
-                                        }
-
                                         m_value = m_options.const_;
                                         break;
                                     case count:
-                                        if (!value.empty())
-                                        {
-                                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", join(get_names(), "/"), value));
-                                        }
-
                                         if (!m_value.has_value())
                                         {
                                             m_value = 1;
@@ -954,11 +955,6 @@ namespace argparse
                                     case append:
                                         if (value.empty())
                                         {
-                                            if (consumable_args.empty())
-                                            {
-                                                throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
-                                            }
-
                                             if (!m_value.has_value())
                                             {
                                                 auto const values = consume_args(consumable_args | std::views::take(1));
