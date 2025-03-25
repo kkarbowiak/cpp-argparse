@@ -2632,7 +2632,7 @@ TEST_CASE("Parsing short option with joined argument yields its value")
     CHECK(args.get_value("o") == "value");
 }
 
-TEST_CASE_TEMPLATE("Parsing short option with joined argument yields its value", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double)
+TEST_CASE_TEMPLATE("Parsing short option with joined argument yields its value", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom, bar::Custom)
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o").type<T>();
@@ -2654,6 +2654,12 @@ TEST_CASE_TEMPLATE("Parsing short option with joined argument yields its value",
         auto args = parser.parse_args(2, cstr_arr{"prog", "-o1.125"});
 
         CHECK(args.get_value<T>("o") == T(1.125));
+    }
+    else
+    {
+        auto args = parser.parse_args(2, cstr_arr{"prog", "-obar"});
+
+        CHECK(args.get_value<T>("o") == T("bar"));
     }
 }
 
