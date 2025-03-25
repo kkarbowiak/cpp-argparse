@@ -38,6 +38,7 @@ namespace argparse
         store_false,
         store_const,
         count,
+        append,
         help,
         version
     };
@@ -480,6 +481,7 @@ namespace argparse
                     virtual auto to_string(std::any const & value) const -> std::string = 0;
                     virtual auto compare(std::any const & lhs, std::any const & rhs) const -> bool = 0;
                     virtual auto transform(std::vector<std::any> const & values) const -> std::any = 0;
+                    virtual auto append(std::any const & value, std::any & values) const -> void = 0;
                     virtual auto size(std::any const & value) const -> std::size_t = 0;
             };
 
@@ -533,6 +535,11 @@ namespace argparse
                         auto const transformation = values
                             | std::views::transform([](auto const & value) { return std::any_cast<T>(value); });
                         return std::any(std::vector(transformation.begin(), transformation.end()));
+                    }
+
+                    auto append(std::any const & value, std::any & values) const -> void override
+                    {
+                        std::any_cast<std::vector<T> &>(values).push_back(std::any_cast<T>(value));
                     }
 
                     auto size(std::any const & value) const -> std::size_t override
@@ -618,7 +625,7 @@ namespace argparse
 
                     auto expects_argument() const -> bool
                     {
-                        return m_options.action == store;
+                        return m_options.action == store || m_options.action == append;
                     }
 
                     auto has_version_action() const -> bool
@@ -928,6 +935,41 @@ namespace argparse
                                             ++std::any_cast<int &>(m_value);
                                         }
                                         break;
+                                    case append:
+                                        if (value.empty())
+                                        {
+                                            if (consumable_args.empty())
+                                            {
+                                                throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
+                                            }
+                                            else
+                                            {
+                                                if (!m_value.has_value())
+                                                {
+                                                    auto const values = consume_args(consumable_args | std::views::take(1));
+                                                    m_value = m_options.type_handler->transform(values);
+                                                }
+                                                else
+                                                {
+                                                    auto const val = consume_arg(consumable_args.front());
+                                                    m_options.type_handler->append(val, m_value);
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (!m_value.has_value())
+                                            {
+                                                auto const values = consume_args(std::views::single(Token{value}));
+                                                m_value = m_options.type_handler->transform(values);
+                                            }
+                                            else
+                                            {
+                                                auto const val = process_arg(value);
+                                                m_options.type_handler->append(val, m_value);
+                                            }
+                                        }
+                                        break;
                                     case help:
                                         m_value = true;
                                         throw HelpRequested();
@@ -1113,7 +1155,7 @@ namespace argparse
                             {
                                 auto const pos = it->m_token.find(name[1]);
                                 it->m_token.erase(pos, 1);
-                                if (m_options.action == store)
+                                if (expects_argument())
                                 {
                                     if (pos == 1)
                                     {

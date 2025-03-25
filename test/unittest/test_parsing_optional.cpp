@@ -193,6 +193,54 @@ TEST_CASE("Parsing an optional argument with count action yields the argument co
     CHECK(parsed.get_value<int>("c") == 3);
 }
 
+TEST_CASE("Parsing an optional argument with append action yields false when it's missing")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-a").action(argparse::append);
+
+    auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+
+    CHECK(!parsed.get("a"));
+}
+
+TEST_CASE("Parsing an optional argument with append action throws an exception when it's missing argument")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-a").action(argparse::append);
+
+    CHECK_THROWS_WITH_AS(parser.parse_args(2, cstr_arr{"prog", "-a"}), "argument -a: expected one argument", argparse::parsing_error);
+}
+
+TEST_CASE("Parsing an optional argument with append action yields a list of arguments for one argument")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-a").action(argparse::append);
+
+    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-a", "one"});
+
+    CHECK(parsed.get_value<std::vector<std::string>>("a") == std::vector<std::string>{"one"});
+}
+
+TEST_CASE("Parsing an optional argument with append action yields a list of arguments for two arguments")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-a").action(argparse::append);
+
+    auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-a", "one", "-a", "two"});
+
+    CHECK(parsed.get_value<std::vector<std::string>>("a") == std::vector<std::string>{"one", "two"});
+}
+
+TEST_CASE("Parsing an optional argument with append action yields a list of arguments for three arguments")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-a").action(argparse::append);
+
+    auto const parsed = parser.parse_args(7, cstr_arr{"prog", "-a", "one", "-a", "two", "-a", "three"});
+
+    CHECK(parsed.get_value<std::vector<std::string>>("a") == std::vector<std::string>{"one", "two", "three"});
+}
+
 TEST_CASE("Parsing an optional argument with help action yields false when it's missing")
 {
     auto parser = argparse::ArgumentParser().add_help(false).handle(argparse::Handle::none);
@@ -2520,6 +2568,34 @@ TEST_CASE("Parsing short option with joined argument yields its value")
     auto args = parser.parse_args(2, cstr_arr{"prog", "-ovalue"});
 
     CHECK(args.get_value("o") == "value");
+}
+
+TEST_CASE("Parsing short option with joined argument with append action does not throw")
+{
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    parser.add_argument("-a").action(argparse::append);
+
+    CHECK_NOTHROW(parser.parse_args(2, cstr_arr{"prog", "-aone"}));
+}
+
+TEST_CASE("Parsing short option with joined argument with append action yields its value")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-a").action(argparse::append);
+
+    auto args = parser.parse_args(2, cstr_arr{"prog", "-aone"});
+
+    CHECK(args.get_value<std::vector<std::string>>("a") == std::vector<std::string>{"one"});
+}
+
+TEST_CASE("Parsing short option with joined argument with append action yields its value")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-a").action(argparse::append);
+
+    auto args = parser.parse_args(3, cstr_arr{"prog", "-aone", "-atwo"});
+
+    CHECK(args.get_value<std::vector<std::string>>("a") == std::vector<std::string>{"one", "two"});
 }
 
 TEST_CASE("Parsing joined short options and short option joined with argument does not throw order ao")

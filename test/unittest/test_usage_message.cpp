@@ -144,6 +144,23 @@ TEST_CASE("ArgumentParser provides usage message for two optional arguments with
     CHECK(parser.format_usage() == "usage: prog [-c] [--count]"s);
 }
 
+TEST_CASE("ArgumentParser provides usage message for one optional argument with append action")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("-a").action(argparse::append);
+
+    CHECK(parser.format_usage() == "usage: prog [-a A]"s);
+}
+
+TEST_CASE("ArgumentParser provides usage message for two optional arguments with append action")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("-a").action(argparse::append);
+    parser.add_argument("--append").action(argparse::append);
+
+    CHECK(parser.format_usage() == "usage: prog [-a A] [--append APPEND]"s);
+}
+
 TEST_CASE("ArgumentParser provides usage message for one optional argument with help action")
 {
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
@@ -332,6 +349,14 @@ TEST_CASE("Usage message contains for optional argument name for argument with c
     parser.add_argument("-c").action(argparse::count);
 
     CHECK(parser.format_usage() == "usage: prog [-c]"s);
+}
+
+TEST_CASE("Usage message contains for optional argument name and automatic metavar for argument with append action")
+{
+    auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
+    parser.add_argument("-a").action(argparse::append);
+
+    CHECK(parser.format_usage() == "usage: prog [-a A]"s);
 }
 
 TEST_CASE("Usage message contains for optional argument name for argument with help action")
