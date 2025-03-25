@@ -883,6 +883,12 @@ namespace argparse
 
                                 switch (m_options.action)
                                 {
+                                    case store:
+                                        if (!has_nargs() && value.empty() && consumable_args.empty())
+                                        {
+                                            throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
+                                        }
+                                        break;
                                     case store_true:
                                     case store_false:
                                     case store_const:
@@ -919,11 +925,6 @@ namespace argparse
                                         {
                                             if (value.empty())
                                             {
-                                                if (consumable_args.empty())
-                                                {
-                                                    throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
-                                                }
-
                                                 m_value = consume_arg(consumable_args.front());
                                             }
                                             else
