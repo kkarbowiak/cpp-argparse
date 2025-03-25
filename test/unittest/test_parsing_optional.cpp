@@ -2561,6 +2561,16 @@ TEST_CASE("Parsing long option with joined argument yields its value")
     CHECK(args.get_value("long") == "value");
 }
 
+TEST_CASE_TEMPLATE("Parsing long option with joined argument yields its value", T, char, signed char, unsigned char)
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("--long").type<T>();
+
+    auto args = parser.parse_args(2, cstr_arr{"prog", "--long=A"});
+
+    CHECK(args.get_value<T>("long") == T(65));
+}
+
 TEST_CASE("Parsing long options with same prefix correctly recognises them plane options")
 {
     auto parser = argparse::ArgumentParser();
