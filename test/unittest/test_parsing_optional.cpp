@@ -2632,14 +2632,23 @@ TEST_CASE("Parsing short option with joined argument yields its value")
     CHECK(args.get_value("o") == "value");
 }
 
-TEST_CASE_TEMPLATE("Parsing short option with joined argument yields its value", T, char, signed char, unsigned char)
+TEST_CASE_TEMPLATE("Parsing short option with joined argument yields its value", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int)
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o").type<T>();
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-oA"});
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        auto args = parser.parse_args(2, cstr_arr{"prog", "-oA"});
 
-    CHECK(args.get_value<T>("o") == T(65));
+        CHECK(args.get_value<T>("o") == T(65));
+    }
+    else if constexpr (std::is_integral_v<T>)
+    {
+        auto args = parser.parse_args(2, cstr_arr{"prog", "-o65"});
+
+        CHECK(args.get_value<T>("o") == T(65));
+    }
 }
 
 TEST_CASE("Parsing short option with joined argument with append action does not throw")
