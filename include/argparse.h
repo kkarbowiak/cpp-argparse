@@ -913,6 +913,10 @@ namespace argparse
                                         }
                                         break;
                                     case store_true:
+                                        if (!value.empty())
+                                        {
+                                            throw 5;
+                                        }
                                         m_value = true;
                                         break;
                                     case store_false:
