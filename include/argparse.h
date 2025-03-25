@@ -915,7 +915,7 @@ namespace argparse
                                     case store_true:
                                         if (!value.empty())
                                         {
-                                            throw 5;
+                                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", join(get_names(), "/"), value));
                                         }
                                         m_value = true;
                                         break;
