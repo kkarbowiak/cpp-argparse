@@ -2561,6 +2561,37 @@ TEST_CASE("Parsing long option with joined argument yields its value")
     CHECK(args.get_value("long") == "value");
 }
 
+TEST_CASE_TEMPLATE("Parsing long option with joined argument yields its value", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom, bar::Custom)
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("--long").type<T>();
+
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        auto args = parser.parse_args(2, cstr_arr{"prog", "--long=A"});
+
+        CHECK(args.get_value<T>("long") == T(65));
+    }
+    else if constexpr (std::is_integral_v<T>)
+    {
+        auto args = parser.parse_args(2, cstr_arr{"prog", "--long=65"});
+
+        CHECK(args.get_value<T>("long") == T(65));
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        auto args = parser.parse_args(2, cstr_arr{"prog", "--long=1.125"});
+
+        CHECK(args.get_value<T>("long") == T(1.125));
+    }
+    else
+    {
+        auto args = parser.parse_args(2, cstr_arr{"prog", "--long=bar"});
+
+        CHECK(args.get_value<T>("long") == T("bar"));
+    }
+}
+
 TEST_CASE("Parsing long options with same prefix correctly recognises them plane options")
 {
     auto parser = argparse::ArgumentParser();
@@ -2599,6 +2630,37 @@ TEST_CASE("Parsing short option with joined argument yields its value")
     auto args = parser.parse_args(2, cstr_arr{"prog", "-ovalue"});
 
     CHECK(args.get_value("o") == "value");
+}
+
+TEST_CASE_TEMPLATE("Parsing short option with joined argument yields its value", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom, bar::Custom)
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-o").type<T>();
+
+    if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
+    {
+        auto args = parser.parse_args(2, cstr_arr{"prog", "-oA"});
+
+        CHECK(args.get_value<T>("o") == T(65));
+    }
+    else if constexpr (std::is_integral_v<T>)
+    {
+        auto args = parser.parse_args(2, cstr_arr{"prog", "-o65"});
+
+        CHECK(args.get_value<T>("o") == T(65));
+    }
+    else if constexpr (std::is_floating_point_v<T>)
+    {
+        auto args = parser.parse_args(2, cstr_arr{"prog", "-o1.125"});
+
+        CHECK(args.get_value<T>("o") == T(1.125));
+    }
+    else
+    {
+        auto args = parser.parse_args(2, cstr_arr{"prog", "-obar"});
+
+        CHECK(args.get_value<T>("o") == T("bar"));
+    }
 }
 
 TEST_CASE("Parsing short option with joined argument with append action does not throw")
