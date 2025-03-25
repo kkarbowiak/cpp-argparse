@@ -886,6 +886,7 @@ namespace argparse
                                     case store_true:
                                     case store_false:
                                     case store_const:
+                                    case count:
                                         if (!value.empty())
                                         {
                                             throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", join(get_names(), "/"), value));
@@ -936,11 +937,6 @@ namespace argparse
                                         m_value = m_options.const_;
                                         break;
                                     case count:
-                                        if (!value.empty())
-                                        {
-                                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", join(get_names(), "/"), value));
-                                        }
-
                                         if (!m_value.has_value())
                                         {
                                             m_value = 1;
