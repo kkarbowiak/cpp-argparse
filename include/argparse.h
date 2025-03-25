@@ -958,8 +958,16 @@ namespace argparse
                                         }
                                         else
                                         {
-                                            auto const values = consume_args(std::views::single(Token{value}));
-                                            m_value = m_options.type_handler->transform(values);
+                                            if (!m_value.has_value())
+                                            {
+                                                auto const values = consume_args(std::views::single(Token{value}));
+                                                m_value = m_options.type_handler->transform(values);
+                                            }
+                                            else
+                                            {
+                                                auto const val = process_arg(value);
+                                                m_options.type_handler->append(val, m_value);
+                                            }
                                         }
                                         break;
                                     case help:

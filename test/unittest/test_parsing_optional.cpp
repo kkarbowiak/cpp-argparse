@@ -2588,6 +2588,16 @@ TEST_CASE("Parsing short option with joined argument with append action yields i
     CHECK(args.get_value<std::vector<std::string>>("a") == std::vector<std::string>{"one"});
 }
 
+TEST_CASE("Parsing short option with joined argument with append action yields its value")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-a").action(argparse::append);
+
+    auto args = parser.parse_args(3, cstr_arr{"prog", "-aone", "-atwo"});
+
+    CHECK(args.get_value<std::vector<std::string>>("a") == std::vector<std::string>{"one", "two"});
+}
+
 TEST_CASE("Parsing joined short options and short option joined with argument does not throw order ao")
 {
     auto parser = argparse::ArgumentParser();
