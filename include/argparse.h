@@ -358,15 +358,13 @@ namespace argparse
             auto parse_optional_arguments(tokens & args) -> void
             {
                 for (auto const & arg : m_arguments
-                    | std::views::filter([](auto && arg){ return !arg->is_positional(); })
-                    | std::views::filter([](auto && arg){ return arg->expects_argument(); }))
+                    | std::views::filter([](auto && arg){ return !arg->is_positional() && arg->expects_argument(); }))
                 {
                     arg->parse_args(args);
                 }
 
                 for (auto const & arg : m_arguments
-                    | std::views::filter([](auto && arg){ return !arg->is_positional(); })
-                    | std::views::filter([](auto && arg){ return !arg->expects_argument(); }))
+                    | std::views::filter([](auto && arg){ return !arg->is_positional() && !arg->expects_argument(); }))
                 {
                     arg->parse_args(args);
                 }
@@ -905,10 +903,8 @@ namespace argparse
                                                 {
                                                     throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
                                                 }
-                                                else
-                                                {
-                                                    m_value = consume_arg(consumable_args.front());
-                                                }
+
+                                                m_value = consume_arg(consumable_args.front());
                                             }
                                             else
                                             {
@@ -942,18 +938,16 @@ namespace argparse
                                             {
                                                 throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
                                             }
+
+                                            if (!m_value.has_value())
+                                            {
+                                                auto const values = consume_args(consumable_args | std::views::take(1));
+                                                m_value = m_options.type_handler->transform(values);
+                                            }
                                             else
                                             {
-                                                if (!m_value.has_value())
-                                                {
-                                                    auto const values = consume_args(consumable_args | std::views::take(1));
-                                                    m_value = m_options.type_handler->transform(values);
-                                                }
-                                                else
-                                                {
-                                                    auto const val = consume_arg(consumable_args.front());
-                                                    m_options.type_handler->append(val, m_value);
-                                                }
+                                                auto const val = consume_arg(consumable_args.front());
+                                                m_options.type_handler->append(val, m_value);
                                             }
                                         }
                                         else
