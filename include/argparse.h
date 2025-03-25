@@ -892,6 +892,11 @@ namespace argparse
                                             throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", join(get_names(), "/"), value));
                                         }
                                         break;
+                                    case append:
+                                        if (value.empty() && consumable_args.empty())
+                                        {
+                                            throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
+                                        }
                                     default:
                                         break;
                                 }
@@ -949,11 +954,6 @@ namespace argparse
                                     case append:
                                         if (value.empty())
                                         {
-                                            if (consumable_args.empty())
-                                            {
-                                                throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
-                                            }
-
                                             if (!m_value.has_value())
                                             {
                                                 auto const values = consume_args(consumable_args | std::views::take(1));
