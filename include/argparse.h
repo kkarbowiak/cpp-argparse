@@ -903,10 +903,8 @@ namespace argparse
                                                 {
                                                     throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
                                                 }
-                                                else
-                                                {
-                                                    m_value = consume_arg(consumable_args.front());
-                                                }
+
+                                                m_value = consume_arg(consumable_args.front());
                                             }
                                             else
                                             {
