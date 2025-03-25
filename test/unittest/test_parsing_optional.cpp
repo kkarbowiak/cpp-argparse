@@ -2632,6 +2632,16 @@ TEST_CASE("Parsing short option with joined argument yields its value")
     CHECK(args.get_value("o") == "value");
 }
 
+TEST_CASE_TEMPLATE("Parsing short option with joined argument yields its value", T, char, signed char, unsigned char)
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-o").type<T>();
+
+    auto args = parser.parse_args(2, cstr_arr{"prog", "-oA"});
+
+    CHECK(args.get_value<T>("o") == T(65));
+}
+
 TEST_CASE("Parsing short option with joined argument with append action does not throw")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
