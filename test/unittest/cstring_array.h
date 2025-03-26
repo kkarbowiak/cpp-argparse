@@ -4,7 +4,7 @@
 #include <array>
 
 
-template<int N, class... Ts>
+template<std::size_t N, class... Ts>
 struct cstr_arr
 {
     cstr_arr(Ts... args)

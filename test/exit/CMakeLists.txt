@@ -8,7 +8,10 @@ target_sources(app
 target_compile_features(app PRIVATE cxx_std_20)
 target_compile_options(app PRIVATE
     $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
-        -Wall -Wextra -Wmisleading-indentation -Wunused -Wuninitialized -Wshadow -Wconversion -Werror -pedantic-errors>
+        -Wall -Wextra -Wmisleading-indentation -Wunused
+        -Wuninitialized -Wshadow -Wconversion -Wsign-conversion
+        -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Woverloaded-virtual
+        -Werror -pedantic-errors>
     $<$<CXX_COMPILER_ID:MSVC>:
         /W4 /WX /permissive->)
 target_link_libraries(app PRIVATE cpp-argparse)
