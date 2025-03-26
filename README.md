@@ -106,7 +106,11 @@ int main(int argc, char* argv[])
 
     auto args = parser.parse_args(argc, argv);
 
-    auto result = move_file(args.get_value("source"), args.get_value("destination"), args.get_value<bool>("force"), args.get_value<bool>("verbose"));
+    auto result = move_file(
+        args.get_value("source"),
+        args.get_value("destination"),
+        args.get_value<bool>("force"),
+        args.get_value<bool>("verbose"));
 
     return result;
 }
