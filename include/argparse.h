@@ -735,7 +735,6 @@ namespace argparse
 
                     auto parse_args(tokens & args) -> void override
                     {
-                        bool past_pseudo_arg = false;
                         auto consumable = args
                             | std::views::drop_while([](auto const & token)
                                 {
@@ -745,7 +744,7 @@ namespace argparse
                                 {
                                     return !token.m_consumed;
                                 })
-                            | std::views::filter([&past_pseudo_arg](auto const & token)
+                            | std::views::filter([past_pseudo_arg = false](auto const & token) mutable
                                 {
                                     if (past_pseudo_arg && (token.m_token != "--"))
                                     {
