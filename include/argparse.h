@@ -321,9 +321,9 @@ namespace argparse
 
                 consume_pseudo_arguments(args);
 
-                ensure_no_unrecognised_arguments(args);
-                ensure_no_arguments_excluded();
-                ensure_no_arguments_missing();
+                check_unrecognised_arguments(args);
+                check_excluded_arguments();
+                check_missing_arguments();
 
                 return get_parameters();
             }
@@ -388,7 +388,7 @@ namespace argparse
                 }
             }
 
-            auto ensure_no_unrecognised_arguments(tokens const & args) const -> void
+            auto check_unrecognised_arguments(tokens const & args) const -> void
             {
                 auto unconsumed = args
                     | std::views::filter([](auto const & token) { return !token.m_consumed; });
@@ -398,7 +398,7 @@ namespace argparse
                 }
             }
 
-            auto ensure_no_arguments_excluded() const -> void
+            auto check_excluded_arguments() const -> void
             {
                 for (auto it1 = m_arguments.begin(); it1 != m_arguments.end(); ++it1)
                 {
@@ -415,7 +415,7 @@ namespace argparse
                 }
             }
 
-            auto ensure_no_arguments_missing() const -> void
+            auto check_missing_arguments() const -> void
             {
                 auto error_message = optstring();
 
