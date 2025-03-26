@@ -321,7 +321,7 @@ namespace argparse
 
                 consume_pseudo_arguments(args);
 
-                ensure_no_unrecognised_arguments(args);
+                check_unrecognised_arguments(args);
                 ensure_no_arguments_excluded();
                 ensure_no_arguments_missing();
 
@@ -388,7 +388,7 @@ namespace argparse
                 }
             }
 
-            auto ensure_no_unrecognised_arguments(tokens const & args) const -> void
+            auto check_unrecognised_arguments(tokens const & args) const -> void
             {
                 auto unconsumed = args
                     | std::views::filter([](auto const & token) { return !token.m_consumed; });
