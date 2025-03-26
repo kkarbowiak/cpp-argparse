@@ -323,7 +323,7 @@ namespace argparse
 
                 check_unrecognised_arguments(args);
                 check_excluded_arguments();
-                ensure_no_arguments_missing();
+                check_missing_arguments();
 
                 return get_parameters();
             }
@@ -415,7 +415,7 @@ namespace argparse
                 }
             }
 
-            auto ensure_no_arguments_missing() const -> void
+            auto check_missing_arguments() const -> void
             {
                 auto error_message = optstring();
 
