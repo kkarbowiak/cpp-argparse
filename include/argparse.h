@@ -979,20 +979,7 @@ namespace argparse
 
                         if (!m_present)
                         {
-                            switch (m_options.action)
-                            {
-                                case store_true:
-                                case help:
-                                case version:
-                                    m_value = false;
-                                    break;
-                                case store_false:
-                                    m_value = true;
-                                    break;
-                                default:
-                                    m_value = m_options.default_;
-                                    break;
-                            }
+                            assing_non_present_value();
                         }
                     }
 
@@ -1213,6 +1200,24 @@ namespace argparse
                                 }
                                 break;
                             default:
+                                break;
+                        }
+                    }
+
+                    auto assing_non_present_value() -> void
+                    {
+                        switch (m_options.action)
+                        {
+                            case store_true:
+                            case help:
+                            case version:
+                                m_value = false;
+                                break;
+                            case store_false:
+                                m_value = true;
+                                break;
+                            default:
+                                m_value = m_options.default_;
                                 break;
                         }
                     }
