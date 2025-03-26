@@ -903,6 +903,7 @@ namespace argparse
                                         {
                                             throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
                                         }
+                                        break;
                                     default:
                                         break;
                                 }
