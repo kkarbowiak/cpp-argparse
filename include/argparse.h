@@ -881,32 +881,7 @@ namespace argparse
                                 auto consumable_args = std::ranges::subrange(std::next(it), consumable.end())
                                     | std::views::take_while([](auto const & token) { return !token.m_token.starts_with("-"); });
 
-                                switch (m_options.action)
-                                {
-                                    case store:
-                                        if (!has_nargs() && value.empty() && consumable_args.empty())
-                                        {
-                                            throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
-                                        }
-                                        break;
-                                    case store_true:
-                                    case store_false:
-                                    case store_const:
-                                    case count:
-                                        if (!value.empty())
-                                        {
-                                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", join(get_names(), "/"), value));
-                                        }
-                                        break;
-                                    case append:
-                                        if (value.empty() && consumable_args.empty())
-                                        {
-                                            throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
-                                        }
-                                        break;
-                                    default:
-                                        break;
-                                }
+                                check_errors(value, consumable_args);
 
                                 switch (m_options.action)
                                 {
@@ -1210,6 +1185,36 @@ namespace argparse
                     auto get_name_for_error() const -> std::string override
                     {
                         return join(get_names(), "/");
+                    }
+
+                    auto check_errors(std::string const & value, std::ranges::view auto args) -> void
+                    {
+                        switch (m_options.action)
+                        {
+                            case store:
+                                if (!has_nargs() && value.empty() && args.empty())
+                                {
+                                    throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
+                                }
+                                break;
+                            case store_true:
+                            case store_false:
+                            case store_const:
+                            case count:
+                                if (!value.empty())
+                                {
+                                    throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", join(get_names(), "/"), value));
+                                }
+                                break;
+                            case append:
+                                if (value.empty() && args.empty())
+                                {
+                                    throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
+                                }
+                                break;
+                            default:
+                                break;
+                        }
                     }
 
                 private:
