@@ -322,7 +322,7 @@ namespace argparse
                 consume_pseudo_arguments(args);
 
                 check_unrecognised_arguments(args);
-                ensure_no_arguments_excluded();
+                check_excluded_arguments();
                 ensure_no_arguments_missing();
 
                 return get_parameters();
@@ -398,7 +398,7 @@ namespace argparse
                 }
             }
 
-            auto ensure_no_arguments_excluded() const -> void
+            auto check_excluded_arguments() const -> void
             {
                 for (auto it1 = m_arguments.begin(); it1 != m_arguments.end(); ++it1)
                 {
