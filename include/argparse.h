@@ -881,113 +881,9 @@ namespace argparse
                                 auto consumable_args = std::ranges::subrange(std::next(it), consumable.end())
                                     | std::views::take_while([](auto const & token) { return !token.m_token.starts_with("-"); });
 
-                                switch (m_options.action)
-                                {
-                                    case store:
-                                        if (!has_nargs() && value.empty() && consumable_args.empty())
-                                        {
-                                            throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
-                                        }
-                                        break;
-                                    case store_true:
-                                    case store_false:
-                                    case store_const:
-                                    case count:
-                                        if (!value.empty())
-                                        {
-                                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", join(get_names(), "/"), value));
-                                        }
-                                        break;
-                                    case append:
-                                        if (value.empty() && consumable_args.empty())
-                                        {
-                                            throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
-                                        }
-                                        break;
-                                    default:
-                                        break;
-                                }
+                                check_errors(value, consumable_args);
 
-                                switch (m_options.action)
-                                {
-                                    case store:
-                                        if (has_nargs())
-                                        {
-                                            if (has_nargs_number())
-                                            {
-                                                parse_arguments_number(consumable_args);
-                                            }
-                                            else
-                                            {
-                                                parse_arguments_option(consumable_args);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (value.empty())
-                                            {
-                                                m_value = consume_arg(consumable_args.front());
-                                            }
-                                            else
-                                            {
-                                                m_value = process_arg(value);
-                                            }
-                                        }
-                                        break;
-                                    case store_true:
-                                        m_value = true;
-                                        break;
-                                    case store_false:
-                                        m_value = false;
-                                        break;
-                                    case store_const:
-                                        m_value = m_options.const_;
-                                        break;
-                                    case count:
-                                        if (!m_value.has_value())
-                                        {
-                                            m_value = 1;
-                                        }
-                                        else
-                                        {
-                                            ++std::any_cast<int &>(m_value);
-                                        }
-                                        break;
-                                    case append:
-                                        if (value.empty())
-                                        {
-                                            if (!m_value.has_value())
-                                            {
-                                                auto const values = consume_args(consumable_args | std::views::take(1));
-                                                m_value = m_options.type_handler->transform(values);
-                                            }
-                                            else
-                                            {
-                                                auto const val = consume_arg(consumable_args.front());
-                                                m_options.type_handler->append(val, m_value);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (!m_value.has_value())
-                                            {
-                                                auto const values = consume_args(std::views::single(Token{value}));
-                                                m_value = m_options.type_handler->transform(values);
-                                            }
-                                            else
-                                            {
-                                                auto const val = process_arg(value);
-                                                m_options.type_handler->append(val, m_value);
-                                            }
-                                        }
-                                        break;
-                                    case help:
-                                        m_value = true;
-                                        throw HelpRequested();
-                                    case version:
-                                        m_value = true;
-                                        throw VersionRequested();
-                                }
+                                perform_action(value, consumable_args);
 
                                 m_present = true;
 
@@ -1004,20 +900,7 @@ namespace argparse
 
                         if (!m_present)
                         {
-                            switch (m_options.action)
-                            {
-                                case store_true:
-                                case help:
-                                case version:
-                                    m_value = false;
-                                    break;
-                                case store_false:
-                                    m_value = true;
-                                    break;
-                                default:
-                                    m_value = m_options.default_;
-                                    break;
-                            }
+                            assing_non_present_value();
                         }
                     }
 
@@ -1075,6 +958,90 @@ namespace argparse
                     }
 
                 private:
+                    auto perform_action(std::string const & value, std::ranges::view auto args) -> void
+                    {
+                        switch (m_options.action)
+                        {
+                            case store:
+                                if (has_nargs())
+                                {
+                                    if (has_nargs_number())
+                                    {
+                                        parse_arguments_number(args);
+                                    }
+                                    else
+                                    {
+                                        parse_arguments_option(args);
+                                    }
+                                }
+                                else
+                                {
+                                    if (value.empty())
+                                    {
+                                        m_value = consume_arg(args.front());
+                                    }
+                                    else
+                                    {
+                                        m_value = process_arg(value);
+                                    }
+                                }
+                                break;
+                            case store_true:
+                                m_value = true;
+                                break;
+                            case store_false:
+                                m_value = false;
+                                break;
+                            case store_const:
+                                m_value = m_options.const_;
+                                break;
+                            case count:
+                                if (!m_value.has_value())
+                                {
+                                    m_value = 1;
+                                }
+                                else
+                                {
+                                    ++std::any_cast<int &>(m_value);
+                                }
+                                break;
+                            case append:
+                                if (value.empty())
+                                {
+                                    if (!m_value.has_value())
+                                    {
+                                        auto const values = consume_args(args | std::views::take(1));
+                                        m_value = m_options.type_handler->transform(values);
+                                    }
+                                    else
+                                    {
+                                        auto const val = consume_arg(args.front());
+                                        m_options.type_handler->append(val, m_value);
+                                    }
+                                }
+                                else
+                                {
+                                    if (!m_value.has_value())
+                                    {
+                                        auto const values = consume_args(std::views::single(Token{value}));
+                                        m_value = m_options.type_handler->transform(values);
+                                    }
+                                    else
+                                    {
+                                        auto const val = process_arg(value);
+                                        m_options.type_handler->append(val, m_value);
+                                    }
+                                }
+                                break;
+                            case help:
+                                m_value = true;
+                                throw HelpRequested();
+                            case version:
+                                m_value = true;
+                                throw VersionRequested();
+                        }
+                    }
+
                     auto parse_arguments_number(std::ranges::view auto args) -> void
                     {
                         auto const nargs_number = get_nargs_number();
@@ -1210,6 +1177,54 @@ namespace argparse
                     auto get_name_for_error() const -> std::string override
                     {
                         return join(get_names(), "/");
+                    }
+
+                    auto check_errors(std::string const & value, std::ranges::view auto args) -> void
+                    {
+                        switch (m_options.action)
+                        {
+                            case store:
+                                if (!has_nargs() && value.empty() && args.empty())
+                                {
+                                    throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
+                                }
+                                break;
+                            case store_true:
+                            case store_false:
+                            case store_const:
+                            case count:
+                                if (!value.empty())
+                                {
+                                    throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", join(get_names(), "/"), value));
+                                }
+                                break;
+                            case append:
+                                if (value.empty() && args.empty())
+                                {
+                                    throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+
+                    auto assing_non_present_value() -> void
+                    {
+                        switch (m_options.action)
+                        {
+                            case store_true:
+                            case help:
+                            case version:
+                                m_value = false;
+                                break;
+                            case store_false:
+                                m_value = true;
+                                break;
+                            default:
+                                m_value = m_options.default_;
+                                break;
+                        }
                     }
 
                 private:
