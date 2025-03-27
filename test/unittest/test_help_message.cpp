@@ -518,7 +518,10 @@ TEST_CASE("Help message contains for optional argument name and long name for ar
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-c", "--count").action(argparse::count);
 
-    CHECK(parser.format_help() == "usage: prog [-c]\n\noptional arguments:\n  -c, --count"s);
+    CHECK(parser.format_help() == "usage: prog [-c]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -c, --count"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and help for argument with count action and help string")
