@@ -90,7 +90,11 @@ TEST_CASE("ArgumentParser provides help message with usage section and optional 
     parser.add_argument("-o");
     parser.add_argument("--option");
 
-    CHECK(parser.format_help() == "usage: prog [-o O] [--option OPTION]\n\noptional arguments:\n  -o O\n  --option OPTION"s);
+    CHECK(parser.format_help() == "usage: prog [-o O] [--option OPTION]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o O\n"
+                                  "  --option OPTION"s);
 }
 
 TEST_CASE("ArgumentParser provides help message with usage section and optional arguments section for three optional arguments")
