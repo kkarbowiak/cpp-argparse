@@ -104,7 +104,12 @@ TEST_CASE("ArgumentParser provides help message with usage section and optional 
     parser.add_argument("--option");
     parser.add_argument("--very-long-name");
 
-    CHECK(parser.format_help() == "usage: prog [-o O] [--option OPTION] [--very-long-name VERY_LONG_NAME]\n\noptional arguments:\n  -o O\n  --option OPTION\n  --very-long-name VERY_LONG_NAME"s);
+    CHECK(parser.format_help() == "usage: prog [-o O] [--option OPTION] [--very-long-name VERY_LONG_NAME]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o O\n"
+                                  "  --option OPTION\n"
+                                  "  --very-long-name VERY_LONG_NAME"s);
 }
 
 TEST_CASE("ArgumentParser provides help message with usage section, positional arguments section, and optional arguments section for one positional and one optional argument")
