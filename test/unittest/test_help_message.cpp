@@ -596,14 +596,20 @@ TEST_CASE("Help message contains for optional argument name and help for argumen
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-h").action(argparse::help).help("help1");
 
-    CHECK(parser.format_help() == "usage: prog [-h]\n\noptional arguments:\n  -h                    help1"s);
+    CHECK(parser.format_help() == "usage: prog [-h]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -h                    help1"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and help for automatically added help argument")
 {
     auto parser = argparse::ArgumentParser().prog("prog");
 
-    CHECK(parser.format_help() == "usage: prog [-h]\n\noptional arguments:\n  -h, --help            show this help message and exit"s);
+    CHECK(parser.format_help() == "usage: prog [-h]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -h, --help            show this help message and exit"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and automatically added help for argument with version action")
