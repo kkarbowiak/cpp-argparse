@@ -1007,7 +1007,10 @@ TEST_CASE("ArgumentParser replaces '{prog}' with program name in optional argume
     auto parser = argparse::ArgumentParser().prog("program").add_help(false);
     parser.add_argument("-o").help("option of the {prog} itself");
 
-    CHECK(parser.format_help() == "usage: program [-o O]\n\noptional arguments:\n  -o O                  option of the program itself");
+    CHECK(parser.format_help() == "usage: program [-o O]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o O                  option of the program itself");
 }
 
 TEST_CASE("ArgumentParser replaces '{prog}' with program name taken from first command-line parameter")
