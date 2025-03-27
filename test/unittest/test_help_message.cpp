@@ -20,14 +20,18 @@ TEST_CASE("ArgumentParser provides help message with usage section and descripti
 {
     auto parser = argparse::ArgumentParser().prog("prog").description("A foo that bars").add_help(false);
 
-    CHECK(parser.format_help() == "usage: prog\n\nA foo that bars"s);
+    CHECK(parser.format_help() == "usage: prog\n"
+                                  "\n"
+                                  "A foo that bars"s);
 }
 
 TEST_CASE("ArgumentParser provides help message with usage section and epilog for epilog and no arguments")
 {
     auto parser = argparse::ArgumentParser().prog("prog").epilog("And that's how you'd foo a bar").add_help(false);
 
-    CHECK(parser.format_help() == "usage: prog\n\nAnd that's how you'd foo a bar"s);
+    CHECK(parser.format_help() == "usage: prog\n"
+                                  "\n"
+                                  "And that's how you'd foo a bar"s);
 }
 
 TEST_CASE("ArgumentParser provides help message with usage section and positional arguments section for one positional argument")
@@ -35,7 +39,10 @@ TEST_CASE("ArgumentParser provides help message with usage section and positiona
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1");
 
-    CHECK(parser.format_help() == "usage: prog p1\n\npositional arguments:\n  p1"s);
+    CHECK(parser.format_help() == "usage: prog p1\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  p1"s);
 }
 
 TEST_CASE("ArgumentParser provides help message with usage section and positional arguments section for two positional arguments")
@@ -44,7 +51,11 @@ TEST_CASE("ArgumentParser provides help message with usage section and positiona
     parser.add_argument("p1");
     parser.add_argument("p2");
 
-    CHECK(parser.format_help() == "usage: prog p1 p2\n\npositional arguments:\n  p1\n  p2"s);
+    CHECK(parser.format_help() == "usage: prog p1 p2\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  p1\n"
+                                  "  p2"s);
 }
 
 TEST_CASE("ArgumentParser provides help message with usage section and positional arguments section for three positional arguments")
@@ -54,7 +65,12 @@ TEST_CASE("ArgumentParser provides help message with usage section and positiona
     parser.add_argument("p2");
     parser.add_argument("p3");
 
-    CHECK(parser.format_help() == "usage: prog p1 p2 p3\n\npositional arguments:\n  p1\n  p2\n  p3"s);
+    CHECK(parser.format_help() == "usage: prog p1 p2 p3\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  p1\n"
+                                  "  p2\n"
+                                  "  p3"s);
 }
 
 TEST_CASE("ArgumentParser provides help message with usage section and optional arguments section for one optional argument")
@@ -62,7 +78,10 @@ TEST_CASE("ArgumentParser provides help message with usage section and optional 
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o");
 
-    CHECK(parser.format_help() == "usage: prog [-o O]\n\noptional arguments:\n  -o O"s);
+    CHECK(parser.format_help() == "usage: prog [-o O]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o O"s);
 }
 
 TEST_CASE("ArgumentParser provides help message with usage section and optional arguments section for two optional arguments")
@@ -71,7 +90,11 @@ TEST_CASE("ArgumentParser provides help message with usage section and optional 
     parser.add_argument("-o");
     parser.add_argument("--option");
 
-    CHECK(parser.format_help() == "usage: prog [-o O] [--option OPTION]\n\noptional arguments:\n  -o O\n  --option OPTION"s);
+    CHECK(parser.format_help() == "usage: prog [-o O] [--option OPTION]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o O\n"
+                                  "  --option OPTION"s);
 }
 
 TEST_CASE("ArgumentParser provides help message with usage section and optional arguments section for three optional arguments")
@@ -81,7 +104,12 @@ TEST_CASE("ArgumentParser provides help message with usage section and optional 
     parser.add_argument("--option");
     parser.add_argument("--very-long-name");
 
-    CHECK(parser.format_help() == "usage: prog [-o O] [--option OPTION] [--very-long-name VERY_LONG_NAME]\n\noptional arguments:\n  -o O\n  --option OPTION\n  --very-long-name VERY_LONG_NAME"s);
+    CHECK(parser.format_help() == "usage: prog [-o O] [--option OPTION] [--very-long-name VERY_LONG_NAME]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o O\n"
+                                  "  --option OPTION\n"
+                                  "  --very-long-name VERY_LONG_NAME"s);
 }
 
 TEST_CASE("ArgumentParser provides help message with usage section, positional arguments section, and optional arguments section for one positional and one optional argument")
@@ -90,7 +118,13 @@ TEST_CASE("ArgumentParser provides help message with usage section, positional a
     parser.add_argument("p1");
     parser.add_argument("-o");
 
-    CHECK(parser.format_help() == "usage: prog [-o O] p1\n\npositional arguments:\n  p1\n\noptional arguments:\n  -o O"s);
+    CHECK(parser.format_help() == "usage: prog [-o O] p1\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  p1\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o O"s);
 }
 
 TEST_CASE("ArgumentParser provides help message with usage section, positional arguments section, and optional arguments section for three positional and three optional arguments")
@@ -103,7 +137,17 @@ TEST_CASE("ArgumentParser provides help message with usage section, positional a
     parser.add_argument("p3");
     parser.add_argument("-z");
 
-    CHECK(parser.format_help() == "usage: prog [-o O] [-a A] [-z Z] p1 p2 p3\n\npositional arguments:\n  p1\n  p2\n  p3\n\noptional arguments:\n  -o O\n  -a A\n  -z Z"s);
+    CHECK(parser.format_help() == "usage: prog [-o O] [-a A] [-z Z] p1 p2 p3\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  p1\n"
+                                  "  p2\n"
+                                  "  p3\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o O\n"
+                                  "  -a A\n"
+                                  "  -z Z"s);
 }
 
 TEST_CASE("Help message contains for positional argument name")
@@ -111,7 +155,10 @@ TEST_CASE("Help message contains for positional argument name")
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1");
 
-    CHECK(parser.format_help() == "usage: prog p1\n\npositional arguments:\n  p1"s);
+    CHECK(parser.format_help() == "usage: prog p1\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  p1"s);
 }
 
 TEST_CASE("Help message contains for positional argument metavar for argument with metavar set")
@@ -119,7 +166,10 @@ TEST_CASE("Help message contains for positional argument metavar for argument wi
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1").metavar("metap1");
 
-    CHECK(parser.format_help() == "usage: prog metap1\n\npositional arguments:\n  metap1"s);
+    CHECK(parser.format_help() == "usage: prog metap1\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  metap1"s);
 }
 
 TEST_CASE("Help message contains for positional argument name and help for argument with help string")
@@ -127,7 +177,10 @@ TEST_CASE("Help message contains for positional argument name and help for argum
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1").help("help1");
 
-    CHECK(parser.format_help() == "usage: prog p1\n\npositional arguments:\n  p1                    help1"s);
+    CHECK(parser.format_help() == "usage: prog p1\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  p1                    help1"s);
 }
 
 TEST_CASE("Help message contains for positional argument choices for argument with choices set")
@@ -135,7 +188,10 @@ TEST_CASE("Help message contains for positional argument choices for argument wi
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1").choices({"foo"s, "bar"s});
 
-    CHECK(parser.format_help() == "usage: prog {\"foo\",\"bar\"}\n\npositional arguments:\n  {\"foo\",\"bar\"}"s);
+    CHECK(parser.format_help() == "usage: prog {\"foo\",\"bar\"}\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  {\"foo\",\"bar\"}"s);
 }
 
 TEST_CASE("Help message contains for positional argument name for argument with nargs set as number 1")
@@ -143,7 +199,10 @@ TEST_CASE("Help message contains for positional argument name for argument with 
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1").nargs(1);
 
-    CHECK(parser.format_help() == "usage: prog p1\n\npositional arguments:\n  p1"s);
+    CHECK(parser.format_help() == "usage: prog p1\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  p1"s);
 }
 
 TEST_CASE("Help message contains for positional argument name for argument with nargs set as number 2")
@@ -151,7 +210,10 @@ TEST_CASE("Help message contains for positional argument name for argument with 
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1").nargs(2);
 
-    CHECK(parser.format_help() == "usage: prog p1 p1\n\npositional arguments:\n  p1"s);
+    CHECK(parser.format_help() == "usage: prog p1 p1\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  p1"s);
 }
 
 TEST_CASE("Help message contains for positional argument name for argument with nargs set as number 3")
@@ -159,7 +221,10 @@ TEST_CASE("Help message contains for positional argument name for argument with 
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1").nargs(3);
 
-    CHECK(parser.format_help() == "usage: prog p1 p1 p1\n\npositional arguments:\n  p1"s);
+    CHECK(parser.format_help() == "usage: prog p1 p1 p1\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  p1"s);
 }
 
 TEST_CASE("Help message contains for positional argument metavar for argument with metavar set and nargs set as number 1")
@@ -167,7 +232,10 @@ TEST_CASE("Help message contains for positional argument metavar for argument wi
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1").metavar("metap1").nargs(1);
 
-    CHECK(parser.format_help() == "usage: prog metap1\n\npositional arguments:\n  metap1"s);
+    CHECK(parser.format_help() == "usage: prog metap1\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  metap1"s);
 }
 
 TEST_CASE("Help message contains for positional argument metavar for argument with metavar set and nargs set as number 2")
@@ -175,7 +243,10 @@ TEST_CASE("Help message contains for positional argument metavar for argument wi
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1").metavar("metap1").nargs(2);
 
-    CHECK(parser.format_help() == "usage: prog metap1 metap1\n\npositional arguments:\n  metap1"s);
+    CHECK(parser.format_help() == "usage: prog metap1 metap1\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  metap1"s);
 }
 
 TEST_CASE("Help message contains for positional argument metavar for argument with metavar set and nargs set as number 3")
@@ -183,7 +254,10 @@ TEST_CASE("Help message contains for positional argument metavar for argument wi
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1").metavar("metap1").nargs(3);
 
-    CHECK(parser.format_help() == "usage: prog metap1 metap1 metap1\n\npositional arguments:\n  metap1"s);
+    CHECK(parser.format_help() == "usage: prog metap1 metap1 metap1\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  metap1"s);
 }
 
 TEST_CASE("Help message contains for positional argument choices for argument with choices set and nargs set as number 1")
@@ -191,7 +265,10 @@ TEST_CASE("Help message contains for positional argument choices for argument wi
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1").choices({"foo"s, "bar"s}).nargs(1);
 
-    CHECK(parser.format_help() == "usage: prog {\"foo\",\"bar\"}\n\npositional arguments:\n  {\"foo\",\"bar\"}"s);
+    CHECK(parser.format_help() == "usage: prog {\"foo\",\"bar\"}\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  {\"foo\",\"bar\"}"s);
 }
 
 TEST_CASE("Help message contains for positional argument choices for argument with choices set and nargs set as number 2")
@@ -199,7 +276,10 @@ TEST_CASE("Help message contains for positional argument choices for argument wi
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1").choices({"foo"s, "bar"s}).nargs(2);
 
-    CHECK(parser.format_help() == "usage: prog {\"foo\",\"bar\"} {\"foo\",\"bar\"}\n\npositional arguments:\n  {\"foo\",\"bar\"}"s);
+    CHECK(parser.format_help() == "usage: prog {\"foo\",\"bar\"} {\"foo\",\"bar\"}\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  {\"foo\",\"bar\"}"s);
 }
 
 TEST_CASE("Help message contains for positional argument choices for argument with choices set and nargs set as number 3")
@@ -207,7 +287,10 @@ TEST_CASE("Help message contains for positional argument choices for argument wi
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1").choices({"foo"s, "bar"s}).nargs(3);
 
-    CHECK(parser.format_help() == "usage: prog {\"foo\",\"bar\"} {\"foo\",\"bar\"} {\"foo\",\"bar\"}\n\npositional arguments:\n  {\"foo\",\"bar\"}"s);
+    CHECK(parser.format_help() == "usage: prog {\"foo\",\"bar\"} {\"foo\",\"bar\"} {\"foo\",\"bar\"}\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  {\"foo\",\"bar\"}"s);
 }
 
 TEST_CASE("Help message contains for positional argument name for argument with nargs set as zero_or_one")
@@ -215,7 +298,10 @@ TEST_CASE("Help message contains for positional argument name for argument with 
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1").nargs(argparse::zero_or_one);
 
-    CHECK(parser.format_help() == "usage: prog [p1]\n\npositional arguments:\n  p1"s);
+    CHECK(parser.format_help() == "usage: prog [p1]\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  p1"s);
 }
 
 TEST_CASE("Help message contains for positional argument metavar for argument with metavar set and nargs set as zero_or_one")
@@ -223,7 +309,10 @@ TEST_CASE("Help message contains for positional argument metavar for argument wi
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1").metavar("metap1").nargs(argparse::zero_or_one);
 
-    CHECK(parser.format_help() == "usage: prog [metap1]\n\npositional arguments:\n  metap1"s);
+    CHECK(parser.format_help() == "usage: prog [metap1]\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  metap1"s);
 }
 
 TEST_CASE("Help message contains for positional argument choices for argument with choices set and nargs set as zero_or_one")
@@ -231,7 +320,10 @@ TEST_CASE("Help message contains for positional argument choices for argument wi
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_one);
 
-    CHECK(parser.format_help() == "usage: prog [{\"foo\",\"bar\"}]\n\npositional arguments:\n  {\"foo\",\"bar\"}"s);
+    CHECK(parser.format_help() == "usage: prog [{\"foo\",\"bar\"}]\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  {\"foo\",\"bar\"}"s);
 }
 
 TEST_CASE("Help message contains for positional argument name for argument with nargs set as zero_or_more")
@@ -239,7 +331,10 @@ TEST_CASE("Help message contains for positional argument name for argument with 
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1").nargs(argparse::zero_or_more);
 
-    CHECK(parser.format_help() == "usage: prog [p1 [p1 ...]]\n\npositional arguments:\n  p1"s);
+    CHECK(parser.format_help() == "usage: prog [p1 [p1 ...]]\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  p1"s);
 }
 
 TEST_CASE("Help message contains for positional argument metavar for argument with metavar set and nargs set as zero_or_more")
@@ -247,7 +342,10 @@ TEST_CASE("Help message contains for positional argument metavar for argument wi
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1").metavar("metap1").nargs(argparse::zero_or_more);
 
-    CHECK(parser.format_help() == "usage: prog [metap1 [metap1 ...]]\n\npositional arguments:\n  metap1"s);
+    CHECK(parser.format_help() == "usage: prog [metap1 [metap1 ...]]\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  metap1"s);
 }
 
 TEST_CASE("Help message contains for positional argument choices for argument with choices set and nargs set as zero_or_more")
@@ -255,7 +353,10 @@ TEST_CASE("Help message contains for positional argument choices for argument wi
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_more);
 
-    CHECK(parser.format_help() == "usage: prog [{\"foo\",\"bar\"} [{\"foo\",\"bar\"} ...]]\n\npositional arguments:\n  {\"foo\",\"bar\"}"s);
+    CHECK(parser.format_help() == "usage: prog [{\"foo\",\"bar\"} [{\"foo\",\"bar\"} ...]]\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  {\"foo\",\"bar\"}"s);
 }
 
 TEST_CASE("Help message contains for positional argument name for argument with nargs set as one_or_more")
@@ -263,7 +364,10 @@ TEST_CASE("Help message contains for positional argument name for argument with 
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1").nargs(argparse::one_or_more);
 
-    CHECK(parser.format_help() == "usage: prog p1 [p1 ...]\n\npositional arguments:\n  p1"s);
+    CHECK(parser.format_help() == "usage: prog p1 [p1 ...]\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  p1"s);
 }
 
 TEST_CASE("Help message contains for positional argument metavar for argument with metavar set and nargs set as one_or_more")
@@ -271,7 +375,10 @@ TEST_CASE("Help message contains for positional argument metavar for argument wi
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1").metavar("metap1").nargs(argparse::one_or_more);
 
-    CHECK(parser.format_help() == "usage: prog metap1 [metap1 ...]\n\npositional arguments:\n  metap1"s);
+    CHECK(parser.format_help() == "usage: prog metap1 [metap1 ...]\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  metap1"s);
 }
 
 TEST_CASE("Help message contains for positional argument choices for argument with choices set and nargs set as one_or_more")
@@ -279,7 +386,10 @@ TEST_CASE("Help message contains for positional argument choices for argument wi
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1").choices({"foo"s, "bar"s}).nargs(argparse::one_or_more);
 
-    CHECK(parser.format_help() == "usage: prog {\"foo\",\"bar\"} [{\"foo\",\"bar\"} ...]\n\npositional arguments:\n  {\"foo\",\"bar\"}"s);
+    CHECK(parser.format_help() == "usage: prog {\"foo\",\"bar\"} [{\"foo\",\"bar\"} ...]\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  {\"foo\",\"bar\"}"s);
 }
 
 TEST_CASE("Help message contains for optional argument name for argument with store true action")
@@ -287,7 +397,10 @@ TEST_CASE("Help message contains for optional argument name for argument with st
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").action(argparse::store_true);
 
-    CHECK(parser.format_help() == "usage: prog [-o]\n\noptional arguments:\n  -o"s);
+    CHECK(parser.format_help() == "usage: prog [-o]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and long name for argument with store true action")
@@ -295,7 +408,10 @@ TEST_CASE("Help message contains for optional argument name and long name for ar
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o", "--option").action(argparse::store_true);
 
-    CHECK(parser.format_help() == "usage: prog [-o]\n\noptional arguments:\n  -o, --option"s);
+    CHECK(parser.format_help() == "usage: prog [-o]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o, --option"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and help for argument with store true action and help string")
@@ -303,7 +419,10 @@ TEST_CASE("Help message contains for optional argument name and help for argumen
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").action(argparse::store_true).help("help1");
 
-    CHECK(parser.format_help() == "usage: prog [-o]\n\noptional arguments:\n  -o                    help1"s);
+    CHECK(parser.format_help() == "usage: prog [-o]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o                    help1"s);
 }
 
 TEST_CASE("Help message contains for optional argument name for argument with store false action")
@@ -311,7 +430,10 @@ TEST_CASE("Help message contains for optional argument name for argument with st
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").action(argparse::store_false);
 
-    CHECK(parser.format_help() == "usage: prog [-o]\n\noptional arguments:\n  -o"s);
+    CHECK(parser.format_help() == "usage: prog [-o]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and long name for argument with store false action")
@@ -319,7 +441,10 @@ TEST_CASE("Help message contains for optional argument name and long name for ar
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o", "--option").action(argparse::store_false);
 
-    CHECK(parser.format_help() == "usage: prog [-o]\n\noptional arguments:\n  -o, --option"s);
+    CHECK(parser.format_help() == "usage: prog [-o]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o, --option"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and long name for argument with store false action")
@@ -327,7 +452,10 @@ TEST_CASE("Help message contains for optional argument name and long name for ar
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o", "--option").action(argparse::store_false);
 
-    CHECK(parser.format_help() == "usage: prog [-o]\n\noptional arguments:\n  -o, --option"s);
+    CHECK(parser.format_help() == "usage: prog [-o]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o, --option"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and help for argument with store false action and help string")
@@ -335,7 +463,10 @@ TEST_CASE("Help message contains for optional argument name and help for argumen
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").action(argparse::store_false).help("help1");
 
-    CHECK(parser.format_help() == "usage: prog [-o]\n\noptional arguments:\n  -o                    help1"s);
+    CHECK(parser.format_help() == "usage: prog [-o]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o                    help1"s);
 }
 
 TEST_CASE("Help message contains for optional argument name for argument with store const action")
@@ -343,7 +474,10 @@ TEST_CASE("Help message contains for optional argument name for argument with st
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").action(argparse::store_const);
 
-    CHECK(parser.format_help() == "usage: prog [-o]\n\noptional arguments:\n  -o"s);
+    CHECK(parser.format_help() == "usage: prog [-o]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and long name for argument with store const action")
@@ -351,7 +485,10 @@ TEST_CASE("Help message contains for optional argument name and long name for ar
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o", "--option").action(argparse::store_const);
 
-    CHECK(parser.format_help() == "usage: prog [-o]\n\noptional arguments:\n  -o, --option"s);
+    CHECK(parser.format_help() == "usage: prog [-o]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o, --option"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and help for argument with store const action and help string")
@@ -359,7 +496,10 @@ TEST_CASE("Help message contains for optional argument name and help for argumen
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").action(argparse::store_const).help("help1");
 
-    CHECK(parser.format_help() == "usage: prog [-o]\n\noptional arguments:\n  -o                    help1"s);
+    CHECK(parser.format_help() == "usage: prog [-o]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o                    help1"s);
 }
 
 TEST_CASE("Help message contains for optional argument name for argument with count action")
@@ -367,7 +507,10 @@ TEST_CASE("Help message contains for optional argument name for argument with co
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-c").action(argparse::count);
 
-    CHECK(parser.format_help() == "usage: prog [-c]\n\noptional arguments:\n  -c"s);
+    CHECK(parser.format_help() == "usage: prog [-c]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -c"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and long name for argument with count action")
@@ -375,7 +518,10 @@ TEST_CASE("Help message contains for optional argument name and long name for ar
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-c", "--count").action(argparse::count);
 
-    CHECK(parser.format_help() == "usage: prog [-c]\n\noptional arguments:\n  -c, --count"s);
+    CHECK(parser.format_help() == "usage: prog [-c]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -c, --count"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and help for argument with count action and help string")
@@ -383,7 +529,10 @@ TEST_CASE("Help message contains for optional argument name and help for argumen
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-c").action(argparse::count).help("help1");
 
-    CHECK(parser.format_help() == "usage: prog [-c]\n\noptional arguments:\n  -c                    help1"s);
+    CHECK(parser.format_help() == "usage: prog [-c]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -c                    help1"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and automatic metavar for argument with append action")
@@ -391,7 +540,10 @@ TEST_CASE("Help message contains for optional argument name and automatic metava
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-a").action(argparse::append);
 
-    CHECK(parser.format_help() == "usage: prog [-a A]\n\noptional arguments:\n  -a A"s);
+    CHECK(parser.format_help() == "usage: prog [-a A]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -a A"s);
 }
 
 TEST_CASE("Help message contains for optional argument name, long name, and automatic metavar for argument with append action")
@@ -399,7 +551,10 @@ TEST_CASE("Help message contains for optional argument name, long name, and auto
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-a", "--append").action(argparse::append);
 
-    CHECK(parser.format_help() == "usage: prog [-a APPEND]\n\noptional arguments:\n  -a APPEND, --append APPEND"s);
+    CHECK(parser.format_help() == "usage: prog [-a APPEND]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -a APPEND, --append APPEND"s);
 }
 
 TEST_CASE("Help message contains for optional argument name, long name, automatic metavar, and help string for argument with append action")
@@ -407,7 +562,11 @@ TEST_CASE("Help message contains for optional argument name, long name, automati
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-a", "--append").action(argparse::append).help("help1");
 
-    CHECK(parser.format_help() == "usage: prog [-a APPEND]\n\noptional arguments:\n  -a APPEND, --append APPEND\n                        help1"s);
+    CHECK(parser.format_help() == "usage: prog [-a APPEND]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -a APPEND, --append APPEND\n"
+                                  "                        help1"s);
 }
 
 TEST_CASE("Help message contains for optional argument name for argument with help action")
@@ -415,7 +574,10 @@ TEST_CASE("Help message contains for optional argument name for argument with he
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-h").action(argparse::help);
 
-    CHECK(parser.format_help() == "usage: prog [-h]\n\noptional arguments:\n  -h"s);
+    CHECK(parser.format_help() == "usage: prog [-h]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -h"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and long name for argument with help action")
@@ -423,7 +585,10 @@ TEST_CASE("Help message contains for optional argument name and long name for ar
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-h", "--help").action(argparse::help);
 
-    CHECK(parser.format_help() == "usage: prog [-h]\n\noptional arguments:\n  -h, --help"s);
+    CHECK(parser.format_help() == "usage: prog [-h]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -h, --help"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and help for argument with help action and help string")
@@ -431,14 +596,20 @@ TEST_CASE("Help message contains for optional argument name and help for argumen
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-h").action(argparse::help).help("help1");
 
-    CHECK(parser.format_help() == "usage: prog [-h]\n\noptional arguments:\n  -h                    help1"s);
+    CHECK(parser.format_help() == "usage: prog [-h]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -h                    help1"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and help for automatically added help argument")
 {
     auto parser = argparse::ArgumentParser().prog("prog");
 
-    CHECK(parser.format_help() == "usage: prog [-h]\n\noptional arguments:\n  -h, --help            show this help message and exit"s);
+    CHECK(parser.format_help() == "usage: prog [-h]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -h, --help            show this help message and exit"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and automatically added help for argument with version action")
@@ -446,7 +617,10 @@ TEST_CASE("Help message contains for optional argument name and automatically ad
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-v").action(argparse::version);
 
-    CHECK(parser.format_help() == "usage: prog [-v]\n\noptional arguments:\n  -v                    show program's version number and exit"s);
+    CHECK(parser.format_help() == "usage: prog [-v]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -v                    show program's version number and exit"s);
 }
 
 TEST_CASE("Help message contains for optional argument name, long name, and automatically added help for argument with version action")
@@ -454,7 +628,10 @@ TEST_CASE("Help message contains for optional argument name, long name, and auto
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-v", "--version").action(argparse::version);
 
-    CHECK(parser.format_help() == "usage: prog [-v]\n\noptional arguments:\n  -v, --version         show program's version number and exit"s);
+    CHECK(parser.format_help() == "usage: prog [-v]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -v, --version         show program's version number and exit"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and help for argument with version action and help string")
@@ -462,7 +639,10 @@ TEST_CASE("Help message contains for optional argument name and help for argumen
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-v").action(argparse::version).help("version1");
 
-    CHECK(parser.format_help() == "usage: prog [-v]\n\noptional arguments:\n  -v                    version1"s);
+    CHECK(parser.format_help() == "usage: prog [-v]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -v                    version1"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and automatic metavar")
@@ -470,7 +650,10 @@ TEST_CASE("Help message contains for optional argument name and automatic metava
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o");
 
-    CHECK(parser.format_help() == "usage: prog [-o O]\n\noptional arguments:\n  -o O"s);
+    CHECK(parser.format_help() == "usage: prog [-o O]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o O"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and metavar for argument with metavar")
@@ -478,7 +661,10 @@ TEST_CASE("Help message contains for optional argument name and metavar for argu
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").metavar("METAVARO");
 
-    CHECK(parser.format_help() == "usage: prog [-o METAVARO]\n\noptional arguments:\n  -o METAVARO"s);
+    CHECK(parser.format_help() == "usage: prog [-o METAVARO]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o METAVARO"s);
 }
 
 TEST_CASE("Help message contains for optional argument name, automatic metavar, and help for argument with help string")
@@ -486,7 +672,10 @@ TEST_CASE("Help message contains for optional argument name, automatic metavar, 
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").help("help1");
 
-    CHECK(parser.format_help() == "usage: prog [-o O]\n\noptional arguments:\n  -o O                  help1"s);
+    CHECK(parser.format_help() == "usage: prog [-o O]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o O                  help1"s);
 }
 
 TEST_CASE("Help message contains for optional argument no brackets for argument with required true")
@@ -494,7 +683,10 @@ TEST_CASE("Help message contains for optional argument no brackets for argument 
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").required(true);
 
-    CHECK(parser.format_help() == "usage: prog -o O\n\noptional arguments:\n  -o O"s);
+    CHECK(parser.format_help() == "usage: prog -o O\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o O"s);
 }
 
 TEST_CASE("Help message contains for optional argument brackets for argument with required false")
@@ -502,7 +694,10 @@ TEST_CASE("Help message contains for optional argument brackets for argument wit
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").required(false);
 
-    CHECK(parser.format_help() == "usage: prog [-o O]\n\noptional arguments:\n  -o O"s);
+    CHECK(parser.format_help() == "usage: prog [-o O]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o O"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and choices for argument with choices set")
@@ -510,7 +705,10 @@ TEST_CASE("Help message contains for optional argument name and choices for argu
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").choices({"foo"s, "bar"s});
 
-    CHECK(parser.format_help() == "usage: prog [-o {\"foo\",\"bar\"}]\n\noptional arguments:\n  -o {\"foo\",\"bar\"}"s);
+    CHECK(parser.format_help() == "usage: prog [-o {\"foo\",\"bar\"}]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o {\"foo\",\"bar\"}"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and automatic metavar repeated N times for argument with nargs set as number 1")
@@ -518,7 +716,10 @@ TEST_CASE("Help message contains for optional argument name and automatic metava
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").nargs(1);
 
-    CHECK(parser.format_help() == "usage: prog [-o O]\n\noptional arguments:\n  -o O"s);
+    CHECK(parser.format_help() == "usage: prog [-o O]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o O"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and automatic metavar repeated N times for argument with nargs set as number 2")
@@ -526,7 +727,10 @@ TEST_CASE("Help message contains for optional argument name and automatic metava
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").nargs(2);
 
-    CHECK(parser.format_help() == "usage: prog [-o O O]\n\noptional arguments:\n  -o O O"s);
+    CHECK(parser.format_help() == "usage: prog [-o O O]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o O O"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and automatic metavar repeated N times for argument with nargs set as number 3")
@@ -534,7 +738,10 @@ TEST_CASE("Help message contains for optional argument name and automatic metava
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").nargs(3);
 
-    CHECK(parser.format_help() == "usage: prog [-o O O O]\n\noptional arguments:\n  -o O O O"s);
+    CHECK(parser.format_help() == "usage: prog [-o O O O]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o O O O"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and metavar repeated N times for argument with metavar and nargs set as number 1")
@@ -542,7 +749,10 @@ TEST_CASE("Help message contains for optional argument name and metavar repeated
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").metavar("METAVARO").nargs(1);
 
-    CHECK(parser.format_help() == "usage: prog [-o METAVARO]\n\noptional arguments:\n  -o METAVARO"s);
+    CHECK(parser.format_help() == "usage: prog [-o METAVARO]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o METAVARO"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and metavar repeated N times for argument with metavar and nargs set as number 2")
@@ -550,7 +760,10 @@ TEST_CASE("Help message contains for optional argument name and metavar repeated
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").metavar("METAVARO").nargs(2);
 
-    CHECK(parser.format_help() == "usage: prog [-o METAVARO METAVARO]\n\noptional arguments:\n  -o METAVARO METAVARO"s);
+    CHECK(parser.format_help() == "usage: prog [-o METAVARO METAVARO]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o METAVARO METAVARO"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and metavar repeated N times for argument with metavar and nargs set as number 3")
@@ -558,7 +771,10 @@ TEST_CASE("Help message contains for optional argument name and metavar repeated
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").metavar("METAVARO").nargs(3);
 
-    CHECK(parser.format_help() == "usage: prog [-o METAVARO METAVARO METAVARO]\n\noptional arguments:\n  -o METAVARO METAVARO METAVARO"s);
+    CHECK(parser.format_help() == "usage: prog [-o METAVARO METAVARO METAVARO]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o METAVARO METAVARO METAVARO"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and choices repeated N times for argument with choices set and nargs set as number 1")
@@ -566,7 +782,10 @@ TEST_CASE("Help message contains for optional argument name and choices repeated
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(1);
 
-    CHECK(parser.format_help() == "usage: prog [-o {\"foo\",\"bar\"}]\n\noptional arguments:\n  -o {\"foo\",\"bar\"}"s);
+    CHECK(parser.format_help() == "usage: prog [-o {\"foo\",\"bar\"}]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o {\"foo\",\"bar\"}"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and choices repeated N times for argument with choices set and nargs set as number 2")
@@ -574,7 +793,10 @@ TEST_CASE("Help message contains for optional argument name and choices repeated
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(2);
 
-    CHECK(parser.format_help() == "usage: prog [-o {\"foo\",\"bar\"} {\"foo\",\"bar\"}]\n\noptional arguments:\n  -o {\"foo\",\"bar\"} {\"foo\",\"bar\"}"s);
+    CHECK(parser.format_help() == "usage: prog [-o {\"foo\",\"bar\"} {\"foo\",\"bar\"}]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o {\"foo\",\"bar\"} {\"foo\",\"bar\"}"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and choices repeated N times for argument with choices set and nargs set as number 3")
@@ -582,7 +804,10 @@ TEST_CASE("Help message contains for optional argument name and choices repeated
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(3);
 
-    CHECK(parser.format_help() == "usage: prog [-o {\"foo\",\"bar\"} {\"foo\",\"bar\"} {\"foo\",\"bar\"}]\n\noptional arguments:\n  -o {\"foo\",\"bar\"} {\"foo\",\"bar\"} {\"foo\",\"bar\"}"s);
+    CHECK(parser.format_help() == "usage: prog [-o {\"foo\",\"bar\"} {\"foo\",\"bar\"} {\"foo\",\"bar\"}]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o {\"foo\",\"bar\"} {\"foo\",\"bar\"} {\"foo\",\"bar\"}"s);
 }
 
 TEST_CASE("Help message contains for optional argument name followed by automatic metavar in brackets for argument with nargs set as zero_or_one")
@@ -590,7 +815,10 @@ TEST_CASE("Help message contains for optional argument name followed by automati
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").nargs(argparse::zero_or_one);
 
-    CHECK(parser.format_help() == "usage: prog [-o [O]]\n\noptional arguments:\n  -o [O]"s);
+    CHECK(parser.format_help() == "usage: prog [-o [O]]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o [O]"s);
 }
 
 TEST_CASE("Help message contains for optional argument name followed by metavar in brackets for argument with metavar set and nargs set as zero_or_one")
@@ -598,7 +826,10 @@ TEST_CASE("Help message contains for optional argument name followed by metavar 
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").metavar("METAVARO").nargs(argparse::zero_or_one);
 
-    CHECK(parser.format_help() == "usage: prog [-o [METAVARO]]\n\noptional arguments:\n  -o [METAVARO]"s);
+    CHECK(parser.format_help() == "usage: prog [-o [METAVARO]]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o [METAVARO]"s);
 }
 
 TEST_CASE("Help message contains for optional argument name followed by choices in brackets for argument with choices set and nargs set as zero_or_one")
@@ -606,7 +837,10 @@ TEST_CASE("Help message contains for optional argument name followed by choices 
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_one);
 
-    CHECK(parser.format_help() == "usage: prog [-o [{\"foo\",\"bar\"}]]\n\noptional arguments:\n  -o [{\"foo\",\"bar\"}]"s);
+    CHECK(parser.format_help() == "usage: prog [-o [{\"foo\",\"bar\"}]]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o [{\"foo\",\"bar\"}]"s);
 }
 
 TEST_CASE("Help message contains for optional argument name followed by automatic metavar in brackets followed by automatic metavar and ellipsis in nested brackets for argument with nargs set as zero_or_more")
@@ -614,7 +848,10 @@ TEST_CASE("Help message contains for optional argument name followed by automati
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").nargs(argparse::zero_or_more);
 
-    CHECK(parser.format_help() == "usage: prog [-o [O [O ...]]]\n\noptional arguments:\n  -o [O [O ...]]"s);
+    CHECK(parser.format_help() == "usage: prog [-o [O [O ...]]]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o [O [O ...]]"s);
 }
 
 TEST_CASE("Help message contains for optional argument name followed by metavar in brackets followed by metavar and ellipsis in nested brackets for argument with metavar set and nargs set as zero_or_more")
@@ -622,7 +859,10 @@ TEST_CASE("Help message contains for optional argument name followed by metavar 
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").metavar("METAVARO").nargs(argparse::zero_or_more);
 
-    CHECK(parser.format_help() == "usage: prog [-o [METAVARO [METAVARO ...]]]\n\noptional arguments:\n  -o [METAVARO [METAVARO ...]]"s);
+    CHECK(parser.format_help() == "usage: prog [-o [METAVARO [METAVARO ...]]]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o [METAVARO [METAVARO ...]]"s);
 }
 
 TEST_CASE("Help message contains for optional argument name followed by choices in brackets followed by choices and ellipsis in nested brackets for argument with choices set and nargs set as zero_or_more")
@@ -630,7 +870,10 @@ TEST_CASE("Help message contains for optional argument name followed by choices 
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_more);
 
-    CHECK(parser.format_help() == "usage: prog [-o [{\"foo\",\"bar\"} [{\"foo\",\"bar\"} ...]]]\n\noptional arguments:\n  -o [{\"foo\",\"bar\"} [{\"foo\",\"bar\"} ...]]"s);
+    CHECK(parser.format_help() == "usage: prog [-o [{\"foo\",\"bar\"} [{\"foo\",\"bar\"} ...]]]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o [{\"foo\",\"bar\"} [{\"foo\",\"bar\"} ...]]"s);
 }
 
 TEST_CASE("Help message contains for optional argument name followed by automatic metavar followed by automatic metavar and ellipsis in brackets for argument with nargs set as one_or_more")
@@ -638,7 +881,10 @@ TEST_CASE("Help message contains for optional argument name followed by automati
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").nargs(argparse::one_or_more);
 
-    CHECK(parser.format_help() == "usage: prog [-o O [O ...]]\n\noptional arguments:\n  -o O [O ...]"s);
+    CHECK(parser.format_help() == "usage: prog [-o O [O ...]]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o O [O ...]"s);
 }
 
 TEST_CASE("Help message contains for optional argument name followed by metavar followed by metavar and ellipsis in brackets for argument with metavar set and nargs set as one_or_more")
@@ -646,7 +892,10 @@ TEST_CASE("Help message contains for optional argument name followed by metavar 
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").metavar("METAVARO").nargs(argparse::one_or_more);
 
-    CHECK(parser.format_help() == "usage: prog [-o METAVARO [METAVARO ...]]\n\noptional arguments:\n  -o METAVARO [METAVARO ...]"s);
+    CHECK(parser.format_help() == "usage: prog [-o METAVARO [METAVARO ...]]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o METAVARO [METAVARO ...]"s);
 }
 
 TEST_CASE("Help message contains for optional argument name followed by choices followed by choices and ellipsis in brackets for argument with choices set and nargs set as one_or_more")
@@ -654,7 +903,10 @@ TEST_CASE("Help message contains for optional argument name followed by choices 
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::one_or_more);
 
-    CHECK(parser.format_help() == "usage: prog [-o {\"foo\",\"bar\"} [{\"foo\",\"bar\"} ...]]\n\noptional arguments:\n  -o {\"foo\",\"bar\"} [{\"foo\",\"bar\"} ...]"s);
+    CHECK(parser.format_help() == "usage: prog [-o {\"foo\",\"bar\"} [{\"foo\",\"bar\"} ...]]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o {\"foo\",\"bar\"} [{\"foo\",\"bar\"} ...]"s);
 }
 
 TEST_CASE("Help string starts on 25th column of the same line for positional arguments with length less than 21 characters")
@@ -662,7 +914,10 @@ TEST_CASE("Help string starts on 25th column of the same line for positional arg
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("pos").help("help");
 
-    CHECK(parser.format_help() == "usage: prog pos\n\npositional arguments:\n  pos                   help");
+    CHECK(parser.format_help() == "usage: prog pos\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  pos                   help");
 }
 
 TEST_CASE("Help string starts on 25th column of the same line for optional arguments with length less than 21 characters")
@@ -670,7 +925,10 @@ TEST_CASE("Help string starts on 25th column of the same line for optional argum
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").help("help");
 
-    CHECK(parser.format_help() == "usage: prog [-o O]\n\noptional arguments:\n  -o O                  help");
+    CHECK(parser.format_help() == "usage: prog [-o O]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o O                  help");
 }
 
 TEST_CASE("Help string starts on 25th column of the next line for positional arguments with length of 21 characters or more")
@@ -678,7 +936,11 @@ TEST_CASE("Help string starts on 25th column of the next line for positional arg
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("abcdefghijklmnopqrstu").help("help");
 
-    CHECK(parser.format_help() == "usage: prog abcdefghijklmnopqrstu\n\npositional arguments:\n  abcdefghijklmnopqrstu\n                        help");
+    CHECK(parser.format_help() == "usage: prog abcdefghijklmnopqrstu\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  abcdefghijklmnopqrstu\n"
+                                  "                        help");
 }
 
 TEST_CASE("Help string starts on 25th column of the next line for optional arguments with length of 21 characters or more")
@@ -686,35 +948,47 @@ TEST_CASE("Help string starts on 25th column of the next line for optional argum
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("--abcdefghijklmnopq").metavar("A").help("help");
 
-    CHECK(parser.format_help() == "usage: prog [--abcdefghijklmnopq A]\n\noptional arguments:\n  --abcdefghijklmnopq A\n                        help");
+    CHECK(parser.format_help() == "usage: prog [--abcdefghijklmnopq A]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  --abcdefghijklmnopq A\n"
+                                  "                        help");
 }
 
 TEST_CASE("ArgumentParser replaces '{prog}' with program name in description text")
 {
     auto parser = argparse::ArgumentParser().prog("program").description("A {prog} that bars").add_help(false);
 
-    CHECK(parser.format_help() == "usage: program\n\nA program that bars"s);
+    CHECK(parser.format_help() == "usage: program\n"
+                                  "\n"
+                                  "A program that bars"s);
 }
 
 TEST_CASE("ArgumentParser replaces '{prog}' with program name in description text")
 {
     auto parser = argparse::ArgumentParser().prog("program").description("A {prog} that {prog}s").add_help(false);
 
-    CHECK(parser.format_help() == "usage: program\n\nA program that programs"s);
+    CHECK(parser.format_help() == "usage: program\n"
+                                  "\n"
+                                  "A program that programs"s);
 }
 
 TEST_CASE("ArgumentParser replaces '{prog}' with program name in epilog text")
 {
     auto parser = argparse::ArgumentParser().prog("program").epilog("And that's how you'd foo a bar using {prog}").add_help(false);
 
-    CHECK(parser.format_help() == "usage: program\n\nAnd that's how you'd foo a bar using program"s);
+    CHECK(parser.format_help() == "usage: program\n"
+                                  "\n"
+                                  "And that's how you'd foo a bar using program"s);
 }
 
 TEST_CASE("ArgumentParser replaces '{prog}' with program name in epilog text")
 {
     auto parser = argparse::ArgumentParser().prog("program").epilog("And that's how you'd {prog} a bar using {prog}").add_help(false);
 
-    CHECK(parser.format_help() == "usage: program\n\nAnd that's how you'd program a bar using program"s);
+    CHECK(parser.format_help() == "usage: program\n"
+                                  "\n"
+                                  "And that's how you'd program a bar using program"s);
 }
 
 TEST_CASE("ArgumentParser replaces '{prog}' with program name in positional argument help message")
@@ -722,7 +996,10 @@ TEST_CASE("ArgumentParser replaces '{prog}' with program name in positional argu
     auto parser = argparse::ArgumentParser().prog("program").add_help(false);
     parser.add_argument("p1").help("p1 of the {prog} itself");
 
-    CHECK(parser.format_help() == "usage: program p1\n\npositional arguments:\n  p1                    p1 of the program itself"s);
+    CHECK(parser.format_help() == "usage: program p1\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  p1                    p1 of the program itself"s);
 }
 
 TEST_CASE("ArgumentParser replaces '{prog}' with program name in optional argument help message")
@@ -730,7 +1007,10 @@ TEST_CASE("ArgumentParser replaces '{prog}' with program name in optional argume
     auto parser = argparse::ArgumentParser().prog("program").add_help(false);
     parser.add_argument("-o").help("option of the {prog} itself");
 
-    CHECK(parser.format_help() == "usage: program [-o O]\n\noptional arguments:\n  -o O                  option of the program itself");
+    CHECK(parser.format_help() == "usage: program [-o O]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o O                  option of the program itself");
 }
 
 TEST_CASE("ArgumentParser replaces '{prog}' with program name taken from first command-line parameter")
@@ -741,5 +1021,15 @@ TEST_CASE("ArgumentParser replaces '{prog}' with program name taken from first c
 
     parser.parse_args(2, cstr_arr{"program", "p"});
 
-    CHECK(parser.format_help() == "usage: program [-o O] pos\n\nThis is program.\n\npositional arguments:\n  pos                   this is program's positional argument\n\noptional arguments:\n  -o O                  this is program's optional argument\n\nThis was program."s);
+    CHECK(parser.format_help() == "usage: program [-o O] pos\n"
+                                  "\n"
+                                  "This is program.\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  pos                   this is program's positional argument\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o O                  this is program's optional argument\n"
+                                  "\n"
+                                  "This was program."s);
 }
