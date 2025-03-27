@@ -959,7 +959,9 @@ TEST_CASE("ArgumentParser replaces '{prog}' with program name in description tex
 {
     auto parser = argparse::ArgumentParser().prog("program").description("A {prog} that bars").add_help(false);
 
-    CHECK(parser.format_help() == "usage: program\n\nA program that bars"s);
+    CHECK(parser.format_help() == "usage: program\n"
+                                  "\n"
+                                  "A program that bars"s);
 }
 
 TEST_CASE("ArgumentParser replaces '{prog}' with program name in description text")
