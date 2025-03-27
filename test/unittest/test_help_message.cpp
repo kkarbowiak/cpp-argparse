@@ -118,7 +118,13 @@ TEST_CASE("ArgumentParser provides help message with usage section, positional a
     parser.add_argument("p1");
     parser.add_argument("-o");
 
-    CHECK(parser.format_help() == "usage: prog [-o O] p1\n\npositional arguments:\n  p1\n\noptional arguments:\n  -o O"s);
+    CHECK(parser.format_help() == "usage: prog [-o O] p1\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  p1\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o O"s);
 }
 
 TEST_CASE("ArgumentParser provides help message with usage section, positional arguments section, and optional arguments section for three positional and three optional arguments")
