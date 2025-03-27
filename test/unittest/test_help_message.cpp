@@ -78,7 +78,10 @@ TEST_CASE("ArgumentParser provides help message with usage section and optional 
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o");
 
-    CHECK(parser.format_help() == "usage: prog [-o O]\n\noptional arguments:\n  -o O"s);
+    CHECK(parser.format_help() == "usage: prog [-o O]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o O"s);
 }
 
 TEST_CASE("ArgumentParser provides help message with usage section and optional arguments section for two optional arguments")
