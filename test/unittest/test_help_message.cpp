@@ -51,7 +51,11 @@ TEST_CASE("ArgumentParser provides help message with usage section and positiona
     parser.add_argument("p1");
     parser.add_argument("p2");
 
-    CHECK(parser.format_help() == "usage: prog p1 p2\n\npositional arguments:\n  p1\n  p2"s);
+    CHECK(parser.format_help() == "usage: prog p1 p2\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  p1\n"
+                                  "  p2"s);
 }
 
 TEST_CASE("ArgumentParser provides help message with usage section and positional arguments section for three positional arguments")
