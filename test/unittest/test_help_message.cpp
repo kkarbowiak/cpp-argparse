@@ -29,7 +29,9 @@ TEST_CASE("ArgumentParser provides help message with usage section and epilog fo
 {
     auto parser = argparse::ArgumentParser().prog("prog").epilog("And that's how you'd foo a bar").add_help(false);
 
-    CHECK(parser.format_help() == "usage: prog\n\nAnd that's how you'd foo a bar"s);
+    CHECK(parser.format_help() == "usage: prog\n"
+                                  "\n"
+                                  "And that's how you'd foo a bar"s);
 }
 
 TEST_CASE("ArgumentParser provides help message with usage section and positional arguments section for one positional argument")
