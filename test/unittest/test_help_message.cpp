@@ -628,7 +628,10 @@ TEST_CASE("Help message contains for optional argument name, long name, and auto
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-v", "--version").action(argparse::version);
 
-    CHECK(parser.format_help() == "usage: prog [-v]\n\noptional arguments:\n  -v, --version         show program's version number and exit"s);
+    CHECK(parser.format_help() == "usage: prog [-v]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -v, --version         show program's version number and exit"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and help for argument with version action and help string")
