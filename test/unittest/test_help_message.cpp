@@ -672,7 +672,10 @@ TEST_CASE("Help message contains for optional argument name, automatic metavar, 
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").help("help1");
 
-    CHECK(parser.format_help() == "usage: prog [-o O]\n\noptional arguments:\n  -o O                  help1"s);
+    CHECK(parser.format_help() == "usage: prog [-o O]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o O                  help1"s);
 }
 
 TEST_CASE("Help message contains for optional argument no brackets for argument with required true")
