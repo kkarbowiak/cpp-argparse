@@ -859,7 +859,10 @@ TEST_CASE("Help message contains for optional argument name followed by metavar 
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").metavar("METAVARO").nargs(argparse::zero_or_more);
 
-    CHECK(parser.format_help() == "usage: prog [-o [METAVARO [METAVARO ...]]]\n\noptional arguments:\n  -o [METAVARO [METAVARO ...]]"s);
+    CHECK(parser.format_help() == "usage: prog [-o [METAVARO [METAVARO ...]]]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o [METAVARO [METAVARO ...]]"s);
 }
 
 TEST_CASE("Help message contains for optional argument name followed by choices in brackets followed by choices and ellipsis in nested brackets for argument with choices set and nargs set as zero_or_more")
