@@ -551,7 +551,10 @@ TEST_CASE("Help message contains for optional argument name, long name, and auto
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-a", "--append").action(argparse::append);
 
-    CHECK(parser.format_help() == "usage: prog [-a APPEND]\n\noptional arguments:\n  -a APPEND, --append APPEND"s);
+    CHECK(parser.format_help() == "usage: prog [-a APPEND]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -a APPEND, --append APPEND"s);
 }
 
 TEST_CASE("Help message contains for optional argument name, long name, automatic metavar, and help string for argument with append action")
