@@ -39,7 +39,10 @@ TEST_CASE("ArgumentParser provides help message with usage section and positiona
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1");
 
-    CHECK(parser.format_help() == "usage: prog p1\n\npositional arguments:\n  p1"s);
+    CHECK(parser.format_help() == "usage: prog p1\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  p1"s);
 }
 
 TEST_CASE("ArgumentParser provides help message with usage section and positional arguments section for two positional arguments")
