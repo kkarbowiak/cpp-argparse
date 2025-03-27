@@ -914,7 +914,10 @@ TEST_CASE("Help string starts on 25th column of the same line for positional arg
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("pos").help("help");
 
-    CHECK(parser.format_help() == "usage: prog pos\n\npositional arguments:\n  pos                   help");
+    CHECK(parser.format_help() == "usage: prog pos\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  pos                   help");
 }
 
 TEST_CASE("Help string starts on 25th column of the same line for optional arguments with length less than 21 characters")
