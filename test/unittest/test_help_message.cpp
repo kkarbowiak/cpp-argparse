@@ -727,7 +727,10 @@ TEST_CASE("Help message contains for optional argument name and automatic metava
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").nargs(2);
 
-    CHECK(parser.format_help() == "usage: prog [-o O O]\n\noptional arguments:\n  -o O O"s);
+    CHECK(parser.format_help() == "usage: prog [-o O O]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o O O"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and automatic metavar repeated N times for argument with nargs set as number 3")
