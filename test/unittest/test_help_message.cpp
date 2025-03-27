@@ -585,7 +585,10 @@ TEST_CASE("Help message contains for optional argument name and long name for ar
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-h", "--help").action(argparse::help);
 
-    CHECK(parser.format_help() == "usage: prog [-h]\n\noptional arguments:\n  -h, --help"s);
+    CHECK(parser.format_help() == "usage: prog [-h]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -h, --help"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and help for argument with help action and help string")
