@@ -815,7 +815,10 @@ TEST_CASE("Help message contains for optional argument name followed by automati
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").nargs(argparse::zero_or_one);
 
-    CHECK(parser.format_help() == "usage: prog [-o [O]]\n\noptional arguments:\n  -o [O]"s);
+    CHECK(parser.format_help() == "usage: prog [-o [O]]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o [O]"s);
 }
 
 TEST_CASE("Help message contains for optional argument name followed by metavar in brackets for argument with metavar set and nargs set as zero_or_one")
