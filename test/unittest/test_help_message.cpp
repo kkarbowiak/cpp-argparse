@@ -1021,5 +1021,15 @@ TEST_CASE("ArgumentParser replaces '{prog}' with program name taken from first c
 
     parser.parse_args(2, cstr_arr{"program", "p"});
 
-    CHECK(parser.format_help() == "usage: program [-o O] pos\n\nThis is program.\n\npositional arguments:\n  pos                   this is program's positional argument\n\noptional arguments:\n  -o O                  this is program's optional argument\n\nThis was program."s);
+    CHECK(parser.format_help() == "usage: program [-o O] pos\n"
+                                  "\n"
+                                  "This is program.\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  pos                   this is program's positional argument\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o O                  this is program's optional argument\n"
+                                  "\n"
+                                  "This was program."s);
 }
