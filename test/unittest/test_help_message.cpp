@@ -364,7 +364,10 @@ TEST_CASE("Help message contains for positional argument name for argument with 
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1").nargs(argparse::one_or_more);
 
-    CHECK(parser.format_help() == "usage: prog p1 [p1 ...]\n\npositional arguments:\n  p1"s);
+    CHECK(parser.format_help() == "usage: prog p1 [p1 ...]\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  p1"s);
 }
 
 TEST_CASE("Help message contains for positional argument metavar for argument with metavar set and nargs set as one_or_more")
