@@ -771,7 +771,10 @@ TEST_CASE("Help message contains for optional argument name and metavar repeated
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").metavar("METAVARO").nargs(3);
 
-    CHECK(parser.format_help() == "usage: prog [-o METAVARO METAVARO METAVARO]\n\noptional arguments:\n  -o METAVARO METAVARO METAVARO"s);
+    CHECK(parser.format_help() == "usage: prog [-o METAVARO METAVARO METAVARO]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o METAVARO METAVARO METAVARO"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and choices repeated N times for argument with choices set and nargs set as number 1")
