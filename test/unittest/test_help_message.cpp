@@ -639,7 +639,10 @@ TEST_CASE("Help message contains for optional argument name and help for argumen
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-v").action(argparse::version).help("version1");
 
-    CHECK(parser.format_help() == "usage: prog [-v]\n\noptional arguments:\n  -v                    version1"s);
+    CHECK(parser.format_help() == "usage: prog [-v]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -v                    version1"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and automatic metavar")
