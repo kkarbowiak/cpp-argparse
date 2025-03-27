@@ -529,7 +529,10 @@ TEST_CASE("Help message contains for optional argument name and help for argumen
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-c").action(argparse::count).help("help1");
 
-    CHECK(parser.format_help() == "usage: prog [-c]\n\noptional arguments:\n  -c                    help1"s);
+    CHECK(parser.format_help() == "usage: prog [-c]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -c                    help1"s);
 }
 
 TEST_CASE("Help message contains for optional argument name and automatic metavar for argument with append action")
