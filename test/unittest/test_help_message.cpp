@@ -320,7 +320,10 @@ TEST_CASE("Help message contains for positional argument choices for argument wi
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("p1").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_one);
 
-    CHECK(parser.format_help() == "usage: prog [{\"foo\",\"bar\"}]\n\npositional arguments:\n  {\"foo\",\"bar\"}"s);
+    CHECK(parser.format_help() == "usage: prog [{\"foo\",\"bar\"}]\n"
+                                  "\n"
+                                  "positional arguments:\n"
+                                  "  {\"foo\",\"bar\"}"s);
 }
 
 TEST_CASE("Help message contains for positional argument name for argument with nargs set as zero_or_more")
