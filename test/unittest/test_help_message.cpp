@@ -804,7 +804,10 @@ TEST_CASE("Help message contains for optional argument name and choices repeated
     auto parser = argparse::ArgumentParser().prog("prog").add_help(false);
     parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(3);
 
-    CHECK(parser.format_help() == "usage: prog [-o {\"foo\",\"bar\"} {\"foo\",\"bar\"} {\"foo\",\"bar\"}]\n\noptional arguments:\n  -o {\"foo\",\"bar\"} {\"foo\",\"bar\"} {\"foo\",\"bar\"}"s);
+    CHECK(parser.format_help() == "usage: prog [-o {\"foo\",\"bar\"} {\"foo\",\"bar\"} {\"foo\",\"bar\"}]\n"
+                                  "\n"
+                                  "optional arguments:\n"
+                                  "  -o {\"foo\",\"bar\"} {\"foo\",\"bar\"} {\"foo\",\"bar\"}"s);
 }
 
 TEST_CASE("Help message contains for optional argument name followed by automatic metavar in brackets for argument with nargs set as zero_or_one")
