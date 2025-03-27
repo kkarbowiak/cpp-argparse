@@ -20,7 +20,9 @@ TEST_CASE("ArgumentParser provides help message with usage section and descripti
 {
     auto parser = argparse::ArgumentParser().prog("prog").description("A foo that bars").add_help(false);
 
-    CHECK(parser.format_help() == "usage: prog\n\nA foo that bars"s);
+    CHECK(parser.format_help() == "usage: prog\n"
+                                  "\n"
+                                  "A foo that bars"s);
 }
 
 TEST_CASE("ArgumentParser provides help message with usage section and epilog for epilog and no arguments")
