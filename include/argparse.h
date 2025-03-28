@@ -8,8 +8,7 @@
     Distributed under MIT license
 */
 
-#ifndef CPP_ARGPARSE_H__DDK
-#define CPP_ARGPARSE_H__DDK
+#pragma once
 
 #include <algorithm>
 #include <any>
@@ -1634,5 +1633,3 @@ namespace argparse
             Handle m_handle;
     };
 }
-
-#endif /* CPP_ARGPARSE_H__DDK */
