@@ -1220,7 +1220,10 @@ namespace argparse
                             case store_false:
                                 m_value = true;
                                 break;
-                            default:
+                            case store:
+                            case store_const:
+                            case count:
+                            case append:
                                 m_value = m_options.default_;
                                 break;
                         }
