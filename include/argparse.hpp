@@ -173,7 +173,7 @@ namespace argparse
             template<typename ...Args>
             decltype(auto) add_argument(Args &&... names)
             {
-                return ArgumentBuilder(m_arguments, std::vector<std::string>{names...});
+                return ArgumentBuilder(m_arguments, m_version, std::vector<std::string>{names...});
             }
 
             auto parse_args(int argc, char const * const argv[]) -> Parameters
@@ -222,7 +222,7 @@ namespace argparse
 
             auto add_mutually_exclusive_group()
             {
-                return MutuallyExclusiveGroup(m_arguments);
+                return MutuallyExclusiveGroup(m_arguments, m_version);
             }
 
             auto prog(std::string const & prog) -> ArgumentParser &&
@@ -284,14 +284,7 @@ namespace argparse
 
             auto format_version() const -> std::string
             {
-                auto version = optstring();
-
-                if (auto it = std::ranges::find_if(m_arguments, [](auto && arg) { return arg->has_version_action(); }); it != m_arguments.end())
-                {
-                    version = (*it)->get_version();
-                }
-
-                auto const formatter = Formatter(m_arguments, m_prog, m_usage, m_description, m_epilog, version);
+                auto const formatter = Formatter(m_arguments, m_prog, m_usage, m_description, m_epilog, m_version);
                 return formatter.format_version();
             }
 
@@ -552,7 +545,6 @@ namespace argparse
             {
                 std::vector<std::string> names;
                 std::string help;
-                std::string version;
                 std::string metavar;
                 std::string dest;
                 Action action = store;
@@ -631,11 +623,6 @@ namespace argparse
                     auto has_version_action() const -> bool
                     {
                         return m_options.action == version;
-                    }
-
-                    auto get_version() const -> std::string const &
-                    {
-                        return m_options.version;
                     }
 
                     auto get_help_message() const -> std::string const &
@@ -1512,26 +1499,29 @@ namespace argparse
             class MutuallyExclusiveGroup
             {
                 public:
-                    MutuallyExclusiveGroup(argument_uptrs & arguments)
+                    MutuallyExclusiveGroup(argument_uptrs & arguments, optstring & version)
                       : m_arguments(arguments)
+                      , m_version(version)
                     {
                     }
 
                     template<typename ...Args>
                     decltype(auto) add_argument(Args &&... names)
                     {
-                        return ArgumentBuilder(m_arguments, std::vector<std::string>{names...}, this);
+                        return ArgumentBuilder(m_arguments, m_version, std::vector<std::string>{names...}, this);
                     }
 
                 private:
                     argument_uptrs & m_arguments;
+                    optstring & m_version;
             };
 
             class ArgumentBuilder
             {
                 public:
-                    ArgumentBuilder(argument_uptrs & arguments, std::vector<std::string> names, MutuallyExclusiveGroup * group = nullptr)
+                    ArgumentBuilder(argument_uptrs & arguments, optstring & version, std::vector<std::string> names, MutuallyExclusiveGroup * group = nullptr)
                       : m_arguments(arguments)
+                      , m_version(version)
                       , m_options()
                     {
                         m_options.names = std::move(names);
@@ -1566,7 +1556,7 @@ namespace argparse
 
                     auto version(std::string const & version) -> ArgumentBuilder &
                     {
-                        m_options.version = version;
+                        m_version = version;
                         return *this;
                     }
 
@@ -1652,6 +1642,7 @@ namespace argparse
 
                 private:
                     argument_uptrs & m_arguments;
+                    optstring & m_version;
                     Options m_options;
             };
 
