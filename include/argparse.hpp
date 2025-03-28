@@ -1146,6 +1146,12 @@ namespace argparse
                             | std::views::take_while([](auto const & token) { return token.m_token != "--"; });
                     }
 
+                    auto get_consumable_args(auto it, std::ranges::view auto consumable)
+                    {
+                        return std::ranges::subrange(std::next(it), consumable.end())
+                            | std::views::take_while([](auto const & token) { return !token.m_token.starts_with("-"); });
+                    }
+
                 private:
                     bool m_present;
 
@@ -1165,8 +1171,7 @@ namespace argparse
                             if (auto [found, name] = has_arg(it); found)
                             {
                                 auto const value = consume_name(it, name);
-                                auto consumable_args = std::ranges::subrange(std::next(it), consumable.end())
-                                    | std::views::take_while([](auto const & token) { return !token.m_token.starts_with("-"); });
+                                auto consumable_args = get_consumable_args(it, consumable);
 
                                 check_errors(value, consumable_args);
 
