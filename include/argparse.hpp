@@ -765,15 +765,9 @@ namespace argparse
                         return get_dest_name();
                     }
 
-                public:
-                    explicit PositionalArgument(Options options)
-                      : Argument(std::move(options))
+                    auto get_consumable(tokens & args)
                     {
-                    }
-
-                    auto parse_args(tokens & args) -> void override
-                    {
-                        auto consumable = args
+                        return args
                             | std::views::drop_while([](auto const & token)
                                 {
                                     return token.m_consumed;
@@ -795,6 +789,18 @@ namespace argparse
                                     }
                                     return !token.m_token.starts_with("-");
                                 });
+                    }
+
+                public:
+                    explicit PositionalArgument(Options options)
+                      : Argument(std::move(options))
+                    {
+                    }
+
+                    auto parse_args(tokens & args) -> void override
+                    {
+                        auto consumable = get_consumable(args);
+
                         if (has_nargs())
                         {
                             if (has_nargs_number())
