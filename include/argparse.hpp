@@ -1139,6 +1139,13 @@ namespace argparse
                         }
                     }
 
+                    auto get_consumable(tokens & args)
+                    {
+                        return args
+                            | std::views::drop_while([](auto const & token) { return token.m_consumed; })
+                            | std::views::take_while([](auto const & token) { return token.m_token != "--"; });
+                    }
+
                 private:
                     bool m_present;
 
@@ -1151,9 +1158,8 @@ namespace argparse
 
                     auto parse_args(tokens & args) -> void override
                     {
-                        auto consumable = args
-                            | std::views::drop_while([](auto const & token) { return token.m_consumed; })
-                            | std::views::take_while([](auto const & token) { return token.m_token != "--"; });
+                        auto consumable = get_consumable(args);
+
                         for (auto it = consumable.begin(); it != consumable.end();)
                         {
                             if (auto [found, name] = has_arg(it); found)
