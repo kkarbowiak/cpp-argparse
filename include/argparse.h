@@ -1452,14 +1452,11 @@ namespace argparse
                             switch (argument.get_nargs_option())
                             {
                                 case zero_or_one:
-                                    result += std::format(" [{0}]", formatted_arg);
-                                    break;
+                                    return std::format(" [{0}]", formatted_arg);
                                 case zero_or_more:
-                                    result += std::format(" [{0} [{0} ...]]", formatted_arg);
-                                    break;
+                                    return std::format(" [{0} [{0} ...]]", formatted_arg);
                                 case one_or_more:
-                                    result += std::format(" {0} [{0} ...]", formatted_arg);
-                                    break;
+                                    return std::format(" {0} [{0} ...]", formatted_arg);
                             }
                         }
 
