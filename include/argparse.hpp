@@ -865,102 +865,6 @@ namespace argparse
 
             class OptionalArgument final : public Argument
             {
-                public:
-                    explicit OptionalArgument(Options options)
-                      : Argument(std::move(options))
-                      , m_present(false)
-                    {
-                    }
-
-                    auto parse_args(tokens & args) -> void override
-                    {
-                        auto consumable = args
-                            | std::views::drop_while([](auto const & token) { return token.m_consumed; })
-                            | std::views::take_while([](auto const & token) { return token.m_token != "--"; });
-                        for (auto it = consumable.begin(); it != consumable.end();)
-                        {
-                            if (auto [found, name] = has_arg(it); found)
-                            {
-                                auto const value = consume_name(it, name);
-                                auto consumable_args = std::ranges::subrange(std::next(it), consumable.end())
-                                    | std::views::take_while([](auto const & token) { return !token.m_token.starts_with("-"); });
-
-                                check_errors(value, consumable_args);
-
-                                perform_action(value, consumable_args);
-
-                                m_present = true;
-
-                                if (it->m_consumed)
-                                {
-                                    ++it;
-                                }
-                            }
-                            else
-                            {
-                                ++it;
-                            }
-                        }
-
-                        if (!m_present)
-                        {
-                            assing_non_present_value();
-                        }
-                    }
-
-                    auto get_dest_name() const -> std::string override
-                    {
-                        if (!m_options.dest.empty())
-                        {
-                            return m_options.dest;
-                        }
-
-                        auto dest = get_name_for_dest();
-
-                        std::ranges::replace(dest, '-', '_');
-
-                        return dest;
-                    }
-
-                    auto get_metavar_name() const -> std::string override
-                    {
-                        if (!m_options.metavar.empty())
-                        {
-                            return m_options.metavar;
-                        }
-
-                        auto metavar = get_dest_name();
-
-                        std::ranges::for_each(metavar, [](char & ch) { ch = static_cast<char>(::toupper(ch)); });
-
-                        return metavar;
-                    }
-
-                    auto has_value() const -> bool override
-                    {
-                        return m_value.has_value();
-                    }
-
-                    auto get_value() const -> std::any override
-                    {
-                        return m_value;
-                    }
-
-                    auto is_required() const -> bool override
-                    {
-                        return m_options.required;
-                    }
-
-                    auto is_positional() const -> bool override
-                    {
-                        return false;
-                    }
-
-                    auto is_present() const -> bool override
-                    {
-                        return m_present;
-                    }
-
                 private:
                     auto perform_action(std::string const & value, std::ranges::view auto args) -> void
                     {
@@ -1237,6 +1141,102 @@ namespace argparse
 
                 private:
                     bool m_present;
+
+                public:
+                    explicit OptionalArgument(Options options)
+                      : Argument(std::move(options))
+                      , m_present(false)
+                    {
+                    }
+
+                    auto parse_args(tokens & args) -> void override
+                    {
+                        auto consumable = args
+                            | std::views::drop_while([](auto const & token) { return token.m_consumed; })
+                            | std::views::take_while([](auto const & token) { return token.m_token != "--"; });
+                        for (auto it = consumable.begin(); it != consumable.end();)
+                        {
+                            if (auto [found, name] = has_arg(it); found)
+                            {
+                                auto const value = consume_name(it, name);
+                                auto consumable_args = std::ranges::subrange(std::next(it), consumable.end())
+                                    | std::views::take_while([](auto const & token) { return !token.m_token.starts_with("-"); });
+
+                                check_errors(value, consumable_args);
+
+                                perform_action(value, consumable_args);
+
+                                m_present = true;
+
+                                if (it->m_consumed)
+                                {
+                                    ++it;
+                                }
+                            }
+                            else
+                            {
+                                ++it;
+                            }
+                        }
+
+                        if (!m_present)
+                        {
+                            assing_non_present_value();
+                        }
+                    }
+
+                    auto get_dest_name() const -> std::string override
+                    {
+                        if (!m_options.dest.empty())
+                        {
+                            return m_options.dest;
+                        }
+
+                        auto dest = get_name_for_dest();
+
+                        std::ranges::replace(dest, '-', '_');
+
+                        return dest;
+                    }
+
+                    auto get_metavar_name() const -> std::string override
+                    {
+                        if (!m_options.metavar.empty())
+                        {
+                            return m_options.metavar;
+                        }
+
+                        auto metavar = get_dest_name();
+
+                        std::ranges::for_each(metavar, [](char & ch) { ch = static_cast<char>(::toupper(ch)); });
+
+                        return metavar;
+                    }
+
+                    auto has_value() const -> bool override
+                    {
+                        return m_value.has_value();
+                    }
+
+                    auto get_value() const -> std::any override
+                    {
+                        return m_value;
+                    }
+
+                    auto is_required() const -> bool override
+                    {
+                        return m_options.required;
+                    }
+
+                    auto is_positional() const -> bool override
+                    {
+                        return false;
+                    }
+
+                    auto is_present() const -> bool override
+                    {
+                        return m_present;
+                    }
             };
 
         private:
