@@ -1,4 +1,4 @@
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 
 auto main(int argc, char * argv[]) -> int

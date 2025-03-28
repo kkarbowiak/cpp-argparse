@@ -1,4 +1,4 @@
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 
 class Logger

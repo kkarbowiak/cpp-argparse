@@ -17,4 +17,4 @@ jobs:
       - name: Upload artifact
         uses: softprops/action-gh-release@v2
         with:
-          files: include/argparse.h
+          files: include/argparse.hpp

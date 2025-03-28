@@ -136,6 +136,6 @@ jobs:
         run: |
           lcov --directory build --capture --output-file coverage.info --ignore-errors mismatch
           lcov --list coverage.info
-          lcov --extract coverage.info --output-file argparse.info *argparse.h
+          lcov --extract coverage.info --output-file argparse.info *argparse.hpp
           lcov --list argparse.info
           bash <(curl -s https://codecov.io/bash) -f argparse.info
