@@ -284,12 +284,15 @@ namespace argparse
 
             auto format_version() const -> std::string
             {
+                auto version = optstring();
+
                 if (auto it = std::ranges::find_if(m_arguments, [](auto && arg) { return arg->has_version_action(); }); it != m_arguments.end())
                 {
-                    return replace_prog((*it)->get_version(), m_prog);
+                    version = (*it)->get_version();
                 }
 
-                return "";
+                auto const formatter = Formatter(m_arguments, m_prog, m_usage, m_description, m_epilog, version);
+                return formatter.format_version();
             }
 
             ArgumentParser()
@@ -1305,6 +1308,11 @@ namespace argparse
                         }
 
                         return message;
+                    }
+
+                    auto format_version() const -> std::string
+                    {
+                        return replace_prog(*m_version, m_prog);
                     }
 
                 private:
