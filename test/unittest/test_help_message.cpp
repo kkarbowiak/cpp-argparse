@@ -1,4 +1,4 @@
-#include "argparse.h"
+#include "argparse.hpp"
 
 #include "cstring_array.h"
 

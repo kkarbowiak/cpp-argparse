@@ -8,7 +8,7 @@ This document is based on the tutorial for the Python's argparse library.
 
 Let's start with a very simple example that doesn't do much (`basic.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 
 int main(int argc, char * argv[])
 {
@@ -47,7 +47,7 @@ Here is what is happening:
 
 An example (`positional.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 
 int main(int argc, char * argv[])
@@ -88,7 +88,7 @@ Here is what is happening:
 
 Note that while the help message looks nice, it is not as helpful as it could be. For example we see that we got `echo` as a positional argument, but we don't know what it does. Let's make it a bit more useful  (`positional1.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 
 int main(int argc, char * argv[])
@@ -112,7 +112,7 @@ optional arguments:
 ```
 Now, how about doing some math  (`positional2.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 
 int main(int argc, char * argv[])
@@ -126,7 +126,7 @@ int main(int argc, char * argv[])
 ```
 Well, this won't compile and your compiler will complain that the `std::string` type does not define a binary `*` operator. As I mentioned, the default type for all options is `std::string`. Let's tell the parser to treat the `square` option as an integer  (`positional3.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 
 int main(int argc, char * argv[])
@@ -158,7 +158,7 @@ That went well. The program now even detects an invalid value and quits with an 
 
 So far we have been playing with positional arguments. Let's see how to add optional ones (`optional.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 
 int main(int argc, char * argv[])
@@ -201,7 +201,7 @@ Here is what is happening:
 
 The above example accepts arbitrary values for `--verbosity`, but for our simple program, only two values are actually useful, `true` and `false`. Let's modify the code accordingly (`optional1.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 
 int main(int argc, char * argv[])
@@ -243,7 +243,7 @@ Here is what is happening:
 
 If you are familiar with command line usage, you will notice that I haven't touched on the topic of short versions of the options. It's quite simple (`optional2.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 
 int main(int argc, char * argv[])
@@ -274,7 +274,7 @@ Note that the new ability is also reflected in the help text.
 
 Our program keeps growing in complexity (`complex.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 
 int main(int argc, char * argv[])
@@ -319,7 +319,7 @@ the square of 4 equals 16
 
 How about we give this program of ours back the ability to have multiple verbosity values, and actually get to use them (`complex1.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 
 int main(int argc, char * argv[])
@@ -371,7 +371,7 @@ $ complex1 4 -v 3
 ```
 The above outputs all look good except the last one, which exposes a bug in our program. Let's fix it by restricting the values the `--verbosity` option can accept (`complex2.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 
 int main(int argc, char * argv[])
@@ -415,7 +415,7 @@ Note that the change reflects in both the error message and the help string.
 
 Let us now try out a different approach of playing with verbosity, which is pretty common (`count.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 
 int main(int argc, char * argv[])
@@ -476,7 +476,7 @@ $ count 4 -vvv
 
 Let's fix it (`count2.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 
 int main(int argc, char * argv[])
@@ -516,7 +516,7 @@ terminate called after throwing an instance of 'std::bad_any_cast'
 
 Let's fix it (`count3.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 
 int main(int argc, char * argv[])
@@ -562,7 +562,7 @@ $ count3 4
 
 One way to remove the need of getting the value object and doing a boolean test before extracting the value is to give the option a default value (`complex3.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 
 int main(int argc, char * argv[])
@@ -605,7 +605,7 @@ As expected, if the argument is not specified, it assumes its default value.
 
 What if we wanted to expand our tiny program to perform other powers, not just squares (`advanced.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 #include <cmath>
 
@@ -652,7 +652,7 @@ $ advanced 4 2 -v 1
 ```
 Notice that so far we've been using verbosity to *change* the text that gets displayed. The following example instead uses verbosity to display *more* text instead (`advanced1.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 #include <cmath>
 
@@ -694,7 +694,7 @@ Running 'advanced1'
 
 So far we have been using two member functions of `argparse::ArgumentParser` class. Let's introduce a third one, `add_mutually_exclusive_group()`. It allows us to specify options that conflict with each other. Let's also change the rest of the program so that the new functionality makes more sense: we'll introduce the `--quiet` option, which will be the opposite of the `--verbose` one (`conflicting.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 #include <cmath>
 
@@ -749,7 +749,7 @@ That should be easy to follow. Note that slight difference in the usage text. No
 
 Before we end this part, you probably want to tell your users the main purpose of your program, just in case they don't know (`conflicting1.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 #include <cmath>
 
@@ -805,7 +805,7 @@ Before we end this tutorial, I would like to mention some more topics more relat
 
 When you want to use default values, choices, or const values in conjunction with types other that `std::string`, please remember to also specify the argument type and then retrieve this same exact type (`types.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 
 int main(int argc, char * argv[])
@@ -849,7 +849,7 @@ d:      21
 
 When using `std::string`, **beware not to use** `const char*` by accident. The easiest and most convenient way to avoid this is to use the `""s` string literal (`string.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <string>
 #include <iostream>
 
@@ -885,7 +885,7 @@ You may wonder whether this library allows using types other than the built-in o
 
 You can parse directly to any custom type, provided that this type is default-constructible and you provide a way to do string-type and type-string conversion as well as equality comparison. This may sound complicated, but basically boils down to specialising three template functions: `argparse::from_string`, `argparse::to_string`, and `argparse::are_equal`, which are the library's customisation points. Let's have a look at an example (`custom.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <string>
 #include <sstream>
 #include <cmath>
@@ -960,7 +960,7 @@ The distance is 1.41421
 ```
 The return value of `argparse::from_string` indicates whether the conversion succeeded. You can use it to your advantage (`custom1.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <string>
 #include <sstream>
 #include <cmath>
@@ -1037,7 +1037,7 @@ Of course it would be even better to let the user know what is the proper format
 
 At this point you may wonder what the type-string conversion and comparison are needed for. They become important when you want to use choices (`custom2.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <string>
 #include <sstream>
 #include <cmath>
@@ -1117,7 +1117,7 @@ As you have noticed, the parser automatically adds the `-h/--help` optional argu
 
 You can disable adding the `--help` option like this (`nohelp.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 
 int main(int argc, char * argv[])
 {
@@ -1133,7 +1133,7 @@ usage: nohelp
 ```
 The automatic help, version, and error handling consists of printing a relevant message and exiting the program by a call to `std::exit`. The reason this may be undesirable is that `std::exit` does not ensure cleanup of local variables (`undesired.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 
 class Logger
@@ -1178,7 +1178,7 @@ optional arguments:
 ```
 To improve this situation, you may tell the logger not to handle help, version, and errors (`nohandling.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 
 class Logger
@@ -1204,7 +1204,7 @@ int main(int argc, char * argv[])
 ```
 In such a case, you'll most likely want to handle help and version requests yourself. Also, you will now **need** to handle errors, otherwise you will encounter unhandled exceptions. Let's extend the program (`nohandling1.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 
 class Logger
@@ -1260,7 +1260,7 @@ Log ended
 ```
 The following example illustrates handling version requests (`nohandling2.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 #include <iostream>
 
 int main(int argc, char * argv[])
@@ -1291,7 +1291,7 @@ This is program version 1.0.0
 ```
 Of course, handling version requests can be fully automatic (`version.cpp`):
 ```c++
-#include "argparse.h"
+#include "argparse.hpp"
 
 int main(int argc, char * argv[])
 {
