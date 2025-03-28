@@ -173,4 +173,4 @@ The below lists features of the `argparse` module that this implementation suppo
 
 ## License
 
-This project is released under **MIT** license, so feel free to do anything you like with it.
+This project is released under **MIT** license.
