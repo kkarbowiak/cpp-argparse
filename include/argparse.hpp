@@ -272,13 +272,13 @@ namespace argparse
 
             auto format_usage() const -> std::string
             {
-                auto const formatter = Formatter(m_arguments, m_prog, m_usage, m_description, m_epilog);
+                auto const formatter = Formatter(m_arguments, m_prog, m_usage, m_description, m_epilog, m_version);
                 return formatter.format_usage();
             }
 
             auto format_help() const -> std::string
             {
-                auto const formatter = Formatter(m_arguments, m_prog, m_usage, m_description, m_epilog);
+                auto const formatter = Formatter(m_arguments, m_prog, m_usage, m_description, m_epilog, m_version);
                 return formatter.format_help();
             }
 
@@ -1258,12 +1258,13 @@ namespace argparse
             class Formatter
             {
                 public:
-                    Formatter(argument_uptrs const & arguments, optstring const & prog, optstring const & usage, optstring const & description, optstring const & epilog)
+                    Formatter(argument_uptrs const & arguments, optstring const & prog, optstring const & usage, optstring const & description, optstring const & epilog, optstring const & version)
                       : m_arguments(arguments)
                       , m_prog(prog)
                       , m_usage(usage)
                       , m_description(description)
                       , m_epilog(epilog)
+                      , m_version(version)
                     {
                     }
 
@@ -1497,6 +1498,7 @@ namespace argparse
                     optstring const & m_usage;
                     optstring const & m_description;
                     optstring const & m_epilog;
+                    optstring const & m_version;
             };
 
             class MutuallyExclusiveGroup
@@ -1651,6 +1653,7 @@ namespace argparse
             optstring m_usage;
             optstring m_description;
             optstring m_epilog;
+            optstring m_version;
             Handle m_handle;
     };
 }
