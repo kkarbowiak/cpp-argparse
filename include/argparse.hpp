@@ -726,6 +726,45 @@ namespace argparse
 
             class PositionalArgument final : public Argument
             {
+                private:
+                    auto parse_arguments_option(std::ranges::view auto args) -> void
+                    {
+                        switch (get_nargs_option())
+                        {
+                            case zero_or_one:
+                            {
+                                if (!args.empty())
+                                {
+                                    m_value = consume_arg(args.front());
+                                }
+                                else
+                                {
+                                    m_value = m_options.default_;
+                                }
+                                break;
+                            }
+                            case zero_or_more:
+                            {
+                                parse_arguments(args);
+                                break;
+                            }
+                            case one_or_more:
+                            {
+                                auto const values = consume_args(args);
+                                if (!values.empty())
+                                {
+                                    m_value = m_options.type_handler->transform(values);
+                                }
+                                break;
+                            }
+                        }
+                    }
+
+                    auto get_name_for_error() const -> std::string override
+                    {
+                        return get_dest_name();
+                    }
+
                 public:
                     explicit PositionalArgument(Options options)
                       : Argument(std::move(options))
@@ -815,45 +854,6 @@ namespace argparse
                     auto is_present() const -> bool override
                     {
                         return false;
-                    }
-
-                private:
-                    auto parse_arguments_option(std::ranges::view auto args) -> void
-                    {
-                        switch (get_nargs_option())
-                        {
-                            case zero_or_one:
-                            {
-                                if (!args.empty())
-                                {
-                                    m_value = consume_arg(args.front());
-                                }
-                                else
-                                {
-                                    m_value = m_options.default_;
-                                }
-                                break;
-                            }
-                            case zero_or_more:
-                            {
-                                parse_arguments(args);
-                                break;
-                            }
-                            case one_or_more:
-                            {
-                                auto const values = consume_args(args);
-                                if (!values.empty())
-                                {
-                                    m_value = m_options.type_handler->transform(values);
-                                }
-                                break;
-                            }
-                        }
-                    }
-
-                    auto get_name_for_error() const -> std::string override
-                    {
-                        return get_dest_name();
                     }
             };
 
