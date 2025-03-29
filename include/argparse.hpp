@@ -68,7 +68,7 @@ namespace argparse
 
     inline auto operator|(Handle lhs, Handle rhs) -> Handle
     {
-        return static_cast<Handle>(static_cast<int>(lhs) & static_cast<int>(rhs));
+        return static_cast<Handle>(static_cast<int>(lhs) | static_cast<int>(rhs));
     }
 
     inline auto operator&(Handle lhs, Handle rhs) -> int
