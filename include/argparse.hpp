@@ -279,7 +279,7 @@ namespace argparse
             auto format_help() const -> std::string
             {
                 auto const formatter = Formatter(m_arguments, m_prog, m_usage, m_description, m_epilog, m_version);
-                return formatter.format_help();
+                return formatter.format_help(m_arguments, m_prog, m_usage, m_description, m_epilog);
             }
 
             auto format_version() const -> std::string
@@ -1268,15 +1268,15 @@ namespace argparse
                         return std::format("usage: {}{}{}", *prog, format_usage_optionals(arguments), format_usage_positionals(arguments));
                     }
 
-                    auto format_help() const -> std::string
+                    auto format_help(argument_uptrs const & arguments, optstring const & prog, optstring const & usage, optstring const & description, optstring const & epilog) const -> std::string
                     {
-                        auto message = format_usage(m_arguments, m_usage, m_prog);
-                        auto positionals = format_help_positionals();
-                        auto optionals = format_help_optionals();
+                        auto message = format_usage(arguments, usage, prog);
+                        auto positionals = format_help_positionals(arguments, prog);
+                        auto optionals = format_help_optionals(arguments, prog);
 
-                        if (m_description)
+                        if (description)
                         {
-                            message += "\n\n" + replace_prog(*m_description, m_prog);
+                            message += "\n\n" + replace_prog(*description, prog);
                         }
 
                         if (!positionals.empty())
@@ -1289,9 +1289,9 @@ namespace argparse
                             message += "\n\noptional arguments:" + optionals;
                         }
 
-                        if (m_epilog)
+                        if (epilog)
                         {
-                            message += "\n\n" + replace_prog(*m_epilog, m_prog);
+                            message += "\n\n" + replace_prog(*epilog, prog);
                         }
 
                         return message;
@@ -1380,11 +1380,11 @@ namespace argparse
                         return optionals;
                     }
 
-                    auto format_help_positionals() const -> std::string
+                    auto format_help_positionals(argument_uptrs const & arguments, optstring const & prog) const -> std::string
                     {
                         auto positionals = std::string();
 
-                        for (auto const & arg : m_arguments
+                        for (auto const & arg : arguments
                             | std::views::filter([](auto const & arg){ return arg->is_positional(); }))
                         {
                             auto arg_line = "  " + format_arg(*arg);
@@ -1392,7 +1392,7 @@ namespace argparse
                             if (auto const & help = arg->get_help_message(); !help.empty())
                             {
                                 arg_line += help_string_separation(arg_line.size());
-                                arg_line += replace_prog(help, m_prog);
+                                arg_line += replace_prog(help, prog);
                             }
 
                             positionals += '\n' + arg_line;
@@ -1401,11 +1401,11 @@ namespace argparse
                         return positionals;
                     }
 
-                    auto format_help_optionals() const -> std::string
+                    auto format_help_optionals(argument_uptrs const & arguments, optstring const & prog) const -> std::string
                     {
                         auto optionals = std::string();
 
-                        for (auto const & arg : m_arguments
+                        for (auto const & arg : arguments
                             | std::views::filter([](auto const & arg){ return !arg->is_positional(); }))
                         {
                             auto arg_line = std::string("  ");
@@ -1435,7 +1435,7 @@ namespace argparse
                             if (auto const & help = arg->get_help_message(); !help.empty())
                             {
                                 arg_line += help_string_separation(arg_line.size());
-                                arg_line += replace_prog(help, m_prog);
+                                arg_line += replace_prog(help, prog);
                             }
 
                             optionals += '\n' + arg_line;
