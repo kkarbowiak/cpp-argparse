@@ -285,7 +285,7 @@ namespace argparse
             auto format_version() const -> std::string
             {
                 auto const formatter = Formatter(m_arguments, m_prog, m_usage, m_description, m_epilog, m_version);
-                return formatter.format_version();
+                return formatter.format_version(m_version, m_prog);
             }
 
             ArgumentParser()
@@ -1297,9 +1297,9 @@ namespace argparse
                         return message;
                     }
 
-                    auto format_version() const -> std::string
+                    auto format_version(optstring const & version, optstring const & prog) const -> std::string
                     {
-                        return replace_prog(*m_version, m_prog);
+                        return replace_prog(*version, prog);
                     }
 
                 private:
