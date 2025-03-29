@@ -493,10 +493,10 @@ namespace argparse
                         else
                         {
                             using argparse::from_string;
-                            auto val = T();
-                            if (from_string(string, val))
+                            auto value = T();
+                            if (from_string(string, value))
                             {
-                                return std::any(val);
+                                return std::any(value);
                             }
                             else
                             {
