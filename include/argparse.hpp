@@ -472,7 +472,7 @@ namespace argparse
                 public:
                     virtual ~TypeHandler() = default;
 
-                    virtual auto from_string(std::string const & string, std::any & value) const -> bool = 0;
+                    virtual auto from_string(std::string const & string) const -> std::any = 0;
                     virtual auto to_string(std::any const & value) const -> std::string = 0;
                     virtual auto compare(std::any const & lhs, std::any const & rhs) const -> bool = 0;
                     virtual auto transform(std::vector<std::any> const & values) const -> std::any = 0;
@@ -484,25 +484,23 @@ namespace argparse
             class TypeHandlerT : public TypeHandler
             {
                 public:
-                    auto from_string(std::string const & string, std::any & value) const -> bool override
+                    auto from_string(std::string const & string) const -> std::any override
                     {
                         if constexpr (std::is_same_v<std::string, T>)
                         {
-                            value = string;
-                            return true;
+                            return std::any(string);
                         }
                         else
                         {
                             using argparse::from_string;
-                            auto val = T();
-                            if (from_string(string, val))
+                            auto value = T();
+                            if (from_string(string, value))
                             {
-                                value = val;
-                                return true;
+                                return std::any(value);
                             }
                             else
                             {
-                                return false;
+                                return std::any();
                             }
                         }
                     }
@@ -669,8 +667,8 @@ namespace argparse
 
                     auto process_arg(std::string const & arg) const -> std::any
                     {
-                        std::any value;
-                        if (!m_options.type_handler->from_string(arg, value))
+                        auto const value = m_options.type_handler->from_string(arg);
+                        if (!value.has_value())
                         {
                             throw parsing_error(std::format("argument {}: invalid value: '{}'", get_name_for_error(), arg));
                         }
