@@ -335,3 +335,8 @@ TEST_CASE("ArgumentParser supports mutually exclusive groups")
     auto group = parser.add_mutually_exclusive_group();
     group.add_argument("-o");
 }
+
+TEST_CASE("Test combining Handle values")
+{
+    CHECK((argparse::Handle::none | argparse::Handle::errors) == argparse::Handle::errors);
+}
