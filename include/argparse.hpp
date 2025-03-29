@@ -405,7 +405,7 @@ namespace argparse
                         {
                             if (auto const & arg2 = **it2; arg2.is_present() && arg2.is_mutually_exclusive_with(arg1))
                             {
-                                throw parsing_error(std::format("argument {}: not allowed with argument {}", join(arg2.get_names(), "/"), join(arg1.get_names(), "/")));
+                                throw parsing_error(std::format("argument {}: not allowed with argument {}", arg2.get_joined_names(), arg1.get_joined_names()));
                             }
                         }
                     }
@@ -421,11 +421,11 @@ namespace argparse
                 {
                     if (!error_message)
                     {
-                        error_message = "the following arguments are required: " + join(arg->get_names(), "/");
+                        error_message = "the following arguments are required: " + arg->get_joined_names();
                     }
                     else
                     {
-                        *error_message += " " + join(arg->get_names(), "/");
+                        *error_message += " " + arg->get_joined_names();
                     }
                 }
 
@@ -583,6 +583,11 @@ namespace argparse
                     auto get_names() const -> std::vector<std::string> const &
                     {
                         return m_options.names;
+                    }
+
+                    auto get_joined_names() const -> std::string
+                    {
+                        return join(m_options.names, "/");
                     }
 
                     auto has_nargs() const -> bool
@@ -936,7 +941,7 @@ namespace argparse
                         auto const values = consume_args(args | std::views::take(nargs_number));
                         if (values.size() < nargs_number)
                         {
-                            throw parsing_error(std::format("argument {}: expected {} argument{}", join(get_names(), "/"), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
+                            throw parsing_error(std::format("argument {}: expected {} argument{}", get_joined_names(), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
                         }
                         m_value = m_options.type_handler->transform(values);
                     }
@@ -967,7 +972,7 @@ namespace argparse
                                 auto const values = consume_args(args);
                                 if (values.empty())
                                 {
-                                    throw parsing_error(std::format("argument {}: expected at least one argument", join(get_names(), "/")));
+                                    throw parsing_error(std::format("argument {}: expected at least one argument", get_joined_names()));
                                 }
                                 m_value = m_options.type_handler->transform(values);
                                 break;
@@ -1064,7 +1069,7 @@ namespace argparse
 
                     auto get_name_for_error() const -> std::string override
                     {
-                        return join(get_names(), "/");
+                        return get_joined_names();
                     }
 
                     auto check_errors(std::string const & value, std::ranges::view auto args) -> void
@@ -1074,7 +1079,7 @@ namespace argparse
                             case store:
                                 if (!has_nargs() && value.empty() && args.empty())
                                 {
-                                    throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
+                                    throw parsing_error(std::format("argument {}: expected one argument", get_joined_names()));
                                 }
                                 break;
                             case store_true:
@@ -1083,13 +1088,13 @@ namespace argparse
                             case count:
                                 if (!value.empty())
                                 {
-                                    throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", join(get_names(), "/"), value));
+                                    throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", get_joined_names(), value));
                                 }
                                 break;
                             case append:
                                 if (value.empty() && args.empty())
                                 {
-                                    throw parsing_error(std::format("argument {}: expected one argument", join(get_names(), "/")));
+                                    throw parsing_error(std::format("argument {}: expected one argument", get_joined_names()));
                                 }
                                 break;
                             case help:
