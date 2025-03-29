@@ -273,7 +273,7 @@ namespace argparse
             auto format_usage() const -> std::string
             {
                 auto const formatter = Formatter(m_arguments, m_prog, m_usage, m_description, m_epilog, m_version);
-                return formatter.format_usage();
+                return formatter.format_usage(m_arguments, m_usage, m_prog);
             }
 
             auto format_help() const -> std::string
@@ -1258,19 +1258,19 @@ namespace argparse
                     {
                     }
 
-                    auto format_usage() const -> std::string
+                    auto format_usage(argument_uptrs const & arguments, optstring const & usage, optstring const & prog) const -> std::string
                     {
-                        if (m_usage)
+                        if (usage)
                         {
-                            return std::format("usage: {}", replace_prog(*m_usage, m_prog));
+                            return std::format("usage: {}", replace_prog(*usage, prog));
                         }
 
-                        return std::format("usage: {}{}{}", *m_prog, format_usage_optionals(), format_usage_positionals());
+                        return std::format("usage: {}{}{}", *prog, format_usage_optionals(arguments), format_usage_positionals(arguments));
                     }
 
                     auto format_help() const -> std::string
                     {
-                        auto message = format_usage();
+                        auto message = format_usage(m_arguments, m_usage, m_prog);
                         auto positionals = format_help_positionals();
                         auto optionals = format_help_optionals();
 
@@ -1303,11 +1303,11 @@ namespace argparse
                     }
 
                 private:
-                    auto format_usage_positionals() const -> std::string
+                    auto format_usage_positionals(argument_uptrs const & arguments) const -> std::string
                     {
                         auto positionals = std::string();
 
-                        for (auto const & arg : m_arguments
+                        for (auto const & arg : arguments
                             | std::views::filter([](auto const & arg){ return arg->is_positional(); }))
                         {
                             if (arg->has_nargs())
@@ -1324,11 +1324,11 @@ namespace argparse
                         return positionals;
                     }
 
-                    auto format_usage_optionals() const -> std::string
+                    auto format_usage_optionals(argument_uptrs const & arguments) const -> std::string
                     {
                         auto optionals = std::string();
 
-                        for (auto it = m_arguments.cbegin(); it != m_arguments.cend(); ++it)
+                        for (auto it = arguments.cbegin(); it != arguments.cend(); ++it)
                         {
                             auto const & arg = *it;
 
@@ -1338,7 +1338,7 @@ namespace argparse
                                 {
                                     optionals += " ";
                                 }
-                                else if (arg->is_mutually_exclusive() && it != m_arguments.cbegin() && arg->is_mutually_exclusive_with(**std::prev(it)))
+                                else if (arg->is_mutually_exclusive() && it != arguments.cbegin() && arg->is_mutually_exclusive_with(**std::prev(it)))
                                 {
                                     optionals += " | ";
                                 }
@@ -1366,7 +1366,7 @@ namespace argparse
                                 {
                                     // skip
                                 }
-                                else if (arg->is_mutually_exclusive() && std::next(it) != m_arguments.cend() && arg->is_mutually_exclusive_with(**std::next(it)))
+                                else if (arg->is_mutually_exclusive() && std::next(it) != arguments.cend() && arg->is_mutually_exclusive_with(**std::next(it)))
                                 {
                                     // skip
                                 }
