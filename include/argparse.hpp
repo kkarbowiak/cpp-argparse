@@ -272,19 +272,19 @@ namespace argparse
 
             auto format_usage() const -> std::string
             {
-                auto const formatter = Formatter(m_arguments, m_prog, m_usage, m_description, m_epilog, m_version);
+                auto const formatter = Formatter();
                 return formatter.format_usage(m_arguments, m_usage, m_prog);
             }
 
             auto format_help() const -> std::string
             {
-                auto const formatter = Formatter(m_arguments, m_prog, m_usage, m_description, m_epilog, m_version);
+                auto const formatter = Formatter();
                 return formatter.format_help(m_arguments, m_prog, m_usage, m_description, m_epilog);
             }
 
             auto format_version() const -> std::string
             {
-                auto const formatter = Formatter(m_arguments, m_prog, m_usage, m_description, m_epilog, m_version);
+                auto const formatter = Formatter();
                 return formatter.format_version(m_version, m_prog);
             }
 
@@ -1248,13 +1248,7 @@ namespace argparse
             class Formatter
             {
                 public:
-                    Formatter(argument_uptrs const & arguments, optstring const & prog, optstring const & usage, optstring const & description, optstring const & epilog, optstring const & version)
-                      : m_arguments(arguments)
-                      , m_prog(prog)
-                      , m_usage(usage)
-                      , m_description(description)
-                      , m_epilog(epilog)
-                      , m_version(version)
+                    Formatter()
                     {
                     }
 
@@ -1486,14 +1480,6 @@ namespace argparse
                             ? fill.substr(arg_line_length + 1)
                             : fill;
                     }
-
-                private:
-                    argument_uptrs const & m_arguments;
-                    optstring const & m_prog;
-                    optstring const & m_usage;
-                    optstring const & m_description;
-                    optstring const & m_epilog;
-                    optstring const & m_version;
             };
 
             class MutuallyExclusiveGroup
