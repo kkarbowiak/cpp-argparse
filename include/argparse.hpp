@@ -697,7 +697,7 @@ namespace argparse
                         {
                             auto const message = std::format(
                                 "argument {}: invalid choice: {} (choose from {})",
-                                join(m_options.names, "/"),
+                                get_joined_names(),
                                 m_options.type_handler->to_string(value),
                                 get_joined_choices(", "));
                             throw parsing_error(message);
