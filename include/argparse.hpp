@@ -637,17 +637,7 @@ namespace argparse
 
                     auto get_joined_choices(std::string const & separator) const -> std::string
                     {
-                        auto result = std::string();
-                        for (auto const & choice : m_options.choices | std::views::take(1))
-                        {
-                            result += m_options.type_handler->to_string(choice);
-                        }
-                        for (auto const & choice : m_options.choices | std::views::drop(1))
-                        {
-                            result += separator;
-                            result += m_options.type_handler->to_string(choice);
-                        }
-                        return result;
+                        return join(m_options.choices | std::views::transform([&](auto const & choice) { return m_options.type_handler->to_string(choice); }), separator);
                     }
 
                 protected:
