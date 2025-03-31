@@ -1394,6 +1394,7 @@ namespace argparse
                             | std::views::filter([](auto const & arg){ return !arg->is_positional(); }))
                         {
                             auto arg_line = std::string("  ");
+                            auto const formatted_arg = format(*arg);
 
                             for (auto name_it = arg->get_names().begin(); name_it != arg->get_names().end(); ++name_it)
                             {
@@ -1403,18 +1404,7 @@ namespace argparse
                                 }
 
                                 arg_line += *name_it;
-                                if (arg->expects_argument())
-                                {
-                                    if (arg->has_nargs())
-                                    {
-                                        arg_line += format_nargs(*arg);
-                                    }
-                                    else
-                                    {
-                                        arg_line += " ";
-                                        arg_line += format_arg(*arg);
-                                    }
-                                }
+                                arg_line += formatted_arg;
                             }
 
                             if (auto const & help = arg->get_help_message(); !help.empty())
@@ -1427,6 +1417,23 @@ namespace argparse
                         }
 
                         return optionals;
+                    }
+
+                    auto format(Argument const & argument) const -> std::string
+                    {
+                        if (!argument.expects_argument())
+                        {
+                            return std::string();
+                        }
+
+                        if (argument.has_nargs())
+                        {
+                            return format_nargs(argument);
+                        }
+                        else
+                        {
+                            return " " + format_arg(argument);
+                        }
                     }
 
                     auto format_arg(Argument const & argument) const -> std::string
