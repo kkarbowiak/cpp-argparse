@@ -1403,18 +1403,7 @@ namespace argparse
                                 }
 
                                 arg_line += *name_it;
-                                if (arg->expects_argument())
-                                {
-                                    if (arg->has_nargs())
-                                    {
-                                        arg_line += format_nargs(*arg);
-                                    }
-                                    else
-                                    {
-                                        arg_line += " ";
-                                        arg_line += format_arg(*arg);
-                                    }
-                                }
+                                arg_line += format(*arg);
                             }
 
                             if (auto const & help = arg->get_help_message(); !help.empty())
@@ -1427,6 +1416,26 @@ namespace argparse
                         }
 
                         return optionals;
+                    }
+
+                    auto format(Argument const & argument) const -> std::string
+                    {
+                        auto result = std::string();
+
+                        if (argument.expects_argument())
+                        {
+                            if (argument.has_nargs())
+                            {
+                                result += format_nargs(argument);
+                            }
+                            else
+                            {
+                                result += " ";
+                                result += format_arg(argument);
+                            }
+                        }
+
+                        return result;
                     }
 
                     auto format_arg(Argument const & argument) const -> std::string
