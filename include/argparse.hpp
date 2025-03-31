@@ -1394,6 +1394,7 @@ namespace argparse
                             | std::views::filter([](auto const & arg){ return !arg->is_positional(); }))
                         {
                             auto arg_line = std::string("  ");
+                            auto const formatted_arg = format(*arg);
 
                             for (auto name_it = arg->get_names().begin(); name_it != arg->get_names().end(); ++name_it)
                             {
@@ -1403,7 +1404,7 @@ namespace argparse
                                 }
 
                                 arg_line += *name_it;
-                                arg_line += format(*arg);
+                                arg_line += formatted_arg;
                             }
 
                             if (auto const & help = arg->get_help_message(); !help.empty())
