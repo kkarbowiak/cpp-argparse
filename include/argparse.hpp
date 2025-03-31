@@ -1243,10 +1243,6 @@ namespace argparse
             class Formatter
             {
                 public:
-                    Formatter()
-                    {
-                    }
-
                     auto format_usage(argument_uptrs const & arguments, optstring const & usage, optstring const & prog) const -> std::string
                     {
                         if (usage)
