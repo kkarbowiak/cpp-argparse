@@ -1420,22 +1420,19 @@ namespace argparse
 
                     auto format(Argument const & argument) const -> std::string
                     {
-                        auto result = std::string();
-
-                        if (argument.expects_argument())
+                        if (!argument.expects_argument())
                         {
-                            if (argument.has_nargs())
-                            {
-                                result += format_nargs(argument);
-                            }
-                            else
-                            {
-                                result += " ";
-                                result += format_arg(argument);
-                            }
+                            return std::string();
                         }
 
-                        return result;
+                        if (argument.has_nargs())
+                        {
+                            return format_nargs(argument);
+                        }
+                        else
+                        {
+                            return " " + format_arg(argument);
+                        }
                     }
 
                     auto format_arg(Argument const & argument) const -> std::string
