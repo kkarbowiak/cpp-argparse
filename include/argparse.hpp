@@ -1562,9 +1562,9 @@ namespace argparse
                         return *this;
                     }
 
-                    auto const_(std::any const & const_) -> ArgumentBuilder &
+                    auto const_(std::any const_) -> ArgumentBuilder &
                     {
-                        m_options.const_ = const_;
+                        m_options.const_ = std::move(const_);
                         return *this;
                     }
 
@@ -1578,9 +1578,9 @@ namespace argparse
                         return *this;
                     }
 
-                    auto default_(std::any const & default_) -> ArgumentBuilder &
+                    auto default_(std::any default_) -> ArgumentBuilder &
                     {
-                        m_options.default_ = default_;
+                        m_options.default_ = std::move(default_);
                         return *this;
                     }
 
@@ -1594,9 +1594,9 @@ namespace argparse
                         return *this;
                     }
 
-                    auto choices(std::vector<std::any> const & choices) -> ArgumentBuilder &
+                    auto choices(std::vector<std::any> choices) -> ArgumentBuilder &
                     {
-                        m_options.choices = choices;
+                        m_options.choices = std::move(choices);
                         return *this;
                     }
 
