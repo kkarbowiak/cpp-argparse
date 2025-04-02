@@ -225,30 +225,30 @@ namespace argparse
                 return MutuallyExclusiveGroup(m_arguments, m_version);
             }
 
-            auto prog(std::string const & prog) -> ArgumentParser &&
+            auto prog(std::string prog) -> ArgumentParser &&
             {
-                m_prog = prog;
+                m_prog = std::move(prog);
 
                 return std::move(*this);
             }
 
-            auto usage(std::string const & usage) -> ArgumentParser &&
+            auto usage(std::string usage) -> ArgumentParser &&
             {
-                m_usage = usage;
+                m_usage = std::move(usage);
 
                 return std::move(*this);
             }
 
-            auto description(std::string const & description) -> ArgumentParser &&
+            auto description(std::string description) -> ArgumentParser &&
             {
-                m_description = description;
+                m_description = std::move(description);
 
                 return std::move(*this);
             }
 
-            auto epilog(std::string const & epilog) -> ArgumentParser &&
+            auto epilog(std::string epilog) -> ArgumentParser &&
             {
-                m_epilog = epilog;
+                m_epilog = std::move(epilog);
 
                 return std::move(*this);
             }
@@ -301,7 +301,7 @@ namespace argparse
             }
 
         private:
-            static auto extract_filename(std::string const & path) -> std::string
+            static auto extract_filename(std::string_view path) -> std::string_view
             {
                 if (auto path_separator = path.find_last_of("/\\"); path_separator != path.npos)
                 {
@@ -330,12 +330,12 @@ namespace argparse
                 return tokens(&argv[1], &argv[argc]);
             }
 
-            static auto join(std::vector<std::string> const & strings, std::string const & separator) -> std::string
+            static auto join(std::vector<std::string> const & strings, std::string_view separator) -> std::string
             {
                 return join(strings | std::views::all, separator);
             }
 
-            static auto join(std::ranges::view auto strings, std::string const & separator) -> std::string
+            static auto join(std::ranges::view auto strings, std::string_view separator) -> std::string
             {
                 auto result = std::string();
 
@@ -640,7 +640,7 @@ namespace argparse
                         return !m_options.choices.empty();
                     }
 
-                    auto get_joined_choices(std::string const & separator) const -> std::string
+                    auto get_joined_choices(std::string_view separator) const -> std::string
                     {
                         return join(m_options.choices | std::views::transform([&](auto const & choice) { return m_options.type_handler->to_string(choice); }), separator);
                     }
@@ -1532,27 +1532,27 @@ namespace argparse
                         }
                     }
 
-                    auto help(std::string const & help) -> ArgumentBuilder &
+                    auto help(std::string help) -> ArgumentBuilder &
                     {
-                        m_options.help = help;
+                        m_options.help = std::move(help);
                         return *this;
                     }
 
-                    auto version(std::string const & version) -> ArgumentBuilder &
+                    auto version(std::string version) -> ArgumentBuilder &
                     {
-                        m_version = version;
+                        m_version = std::move(version);
                         return *this;
                     }
 
-                    auto metavar(std::string const & metavar) -> ArgumentBuilder &
+                    auto metavar(std::string metavar) -> ArgumentBuilder &
                     {
-                        m_options.metavar = metavar;
+                        m_options.metavar = std::move(metavar);
                         return *this;
                     }
 
-                    auto dest(std::string const & dest) -> ArgumentBuilder &
+                    auto dest(std::string dest) -> ArgumentBuilder &
                     {
-                        m_options.dest = dest;
+                        m_options.dest = std::move(dest);
                         return *this;
                     }
 
@@ -1562,9 +1562,9 @@ namespace argparse
                         return *this;
                     }
 
-                    auto const_(std::any const & const_) -> ArgumentBuilder &
+                    auto const_(std::any const_) -> ArgumentBuilder &
                     {
-                        m_options.const_ = const_;
+                        m_options.const_ = std::move(const_);
                         return *this;
                     }
 
@@ -1578,9 +1578,9 @@ namespace argparse
                         return *this;
                     }
 
-                    auto default_(std::any const & default_) -> ArgumentBuilder &
+                    auto default_(std::any default_) -> ArgumentBuilder &
                     {
-                        m_options.default_ = default_;
+                        m_options.default_ = std::move(default_);
                         return *this;
                     }
 
@@ -1594,9 +1594,9 @@ namespace argparse
                         return *this;
                     }
 
-                    auto choices(std::vector<std::any> const & choices) -> ArgumentBuilder &
+                    auto choices(std::vector<std::any> choices) -> ArgumentBuilder &
                     {
-                        m_options.choices = choices;
+                        m_options.choices = std::move(choices);
                         return *this;
                     }
 
