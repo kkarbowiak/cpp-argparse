@@ -225,30 +225,30 @@ namespace argparse
                 return MutuallyExclusiveGroup(m_arguments, m_version);
             }
 
-            auto prog(std::string const & prog) -> ArgumentParser &&
+            auto prog(std::string prog) -> ArgumentParser &&
             {
-                m_prog = prog;
+                m_prog = std::move(prog);
 
                 return std::move(*this);
             }
 
-            auto usage(std::string const & usage) -> ArgumentParser &&
+            auto usage(std::string usage) -> ArgumentParser &&
             {
-                m_usage = usage;
+                m_usage = std::move(usage);
 
                 return std::move(*this);
             }
 
-            auto description(std::string const & description) -> ArgumentParser &&
+            auto description(std::string description) -> ArgumentParser &&
             {
-                m_description = description;
+                m_description = std::move(description);
 
                 return std::move(*this);
             }
 
-            auto epilog(std::string const & epilog) -> ArgumentParser &&
+            auto epilog(std::string epilog) -> ArgumentParser &&
             {
-                m_epilog = epilog;
+                m_epilog = std::move(epilog);
 
                 return std::move(*this);
             }
