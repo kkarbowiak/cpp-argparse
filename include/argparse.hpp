@@ -1532,27 +1532,27 @@ namespace argparse
                         }
                     }
 
-                    auto help(std::string const & help) -> ArgumentBuilder &
+                    auto help(std::string help) -> ArgumentBuilder &
                     {
-                        m_options.help = help;
+                        m_options.help = std::move(help);
                         return *this;
                     }
 
-                    auto version(std::string const & version) -> ArgumentBuilder &
+                    auto version(std::string version) -> ArgumentBuilder &
                     {
-                        m_version = version;
+                        m_version = std::move(version);
                         return *this;
                     }
 
-                    auto metavar(std::string const & metavar) -> ArgumentBuilder &
+                    auto metavar(std::string metavar) -> ArgumentBuilder &
                     {
-                        m_options.metavar = metavar;
+                        m_options.metavar = std::move(metavar);
                         return *this;
                     }
 
-                    auto dest(std::string const & dest) -> ArgumentBuilder &
+                    auto dest(std::string dest) -> ArgumentBuilder &
                     {
-                        m_options.dest = dest;
+                        m_options.dest = std::move(dest);
                         return *this;
                     }
 
