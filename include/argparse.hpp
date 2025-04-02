@@ -301,7 +301,7 @@ namespace argparse
             }
 
         private:
-            static auto extract_filename(std::string const & path) -> std::string
+            static auto extract_filename(std::string_view path) -> std::string_view
             {
                 if (auto path_separator = path.find_last_of("/\\"); path_separator != path.npos)
                 {
@@ -330,12 +330,12 @@ namespace argparse
                 return tokens(&argv[1], &argv[argc]);
             }
 
-            static auto join(std::vector<std::string> const & strings, std::string const & separator) -> std::string
+            static auto join(std::vector<std::string> const & strings, std::string_view separator) -> std::string
             {
                 return join(strings | std::views::all, separator);
             }
 
-            static auto join(std::ranges::view auto strings, std::string const & separator) -> std::string
+            static auto join(std::ranges::view auto strings, std::string_view separator) -> std::string
             {
                 auto result = std::string();
 
@@ -640,7 +640,7 @@ namespace argparse
                         return !m_options.choices.empty();
                     }
 
-                    auto get_joined_choices(std::string const & separator) const -> std::string
+                    auto get_joined_choices(std::string_view separator) const -> std::string
                     {
                         return join(m_options.choices | std::views::transform([&](auto const & choice) { return m_options.type_handler->to_string(choice); }), separator);
                     }
