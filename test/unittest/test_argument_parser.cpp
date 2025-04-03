@@ -340,3 +340,21 @@ TEST_CASE("Test combining Handle values")
 {
     CHECK((argparse::Handle::none | argparse::Handle::errors) == argparse::Handle::errors);
 }
+
+TEST_CASE("Requesting non-existing argument throws an exception")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("foo");
+    auto args = parser.parse_args(2, cstr_arr{"prog", "val"});
+
+    CHECK_THROWS_WITH(args.get("boo"), "no such argument: 'boo'");
+}
+
+TEST_CASE("Requesting non-existing argument throws an exception")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("--foo");
+    auto args = parser.parse_args(3, cstr_arr{"prog", "--foo", "val"});
+
+    CHECK_THROWS_WITH(args.get("boo"), "no such argument: 'boo'");
+}
