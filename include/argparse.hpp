@@ -133,14 +133,14 @@ namespace argparse
                 public:
                     auto get(std::string const & name) const -> Value
                     {
-                        auto const it = m_parameters.find(name);
-
-                        if (it == m_parameters.end())
+                        if (auto const it = m_parameters.find(name); it == m_parameters.end())
                         {
                             throw std::runtime_error(std::format("no such argument: '{}'", name));
                         }
-
-                        return it->second;
+                        else
+                        {
+                            return it->second;
+                        }
                     }
 
                     auto get_value(std::string const & name) const -> std::string
