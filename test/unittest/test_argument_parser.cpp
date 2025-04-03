@@ -347,5 +347,5 @@ TEST_CASE("Requesting non-existing argument throws an exception")
     parser.add_argument("foo");
     auto args = parser.parse_args(2, cstr_arr{"prog", "val"});
 
-    CHECK_THROWS(args.get("boo"));
+    CHECK_THROWS_WITH(args.get("boo"), "no such argument: 'boo'");
 }
