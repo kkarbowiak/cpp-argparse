@@ -160,7 +160,7 @@ namespace argparse
                     }
 
                 private:
-                    std::map<std::string, Value> m_parameters;
+                    std::map<std::string, Value, std::less<>> m_parameters;
             };
 
         private:
