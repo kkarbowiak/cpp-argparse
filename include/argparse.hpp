@@ -131,7 +131,7 @@ namespace argparse
             class Parameters
             {
                 public:
-                    auto get(std::string const & name) const -> Value
+                    auto get(std::string_view name) const -> Value
                     {
                         if (auto const it = m_parameters.find(name); it == m_parameters.end())
                         {
@@ -143,13 +143,13 @@ namespace argparse
                         }
                     }
 
-                    auto get_value(std::string const & name) const -> std::string
+                    auto get_value(std::string_view name) const -> std::string
                     {
                         return get(name).get();
                     }
 
                     template<typename T>
-                    auto get_value(std::string const & name) const -> T
+                    auto get_value(std::string_view name) const -> T
                     {
                         return get(name).get<T>();
                     }
@@ -160,7 +160,7 @@ namespace argparse
                     }
 
                 private:
-                    std::map<std::string, Value> m_parameters;
+                    std::map<std::string, Value, std::less<>> m_parameters;
             };
 
         private:
