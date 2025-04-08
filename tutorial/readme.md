@@ -1307,7 +1307,8 @@ $ version --version
 ```
 
 Some things to note here:
- * You can use parser's `format_help` and `format_usage` functions to generate the messages for you.
+ * You can use parser's `format_help`, `format_usage`, and `format_version` functions to generate the messages for you.
+ * Before using `format_version` be sure to add an argument with `version` action and set the version.
  * In case of error, parser throws an exception of type `argparse::parsing_error` (or type derived from it), which derives from `std::runtime_error`.
  * The control is more granular; you can tell the parser to handle:
    * only help (`argparse::Handle::help`),
