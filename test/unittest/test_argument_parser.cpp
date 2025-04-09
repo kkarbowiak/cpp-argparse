@@ -376,3 +376,12 @@ TEST_CASE("Requesting wrong argument type throws an exception")
 
     CHECK_THROWS_WITH(args.get_value<int>("pos"), doctest::Contains("wrong type"));
 }
+
+TEST_CASE("Requesting wrong argument type throws an exception")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("pos").type<int>();
+    auto args = parser.parse_args(2, cstr_arr{"prog", "3"});
+
+    CHECK_THROWS_WITH(args.get_value("pos"), doctest::Contains("wrong type"));
+}
