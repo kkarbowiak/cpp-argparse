@@ -128,7 +128,7 @@ namespace argparse
                         }
                         else
                         {
-                            throw std::runtime_error("wrong type");
+                            throw std::runtime_error(std::format("wrong type: requested '{}' for argument of type '{}'", typeid(T).name(), m_value.type().name()));
                         }
                     }
 
