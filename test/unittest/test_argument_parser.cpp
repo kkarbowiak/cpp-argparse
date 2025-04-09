@@ -358,3 +358,12 @@ TEST_CASE("Requesting non-existing argument throws an exception")
 
     CHECK_THROWS_WITH(args.get("boo"), "no such argument: 'boo'");
 }
+
+TEST_CASE("Requesting wrong argument type throws an exception")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("pos").type<int>();
+    auto args = parser.parse_args(2, cstr_arr{"prog", "3"});
+
+    CHECK_THROWS(args.get_value<double>("pos"));
+}
