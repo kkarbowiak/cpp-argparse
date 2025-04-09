@@ -122,14 +122,12 @@ namespace argparse
                     template<typename T>
                     auto get() const -> T
                     {
-                        if (m_value.type() == typeid(T))
-                        {
-                            return std::any_cast<T>(m_value);
-                        }
-                        else
+                        if (m_value.type() != typeid(T))
                         {
                             throw std::runtime_error(std::format("wrong type: requested '{}' for argument of type '{}'", typeid(T).name(), m_value.type().name()));
                         }
+
+                        return std::any_cast<T>(m_value);
                     }
 
                 private:
