@@ -23,6 +23,7 @@
 #include <string>
 #include <string_view>
 #include <type_traits>
+#include <typeinfo>
 #include <variant>
 #include <vector>
 #include <cstdlib>
@@ -121,7 +122,14 @@ namespace argparse
                     template<typename T>
                     auto get() const -> T
                     {
-                        return std::any_cast<T>(m_value);
+                        if (m_value.type() == typeid(T))
+                        {
+                            return std::any_cast<T>(m_value);
+                        }
+                        else
+                        {
+                            throw std::runtime_error("wrong type");
+                        }
                     }
 
                 private:
