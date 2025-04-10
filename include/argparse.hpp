@@ -74,6 +74,13 @@ namespace argparse
             using logic_error::logic_error;
     };
 
+    class type_error
+      : public std::logic_error
+    {
+        public:
+            using logic_error::logic_error;
+    };
+
     inline auto operator|(Handle lhs, Handle rhs) -> Handle
     {
         return static_cast<Handle>(static_cast<int>(lhs) | static_cast<int>(rhs));
@@ -131,7 +138,7 @@ namespace argparse
                     {
                         if (m_value.type() != typeid(T))
                         {
-                            throw std::runtime_error(std::format("wrong type: requested '{}' for argument of type '{}'", typeid(T).name(), m_value.type().name()));
+                            throw type_error(std::format("wrong type: requested '{}' for argument of type '{}'", typeid(T).name(), m_value.type().name()));
                         }
 
                         return std::any_cast<T>(m_value);
