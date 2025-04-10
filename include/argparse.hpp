@@ -67,6 +67,13 @@ namespace argparse
             using runtime_error::runtime_error;
     };
 
+    class name_error
+      : public std::logic_error
+    {
+        public:
+            using logic_error::logic_error;
+    };
+
     inline auto operator|(Handle lhs, Handle rhs) -> Handle
     {
         return static_cast<Handle>(static_cast<int>(lhs) | static_cast<int>(rhs));
@@ -141,7 +148,7 @@ namespace argparse
                     {
                         if (auto const it = m_parameters.find(name); it == m_parameters.end())
                         {
-                            throw std::runtime_error(std::format("no such argument: '{}'", name));
+                            throw name_error(std::format("no such argument: '{}'", name));
                         }
                         else
                         {
