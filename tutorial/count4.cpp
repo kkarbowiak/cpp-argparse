@@ -5,7 +5,7 @@ int main(int argc, char * argv[])
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("square").help("display a square of a given number").type<int>();
-    parser.add_argument("-v", "--verbosity").help("increase output verbosity").action(argparse::count);
+    parser.add_argument("-v", "--verbosity").help("increase output verbosity").action(argparse::count).default_(0);
     auto parsed = parser.parse_args(argc, argv);
     auto value = parsed.get_value<int>("square");
     auto answer = value * value;

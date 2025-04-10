@@ -13,6 +13,7 @@ set(targets
     count
     count2
     count3
+    count4
     custom
     custom1
     custom2
