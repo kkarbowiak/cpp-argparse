@@ -347,7 +347,7 @@ TEST_CASE("Requesting non-existing argument throws an exception")
     parser.add_argument("foo");
     auto args = parser.parse_args(2, cstr_arr{"prog", "val"});
 
-    CHECK_THROWS_WITH(args.get("boo"), "no such argument: 'boo'");
+    CHECK_THROWS_WITH_AS(args.get("boo"), "no such argument: 'boo'", argparse::name_error);
 }
 
 TEST_CASE("Requesting non-existing argument throws an exception")
@@ -356,7 +356,7 @@ TEST_CASE("Requesting non-existing argument throws an exception")
     parser.add_argument("--foo");
     auto args = parser.parse_args(3, cstr_arr{"prog", "--foo", "val"});
 
-    CHECK_THROWS_WITH(args.get("boo"), "no such argument: 'boo'");
+    CHECK_THROWS_WITH_AS(args.get("boo"), "no such argument: 'boo'", argparse::name_error);
 }
 
 TEST_CASE("Requesting wrong argument type throws an exception")
@@ -365,7 +365,7 @@ TEST_CASE("Requesting wrong argument type throws an exception")
     parser.add_argument("pos").type<int>();
     auto args = parser.parse_args(2, cstr_arr{"prog", "3"});
 
-    CHECK_THROWS_WITH(args.get_value<double>("pos"), doctest::Contains("wrong type"));
+    CHECK_THROWS_WITH_AS(args.get_value<double>("pos"), doctest::Contains("wrong type"), argparse::type_error);
 }
 
 TEST_CASE("Requesting wrong argument type throws an exception")
@@ -374,7 +374,7 @@ TEST_CASE("Requesting wrong argument type throws an exception")
     parser.add_argument("pos");
     auto args = parser.parse_args(2, cstr_arr{"prog", "val"});
 
-    CHECK_THROWS_WITH(args.get_value<int>("pos"), doctest::Contains("wrong type"));
+    CHECK_THROWS_WITH_AS(args.get_value<int>("pos"), doctest::Contains("wrong type"), argparse::type_error);
 }
 
 TEST_CASE("Requesting wrong argument type throws an exception")
@@ -383,5 +383,5 @@ TEST_CASE("Requesting wrong argument type throws an exception")
     parser.add_argument("pos").type<int>();
     auto args = parser.parse_args(2, cstr_arr{"prog", "3"});
 
-    CHECK_THROWS_WITH(args.get_value("pos"), doctest::Contains("wrong type"));
+    CHECK_THROWS_WITH_AS(args.get_value("pos"), doctest::Contains("wrong type"), argparse::type_error);
 }
