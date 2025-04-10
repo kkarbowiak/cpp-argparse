@@ -514,7 +514,7 @@ terminate called after throwing an instance of 'std::bad_any_cast'
  * First output went well. The second illustrates we fixed the bug we had before. Now, any value >= 2 is as verbose as possible.
  * The third execution crashed. Yikes!
 
-Let's fix it (`count3.cpp`):
+Let's fix it (`count4.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
@@ -546,15 +546,15 @@ We have introduced default value of 0. When an option is not specified, it gets 
 
 And the output:
 ```
-$ count3 4 -vvvv
+$ count4 4 -vvvv
 the square of 4 equals 16
-$ count3 4 -vvv
+$ count4 4 -vvv
 the square of 4 equals 16
-$ count3 4 -vv
+$ count4 4 -vv
 the square of 4 equals 16
-$ count3 4 -v
+$ count4 4 -v
 4^2 == 16
-$ count3 4
+$ count4 4
 16
 ```
 
