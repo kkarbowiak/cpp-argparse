@@ -9,12 +9,12 @@ int main(int argc, char * argv[])
     auto parsed = parser.parse_args(argc, argv);
     auto value = parsed.get_value<int>("square");
     auto answer = value * value;
-    auto verbosity = parsed.get("verbosity");
-    if (verbosity.get<int>() >= 2)
+    auto verbosity = parsed.get_value<int>("verbosity");
+    if (verbosity >= 2)
     {
         std::cout << "the square of " << value << " equals " << answer << '\n';
     }
-    else if (verbosity.get<int>() >= 1)
+    else if (verbosity >= 1)
     {
         std::cout << value << "^2 == " << answer << '\n';
     }
