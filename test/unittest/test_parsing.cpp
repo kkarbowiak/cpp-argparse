@@ -157,7 +157,7 @@ TEST_CASE("Parsing")
     parser.add_argument("--opt1");
     parser.add_argument("--opt2");
 
-    auto args = parser.parse_args(6, cstr_arr{"prog", "p1", "--opt1", "o1", "--", "--opt2"});
+    auto const args = parser.parse_args(6, cstr_arr{"prog", "p1", "--opt1", "o1", "--", "--opt2"});
 
     CHECK(args.get_value("pos1") == "p1");
     CHECK(args.get_value("pos2") == "--opt2");
@@ -170,7 +170,7 @@ TEST_CASE("Parsing")
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("pos").nargs(argparse::zero_or_more);
 
-    auto args = parser.parse_args(5, cstr_arr{"prog", "p1", "p2", "--", "p3"});
+    auto const args = parser.parse_args(5, cstr_arr{"prog", "p1", "p2", "--", "p3"});
 
     CHECK(args.get_value<std::vector<std::string>>("pos") == std::vector{"p1"s, "p2"s, "p3"s});
 }

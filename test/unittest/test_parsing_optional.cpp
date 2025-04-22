@@ -2404,7 +2404,7 @@ TEST_CASE("An optional argument does not consume arguments past the -- pseudo ar
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("-o").nargs(argparse::zero_or_one);
 
-    auto args = parser.parse_args(3, cstr_arr{"prog", "-o", "--"});
+    auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "--"});
 
     CHECK(!args.get("o"));
 }
@@ -2414,7 +2414,7 @@ TEST_CASE("An optional argument does not consume arguments past the -- pseudo ar
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("-o").nargs(argparse::zero_or_more);
 
-    auto args = parser.parse_args(3, cstr_arr{"prog", "-o", "--"});
+    auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "--"});
 
     CHECK(args.get_value<std::vector<std::string>>("o") == std::vector<std::string>());
 }
@@ -2433,7 +2433,7 @@ TEST_CASE("An optional argument does not consume arguments past the -- pseudo ar
     parser.add_argument("-o").nargs(argparse::zero_or_more);
     parser.add_argument("pos");
 
-    auto args = parser.parse_args(4, cstr_arr{"prog", "-o", "--", "val"});
+    auto const args = parser.parse_args(4, cstr_arr{"prog", "-o", "--", "val"});
 
     CHECK(args.get_value<std::vector<std::string>>("o") == std::vector<std::string>());
     CHECK(args.get_value("pos") == "val");
@@ -2489,7 +2489,7 @@ TEST_CASE("Parsing joined short options with store true action yields true for e
     parser.add_argument("-a").action(argparse::store_true);
     parser.add_argument("-b").action(argparse::store_true);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-ab"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-ab"});
 
     CHECK(args.get_value<bool>("a") == true);
     CHECK(args.get_value<bool>("b") == true);
@@ -2501,7 +2501,7 @@ TEST_CASE("Parsing joined short options with store false action yields false for
     parser.add_argument("-a").action(argparse::store_false);
     parser.add_argument("-b").action(argparse::store_false);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-ab"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-ab"});
 
     CHECK(args.get_value<bool>("a") == false);
     CHECK(args.get_value<bool>("b") == false);
@@ -2513,7 +2513,7 @@ TEST_CASE("Parsing joined short options with store const action yields const val
     parser.add_argument("-a").action(argparse::store_const).const_(10);
     parser.add_argument("-b").action(argparse::store_const).const_(20);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-ab"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-ab"});
 
     CHECK(args.get_value<int>("a") == 10);
     CHECK(args.get_value<int>("b") == 20);
@@ -2525,7 +2525,7 @@ TEST_CASE("Parsing joined short options with count action yields their count")
     parser.add_argument("-a").action(argparse::count);
     parser.add_argument("-b").action(argparse::count);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-ababa"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-ababa"});
 
     CHECK(args.get_value<int>("a") == 3);
     CHECK(args.get_value<int>("b") == 2);
@@ -2537,7 +2537,7 @@ TEST_CASE("Parsing joined short options with count action yields their count")
     parser.add_argument("-a").action(argparse::count);
     parser.add_argument("-b").action(argparse::count);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-abbaa"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-abbaa"});
 
     CHECK(args.get_value<int>("a") == 3);
     CHECK(args.get_value<int>("b") == 2);
@@ -2556,7 +2556,7 @@ TEST_CASE("Parsing long option with joined argument yields its value")
     auto parser = argparse::ArgumentParser();
     parser.add_argument("--long");
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "--long=value"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "--long=value"});
 
     CHECK(args.get_value("long") == "value");
 }
@@ -2568,25 +2568,25 @@ TEST_CASE_TEMPLATE("Parsing long option with joined argument yields its value", 
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto args = parser.parse_args(2, cstr_arr{"prog", "--long=A"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "--long=A"});
 
         CHECK(args.get_value<T>("long") == T(65));
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto args = parser.parse_args(2, cstr_arr{"prog", "--long=65"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "--long=65"});
 
         CHECK(args.get_value<T>("long") == T(65));
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto args = parser.parse_args(2, cstr_arr{"prog", "--long=1.125"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "--long=1.125"});
 
         CHECK(args.get_value<T>("long") == T(1.125));
     }
     else
     {
-        auto args = parser.parse_args(2, cstr_arr{"prog", "--long=bar"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "--long=bar"});
 
         CHECK(args.get_value<T>("long") == T("bar"));
     }
@@ -2598,7 +2598,7 @@ TEST_CASE("Parsing long options with same prefix correctly recognises them plane
     parser.add_argument("--same").action(argparse::store_true);
     parser.add_argument("--same-prefix").action(argparse::store_true);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "--same-prefix"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "--same-prefix"});
 
     CHECK(args.get_value<bool>("same") == false);
 }
@@ -2609,7 +2609,7 @@ TEST_CASE("Parsing long options with same prefix correctly recognises them optio
     parser.add_argument("--same");
     parser.add_argument("--same-prefix");
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "--same-prefix=value"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "--same-prefix=value"});
 
     CHECK(!args.get("same"));
 }
@@ -2627,7 +2627,7 @@ TEST_CASE("Parsing short option with joined argument yields its value")
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o");
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-ovalue"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-ovalue"});
 
     CHECK(args.get_value("o") == "value");
 }
@@ -2639,25 +2639,25 @@ TEST_CASE_TEMPLATE("Parsing short option with joined argument yields its value",
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto args = parser.parse_args(2, cstr_arr{"prog", "-oA"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "-oA"});
 
         CHECK(args.get_value<T>("o") == T(65));
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto args = parser.parse_args(2, cstr_arr{"prog", "-o65"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "-o65"});
 
         CHECK(args.get_value<T>("o") == T(65));
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto args = parser.parse_args(2, cstr_arr{"prog", "-o1.125"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "-o1.125"});
 
         CHECK(args.get_value<T>("o") == T(1.125));
     }
     else
     {
-        auto args = parser.parse_args(2, cstr_arr{"prog", "-obar"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "-obar"});
 
         CHECK(args.get_value<T>("o") == T("bar"));
     }
@@ -2676,7 +2676,7 @@ TEST_CASE("Parsing short option with joined argument with append action yields i
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-a").action(argparse::append);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-aone"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-aone"});
 
     CHECK(args.get_value<std::vector<std::string>>("a") == std::vector<std::string>{"one"});
 }
@@ -2686,7 +2686,7 @@ TEST_CASE("Parsing short option with joined argument with append action yields i
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-a").action(argparse::append);
 
-    auto args = parser.parse_args(3, cstr_arr{"prog", "-aone", "-atwo"});
+    auto const args = parser.parse_args(3, cstr_arr{"prog", "-aone", "-atwo"});
 
     CHECK(args.get_value<std::vector<std::string>>("a") == std::vector<std::string>{"one", "two"});
 }
@@ -2715,7 +2715,7 @@ TEST_CASE("Parsing joined short options and short option joined with argument yi
     parser.add_argument("-a").action(argparse::store_true);
     parser.add_argument("-o");
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
 
     CHECK(args.get_value<bool>("a") == true);
     CHECK(args.get_value("o") == "value");
@@ -2727,7 +2727,7 @@ TEST_CASE("Parsing joined short options and short option joined with argument yi
     parser.add_argument("-o");
     parser.add_argument("-a").action(argparse::store_true);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
 
     CHECK(args.get_value<bool>("a") == true);
     CHECK(args.get_value("o") == "value");
@@ -2740,7 +2740,7 @@ TEST_CASE("Parsing joined short optiona and short option joined with argument do
     parser.add_argument("-a").action(argparse::store_true);
     parser.add_argument("-v").action(argparse::store_true);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
 
     CHECK(args.get_value<bool>("a") == true);
     CHECK(args.get_value<bool>("v") == false);
@@ -2754,7 +2754,7 @@ TEST_CASE("Parsing joined short optiona and short option joined with argument do
     parser.add_argument("-a").action(argparse::store_true);
     parser.add_argument("-o");
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
 
     CHECK(args.get_value<bool>("a") == true);
     CHECK(args.get_value<bool>("v") == false);
@@ -2769,7 +2769,7 @@ TEST_CASE("Parsing long options does not affect short options")
     parser.add_argument("-a").action(argparse::store_true);
     parser.add_argument("-r").action(argparse::store_true);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "--bar"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "--bar"});
 
     CHECK(args.get_value<bool>("b") == false);
     CHECK(args.get_value<bool>("a") == false);
@@ -2785,7 +2785,7 @@ TEST_CASE("Parsing long options does not affect short options")
     parser.add_argument("-a").action(argparse::store_true);
     parser.add_argument("-r").action(argparse::store_true);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "--bar=bar"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "--bar=bar"});
 
     CHECK(args.get_value<bool>("b") == false);
     CHECK(args.get_value<bool>("a") == false);
@@ -2801,7 +2801,7 @@ TEST_CASE("Parsing joined flags does not affect long options")
     parser.add_argument("-a").action(argparse::store_true);
     parser.add_argument("-r").action(argparse::store_true);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-bar"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-bar"});
 
     CHECK(args.get_value<bool>("bar") == false);
     CHECK(args.get_value<bool>("b") == true);
