@@ -25,9 +25,9 @@ TEST_CASE("Parsing a positional argument yields its value")
     auto parser = argparse::ArgumentParser();
     parser.add_argument("p1");
 
-    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "v1"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "v1"});
 
-    CHECK(parsed.get_value("p1") == "v1");
+    CHECK(args.get_value("p1") == "v1");
 }
 
 TEST_CASE_TEMPLATE("Parsing a positional argument yields its requested type", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom, bar::Custom)
@@ -37,27 +37,27 @@ TEST_CASE_TEMPLATE("Parsing a positional argument yields its requested type", T,
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "A"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "A"});
 
-        CHECK(parsed.get_value<T>("pos") == T(65));
+        CHECK(args.get_value<T>("pos") == T(65));
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "65"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "65"});
 
-        CHECK(parsed.get_value<T>("pos") == T(65));
+        CHECK(args.get_value<T>("pos") == T(65));
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "1.125"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "1.125"});
 
-        CHECK(parsed.get_value<T>("pos") == T(1.125));
+        CHECK(args.get_value<T>("pos") == T(1.125));
     }
     else
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "bar"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "bar"});
 
-        CHECK(parsed.get_value<T>("pos") == T("bar"));
+        CHECK(args.get_value<T>("pos") == T("bar"));
     }
 }
 
@@ -125,9 +125,9 @@ TEST_CASE("The resulting attribute name for positional argument is based on its 
     auto parser = argparse::ArgumentParser();
     parser.add_argument("foo");
 
-    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "val"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "val"});
 
-    CHECK(parsed.get("foo"));
+    CHECK(args.get("foo"));
 }
 
 TEST_CASE("The resulting attribute name for positional argument is based on dest parameter")
@@ -135,9 +135,9 @@ TEST_CASE("The resulting attribute name for positional argument is based on dest
     auto parser = argparse::ArgumentParser();
     parser.add_argument("foo").dest("bar");
 
-    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "val"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "val"});
 
-    CHECK(parsed.get("bar"));
+    CHECK(args.get("bar"));
 }
 
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set accepts one of the values", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
@@ -286,27 +286,27 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set as a number yie
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "B"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "B"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'B'});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{'B'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "42"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "42"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{42});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{42});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "0.5"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "0.5"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.5});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{0.5});
     }
     else
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "foo"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo"});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{"foo"});
     }
 }
 
@@ -317,27 +317,27 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set as a number yie
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "B", "D"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "B", "D"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'B', 'D'});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{'B', 'D'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "42", "54"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "42", "54"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{42, 54});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{42, 54});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "0.5", "1.125"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "0.5", "1.125"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.5, 1.125});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{0.5, 1.125});
     }
     else
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "foo", "bar"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "foo", "bar"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "bar"});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "bar"});
     }
 }
 
@@ -348,27 +348,27 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set as a number yie
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "B", "D", "F"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "B", "D", "F"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'B', 'D', 'F'});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{'B', 'D', 'F'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "42", "54", "65"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "42", "54", "65"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{42, 54, 65});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{42, 54, 65});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "0.5", "1.125", "2.375"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "0.5", "1.125", "2.375"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.5, 1.125, 2.375});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{0.5, 1.125, 2.375});
     }
     else
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "bar", "baz"});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "bar", "baz"});
     }
 }
 
@@ -502,27 +502,27 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set as zero_or_one 
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "A"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "A"});
 
-        CHECK(parsed.get_value<T>("pos") == T('A'));
+        CHECK(args.get_value<T>("pos") == T('A'));
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "42"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "42"});
 
-        CHECK(parsed.get_value<T>("pos") == T(42));
+        CHECK(args.get_value<T>("pos") == T(42));
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "0.5"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "0.5"});
 
-        CHECK(parsed.get_value<T>("pos") == T(0.5));
+        CHECK(args.get_value<T>("pos") == T(0.5));
     }
     else
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "foo"});
 
-        CHECK(parsed.get_value<T>("pos") == T("foo"));
+        CHECK(args.get_value<T>("pos") == T("foo"));
     }
 }
 
@@ -534,33 +534,33 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set as zero_or_one 
     {
         parser.add_argument("pos").nargs(argparse::zero_or_one).default_(T('A'));
 
-        auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+        auto const args = parser.parse_args(1, cstr_arr{"prog"});
 
-        CHECK(parsed.get_value<T>("pos") == T('A'));
+        CHECK(args.get_value<T>("pos") == T('A'));
     }
     else if constexpr (std::is_integral_v<T>)
     {
         parser.add_argument("pos").nargs(argparse::zero_or_one).default_(T(10));
 
-        auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+        auto const args = parser.parse_args(1, cstr_arr{"prog"});
 
-        CHECK(parsed.get_value<T>("pos") == T(10));
+        CHECK(args.get_value<T>("pos") == T(10));
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
         parser.add_argument("pos").nargs(argparse::zero_or_one).default_(T(0.0625));
 
-        auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+        auto const args = parser.parse_args(1, cstr_arr{"prog"});
 
-        CHECK(parsed.get_value<T>("pos") == T(0.0625));
+        CHECK(args.get_value<T>("pos") == T(0.0625));
     }
     else
     {
         parser.add_argument("pos").nargs(argparse::zero_or_one).default_("foo"s);
 
-        auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+        auto const args = parser.parse_args(1, cstr_arr{"prog"});
 
-        CHECK(parsed.get_value<T>("pos") == T("foo"));
+        CHECK(args.get_value<T>("pos") == T("foo"));
     }
 }
 
@@ -569,9 +569,9 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set as zero_or_more
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("pos").nargs(argparse::zero_or_more).template type<T>();
 
-    auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+    auto const args = parser.parse_args(1, cstr_arr{"prog"});
 
-    CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>());
+    CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>());
 }
 
 TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set as zero_or_more consumes single argument and yields it as a list", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
@@ -581,27 +581,27 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set as zero_or_more
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "A"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "A"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A'});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{'A'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "42"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "42"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{42});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{42});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "0.5"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "0.5"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.5});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{0.5});
     }
     else
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "foo"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo"});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{"foo"});
     }
 }
 
@@ -612,27 +612,27 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set as zero_or_more
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "A", "G", "J"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "A", "G", "J"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A', 'G', 'J'});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{'A', 'G', 'J'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "42", "54", "65"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "42", "54", "65"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{42, 54, 65});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{42, 54, 65});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "0.5", "1.125", "2.375"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "0.5", "1.125", "2.375"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.5, 1.125, 2.375});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{0.5, 1.125, 2.375});
     }
     else
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "bar", "baz"});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "bar", "baz"});
     }
 }
 
@@ -651,27 +651,27 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set as one_or_more 
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "A"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "A"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A'});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{'A'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "42"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "42"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{42});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{42});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "0.5"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "0.5"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.5});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{0.5});
     }
     else
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "foo"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo"});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{"foo"});
     }
 }
 
@@ -682,27 +682,27 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with nargs set as one_or_more 
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "A", "G", "J"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "A", "G", "J"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A', 'G', 'J'});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{'A', 'G', 'J'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "42", "54", "65"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "42", "54", "65"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{42, 54, 65});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{42, 54, 65});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "0.5", "1.125", "2.375"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "0.5", "1.125", "2.375"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.5, 1.125, 2.375});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{0.5, 1.125, 2.375});
     }
     else
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "baz"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "bar", "baz"});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "bar", "baz"});
     }
 }
 
@@ -1108,33 +1108,33 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(1).template type<T>();
 
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "A"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "A"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A'});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{'A'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
         parser.add_argument("pos").choices({T(11), T(22)}).nargs(1).template type<T>();
 
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "11"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "11"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{11});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{11});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
         parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs(1).template type<T>();
 
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "0.125"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "0.125"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.125});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{0.125});
     }
     else
     {
         parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(1).template type<T>();
 
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "foo"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo"});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{"foo"});
     }
 }
 
@@ -1146,33 +1146,33 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(2).template type<T>();
 
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "A", "C"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "A", "C"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A', 'C'});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{'A', 'C'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
         parser.add_argument("pos").choices({T(11), T(22)}).nargs(2).template type<T>();
 
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "11", "22"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "11", "22"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{11, 22});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{11, 22});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
         parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs(2).template type<T>();
 
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "0.125", "0.25"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "0.125", "0.25"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.125, 0.25});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{0.125, 0.25});
     }
     else
     {
         parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(2).template type<T>();
 
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "foo", "bar"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "foo", "bar"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "bar"});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "bar"});
     }
 }
 
@@ -1184,33 +1184,33 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(3).template type<T>();
 
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "A", "C", "A"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "A", "C", "A"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A', 'C', 'A'});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{'A', 'C', 'A'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
         parser.add_argument("pos").choices({T(11), T(22)}).nargs(3).template type<T>();
 
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "11", "22", "11"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "11", "22", "11"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{11, 22, 11});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{11, 22, 11});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
         parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs(3).template type<T>();
 
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "0.125", "0.25", "0.125"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "0.125", "0.25", "0.125"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.125, 0.25, 0.125});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{0.125, 0.25, 0.125});
     }
     else
     {
         parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(3).template type<T>();
 
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "foo"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "foo", "bar", "foo"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "bar", "foo"});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "bar", "foo"});
     }
 }
 
@@ -1222,33 +1222,33 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
     {
         parser.add_argument("pos").choices({T('A'), T('C')}).nargs(argparse::zero_or_one).template type<T>();
 
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "A"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "A"});
 
-        CHECK(parsed.get_value<T>("pos") == T('A'));
+        CHECK(args.get_value<T>("pos") == T('A'));
     }
     else if constexpr (std::is_integral_v<T>)
     {
         parser.add_argument("pos").choices({T(11), T(22)}).nargs(argparse::zero_or_one).template type<T>();
 
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "11"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "11"});
 
-        CHECK(parsed.get_value<T>("pos") == T(11));
+        CHECK(args.get_value<T>("pos") == T(11));
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
         parser.add_argument("pos").choices({T(0.125), T(0.25)}).nargs(argparse::zero_or_one).template type<T>();
 
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "0.125"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "0.125"});
 
-        CHECK(parsed.get_value<T>("pos") == T(0.125));
+        CHECK(args.get_value<T>("pos") == T(0.125));
     }
     else
     {
         parser.add_argument("pos").choices({T("foo"), T("bar")}).nargs(argparse::zero_or_one).template type<T>();
 
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "foo"});
 
-        CHECK(parsed.get_value<T>("pos") == T("foo"));
+        CHECK(args.get_value<T>("pos") == T("foo"));
     }
 }
 
@@ -1275,27 +1275,27 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "A"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "A"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A'});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{'A'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "11"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "11"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{11});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{11});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "0.125"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "0.125"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.125});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{0.125});
     }
     else
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "foo"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo"});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{"foo"});
     }
 }
 
@@ -1322,27 +1322,27 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "A", "A"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "A", "A"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A', 'A'});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{'A', 'A'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "11", "11"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "11", "11"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{11, 11});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{11, 11});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "0.125", "0.125"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "0.125", "0.125"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.125, 0.125});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{0.125, 0.125});
     }
     else
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "foo", "foo"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "foo", "foo"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "foo"});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "foo"});
     }
 }
 
@@ -1369,27 +1369,27 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "A", "A", "A"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "A", "A", "A"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A', 'A', 'A'});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{'A', 'A', 'A'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "11", "11", "11"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "11", "11", "11"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{11, 11, 11});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{11, 11, 11});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "0.125", "0.125", "0.125"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "0.125", "0.125", "0.125"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.125, 0.125, 0.125});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{0.125, 0.125, 0.125});
     }
     else
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "foo", "foo", "foo"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "foo", "foo", "foo"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "foo", "foo"});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "foo", "foo"});
     }
 }
 
@@ -1416,27 +1416,27 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "A"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "A"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A'});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{'A'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "11"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "11"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{11});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{11});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "0.125"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "0.125"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.125});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{0.125});
     }
     else
     {
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "foo"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "foo"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo"});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{"foo"});
     }
 }
 
@@ -1463,27 +1463,27 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "A", "A"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "A", "A"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A', 'A'});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{'A', 'A'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "11", "11"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "11", "11"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{11, 11});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{11, 11});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "0.125", "0.125"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "0.125", "0.125"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.125, 0.125});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{0.125, 0.125});
     }
     else
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "foo", "foo"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "foo", "foo"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "foo"});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "foo"});
     }
 }
 
@@ -1510,27 +1510,27 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set yields the ar
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "A", "A", "A"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "A", "A", "A"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{'A', 'A', 'A'});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{'A', 'A', 'A'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "11", "11", "11"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "11", "11", "11"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{11, 11, 11});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{11, 11, 11});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "0.125", "0.125", "0.125"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "0.125", "0.125", "0.125"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{0.125, 0.125, 0.125});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{0.125, 0.125, 0.125});
     }
     else
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "foo", "foo", "foo"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "foo", "foo", "foo"});
 
-        CHECK(parsed.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "foo", "foo"});
+        CHECK(args.get_value<std::vector<T>>("pos") == std::vector<T>{"foo", "foo", "foo"});
     }
 }
 

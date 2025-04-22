@@ -25,9 +25,9 @@ TEST_CASE("Parsing an optional argument yields false when it's missing")
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("-o");
 
-    auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+    auto const args = parser.parse_args(1, cstr_arr{"prog"});
 
-    CHECK(!parsed.get("o"));
+    CHECK(!args.get("o"));
 }
 
 TEST_CASE("Parsing an optional argument throws an exception when it's missing argument")
@@ -43,9 +43,9 @@ TEST_CASE("Parsing an optional argument yields its value")
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("-o");
 
-    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "v1"});
+    auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "v1"});
 
-    CHECK(parsed.get_value("o") == "v1");
+    CHECK(args.get_value("o") == "v1");
 }
 
 TEST_CASE("Parsing an optional argument with store true action yields false when it's missing")
@@ -53,9 +53,9 @@ TEST_CASE("Parsing an optional argument with store true action yields false when
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o").action(argparse::store_true);
 
-    auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+    auto const args = parser.parse_args(1, cstr_arr{"prog"});
 
-    CHECK(parsed.get_value<bool>("o") == false);
+    CHECK(args.get_value<bool>("o") == false);
 }
 
 TEST_CASE("Parsing an optional argument with store true action yields true when it's present")
@@ -63,9 +63,9 @@ TEST_CASE("Parsing an optional argument with store true action yields true when 
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o").action(argparse::store_true);
 
-    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-o"});
 
-    CHECK(parsed.get_value<bool>("o") == true);
+    CHECK(args.get_value<bool>("o") == true);
 }
 
 TEST_CASE("Parsing an optional argument with store false action yields true when it's missing")
@@ -73,9 +73,9 @@ TEST_CASE("Parsing an optional argument with store false action yields true when
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o").action(argparse::store_false);
 
-    auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+    auto const args = parser.parse_args(1, cstr_arr{"prog"});
 
-    CHECK(parsed.get_value<bool>("o") == true);
+    CHECK(args.get_value<bool>("o") == true);
 }
 
 TEST_CASE("Parsing an optional argument with store false action yields false when it's present")
@@ -83,9 +83,9 @@ TEST_CASE("Parsing an optional argument with store false action yields false whe
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o").action(argparse::store_false);
 
-    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-o"});
 
-    CHECK(parsed.get_value<bool>("o") == false);
+    CHECK(args.get_value<bool>("o") == false);
 }
 
 TEST_CASE_TEMPLATE("Parsing an optional argument with store const action yields false when it's missing", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
@@ -105,9 +105,9 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with store const action yields 
         parser.add_argument("-o").action(argparse::store_const).const_(T("bar"));
     }
 
-    auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+    auto const args = parser.parse_args(1, cstr_arr{"prog"});
 
-    CHECK(!parsed.get("o"));
+    CHECK(!args.get("o"));
 }
 
 TEST_CASE_TEMPLATE("Parsing an optional argument with store const action yields const value", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
@@ -127,19 +127,19 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with store const action yields 
         parser.add_argument("-o").action(argparse::store_const).const_(T("bar"));
     }
 
-    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-o"});
 
     if constexpr (std::is_integral_v<T>)
     {
-        CHECK(parsed.get_value<T>("o") == T(65));
+        CHECK(args.get_value<T>("o") == T(65));
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        CHECK(parsed.get_value<T>("o") == T(1.125));
+        CHECK(args.get_value<T>("o") == T(1.125));
     }
     else
     {
-        CHECK(parsed.get_value<T>("o") == T("bar"));
+        CHECK(args.get_value<T>("o") == T("bar"));
     }
 }
 
@@ -148,9 +148,9 @@ TEST_CASE("Parsing an optional argument with count action yields false when it's
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-c").action(argparse::count);
 
-    auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+    auto const args = parser.parse_args(1, cstr_arr{"prog"});
 
-    CHECK(!parsed.get("c"));
+    CHECK(!args.get("c"));
 }
 
 TEST_CASE("Parsing an optional argument with count action yields default value when it's missing")
@@ -158,9 +158,9 @@ TEST_CASE("Parsing an optional argument with count action yields default value w
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-c").action(argparse::count).default_(0);
 
-    auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+    auto const args = parser.parse_args(1, cstr_arr{"prog"});
 
-    CHECK(parsed.get_value<int>("c") == 0);
+    CHECK(args.get_value<int>("c") == 0);
 }
 
 TEST_CASE("Parsing an optional argument with count action yields the argument count for one argument")
@@ -168,9 +168,9 @@ TEST_CASE("Parsing an optional argument with count action yields the argument co
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-c").action(argparse::count);
 
-    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-c"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-c"});
 
-    CHECK(parsed.get_value<int>("c") == 1);
+    CHECK(args.get_value<int>("c") == 1);
 }
 
 TEST_CASE("Parsing an optional argument with count action yields the argument count for two arguments")
@@ -178,9 +178,9 @@ TEST_CASE("Parsing an optional argument with count action yields the argument co
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-c").action(argparse::count);
 
-    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-c", "-c"});
+    auto const args = parser.parse_args(3, cstr_arr{"prog", "-c", "-c"});
 
-    CHECK(parsed.get_value<int>("c") == 2);
+    CHECK(args.get_value<int>("c") == 2);
 }
 
 TEST_CASE("Parsing an optional argument with count action yields the argument count for three arguments")
@@ -188,9 +188,9 @@ TEST_CASE("Parsing an optional argument with count action yields the argument co
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-c").action(argparse::count);
 
-    auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-c", "-c", "-c"});
+    auto const args = parser.parse_args(4, cstr_arr{"prog", "-c", "-c", "-c"});
 
-    CHECK(parsed.get_value<int>("c") == 3);
+    CHECK(args.get_value<int>("c") == 3);
 }
 
 TEST_CASE("Parsing an optional argument with append action yields false when it's missing")
@@ -198,9 +198,9 @@ TEST_CASE("Parsing an optional argument with append action yields false when it'
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-a").action(argparse::append);
 
-    auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+    auto const args = parser.parse_args(1, cstr_arr{"prog"});
 
-    CHECK(!parsed.get("a"));
+    CHECK(!args.get("a"));
 }
 
 TEST_CASE("Parsing an optional argument with append action throws an exception when it's missing argument")
@@ -216,9 +216,9 @@ TEST_CASE("Parsing an optional argument with append action yields a list of argu
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-a").action(argparse::append);
 
-    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-a", "one"});
+    auto const args = parser.parse_args(3, cstr_arr{"prog", "-a", "one"});
 
-    CHECK(parsed.get_value<std::vector<std::string>>("a") == std::vector<std::string>{"one"});
+    CHECK(args.get_value<std::vector<std::string>>("a") == std::vector<std::string>{"one"});
 }
 
 TEST_CASE("Parsing an optional argument with append action yields a list of arguments for two arguments")
@@ -226,9 +226,9 @@ TEST_CASE("Parsing an optional argument with append action yields a list of argu
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-a").action(argparse::append);
 
-    auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-a", "one", "-a", "two"});
+    auto const args = parser.parse_args(5, cstr_arr{"prog", "-a", "one", "-a", "two"});
 
-    CHECK(parsed.get_value<std::vector<std::string>>("a") == std::vector<std::string>{"one", "two"});
+    CHECK(args.get_value<std::vector<std::string>>("a") == std::vector<std::string>{"one", "two"});
 }
 
 TEST_CASE("Parsing an optional argument with append action yields a list of arguments for three arguments")
@@ -236,9 +236,9 @@ TEST_CASE("Parsing an optional argument with append action yields a list of argu
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-a").action(argparse::append);
 
-    auto const parsed = parser.parse_args(7, cstr_arr{"prog", "-a", "one", "-a", "two", "-a", "three"});
+    auto const args = parser.parse_args(7, cstr_arr{"prog", "-a", "one", "-a", "two", "-a", "three"});
 
-    CHECK(parsed.get_value<std::vector<std::string>>("a") == std::vector<std::string>{"one", "two", "three"});
+    CHECK(args.get_value<std::vector<std::string>>("a") == std::vector<std::string>{"one", "two", "three"});
 }
 
 TEST_CASE_TEMPLATE("Parsing an optional argument with append action yields its requested type", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom, bar::Custom)
@@ -248,27 +248,27 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with append action yields its r
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-a", "A"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-a", "A"});
 
-        CHECK(parsed.get_value<std::vector<T>>("a") == std::vector{T(65)});
+        CHECK(args.get_value<std::vector<T>>("a") == std::vector{T(65)});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-a", "65"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-a", "65"});
 
-        CHECK(parsed.get_value<std::vector<T>>("a") == std::vector{T(65)});
+        CHECK(args.get_value<std::vector<T>>("a") == std::vector{T(65)});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-a", "1.125"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-a", "1.125"});
 
-        CHECK(parsed.get_value<std::vector<T>>("a") == std::vector{T(1.125)});
+        CHECK(args.get_value<std::vector<T>>("a") == std::vector{T(1.125)});
     }
     else
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-a", "bar"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-a", "bar"});
 
-        CHECK(parsed.get_value<std::vector<T>>("a") == std::vector{T("bar")});
+        CHECK(args.get_value<std::vector<T>>("a") == std::vector{T("bar")});
     }
 }
 
@@ -277,9 +277,9 @@ TEST_CASE("Parsing an optional argument with help action yields false when it's 
     auto parser = argparse::ArgumentParser().add_help(false).handle(argparse::Handle::none);
     parser.add_argument("-h").action(argparse::help);
 
-    auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+    auto const args = parser.parse_args(1, cstr_arr{"prog"});
 
-    CHECK(parsed.get_value<bool>("h") == false);
+    CHECK(args.get_value<bool>("h") == false);
 }
 
 TEST_CASE("Parsing an optional argument with help action yields true when it's present")
@@ -287,9 +287,9 @@ TEST_CASE("Parsing an optional argument with help action yields true when it's p
     auto parser = argparse::ArgumentParser().add_help(false).handle(argparse::Handle::none);
     parser.add_argument("-h").action(argparse::help);
 
-    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-h"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-h"});
 
-    CHECK(parsed.get_value<bool>("h") == true);
+    CHECK(args.get_value<bool>("h") == true);
 }
 
 TEST_CASE("Parsing an optional argument with version action yields false when it's missing")
@@ -297,9 +297,9 @@ TEST_CASE("Parsing an optional argument with version action yields false when it
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("-v").action(argparse::version);
 
-    auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+    auto const args = parser.parse_args(1, cstr_arr{"prog"});
 
-    CHECK(parsed.get_value<bool>("v") == false);
+    CHECK(args.get_value<bool>("v") == false);
 }
 
 TEST_CASE("Parsing an optional argument with version action yields true when it's present")
@@ -307,9 +307,9 @@ TEST_CASE("Parsing an optional argument with version action yields true when it'
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("-v").action(argparse::version);
 
-    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-v"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-v"});
 
-    CHECK(parsed.get_value<bool>("v") == true);
+    CHECK(args.get_value<bool>("v") == true);
 }
 
 TEST_CASE("Optional argument can be used with its short name")
@@ -317,9 +317,9 @@ TEST_CASE("Optional argument can be used with its short name")
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o", "--option");
 
-    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "val"});
+    auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "val"});
 
-    CHECK(parsed.get_value("option") == "val");
+    CHECK(args.get_value("option") == "val");
 }
 
 TEST_CASE("Optional argument can be used with its long name")
@@ -327,9 +327,9 @@ TEST_CASE("Optional argument can be used with its long name")
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o", "--option");
 
-    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "--option", "val"});
+    auto const args = parser.parse_args(3, cstr_arr{"prog", "--option", "val"});
 
-    CHECK(parsed.get_value("option") == "val");
+    CHECK(args.get_value("option") == "val");
 }
 
 TEST_CASE_TEMPLATE("Parsing an optional argument yields its requested type", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom, bar::Custom)
@@ -339,27 +339,27 @@ TEST_CASE_TEMPLATE("Parsing an optional argument yields its requested type", T, 
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
 
-        CHECK(parsed.get_value<T>("o") == T(65));
+        CHECK(args.get_value<T>("o") == T(65));
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "65"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "65"});
 
-        CHECK(parsed.get_value<T>("o") == T(65));
+        CHECK(args.get_value<T>("o") == T(65));
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "1.125"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "1.125"});
 
-        CHECK(parsed.get_value<T>("o") == T(1.125));
+        CHECK(args.get_value<T>("o") == T(1.125));
     }
     else
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "bar"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "bar"});
 
-        CHECK(parsed.get_value<T>("o") == T("bar"));
+        CHECK(args.get_value<T>("o") == T("bar"));
     }
 }
 
@@ -389,19 +389,19 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with default value yields the d
         parser.add_argument("-o").default_(T("foo")).template type<T>();
     }
 
-    auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+    auto const args = parser.parse_args(1, cstr_arr{"prog"});
 
     if constexpr (std::is_integral_v<T>)
     {
-        CHECK(parsed.get_value<T>("o") == T(54));
+        CHECK(args.get_value<T>("o") == T(54));
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        CHECK(parsed.get_value<T>("o") == T(0.125));
+        CHECK(args.get_value<T>("o") == T(0.125));
     }
     else
     {
-        CHECK(parsed.get_value<T>("o") == T("foo"));
+        CHECK(args.get_value<T>("o") == T("foo"));
     }
 }
 
@@ -424,27 +424,27 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with default value yields value
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
 
-        CHECK(parsed.get_value<T>("o") == T(65));
+        CHECK(args.get_value<T>("o") == T(65));
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "65"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "65"});
 
-        CHECK(parsed.get_value<T>("o") == T(65));
+        CHECK(args.get_value<T>("o") == T(65));
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "1.125"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "1.125"});
 
-        CHECK(parsed.get_value<T>("o") == T(1.125));
+        CHECK(args.get_value<T>("o") == T(1.125));
     }
     else
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "bar"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "bar"});
 
-        CHECK(parsed.get_value<T>("o") == T("bar"));
+        CHECK(args.get_value<T>("o") == T("bar"));
     }
 }
 
@@ -477,9 +477,9 @@ TEST_CASE("The resulting attribute name for optional argument is based on its lo
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-f", "--foo");
 
-    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-f", "val"});
+    auto const args = parser.parse_args(3, cstr_arr{"prog", "-f", "val"});
 
-    CHECK(parsed.get("foo"));
+    CHECK(args.get("foo"));
 }
 
 TEST_CASE("The resulting attribute name for optional argument is based on its short name")
@@ -487,9 +487,9 @@ TEST_CASE("The resulting attribute name for optional argument is based on its sh
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-f");
 
-    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-f", "val"});
+    auto const args = parser.parse_args(3, cstr_arr{"prog", "-f", "val"});
 
-    CHECK(parsed.get("f"));
+    CHECK(args.get("f"));
 }
 
 TEST_CASE("The resulting attribute name for optional argument is based on dest parameter")
@@ -497,9 +497,9 @@ TEST_CASE("The resulting attribute name for optional argument is based on dest p
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-f", "--foo").dest("bar");
 
-    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-f", "val"});
+    auto const args = parser.parse_args(3, cstr_arr{"prog", "-f", "val"});
 
-    CHECK(parsed.get("bar"));
+    CHECK(args.get("bar"));
 }
 
 TEST_CASE("Parsing a missing optional argument with required true throws an exception")
@@ -664,27 +664,27 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as a number yiel
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A'});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{'A'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "42"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "42"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{42});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{0.5});
     }
     else
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
     }
 }
 
@@ -695,27 +695,27 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as a number yiel
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "A", "C"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "-o", "A", "C"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C'});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "42", "54"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "-o", "42", "54"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42, 54});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{42, 54});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "0.5", "1.125"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "-o", "0.5", "1.125"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5, 1.125});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{0.5, 1.125});
     }
     else
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar"});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar"});
     }
 }
 
@@ -726,27 +726,27 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as a number yiel
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "E"});
+        auto const args = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "E"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C', 'E'});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C', 'E'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"});
+        auto const args = parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42, 54, 65});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{42, 54, 65});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "0.5", "1.125", "2.375"});
+        auto const args = parser.parse_args(5, cstr_arr{"prog", "-o", "0.5", "1.125", "2.375"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5, 1.125, 2.375});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{0.5, 1.125, 2.375});
     }
     else
     {
-        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"});
+        auto const args = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar", "baz"});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar", "baz"});
     }
 }
 
@@ -880,27 +880,27 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as zero_or_one c
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
 
-        CHECK(parsed.get_value<T>("o") == T('A'));
+        CHECK(args.get_value<T>("o") == T('A'));
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "42"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "42"});
 
-        CHECK(parsed.get_value<T>("o") == T(42));
+        CHECK(args.get_value<T>("o") == T(42));
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"});
 
-        CHECK(parsed.get_value<T>("o") == T(0.5));
+        CHECK(args.get_value<T>("o") == T(0.5));
     }
     else
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
 
-        CHECK(parsed.get_value<T>("o") == T("foo"));
+        CHECK(args.get_value<T>("o") == T("foo"));
     }
 }
 
@@ -912,33 +912,33 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as zero_or_one y
     {
         parser.add_argument("-o").nargs(argparse::zero_or_one).default_(T('A'));
 
-        auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+        auto const args = parser.parse_args(1, cstr_arr{"prog"});
 
-        CHECK(parsed.get_value<T>("o") == T('A'));
+        CHECK(args.get_value<T>("o") == T('A'));
     }
     else if constexpr (std::is_integral_v<T>)
     {
         parser.add_argument("-o").nargs(argparse::zero_or_one).default_(T(10));
 
-        auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+        auto const args = parser.parse_args(1, cstr_arr{"prog"});
 
-        CHECK(parsed.get_value<T>("o") == T(10));
+        CHECK(args.get_value<T>("o") == T(10));
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
         parser.add_argument("-o").nargs(argparse::zero_or_one).default_(T(0.0625));
 
-        auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+        auto const args = parser.parse_args(1, cstr_arr{"prog"});
 
-        CHECK(parsed.get_value<T>("o") == T(0.0625));
+        CHECK(args.get_value<T>("o") == T(0.0625));
     }
     else
     {
         parser.add_argument("-o").nargs(argparse::zero_or_one).default_("foo"s);
 
-        auto const parsed = parser.parse_args(1, cstr_arr{"prog"});
+        auto const args = parser.parse_args(1, cstr_arr{"prog"});
 
-        CHECK(parsed.get_value<T>("o") == "foo");
+        CHECK(args.get_value<T>("o") == "foo");
     }
 }
 
@@ -950,33 +950,33 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as zero_or_one y
     {
         parser.add_argument("-o").nargs(argparse::zero_or_one).const_(T('A'));
 
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "-o"});
 
-        CHECK(parsed.get_value<T>("o") == T('A'));
+        CHECK(args.get_value<T>("o") == T('A'));
     }
     else if constexpr (std::is_integral_v<T>)
     {
         parser.add_argument("-o").nargs(argparse::zero_or_one).const_(T(5));
 
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "-o"});
 
-        CHECK(parsed.get_value<T>("o") == T(5));
+        CHECK(args.get_value<T>("o") == T(5));
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
         parser.add_argument("-o").nargs(argparse::zero_or_one).const_(T(0.875));
 
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "-o"});
 
-        CHECK(parsed.get_value<T>("o") == T(0.875));
+        CHECK(args.get_value<T>("o") == T(0.875));
     }
     else
     {
         parser.add_argument("-o").nargs(argparse::zero_or_one).const_("foo"s);
 
-        auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "-o"});
 
-        CHECK(parsed.get_value<T>("o") == "foo");
+        CHECK(args.get_value<T>("o") == "foo");
     }
 }
 
@@ -985,9 +985,9 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as zero_or_more 
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("-o").nargs(argparse::zero_or_more).template type<T>();
 
-    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-o"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-o"});
 
-    CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>());
+    CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>());
 }
 
 TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as zero_or_more consumes single argument and yields it as a list", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string)
@@ -997,27 +997,27 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as zero_or_more 
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A'});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{'A'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "42"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "42"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{42});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{0.5});
     }
     else
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
     }
 }
 
@@ -1028,27 +1028,27 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as zero_or_more 
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "E"});
+        auto const args = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "E"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C', 'E'});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C', 'E'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"});
+        auto const args = parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42, 54, 65});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{42, 54, 65});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "0.5", "1.125", "2.375"});
+        auto const args = parser.parse_args(5, cstr_arr{"prog", "-o", "0.5", "1.125", "2.375"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5, 1.125, 2.375});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{0.5, 1.125, 2.375});
     }
     else
     {
-        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"});
+        auto const args = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar", "baz"});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar", "baz"});
     }
 }
 
@@ -1067,27 +1067,27 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as one_or_more c
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A'});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{'A'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "42"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "42"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{42});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "0.5"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{0.5});
     }
     else
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
     }
 }
 
@@ -1098,27 +1098,27 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with nargs set as one_or_more c
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "E"});
+        auto const args = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "E"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C', 'E'});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C', 'E'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"});
+        auto const args = parser.parse_args(5, cstr_arr{"prog", "-o", "42", "54", "65"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{42, 54, 65});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{42, 54, 65});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "0.5", "1.125", "2.375"});
+        auto const args = parser.parse_args(5, cstr_arr{"prog", "-o", "0.5", "1.125", "2.375"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.5, 1.125, 2.375});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{0.5, 1.125, 2.375});
     }
     else
     {
-        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"});
+        auto const args = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "baz"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar", "baz"});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar", "baz"});
     }
 }
 
@@ -1524,33 +1524,33 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(1).template type<T>();
 
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A'});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{'A'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
         parser.add_argument("-o").choices({T(11), T(22)}).nargs(1).template type<T>();
 
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "11"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "11"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{11});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{11});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
         parser.add_argument("-o").choices({T(0.125), T(0.25)}).nargs(1).template type<T>();
 
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "0.125"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "0.125"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.125});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{0.125});
     }
     else
     {
         parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(1).template type<T>();
 
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
     }
 }
 
@@ -1562,33 +1562,33 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(2).template type<T>();
 
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "A", "C"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "-o", "A", "C"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C'});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
         parser.add_argument("-o").choices({T(11), T(22)}).nargs(2).template type<T>();
 
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "11", "22"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "-o", "11", "22"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{11, 22});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{11, 22});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
         parser.add_argument("-o").choices({T(0.125), T(0.25)}).nargs(2).template type<T>();
 
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "0.125", "0.25"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "-o", "0.125", "0.25"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.125, 0.25});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{0.125, 0.25});
     }
     else
     {
         parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(2).template type<T>();
 
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "bar"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar"});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar"});
     }
 }
 
@@ -1600,33 +1600,33 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(3).template type<T>();
 
-        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "A"});
+        auto const args = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "C", "A"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C', 'A'});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'C', 'A'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
         parser.add_argument("-o").choices({T(11), T(22)}).nargs(3).template type<T>();
 
-        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "11", "22", "11"});
+        auto const args = parser.parse_args(5, cstr_arr{"prog", "-o", "11", "22", "11"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{11, 22, 11});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{11, 22, 11});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
         parser.add_argument("-o").choices({T(0.125), T(0.25)}).nargs(3).template type<T>();
 
-        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "0.125", "0.25", "0.125"});
+        auto const args = parser.parse_args(5, cstr_arr{"prog", "-o", "0.125", "0.25", "0.125"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.125, 0.25, 0.125});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{0.125, 0.25, 0.125});
     }
     else
     {
         parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(3).template type<T>();
 
-        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "foo"});
+        auto const args = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "bar", "foo"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar", "foo"});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "bar", "foo"});
     }
 }
 
@@ -1638,33 +1638,33 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
     {
         parser.add_argument("-o").choices({T('A'), T('C')}).nargs(argparse::zero_or_one).template type<T>();
 
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
 
-        CHECK(parsed.get_value<T>("o") == T('A'));
+        CHECK(args.get_value<T>("o") == T('A'));
     }
     else if constexpr (std::is_integral_v<T>)
     {
         parser.add_argument("-o").choices({T(11), T(22)}).nargs(argparse::zero_or_one).template type<T>();
 
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "11"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "11"});
 
-        CHECK(parsed.get_value<T>("o") == T(11));
+        CHECK(args.get_value<T>("o") == T(11));
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
         parser.add_argument("-o").choices({T(0.125), T(0.25)}).nargs(argparse::zero_or_one).template type<T>();
 
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "0.125"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "0.125"});
 
-        CHECK(parsed.get_value<T>("o") == T(0.125));
+        CHECK(args.get_value<T>("o") == T(0.125));
     }
     else
     {
         parser.add_argument("-o").choices({"foo"s, "bar"s}).nargs(argparse::zero_or_one).template type<T>();
 
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
 
-        CHECK(parsed.get_value<T>("o") == T("foo"));
+        CHECK(args.get_value<T>("o") == T("foo"));
     }
 }
 
@@ -1691,27 +1691,27 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A'});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{'A'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "11"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "11"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{11});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{11});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "0.125"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "0.125"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.125});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{0.125});
     }
     else
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
     }
 }
 
@@ -1738,27 +1738,27 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "A", "A"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "-o", "A", "A"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'A'});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'A'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "11", "11"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "-o", "11", "11"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{11, 11});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{11, 11});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "0.125", "0.125"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "-o", "0.125", "0.125"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.125, 0.125});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{0.125, 0.125});
     }
     else
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "foo"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "foo"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "foo"});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "foo"});
     }
 }
 
@@ -1785,27 +1785,27 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "A", "A"});
+        auto const args = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "A", "A"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'A', 'A'});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'A', 'A'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "11", "11", "11"});
+        auto const args = parser.parse_args(5, cstr_arr{"prog", "-o", "11", "11", "11"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{11, 11, 11});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{11, 11, 11});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "0.125", "0.125", "0.125"});
+        auto const args = parser.parse_args(5, cstr_arr{"prog", "-o", "0.125", "0.125", "0.125"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.125, 0.125, 0.125});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{0.125, 0.125, 0.125});
     }
     else
     {
-        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "foo", "foo"});
+        auto const args = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "foo", "foo"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "foo", "foo"});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "foo", "foo"});
     }
 }
 
@@ -1832,27 +1832,27 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "A"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A'});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{'A'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "11"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "11"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{11});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{11});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "0.125"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "0.125"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.125});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{0.125});
     }
     else
     {
-        auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "foo"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{"foo"});
     }
 }
 
@@ -1879,27 +1879,27 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "A", "A"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "-o", "A", "A"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'A'});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'A'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "11", "11"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "-o", "11", "11"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{11, 11});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{11, 11});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "0.125", "0.125"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "-o", "0.125", "0.125"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.125, 0.125});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{0.125, 0.125});
     }
     else
     {
-        auto const parsed = parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "foo"});
+        auto const args = parser.parse_args(4, cstr_arr{"prog", "-o", "foo", "foo"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "foo"});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "foo"});
     }
 }
 
@@ -1926,27 +1926,27 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set yields the arg
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "A", "A"});
+        auto const args = parser.parse_args(5, cstr_arr{"prog", "-o", "A", "A", "A"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'A', 'A'});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{'A', 'A', 'A'});
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "11", "11", "11"});
+        auto const args = parser.parse_args(5, cstr_arr{"prog", "-o", "11", "11", "11"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{11, 11, 11});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{11, 11, 11});
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "0.125", "0.125", "0.125"});
+        auto const args = parser.parse_args(5, cstr_arr{"prog", "-o", "0.125", "0.125", "0.125"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{0.125, 0.125, 0.125});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{0.125, 0.125, 0.125});
     }
     else
     {
-        auto const parsed = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "foo", "foo"});
+        auto const args = parser.parse_args(5, cstr_arr{"prog", "-o", "foo", "foo", "foo"});
 
-        CHECK(parsed.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "foo", "foo"});
+        CHECK(args.get_value<std::vector<T>>("o") == std::vector<T>{"foo", "foo", "foo"});
     }
 }
 
@@ -2404,7 +2404,7 @@ TEST_CASE("An optional argument does not consume arguments past the -- pseudo ar
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("-o").nargs(argparse::zero_or_one);
 
-    auto args = parser.parse_args(3, cstr_arr{"prog", "-o", "--"});
+    auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "--"});
 
     CHECK(!args.get("o"));
 }
@@ -2414,7 +2414,7 @@ TEST_CASE("An optional argument does not consume arguments past the -- pseudo ar
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("-o").nargs(argparse::zero_or_more);
 
-    auto args = parser.parse_args(3, cstr_arr{"prog", "-o", "--"});
+    auto const args = parser.parse_args(3, cstr_arr{"prog", "-o", "--"});
 
     CHECK(args.get_value<std::vector<std::string>>("o") == std::vector<std::string>());
 }
@@ -2433,7 +2433,7 @@ TEST_CASE("An optional argument does not consume arguments past the -- pseudo ar
     parser.add_argument("-o").nargs(argparse::zero_or_more);
     parser.add_argument("pos");
 
-    auto args = parser.parse_args(4, cstr_arr{"prog", "-o", "--", "val"});
+    auto const args = parser.parse_args(4, cstr_arr{"prog", "-o", "--", "val"});
 
     CHECK(args.get_value<std::vector<std::string>>("o") == std::vector<std::string>());
     CHECK(args.get_value("pos") == "val");
@@ -2489,7 +2489,7 @@ TEST_CASE("Parsing joined short options with store true action yields true for e
     parser.add_argument("-a").action(argparse::store_true);
     parser.add_argument("-b").action(argparse::store_true);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-ab"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-ab"});
 
     CHECK(args.get_value<bool>("a") == true);
     CHECK(args.get_value<bool>("b") == true);
@@ -2501,7 +2501,7 @@ TEST_CASE("Parsing joined short options with store false action yields false for
     parser.add_argument("-a").action(argparse::store_false);
     parser.add_argument("-b").action(argparse::store_false);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-ab"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-ab"});
 
     CHECK(args.get_value<bool>("a") == false);
     CHECK(args.get_value<bool>("b") == false);
@@ -2513,7 +2513,7 @@ TEST_CASE("Parsing joined short options with store const action yields const val
     parser.add_argument("-a").action(argparse::store_const).const_(10);
     parser.add_argument("-b").action(argparse::store_const).const_(20);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-ab"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-ab"});
 
     CHECK(args.get_value<int>("a") == 10);
     CHECK(args.get_value<int>("b") == 20);
@@ -2525,7 +2525,7 @@ TEST_CASE("Parsing joined short options with count action yields their count")
     parser.add_argument("-a").action(argparse::count);
     parser.add_argument("-b").action(argparse::count);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-ababa"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-ababa"});
 
     CHECK(args.get_value<int>("a") == 3);
     CHECK(args.get_value<int>("b") == 2);
@@ -2537,7 +2537,7 @@ TEST_CASE("Parsing joined short options with count action yields their count")
     parser.add_argument("-a").action(argparse::count);
     parser.add_argument("-b").action(argparse::count);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-abbaa"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-abbaa"});
 
     CHECK(args.get_value<int>("a") == 3);
     CHECK(args.get_value<int>("b") == 2);
@@ -2556,7 +2556,7 @@ TEST_CASE("Parsing long option with joined argument yields its value")
     auto parser = argparse::ArgumentParser();
     parser.add_argument("--long");
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "--long=value"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "--long=value"});
 
     CHECK(args.get_value("long") == "value");
 }
@@ -2568,25 +2568,25 @@ TEST_CASE_TEMPLATE("Parsing long option with joined argument yields its value", 
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto args = parser.parse_args(2, cstr_arr{"prog", "--long=A"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "--long=A"});
 
         CHECK(args.get_value<T>("long") == T(65));
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto args = parser.parse_args(2, cstr_arr{"prog", "--long=65"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "--long=65"});
 
         CHECK(args.get_value<T>("long") == T(65));
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto args = parser.parse_args(2, cstr_arr{"prog", "--long=1.125"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "--long=1.125"});
 
         CHECK(args.get_value<T>("long") == T(1.125));
     }
     else
     {
-        auto args = parser.parse_args(2, cstr_arr{"prog", "--long=bar"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "--long=bar"});
 
         CHECK(args.get_value<T>("long") == T("bar"));
     }
@@ -2598,7 +2598,7 @@ TEST_CASE("Parsing long options with same prefix correctly recognises them plane
     parser.add_argument("--same").action(argparse::store_true);
     parser.add_argument("--same-prefix").action(argparse::store_true);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "--same-prefix"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "--same-prefix"});
 
     CHECK(args.get_value<bool>("same") == false);
 }
@@ -2609,7 +2609,7 @@ TEST_CASE("Parsing long options with same prefix correctly recognises them optio
     parser.add_argument("--same");
     parser.add_argument("--same-prefix");
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "--same-prefix=value"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "--same-prefix=value"});
 
     CHECK(!args.get("same"));
 }
@@ -2627,7 +2627,7 @@ TEST_CASE("Parsing short option with joined argument yields its value")
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o");
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-ovalue"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-ovalue"});
 
     CHECK(args.get_value("o") == "value");
 }
@@ -2639,25 +2639,25 @@ TEST_CASE_TEMPLATE("Parsing short option with joined argument yields its value",
 
     if constexpr (std::is_same_v<char, T> || std::is_same_v<signed char, T> || std::is_same_v<unsigned char, T>)
     {
-        auto args = parser.parse_args(2, cstr_arr{"prog", "-oA"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "-oA"});
 
         CHECK(args.get_value<T>("o") == T(65));
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        auto args = parser.parse_args(2, cstr_arr{"prog", "-o65"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "-o65"});
 
         CHECK(args.get_value<T>("o") == T(65));
     }
     else if constexpr (std::is_floating_point_v<T>)
     {
-        auto args = parser.parse_args(2, cstr_arr{"prog", "-o1.125"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "-o1.125"});
 
         CHECK(args.get_value<T>("o") == T(1.125));
     }
     else
     {
-        auto args = parser.parse_args(2, cstr_arr{"prog", "-obar"});
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "-obar"});
 
         CHECK(args.get_value<T>("o") == T("bar"));
     }
@@ -2676,7 +2676,7 @@ TEST_CASE("Parsing short option with joined argument with append action yields i
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-a").action(argparse::append);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-aone"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-aone"});
 
     CHECK(args.get_value<std::vector<std::string>>("a") == std::vector<std::string>{"one"});
 }
@@ -2686,7 +2686,7 @@ TEST_CASE("Parsing short option with joined argument with append action yields i
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-a").action(argparse::append);
 
-    auto args = parser.parse_args(3, cstr_arr{"prog", "-aone", "-atwo"});
+    auto const args = parser.parse_args(3, cstr_arr{"prog", "-aone", "-atwo"});
 
     CHECK(args.get_value<std::vector<std::string>>("a") == std::vector<std::string>{"one", "two"});
 }
@@ -2715,7 +2715,7 @@ TEST_CASE("Parsing joined short options and short option joined with argument yi
     parser.add_argument("-a").action(argparse::store_true);
     parser.add_argument("-o");
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
 
     CHECK(args.get_value<bool>("a") == true);
     CHECK(args.get_value("o") == "value");
@@ -2727,7 +2727,7 @@ TEST_CASE("Parsing joined short options and short option joined with argument yi
     parser.add_argument("-o");
     parser.add_argument("-a").action(argparse::store_true);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
 
     CHECK(args.get_value<bool>("a") == true);
     CHECK(args.get_value("o") == "value");
@@ -2740,7 +2740,7 @@ TEST_CASE("Parsing joined short optiona and short option joined with argument do
     parser.add_argument("-a").action(argparse::store_true);
     parser.add_argument("-v").action(argparse::store_true);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
 
     CHECK(args.get_value<bool>("a") == true);
     CHECK(args.get_value<bool>("v") == false);
@@ -2754,7 +2754,7 @@ TEST_CASE("Parsing joined short optiona and short option joined with argument do
     parser.add_argument("-a").action(argparse::store_true);
     parser.add_argument("-o");
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-aovalue"});
 
     CHECK(args.get_value<bool>("a") == true);
     CHECK(args.get_value<bool>("v") == false);
@@ -2769,7 +2769,7 @@ TEST_CASE("Parsing long options does not affect short options")
     parser.add_argument("-a").action(argparse::store_true);
     parser.add_argument("-r").action(argparse::store_true);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "--bar"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "--bar"});
 
     CHECK(args.get_value<bool>("b") == false);
     CHECK(args.get_value<bool>("a") == false);
@@ -2785,7 +2785,7 @@ TEST_CASE("Parsing long options does not affect short options")
     parser.add_argument("-a").action(argparse::store_true);
     parser.add_argument("-r").action(argparse::store_true);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "--bar=bar"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "--bar=bar"});
 
     CHECK(args.get_value<bool>("b") == false);
     CHECK(args.get_value<bool>("a") == false);
@@ -2801,7 +2801,7 @@ TEST_CASE("Parsing joined flags does not affect long options")
     parser.add_argument("-a").action(argparse::store_true);
     parser.add_argument("-r").action(argparse::store_true);
 
-    auto args = parser.parse_args(2, cstr_arr{"prog", "-bar"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-bar"});
 
     CHECK(args.get_value<bool>("bar") == false);
     CHECK(args.get_value<bool>("b") == true);
