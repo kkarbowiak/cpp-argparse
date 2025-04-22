@@ -14,9 +14,9 @@ TEST_CASE("Optional arguments support short names")
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-s");
 
-    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "-s", "ess"});
+    auto const args = parser.parse_args(3, cstr_arr{"prog", "-s", "ess"});
 
-    CHECK(parsed.get("s"));
+    CHECK(args.get("s"));
 }
 
 TEST_CASE("Optional arguments support long names")
@@ -24,9 +24,9 @@ TEST_CASE("Optional arguments support long names")
     auto parser = argparse::ArgumentParser();
     parser.add_argument("--long-arg");
 
-    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "--long-arg", "value"});
+    auto const args = parser.parse_args(3, cstr_arr{"prog", "--long-arg", "value"});
 
-    CHECK(parsed.get("long_arg"));
+    CHECK(args.get("long_arg"));
 }
 
 TEST_CASE("ArgumentParser adds help argument automatically with short name")
@@ -68,27 +68,27 @@ TEST_CASE("ArgumentParser does not handle help when requested to handle nothing"
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
-    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-h"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-h"});
 
-    CHECK(parsed.get_value<bool>("help") == true);
+    CHECK(args.get_value<bool>("help") == true);
 }
 
 TEST_CASE("ArgumentParser does not handle help when requested to handle parsing errors")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::errors);
 
-    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-h"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-h"});
 
-    CHECK(parsed.get_value<bool>("help") == true);
+    CHECK(args.get_value<bool>("help") == true);
 }
 
 TEST_CASE("ArgumentParser does not handle help when requested to handle version")
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::version);
 
-    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-h"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-h"});
 
-    CHECK(parsed.get_value<bool>("help") == true);
+    CHECK(args.get_value<bool>("help") == true);
 }
 
 TEST_CASE("ArgumentParser does not handle parsing errors when requested to handle nothing")
@@ -120,9 +120,9 @@ TEST_CASE("ArgumentParser does not handle version when requested to handle nothi
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("-v").action(argparse::version);
 
-    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-v"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-v"});
 
-    CHECK(parsed.get_value<bool>("v") == true);
+    CHECK(args.get_value<bool>("v") == true);
 }
 
 TEST_CASE("ArgumentParser does not handle version when requested to handle errors")
@@ -130,9 +130,9 @@ TEST_CASE("ArgumentParser does not handle version when requested to handle error
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::errors);
     parser.add_argument("-v").action(argparse::version);
 
-    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-v"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-v"});
 
-    CHECK(parsed.get_value<bool>("v") == true);
+    CHECK(args.get_value<bool>("v") == true);
 }
 
 TEST_CASE("ArgumentParser does not handle version when requested to handle help")
@@ -140,9 +140,9 @@ TEST_CASE("ArgumentParser does not handle version when requested to handle help"
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::help);
     parser.add_argument("-v").action(argparse::version);
 
-    auto const parsed = parser.parse_args(2, cstr_arr{"prog", "-v"});
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-v"});
 
-    CHECK(parsed.get_value<bool>("v") == true);
+    CHECK(args.get_value<bool>("v") == true);
 }
 
 TEST_CASE("ArgumentParser uses first command-line parameter as its name when executed from current directory using no separators in usage message")

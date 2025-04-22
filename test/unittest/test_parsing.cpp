@@ -44,11 +44,11 @@ TEST_CASE("Parsing mixed positional and optional arguments give same result no m
     parser2.add_argument("-f");
     parser2.add_argument("pos1");
     auto const argv = cstr_arr{"prog", "val1", "-f", "a"};
-    auto const parsed1 = parser1.parse_args(4, argv);
-    auto const parsed2 = parser2.parse_args(4, argv);
+    auto const args1 = parser1.parse_args(4, argv);
+    auto const args2 = parser2.parse_args(4, argv);
 
-    CHECK(parsed1.get_value("pos1") == parsed2.get_value("pos1"));
-    CHECK(parsed1.get_value("f") == parsed2.get_value("f"));
+    CHECK(args1.get_value("pos1") == args2.get_value("pos1"));
+    CHECK(args1.get_value("f") == args2.get_value("f"));
 }
 
 TEST_CASE("Parsing mixed positional and optional arguments give same result no matter the order for optional and positional")
@@ -61,11 +61,11 @@ TEST_CASE("Parsing mixed positional and optional arguments give same result no m
     parser2.add_argument("-f");
     parser2.add_argument("pos1");
     auto const argv = cstr_arr{"prog", "-f", "a", "val1"};
-    auto const parsed1 = parser1.parse_args(4, argv);
-    auto const parsed2 = parser2.parse_args(4, argv);
+    auto const args1 = parser1.parse_args(4, argv);
+    auto const args2 = parser2.parse_args(4, argv);
 
-    CHECK(parsed1.get_value("pos1") == parsed2.get_value("pos1"));
-    CHECK(parsed1.get_value("f") == parsed2.get_value("f"));
+    CHECK(args1.get_value("pos1") == args2.get_value("pos1"));
+    CHECK(args1.get_value("f") == args2.get_value("f"));
 }
 
 TEST_CASE("Parsing -- pseudo argument does not throw")
@@ -88,9 +88,9 @@ TEST_CASE("Arguments past the -- pseudo argument are treated as positional for p
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.add_argument("pos");
 
-    auto const parsed = parser.parse_args(3, cstr_arr{"prog", "--", "-o"});
+    auto const args = parser.parse_args(3, cstr_arr{"prog", "--", "-o"});
 
-    CHECK(parsed.get_value("pos") == "-o");
+    CHECK(args.get_value("pos") == "-o");
 }
 
 TEST_CASE("Positional argument does not consume unrecognised optional argument")
