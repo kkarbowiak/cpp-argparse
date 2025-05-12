@@ -1007,7 +1007,7 @@ namespace argparse
                         }
                     }
 
-                    auto has_arg(auto it) const -> optstring
+                    auto has_arg(auto it) const -> std::string_view
                     {
                         for (auto const & name: m_options.names)
                         {
@@ -1028,10 +1028,10 @@ namespace argparse
                             }
                         }
 
-                        return optstring();
+                        return std::string_view();
                     }
 
-                    auto consume_name(auto it, std::string const & name) const -> std::string
+                    auto consume_name(auto it, std::string_view name) const -> std::string
                     {
                         if (auto const & arg = *it; arg.m_token.starts_with("--"))
                         {
@@ -1180,9 +1180,9 @@ namespace argparse
 
                         for (auto it = consumable.begin(); it != consumable.end();)
                         {
-                            if (auto const name = has_arg(it); name)
+                            if (auto const name = has_arg(it); !name.empty())
                             {
-                                auto const value = consume_name(it, *name);
+                                auto const value = consume_name(it, name);
                                 auto consumable_args = get_consumable_args(it, consumable);
 
                                 check_errors(value, consumable_args);
