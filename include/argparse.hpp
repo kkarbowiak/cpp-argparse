@@ -755,8 +755,7 @@ namespace argparse
                             }
                             case one_or_more:
                             {
-                                auto const values = consume_args(args);
-                                if (!values.empty())
+                                if (auto const values = consume_args(args); !values.empty())
                                 {
                                     m_value = m_options.type_handler->transform(values);
                                 }
