@@ -1530,7 +1530,7 @@ namespace argparse
             class ArgumentBuilder
             {
                 public:
-                    ArgumentBuilder(argument_uptrs & arguments, optstring & version, std::vector<std::string> names, MutuallyExclusiveGroup * group = nullptr)
+                    ArgumentBuilder(argument_uptrs & arguments, optstring & version, std::vector<std::string> names, MutuallyExclusiveGroup const * group = nullptr)
                       : m_arguments(arguments)
                       , m_version(version)
                       , m_options()
