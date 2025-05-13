@@ -190,7 +190,6 @@ namespace argparse
                     std::map<std::string, Value, std::less<>> m_parameters;
             };
 
-        private:
             struct Token
             {
                 std::string m_token;
