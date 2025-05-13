@@ -777,7 +777,7 @@ namespace argparse
                         return get_dest_name();
                     }
 
-                    auto get_consumable(tokens & args)
+                    auto get_consumable(tokens & args) const
                     {
                         return args
                             | std::views::drop_while([](auto const & token)
@@ -1099,7 +1099,7 @@ namespace argparse
                         return get_joined_names();
                     }
 
-                    auto check_errors(std::string const & value, std::ranges::view auto args) -> void
+                    auto check_errors(std::string const & value, std::ranges::view auto args) const -> void
                     {
                         switch (m_options.action)
                         {
@@ -1151,14 +1151,14 @@ namespace argparse
                         }
                     }
 
-                    auto get_consumable(tokens & args)
+                    auto get_consumable(tokens & args) const
                     {
                         return args
                             | std::views::drop_while([](auto const & token) { return token.m_consumed; })
                             | std::views::take_while([](auto const & token) { return token.m_token != "--"; });
                     }
 
-                    auto get_consumable_args(auto it, std::ranges::view auto consumable)
+                    auto get_consumable_args(auto it, std::ranges::view auto consumable) const
                     {
                         return std::ranges::subrange(std::next(it), consumable.end())
                             | std::views::take_while([](auto const & token) { return !token.m_token.starts_with("-"); });
