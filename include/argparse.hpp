@@ -1158,12 +1158,11 @@ namespace argparse
                     }
 
                 private:
-                    bool m_present;
+                    bool m_present = false;
 
                 public:
                     explicit OptionalArgument(Options options)
                       : Argument(std::move(options))
-                      , m_present(false)
                     {
                     }
 
