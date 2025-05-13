@@ -755,8 +755,7 @@ namespace argparse
                             }
                             case one_or_more:
                             {
-                                auto const values = consume_args(args);
-                                if (!values.empty())
+                                if (auto const values = consume_args(args); !values.empty())
                                 {
                                     m_value = m_options.type_handler->transform(values);
                                 }
@@ -1533,12 +1532,9 @@ namespace argparse
 
                     ~ArgumentBuilder()
                     {
-                        if (m_options.action == argparse::version)
+                        if ((m_options.action == argparse::version) && m_options.help.empty())
                         {
-                            if (m_options.help.empty())
-                            {
-                                m_options.help = "show program's version number and exit";
-                            }
+                            m_options.help = "show program's version number and exit";
                         }
 
                         if (is_positional())
