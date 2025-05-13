@@ -329,7 +329,7 @@ namespace argparse
         private:
             static auto extract_filename(std::string_view path) -> std::string_view
             {
-                if (auto path_separator = path.find_last_of("/\\"); path_separator != path.npos)
+                if (auto path_separator = path.find_last_of("/\\"); path_separator != std::string_view::npos)
                 {
                     return path.substr(path_separator + 1);
                 }
