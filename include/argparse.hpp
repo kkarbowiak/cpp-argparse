@@ -1532,12 +1532,9 @@ namespace argparse
 
                     ~ArgumentBuilder()
                     {
-                        if (m_options.action == argparse::version)
+                        if ((m_options.action == argparse::version) && m_options.help.empty())
                         {
-                            if (m_options.help.empty())
-                            {
-                                m_options.help = "show program's version number and exit";
-                            }
+                            m_options.help = "show program's version number and exit";
                         }
 
                         if (is_positional())
