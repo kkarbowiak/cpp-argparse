@@ -190,7 +190,6 @@ namespace argparse
                     std::map<std::string, Value, std::less<>> m_parameters;
             };
 
-        private:
             struct Token
             {
                 std::string m_token;
@@ -1260,11 +1259,9 @@ namespace argparse
                     }
             };
 
-        private:
             using argument_uptr = std::unique_ptr<Argument>;
             using argument_uptrs = std::vector<argument_uptr>;
 
-        private:
             class Formatter
             {
                 public:
@@ -1652,7 +1649,6 @@ namespace argparse
                     Options m_options;
             };
 
-        private:
             argument_uptrs m_arguments;
             optstring m_prog;
             optstring m_usage;
