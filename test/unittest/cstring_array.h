@@ -7,7 +7,7 @@
 template<std::size_t N, class... Ts>
 struct cstr_arr
 {
-    cstr_arr(Ts... args)
+    explicit cstr_arr(Ts... args)
         : array{args...}
     {
     }
