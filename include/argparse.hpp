@@ -316,13 +316,6 @@ namespace argparse
             }
 
             ArgumentParser()
-              : m_arguments()
-              , m_prog()
-              , m_usage()
-              , m_description()
-              , m_epilog()
-              , m_version()
-              , m_handle(Handle::errors_help_version)
             {
                 add_argument("-h", "--help").action(help).help("show this help message and exit");
             }
@@ -1165,12 +1158,11 @@ namespace argparse
                     }
 
                 private:
-                    bool m_present;
+                    bool m_present = false;
 
                 public:
                     explicit OptionalArgument(Options options)
                       : Argument(std::move(options))
-                      , m_present(false)
                     {
                     }
 
@@ -1664,6 +1656,6 @@ namespace argparse
             optstring m_description;
             optstring m_epilog;
             optstring m_version;
-            Handle m_handle;
+            Handle m_handle = Handle::errors_help_version;
     };
 }
