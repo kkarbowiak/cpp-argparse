@@ -81,6 +81,13 @@ namespace argparse
             using logic_error::logic_error;
     };
 
+    class option_error
+      : public std::logic_error
+    {
+        public:
+            using logic_error::logic_error;
+    };
+
     inline auto operator|(Handle lhs, Handle rhs) -> Handle
     {
         return static_cast<Handle>(static_cast<int>(lhs) | static_cast<int>(rhs));
@@ -1603,7 +1610,7 @@ namespace argparse
                     {
                         if (is_positional())
                         {
-                            throw std::runtime_error("'required' is an invalid argument for positionals");
+                            throw option_error("'required' is an invalid argument for positionals");
                         }
                         m_options.required = required;
                         return *this;
