@@ -152,7 +152,7 @@ namespace argparse
                     }
 
                 private:
-                    std::any const m_value;
+                    std::any m_value;
             };
 
             class Parameters
@@ -329,7 +329,7 @@ namespace argparse
         private:
             static auto extract_filename(std::string_view path) -> std::string_view
             {
-                if (auto path_separator = path.find_last_of("/\\"); path_separator != path.npos)
+                if (auto path_separator = path.find_last_of("/\\"); path_separator != std::string_view::npos)
                 {
                     return path.substr(path_separator + 1);
                 }
@@ -1528,7 +1528,6 @@ namespace argparse
                     ArgumentBuilder(argument_uptrs & arguments, optstring & version, std::vector<std::string> names, MutuallyExclusiveGroup const * group = nullptr)
                       : m_arguments(arguments)
                       , m_version(version)
-                      , m_options()
                     {
                         m_options.names = std::move(names);
                         m_options.mutually_exclusive_group = group;
