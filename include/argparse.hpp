@@ -1528,7 +1528,6 @@ namespace argparse
                     ArgumentBuilder(argument_uptrs & arguments, optstring & version, std::vector<std::string> names, MutuallyExclusiveGroup const * group = nullptr)
                       : m_arguments(arguments)
                       , m_version(version)
-                      , m_options()
                     {
                         m_options.names = std::move(names);
                         m_options.mutually_exclusive_group = group;
