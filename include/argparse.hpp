@@ -423,10 +423,10 @@ namespace argparse
 
             auto check_excluded_arguments() const -> void
             {
-                auto const present = [](auto const & arg) { return arg->is_present(); };
-                for (auto const & arg1 : m_arguments | std::views::filter(present))
+                auto const filter = [](auto const & arg) { return arg->is_present() && arg->is_mutually_exclusive(); };
+                for (auto const & arg1 : m_arguments | std::views::filter(filter))
                 {
-                    for (auto const & arg2 : m_arguments | std::views::filter(present))
+                    for (auto const & arg2 : m_arguments | std::views::filter(filter))
                     {
                         if ((arg2 != arg1) && arg2->is_mutually_exclusive_with(*arg1))
                         {
