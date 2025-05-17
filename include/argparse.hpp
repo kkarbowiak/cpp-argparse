@@ -423,16 +423,14 @@ namespace argparse
 
             auto check_excluded_arguments() const -> void
             {
-                for (auto it1 = m_arguments.begin(); it1 != m_arguments.end(); ++it1)
+                auto const present = [](auto const & arg) { return arg->is_present(); };
+                for (auto const & arg1 : m_arguments | std::views::filter(present))
                 {
-                    if (auto const & arg1 = **it1; arg1.is_present())
+                    for (auto const & arg2 : m_arguments | std::views::filter(present))
                     {
-                        for (auto it2 = std::next(it1); it2 != m_arguments.end(); ++it2)
+                        if ((arg2 != arg1) && arg2->is_mutually_exclusive_with(*arg1))
                         {
-                            if (auto const & arg2 = **it2; arg2.is_present() && arg2.is_mutually_exclusive_with(arg1))
-                            {
-                                throw parsing_error(std::format("argument {}: not allowed with argument {}", arg2.get_joined_names(), arg1.get_joined_names()));
-                            }
+                            throw parsing_error(std::format("argument {}: not allowed with argument {}", arg2->get_joined_names(), arg1->get_joined_names()));
                         }
                     }
                 }
