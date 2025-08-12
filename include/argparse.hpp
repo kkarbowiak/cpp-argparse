@@ -381,13 +381,13 @@ namespace argparse
             auto parse_optional_arguments(tokens & args) -> void
             {
                 for (auto const & arg : m_arguments
-                    | std::views::filter([](auto const & arg){ return !arg->is_positional() && arg->expects_argument(); }))
+                    | std::views::filter([](auto const & arg) { return !arg->is_positional() && arg->expects_argument(); }))
                 {
                     arg->parse_args(args);
                 }
 
                 for (auto const & arg : m_arguments
-                    | std::views::filter([](auto const & arg){ return !arg->is_positional() && !arg->expects_argument(); }))
+                    | std::views::filter([](auto const & arg) { return !arg->is_positional() && !arg->expects_argument(); }))
                 {
                     arg->parse_args(args);
                 }
@@ -396,7 +396,7 @@ namespace argparse
             auto parse_positional_arguments(tokens & args) -> void
             {
                 for (auto const & arg : m_arguments
-                    | std::views::filter([](auto const & arg){ return arg->is_positional(); }))
+                    | std::views::filter([](auto const & arg) { return arg->is_positional(); }))
                 {
                     arg->parse_args(args);
                 }
@@ -441,7 +441,7 @@ namespace argparse
                 auto error_message = optstring();
 
                 for (auto const & arg : m_arguments
-                    | std::views::filter([](auto const & arg){ return arg->is_required() && !arg->has_value(); }))
+                    | std::views::filter([](auto const & arg) { return arg->is_required() && !arg->has_value(); }))
                 {
                     if (!error_message)
                     {
@@ -1313,7 +1313,7 @@ namespace argparse
                         auto positionals = std::string();
 
                         for (auto const & arg : arguments
-                            | std::views::filter([](auto const & arg){ return arg->is_positional(); }))
+                            | std::views::filter([](auto const & arg) { return arg->is_positional(); }))
                         {
                             if (arg->has_nargs())
                             {
@@ -1390,7 +1390,7 @@ namespace argparse
                         auto positionals = std::string();
 
                         for (auto const & arg : arguments
-                            | std::views::filter([](auto const & arg){ return arg->is_positional(); }))
+                            | std::views::filter([](auto const & arg) { return arg->is_positional(); }))
                         {
                             auto arg_line = "  " + format_arg(*arg);
 
@@ -1411,7 +1411,7 @@ namespace argparse
                         auto optionals = std::string();
 
                         for (auto const & arg : arguments
-                            | std::views::filter([](auto const & arg){ return !arg->is_positional(); }))
+                            | std::views::filter([](auto const & arg) { return !arg->is_positional(); }))
                         {
                             auto arg_line = std::string("  ");
                             auto const formatted_arg = format(*arg);
