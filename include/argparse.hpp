@@ -672,10 +672,10 @@ namespace argparse
                 protected:
                     virtual auto get_name_for_error() const -> std::string = 0;
 
-                    auto parse_arguments(std::ranges::view auto args) -> void
+                    auto parse_arguments(std::ranges::view auto args) -> std::any
                     {
                         auto const values = consume_args(args);
-                        m_value = m_options.type_handler->transform(values);
+                        return m_options.type_handler->transform(values);
                     }
 
                     auto consume_arg(Token & arg) const -> std::any
@@ -754,7 +754,7 @@ namespace argparse
                             }
                             case zero_or_more:
                             {
-                                parse_arguments(args);
+                                m_value = parse_arguments(args);
                                 break;
                             }
                             case one_or_more:
@@ -813,7 +813,7 @@ namespace argparse
                         {
                             if (has_nargs_number())
                             {
-                                parse_arguments(consumable | std::views::take(get_nargs_number()));
+                                m_value = parse_arguments(consumable | std::views::take(get_nargs_number()));
                             }
                             else
                             {
@@ -987,7 +987,7 @@ namespace argparse
                             }
                             case zero_or_more:
                             {
-                                parse_arguments(args);
+                                m_value = parse_arguments(args);
                                 break;
                             }
                             case one_or_more:
