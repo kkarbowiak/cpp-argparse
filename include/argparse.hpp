@@ -728,6 +728,11 @@ namespace argparse
                         }
                     }
 
+                    auto get_default() const -> std::any
+                    {
+                        return m_options.default_;
+                    }
+
                 protected:
                     Options const m_options;
             };
@@ -747,7 +752,7 @@ namespace argparse
                                 }
                                 else
                                 {
-                                    m_value = m_options.default_;
+                                    m_value = get_default();
                                 }
                                 break;
                             }
@@ -1144,7 +1149,7 @@ namespace argparse
                             case store_const:
                             case count:
                             case append:
-                                m_value = m_options.default_;
+                                m_value = get_default();
                                 break;
                         }
                     }
