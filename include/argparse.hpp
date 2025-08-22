@@ -730,7 +730,6 @@ namespace argparse
 
                 protected:
                     Options const m_options;
-                    std::any m_value;
             };
 
             class PositionalArgument final : public Argument
@@ -869,6 +868,9 @@ namespace argparse
                     {
                         return false;
                     }
+
+                private:
+                    std::any m_value;
             };
 
             class OptionalArgument final : public Argument
@@ -1161,6 +1163,7 @@ namespace argparse
                     }
 
                 private:
+                    std::any m_value;
                     bool m_present = false;
 
                 public:
