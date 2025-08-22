@@ -1313,7 +1313,7 @@ namespace argparse
                         auto positionals = std::string();
 
                         for (auto const & arg : arguments
-                            | std::views::filter([](auto const & arg) { return arg->is_positional(); }))
+                            | std::views::filter(&Argument::is_positional))
                         {
                             if (arg->has_nargs())
                             {
