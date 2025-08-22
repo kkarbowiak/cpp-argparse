@@ -831,14 +831,14 @@ namespace argparse
                     auto get_dest_name() const -> std::string override
                     {
                         return m_options.dest.empty()
-                            ? m_options.names.front()
+                            ? get_name()
                             : m_options.dest;
                     }
 
                     auto get_metavar_name() const -> std::string override
                     {
                         return m_options.metavar.empty()
-                            ? m_options.names.front()
+                            ? get_name()
                             : m_options.metavar;
                     }
 
@@ -1089,7 +1089,7 @@ namespace argparse
                             }
                         }
 
-                        return m_options.names.front().substr(1);
+                        return get_name().substr(1);
                     }
 
                     auto get_name_for_error() const -> std::string override
