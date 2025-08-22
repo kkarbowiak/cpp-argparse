@@ -1007,7 +1007,7 @@ namespace argparse
 
                     auto has_arg(auto it) const -> std::string_view
                     {
-                        for (auto const & name: m_options.names)
+                        for (auto const & name: get_names())
                         {
                             if (name[1] != '-')
                             {
@@ -1081,7 +1081,7 @@ namespace argparse
 
                     auto get_name_for_dest() const -> std::string
                     {
-                        for (auto const & name : m_options.names)
+                        for (auto const & name : get_names())
                         {
                             if (name.starts_with("--"))
                             {
