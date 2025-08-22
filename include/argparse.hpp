@@ -733,6 +733,11 @@ namespace argparse
                         return m_options.default_;
                     }
 
+                    auto get_const() const -> std::any
+                    {
+                        return m_options.const_;
+                    }
+
                 protected:
                     Options const m_options;
             };
@@ -916,7 +921,7 @@ namespace argparse
                                 m_value = false;
                                 break;
                             case store_const:
-                                m_value = m_options.const_;
+                                m_value = get_const();
                                 break;
                             case count:
                                 if (!m_value.has_value())
@@ -984,7 +989,7 @@ namespace argparse
                             {
                                 if (args.empty())
                                 {
-                                    m_value = m_options.const_;
+                                    m_value = get_const();
                                 }
                                 else
                                 {
