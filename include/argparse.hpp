@@ -396,7 +396,7 @@ namespace argparse
             auto parse_positional_arguments(tokens & args) -> void
             {
                 for (auto const & arg : m_arguments
-                    | std::views::filter([](auto const & arg) { return arg->is_positional(); }))
+                    | std::views::filter(&Argument::is_positional))
                 {
                     arg->parse_args(args);
                 }
@@ -417,7 +417,7 @@ namespace argparse
                     | std::views::filter([](auto const & token) { return !token.m_consumed; });
                 if (!unconsumed.empty())
                 {
-                    throw parsing_error(std::format("unrecognised arguments: {}", join(unconsumed | std::views::transform([](auto const & token) { return token.m_token; }), " ")));
+                    throw parsing_error(std::format("unrecognised arguments: {}", join(unconsumed | std::views::transform(&Token::m_token), " ")));
                 }
             }
 
@@ -1313,7 +1313,7 @@ namespace argparse
                         auto positionals = std::string();
 
                         for (auto const & arg : arguments
-                            | std::views::filter([](auto const & arg) { return arg->is_positional(); }))
+                            | std::views::filter(&Argument::is_positional))
                         {
                             if (arg->has_nargs())
                             {
@@ -1390,7 +1390,7 @@ namespace argparse
                         auto positionals = std::string();
 
                         for (auto const & arg : arguments
-                            | std::views::filter([](auto const & arg) { return arg->is_positional(); }))
+                            | std::views::filter(&Argument::is_positional))
                         {
                             auto arg_line = "  " + format_arg(*arg);
 
