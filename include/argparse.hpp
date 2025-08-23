@@ -763,6 +763,11 @@ namespace argparse
                         return m_options.type_handler->transform(values);
                     }
 
+                    auto get_size(std::any const & value) const -> std::size_t
+                    {
+                        return m_options.type_handler->size(value);
+                    }
+
                 protected:
                     Options const m_options;
             };
@@ -880,7 +885,7 @@ namespace argparse
                     auto has_value() const -> bool override
                     {
                         return has_nargs() && has_nargs_number()
-                            ? m_options.type_handler->size(m_value) == get_nargs_number()
+                            ? get_size(m_value) == get_nargs_number()
                             : m_value.has_value();
                     }
 
