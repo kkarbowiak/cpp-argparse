@@ -753,6 +753,11 @@ namespace argparse
                         return m_options.action;
                     }
 
+                    auto get_required() const -> bool
+                    {
+                        return m_options.required;
+                    }
+
                     auto get_transformed(std::vector<std::any> const & values) const -> std::any
                     {
                         return m_options.type_handler->transform(values);
@@ -1276,7 +1281,7 @@ namespace argparse
 
                     auto is_required() const -> bool override
                     {
-                        return m_options.required;
+                        return get_required();
                     }
 
                     auto is_positional() const -> bool override
