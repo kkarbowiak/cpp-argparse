@@ -743,6 +743,11 @@ namespace argparse
                         return m_options.dest;
                     }
 
+                    auto get_transformed(std::vector<std::any> const & values) const -> std::any
+                    {
+                        return m_options.type_handler->transform(values);
+                    }
+
                 protected:
                     Options const m_options;
             };
@@ -775,7 +780,7 @@ namespace argparse
                             {
                                 if (auto const values = consume_args(args); !values.empty())
                                 {
-                                    m_value = m_options.type_handler->transform(values);
+                                    m_value = get_transformed(values);
                                 }
                                 break;
                             }
@@ -944,7 +949,7 @@ namespace argparse
                                     if (!m_value.has_value())
                                     {
                                         auto const values = consume_args(args | std::views::take(1));
-                                        m_value = m_options.type_handler->transform(values);
+                                        m_value = get_transformed(values);
                                     }
                                     else
                                     {
@@ -957,7 +962,7 @@ namespace argparse
                                     if (!m_value.has_value())
                                     {
                                         auto const values = consume_args(std::views::single(Token{value}));
-                                        m_value = m_options.type_handler->transform(values);
+                                        m_value = get_transformed(values);
                                     }
                                     else
                                     {
@@ -983,7 +988,7 @@ namespace argparse
                         {
                             throw parsing_error(std::format("argument {}: expected {} argument{}", get_joined_names(), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
                         }
-                        m_value = m_options.type_handler->transform(values);
+                        m_value = get_transformed(values);
                     }
 
                     auto parse_arguments_option(std::ranges::view auto args) -> void
@@ -1014,7 +1019,7 @@ namespace argparse
                                 {
                                     throw parsing_error(std::format("argument {}: expected at least one argument", get_joined_names()));
                                 }
-                                m_value = m_options.type_handler->transform(values);
+                                m_value = get_transformed(values);
                                 break;
                             }
                         }
