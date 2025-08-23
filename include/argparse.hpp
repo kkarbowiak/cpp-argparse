@@ -768,6 +768,11 @@ namespace argparse
                         return m_options.type_handler->size(value);
                     }
 
+                    auto append_value(std::any const & value, std::any & values) const -> void
+                    {
+                        m_options.type_handler->append(value, values);
+                    }
+
                 protected:
                     Options const m_options;
             };
@@ -974,7 +979,7 @@ namespace argparse
                                     else
                                     {
                                         auto const val = consume_arg(args.front());
-                                        m_options.type_handler->append(val, m_value);
+                                        append_value(val, m_value);
                                     }
                                 }
                                 else
@@ -987,7 +992,7 @@ namespace argparse
                                     else
                                     {
                                         auto const val = process_arg(value);
-                                        m_options.type_handler->append(val, m_value);
+                                        append_value(val, m_value);
                                     }
                                 }
                                 break;
