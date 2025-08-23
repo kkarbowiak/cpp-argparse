@@ -773,7 +773,7 @@ namespace argparse
                         m_options.type_handler->append(value, values);
                     }
 
-                protected:
+                private:
                     Options const m_options;
             };
 
