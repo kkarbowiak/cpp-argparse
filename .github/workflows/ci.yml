@@ -38,7 +38,7 @@ jobs:
               cxx: "clang++",
             }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: CMake configure
         run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=${{ matrix.config.cc }} -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }}
@@ -56,7 +56,7 @@ jobs:
     name: "clang-tidy"
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install clang-tidy
         run: |
@@ -73,7 +73,7 @@ jobs:
     name: "clang-sanitisers"
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: CMake configure
         run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS=-fsanitize=address,undefined,alignment,array-bounds -DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address,undefined,alignment,array-bounds
@@ -85,7 +85,7 @@ jobs:
     name: "msvc-sanitisers"
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: CMake configure
         run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_CXX_FLAGS="/fsanitize=address /EHsc"
@@ -97,7 +97,7 @@ jobs:
     name: "Valgrind"
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install Valgrind
         run: |
@@ -119,7 +119,7 @@ jobs:
     env:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install lcov
         run: |
