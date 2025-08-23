@@ -738,6 +738,11 @@ namespace argparse
                         return m_options.const_;
                     }
 
+                    auto get_dest() const -> std::string
+                    {
+                        return m_options.dest;
+                    }
+
                 protected:
                     Options const m_options;
             };
@@ -840,9 +845,9 @@ namespace argparse
 
                     auto get_dest_name() const -> std::string override
                     {
-                        return m_options.dest.empty()
+                        return get_dest().empty()
                             ? get_name()
-                            : m_options.dest;
+                            : get_dest();
                     }
 
                     auto get_metavar_name() const -> std::string override
@@ -1218,9 +1223,9 @@ namespace argparse
 
                     auto get_dest_name() const -> std::string override
                     {
-                        if (!m_options.dest.empty())
+                        if (!get_dest().empty())
                         {
-                            return m_options.dest;
+                            return get_dest();
                         }
 
                         auto dest = get_name_for_dest();
