@@ -743,6 +743,11 @@ namespace argparse
                         return m_options.dest;
                     }
 
+                    auto get_metavar() const -> std::string
+                    {
+                        return m_options.metavar;
+                    }
+
                     auto get_transformed(std::vector<std::any> const & values) const -> std::any
                     {
                         return m_options.type_handler->transform(values);
@@ -857,9 +862,9 @@ namespace argparse
 
                     auto get_metavar_name() const -> std::string override
                     {
-                        return m_options.metavar.empty()
+                        return get_metavar().empty()
                             ? get_name()
-                            : m_options.metavar;
+                            : get_metavar();
                     }
 
                     auto has_value() const -> bool override
@@ -1242,9 +1247,9 @@ namespace argparse
 
                     auto get_metavar_name() const -> std::string override
                     {
-                        if (!m_options.metavar.empty())
+                        if (!get_metavar().empty())
                         {
-                            return m_options.metavar;
+                            return get_metavar();
                         }
 
                         auto metavar = get_dest_name();
