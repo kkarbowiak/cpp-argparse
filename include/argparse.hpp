@@ -672,10 +672,10 @@ namespace argparse
                 protected:
                     virtual auto get_name_for_error() const -> std::string = 0;
 
-                    auto parse_arguments(std::ranges::view auto args) -> void
+                    auto parse_arguments(std::ranges::view auto args) -> std::any
                     {
                         auto const values = consume_args(args);
-                        m_value = m_options.type_handler->transform(values);
+                        return m_options.type_handler->transform(values);
                     }
 
                     auto consume_arg(Token & arg) const -> std::any
@@ -728,9 +728,53 @@ namespace argparse
                         }
                     }
 
-                protected:
+                    auto get_default() const -> std::any
+                    {
+                        return m_options.default_;
+                    }
+
+                    auto get_const() const -> std::any
+                    {
+                        return m_options.const_;
+                    }
+
+                    auto get_dest() const -> std::string
+                    {
+                        return m_options.dest;
+                    }
+
+                    auto get_metavar() const -> std::string
+                    {
+                        return m_options.metavar;
+                    }
+
+                    auto get_action() const -> Action
+                    {
+                        return m_options.action;
+                    }
+
+                    auto get_required() const -> bool
+                    {
+                        return m_options.required;
+                    }
+
+                    auto get_transformed(std::vector<std::any> const & values) const -> std::any
+                    {
+                        return m_options.type_handler->transform(values);
+                    }
+
+                    auto get_size(std::any const & value) const -> std::size_t
+                    {
+                        return m_options.type_handler->size(value);
+                    }
+
+                    auto append_value(std::any const & value, std::any & values) const -> void
+                    {
+                        m_options.type_handler->append(value, values);
+                    }
+
+                private:
                     Options const m_options;
-                    std::any m_value;
             };
 
             class PositionalArgument final : public Argument
@@ -748,20 +792,20 @@ namespace argparse
                                 }
                                 else
                                 {
-                                    m_value = m_options.default_;
+                                    m_value = get_default();
                                 }
                                 break;
                             }
                             case zero_or_more:
                             {
-                                parse_arguments(args);
+                                m_value = parse_arguments(args);
                                 break;
                             }
                             case one_or_more:
                             {
                                 if (auto const values = consume_args(args); !values.empty())
                                 {
-                                    m_value = m_options.type_handler->transform(values);
+                                    m_value = get_transformed(values);
                                 }
                                 break;
                             }
@@ -813,7 +857,7 @@ namespace argparse
                         {
                             if (has_nargs_number())
                             {
-                                parse_arguments(consumable | std::views::take(get_nargs_number()));
+                                m_value = parse_arguments(consumable | std::views::take(get_nargs_number()));
                             }
                             else
                             {
@@ -831,22 +875,22 @@ namespace argparse
 
                     auto get_dest_name() const -> std::string override
                     {
-                        return m_options.dest.empty()
-                            ? m_options.names.front()
-                            : m_options.dest;
+                        return get_dest().empty()
+                            ? get_name()
+                            : get_dest();
                     }
 
                     auto get_metavar_name() const -> std::string override
                     {
-                        return m_options.metavar.empty()
-                            ? m_options.names.front()
-                            : m_options.metavar;
+                        return get_metavar().empty()
+                            ? get_name()
+                            : get_metavar();
                     }
 
                     auto has_value() const -> bool override
                     {
                         return has_nargs() && has_nargs_number()
-                            ? m_options.type_handler->size(m_value) == get_nargs_number()
+                            ? get_size(m_value) == get_nargs_number()
                             : m_value.has_value();
                     }
 
@@ -869,6 +913,9 @@ namespace argparse
                     {
                         return false;
                     }
+
+                private:
+                    std::any m_value;
             };
 
             class OptionalArgument final : public Argument
@@ -876,7 +923,7 @@ namespace argparse
                 private:
                     auto perform_action(std::string const & value, std::ranges::view auto args) -> void
                     {
-                        switch (m_options.action)
+                        switch (get_action())
                         {
                             case store:
                                 if (has_nargs())
@@ -909,7 +956,7 @@ namespace argparse
                                 m_value = false;
                                 break;
                             case store_const:
-                                m_value = m_options.const_;
+                                m_value = get_const();
                                 break;
                             case count:
                                 if (!m_value.has_value())
@@ -927,12 +974,12 @@ namespace argparse
                                     if (!m_value.has_value())
                                     {
                                         auto const values = consume_args(args | std::views::take(1));
-                                        m_value = m_options.type_handler->transform(values);
+                                        m_value = get_transformed(values);
                                     }
                                     else
                                     {
                                         auto const val = consume_arg(args.front());
-                                        m_options.type_handler->append(val, m_value);
+                                        append_value(val, m_value);
                                     }
                                 }
                                 else
@@ -940,12 +987,12 @@ namespace argparse
                                     if (!m_value.has_value())
                                     {
                                         auto const values = consume_args(std::views::single(Token{value}));
-                                        m_value = m_options.type_handler->transform(values);
+                                        m_value = get_transformed(values);
                                     }
                                     else
                                     {
                                         auto const val = process_arg(value);
-                                        m_options.type_handler->append(val, m_value);
+                                        append_value(val, m_value);
                                     }
                                 }
                                 break;
@@ -966,7 +1013,7 @@ namespace argparse
                         {
                             throw parsing_error(std::format("argument {}: expected {} argument{}", get_joined_names(), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
                         }
-                        m_value = m_options.type_handler->transform(values);
+                        m_value = get_transformed(values);
                     }
 
                     auto parse_arguments_option(std::ranges::view auto args) -> void
@@ -977,7 +1024,7 @@ namespace argparse
                             {
                                 if (args.empty())
                                 {
-                                    m_value = m_options.const_;
+                                    m_value = get_const();
                                 }
                                 else
                                 {
@@ -987,7 +1034,7 @@ namespace argparse
                             }
                             case zero_or_more:
                             {
-                                parse_arguments(args);
+                                m_value = parse_arguments(args);
                                 break;
                             }
                             case one_or_more:
@@ -997,7 +1044,7 @@ namespace argparse
                                 {
                                     throw parsing_error(std::format("argument {}: expected at least one argument", get_joined_names()));
                                 }
-                                m_value = m_options.type_handler->transform(values);
+                                m_value = get_transformed(values);
                                 break;
                             }
                         }
@@ -1005,7 +1052,7 @@ namespace argparse
 
                     auto has_arg(auto it) const -> std::string_view
                     {
-                        for (auto const & name: m_options.names)
+                        for (auto const & name: get_names())
                         {
                             if (name[1] != '-')
                             {
@@ -1079,7 +1126,7 @@ namespace argparse
 
                     auto get_name_for_dest() const -> std::string
                     {
-                        for (auto const & name : m_options.names)
+                        for (auto const & name : get_names())
                         {
                             if (name.starts_with("--"))
                             {
@@ -1087,7 +1134,7 @@ namespace argparse
                             }
                         }
 
-                        return m_options.names.front().substr(1);
+                        return get_name().substr(1);
                     }
 
                     auto get_name_for_error() const -> std::string override
@@ -1097,7 +1144,7 @@ namespace argparse
 
                     auto check_errors(std::string const & value, std::ranges::view auto args) const -> void
                     {
-                        switch (m_options.action)
+                        switch (get_action())
                         {
                             case store:
                                 if (!has_nargs() && value.empty() && args.empty())
@@ -1128,7 +1175,7 @@ namespace argparse
 
                     auto assing_non_present_value() -> void
                     {
-                        switch (m_options.action)
+                        switch (get_action())
                         {
                             case store_true:
                             case help:
@@ -1142,7 +1189,7 @@ namespace argparse
                             case store_const:
                             case count:
                             case append:
-                                m_value = m_options.default_;
+                                m_value = get_default();
                                 break;
                         }
                     }
@@ -1161,6 +1208,7 @@ namespace argparse
                     }
 
                 private:
+                    std::any m_value;
                     bool m_present = false;
 
                 public:
@@ -1205,9 +1253,9 @@ namespace argparse
 
                     auto get_dest_name() const -> std::string override
                     {
-                        if (!m_options.dest.empty())
+                        if (!get_dest().empty())
                         {
-                            return m_options.dest;
+                            return get_dest();
                         }
 
                         auto dest = get_name_for_dest();
@@ -1219,9 +1267,9 @@ namespace argparse
 
                     auto get_metavar_name() const -> std::string override
                     {
-                        if (!m_options.metavar.empty())
+                        if (!get_metavar().empty())
                         {
-                            return m_options.metavar;
+                            return get_metavar();
                         }
 
                         auto metavar = get_dest_name();
@@ -1243,7 +1291,7 @@ namespace argparse
 
                     auto is_required() const -> bool override
                     {
-                        return m_options.required;
+                        return get_required();
                     }
 
                     auto is_positional() const -> bool override
