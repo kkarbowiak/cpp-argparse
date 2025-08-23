@@ -748,6 +748,11 @@ namespace argparse
                         return m_options.metavar;
                     }
 
+                    auto get_action() const -> Action
+                    {
+                        return m_options.action;
+                    }
+
                     auto get_transformed(std::vector<std::any> const & values) const -> std::any
                     {
                         return m_options.type_handler->transform(values);
@@ -903,7 +908,7 @@ namespace argparse
                 private:
                     auto perform_action(std::string const & value, std::ranges::view auto args) -> void
                     {
-                        switch (m_options.action)
+                        switch (get_action())
                         {
                             case store:
                                 if (has_nargs())
@@ -1124,7 +1129,7 @@ namespace argparse
 
                     auto check_errors(std::string const & value, std::ranges::view auto args) const -> void
                     {
-                        switch (m_options.action)
+                        switch (get_action())
                         {
                             case store:
                                 if (!has_nargs() && value.empty() && args.empty())
@@ -1155,7 +1160,7 @@ namespace argparse
 
                     auto assing_non_present_value() -> void
                     {
-                        switch (m_options.action)
+                        switch (get_action())
                         {
                             case store_true:
                             case help:
