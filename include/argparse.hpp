@@ -565,6 +565,29 @@ namespace argparse
                     }
             };
 
+            class Formattable
+            {
+                public:
+                    virtual auto get_name() const -> std::string const & = 0;
+                    virtual auto get_names() const -> std::vector<std::string> const & = 0;
+                    virtual auto get_help() const -> std::string const & = 0;
+                    virtual auto is_positional() const -> bool = 0;
+                    virtual auto is_required() const -> bool = 0;
+                    virtual auto is_mutually_exclusive() const -> bool = 0;
+                    virtual auto is_mutually_exclusive_with(Formattable const & other) const -> bool = 0;
+                    virtual auto has_nargs() const -> bool = 0;
+                    virtual auto has_nargs_number() const -> bool = 0;
+                    virtual auto has_choices() const -> bool = 0;
+                    virtual auto expects_argument() const -> bool = 0;
+                    virtual auto get_joined_choices(std::string_view separator) const -> std::string = 0;
+                    virtual auto get_metavar_name() const -> std::string = 0;
+                    virtual auto get_nargs_number() const -> std::size_t = 0;
+                    virtual auto get_nargs_option() const -> Nargs = 0;
+
+                protected:
+                    virtual ~Formattable() = default;
+            };
+
             struct Options
             {
                 std::vector<std::string> names;
