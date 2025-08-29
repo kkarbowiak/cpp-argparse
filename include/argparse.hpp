@@ -581,6 +581,79 @@ namespace argparse
                 std::unique_ptr<TypeHandler> type_handler = std::make_unique<TypeHandlerT<std::string>>();
             };
 
+            class OptionsHolder
+            {
+                protected:
+                    explicit OptionsHolder(Options options)
+                      : m_options(std::move(options))
+                    {
+                    }
+                    ~OptionsHolder() = default;
+
+                    auto get_names() const -> std::vector<std::string> const &
+                    {
+                        return m_options.names;
+                    }
+
+                    auto get_help() const -> std::string const &
+                    {
+                        return m_options.help;
+                    }
+
+                    auto get_metavar() const -> std::string const &
+                    {
+                        return m_options.metavar;
+                    }
+
+                    auto get_dest() const -> std::string const &
+                    {
+                        return m_options.dest;
+                    }
+
+                    auto get_action() const -> Action
+                    {
+                        return m_options.action;
+                    }
+
+                    auto get_const() const -> std::any const &
+                    {
+                        return m_options.const_;
+                    }
+
+                    auto get_default() const -> std::any const &
+                    {
+                        return m_options.default_;
+                    }
+
+                    auto get_required() const -> bool
+                    {
+                        return m_options.required;
+                    }
+
+                    auto get_choices() const -> std::vector<std::any> const &
+                    {
+                        return m_options.choices;
+                    }
+
+                    auto get_nargs() const -> std::optional<std::variant<std::size_t, Nargs>> const &
+                    {
+                        return m_options.nargs;
+                    }
+
+                    auto get_mutually_exclusive_group() const -> MutuallyExclusiveGroup const *
+                    {
+                        return m_options.mutually_exclusive_group;
+                    }
+
+                    auto get_type_handler() const -> TypeHandler const &
+                    {
+                        return *m_options.type_handler;
+                    }
+
+                private:
+                    Options m_options;
+            };
+
             class Argument
             {
                 public:
