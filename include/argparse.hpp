@@ -396,7 +396,7 @@ namespace argparse
             auto parse_positional_arguments(tokens & args) -> void
             {
                 for (auto const & arg : m_arguments
-                    | std::views::filter(&Argument::is_positional))
+                    | std::views::filter(&ArgumentCommon::is_positional))
                 {
                     arg->parse_args(args);
                 }
@@ -565,6 +565,29 @@ namespace argparse
                     }
             };
 
+            class Formattable
+            {
+                public:
+                    virtual auto get_name() const -> std::string const & = 0;
+                    virtual auto get_names() const -> std::vector<std::string> const & = 0;
+                    virtual auto get_help() const -> std::string const & = 0;
+                    virtual auto is_positional() const -> bool = 0;
+                    virtual auto is_required() const -> bool = 0;
+                    virtual auto is_mutually_exclusive() const -> bool = 0;
+                    virtual auto is_mutually_exclusive_with(Formattable const & other) const -> bool = 0;
+                    virtual auto has_nargs() const -> bool = 0;
+                    virtual auto has_nargs_number() const -> bool = 0;
+                    virtual auto has_choices() const -> bool = 0;
+                    virtual auto expects_argument() const -> bool = 0;
+                    virtual auto get_joined_choices(std::string_view separator) const -> std::string = 0;
+                    virtual auto get_metavar_name() const -> std::string = 0;
+                    virtual auto get_nargs_number() const -> std::size_t = 0;
+                    virtual auto get_nargs_option() const -> Nargs = 0;
+
+                protected:
+                    virtual ~Formattable() = default;
+            };
+
             struct Options
             {
                 std::vector<std::string> names;
@@ -581,14 +604,87 @@ namespace argparse
                 std::unique_ptr<TypeHandler> type_handler = std::make_unique<TypeHandlerT<std::string>>();
             };
 
-            class Argument
+            class OptionsHolder
             {
-                public:
-                    explicit Argument(Options options)
+                protected:
+                    explicit OptionsHolder(Options options)
                       : m_options(std::move(options))
                     {
                     }
-                    virtual ~Argument() = default;
+                    ~OptionsHolder() = default;
+
+                    auto get_names() const -> std::vector<std::string> const &
+                    {
+                        return m_options.names;
+                    }
+
+                    auto get_help() const -> std::string const &
+                    {
+                        return m_options.help;
+                    }
+
+                    auto get_metavar() const -> std::string const &
+                    {
+                        return m_options.metavar;
+                    }
+
+                    auto get_dest() const -> std::string const &
+                    {
+                        return m_options.dest;
+                    }
+
+                    auto get_action() const -> Action
+                    {
+                        return m_options.action;
+                    }
+
+                    auto get_const() const -> std::any const &
+                    {
+                        return m_options.const_;
+                    }
+
+                    auto get_default() const -> std::any const &
+                    {
+                        return m_options.default_;
+                    }
+
+                    auto get_required() const -> bool
+                    {
+                        return m_options.required;
+                    }
+
+                    auto get_choices() const -> std::vector<std::any> const &
+                    {
+                        return m_options.choices;
+                    }
+
+                    auto get_nargs() const -> std::optional<std::variant<std::size_t, Nargs>> const &
+                    {
+                        return m_options.nargs;
+                    }
+
+                    auto get_mutually_exclusive_group() const -> MutuallyExclusiveGroup const *
+                    {
+                        return m_options.mutually_exclusive_group;
+                    }
+
+                    auto get_type_handler() const -> TypeHandler const &
+                    {
+                        return *m_options.type_handler;
+                    }
+
+                private:
+                    Options m_options;
+            };
+
+            class ArgumentCommon : public Formattable, public OptionsHolder
+            {
+                public:
+                    explicit ArgumentCommon(Options options)
+                      : OptionsHolder(std::move(options))
+                    {
+                    }
+                    virtual ~ArgumentCommon() = default;
 
                     virtual auto parse_args(tokens & args) -> void = 0;
                     virtual auto get_dest_name() const -> std::string = 0;
@@ -599,74 +695,74 @@ namespace argparse
                     virtual auto is_positional() const -> bool = 0;
                     virtual auto is_present() const -> bool = 0;
 
-                    auto get_name() const -> std::string
+                    auto get_name() const -> std::string const &
                     {
-                        return m_options.names.front();
+                        return get_names().front();
                     }
 
                     auto get_names() const -> std::vector<std::string> const &
                     {
-                        return m_options.names;
+                        return OptionsHolder::get_names();
                     }
 
                     auto get_joined_names() const -> std::string
                     {
-                        return join(m_options.names, "/");
+                        return join(get_names(), "/");
                     }
 
                     auto has_nargs() const -> bool
                     {
-                        return m_options.nargs.has_value();
+                        return get_nargs().has_value();
                     }
 
                     auto has_nargs_number() const -> bool
                     {
-                        return std::holds_alternative<std::size_t>(*m_options.nargs);
+                        return std::holds_alternative<std::size_t>(*get_nargs());
                     }
 
                     auto get_nargs_number() const -> std::size_t
                     {
-                        return std::get<std::size_t>(*m_options.nargs);
+                        return std::get<std::size_t>(*get_nargs());
                     }
 
                     auto get_nargs_option() const -> Nargs
                     {
-                        return std::get<Nargs>(*m_options.nargs);
+                        return std::get<Nargs>(*get_nargs());
                     }
 
                     auto is_mutually_exclusive() const -> bool
                     {
-                        return m_options.mutually_exclusive_group != nullptr;
+                        return get_mutually_exclusive_group() != nullptr;
                     }
 
-                    auto is_mutually_exclusive_with(Argument const & other) const -> bool
+                    auto is_mutually_exclusive_with(Formattable const & other) const -> bool
                     {
-                        return (m_options.mutually_exclusive_group != nullptr) && (m_options.mutually_exclusive_group == other.m_options.mutually_exclusive_group);
+                        return (get_mutually_exclusive_group() != nullptr) && (get_mutually_exclusive_group() == static_cast<ArgumentCommon const &>(other).get_mutually_exclusive_group());
                     }
 
                     auto expects_argument() const -> bool
                     {
-                        return m_options.action == store || m_options.action == append;
+                        return get_action() == store || get_action() == append;
                     }
 
                     auto has_version_action() const -> bool
                     {
-                        return m_options.action == version;
+                        return get_action() == version;
                     }
 
-                    auto get_help_message() const -> std::string const &
+                    auto get_help() const -> std::string const &
                     {
-                        return m_options.help;
+                        return OptionsHolder::get_help();
                     }
 
                     auto has_choices() const -> bool
                     {
-                        return !m_options.choices.empty();
+                        return !get_choices().empty();
                     }
 
                     auto get_joined_choices(std::string_view separator) const -> std::string
                     {
-                        return join(m_options.choices | std::views::transform([&](auto const & choice) { return m_options.type_handler->to_string(choice); }), separator);
+                        return join(get_choices() | std::views::transform([&](auto const & choice) { return get_type_handler().to_string(choice); }), separator);
                     }
 
                 protected:
@@ -675,7 +771,7 @@ namespace argparse
                     auto parse_arguments(std::ranges::view auto args) -> std::any
                     {
                         auto const values = consume_args(args);
-                        return m_options.type_handler->transform(values);
+                        return get_type_handler().transform(values);
                     }
 
                     auto consume_arg(Token & arg) const -> std::any
@@ -686,7 +782,7 @@ namespace argparse
 
                     auto process_arg(std::string const & arg) const -> std::any
                     {
-                        auto const value = m_options.type_handler->from_string(arg);
+                        auto const value = get_type_handler().from_string(arg);
                         if (!value.has_value())
                         {
                             throw parsing_error(std::format("argument {}: invalid value: '{}'", get_name_for_error(), arg));
@@ -710,74 +806,41 @@ namespace argparse
 
                     auto check_choices(std::any const & value) const -> void
                     {
-                        if (m_options.choices.empty())
+                        if (get_choices().empty())
                         {
                             return;
                         }
 
                         if (!std::ranges::any_of(
-                            m_options.choices,
-                            [&](auto const & rhs) { return m_options.type_handler->compare(value, rhs); }))
+                            get_choices(),
+                            [&](auto const & rhs) { return get_type_handler().compare(value, rhs); }))
                         {
                             auto const message = std::format(
                                 "argument {}: invalid choice: {} (choose from {})",
                                 get_joined_names(),
-                                m_options.type_handler->to_string(value),
+                                get_type_handler().to_string(value),
                                 get_joined_choices(", "));
                             throw parsing_error(message);
                         }
                     }
 
-                    auto get_default() const -> std::any
-                    {
-                        return m_options.default_;
-                    }
-
-                    auto get_const() const -> std::any
-                    {
-                        return m_options.const_;
-                    }
-
-                    auto get_dest() const -> std::string
-                    {
-                        return m_options.dest;
-                    }
-
-                    auto get_metavar() const -> std::string
-                    {
-                        return m_options.metavar;
-                    }
-
-                    auto get_action() const -> Action
-                    {
-                        return m_options.action;
-                    }
-
-                    auto get_required() const -> bool
-                    {
-                        return m_options.required;
-                    }
-
                     auto get_transformed(std::vector<std::any> const & values) const -> std::any
                     {
-                        return m_options.type_handler->transform(values);
+                        return get_type_handler().transform(values);
                     }
 
                     auto get_size(std::any const & value) const -> std::size_t
                     {
-                        return m_options.type_handler->size(value);
+                        return get_type_handler().size(value);
                     }
 
                     auto append_value(std::any const & value, std::any & values) const -> void
                     {
-                        m_options.type_handler->append(value, values);
+                        get_type_handler().append(value, values);
                     }
-
-                private:
-                    Options const m_options;
             };
 
-            class PositionalArgument final : public Argument
+            class PositionalArgument final : public ArgumentCommon
             {
                 private:
                     auto parse_arguments_option(std::ranges::view auto args) -> void
@@ -845,7 +908,7 @@ namespace argparse
 
                 public:
                     explicit PositionalArgument(Options options)
-                      : Argument(std::move(options))
+                      : ArgumentCommon(std::move(options))
                     {
                     }
 
@@ -918,7 +981,7 @@ namespace argparse
                     std::any m_value;
             };
 
-            class OptionalArgument final : public Argument
+            class OptionalArgument final : public ArgumentCommon
             {
                 private:
                     auto perform_action(std::string const & value, std::ranges::view auto args) -> void
@@ -1213,7 +1276,7 @@ namespace argparse
 
                 public:
                     explicit OptionalArgument(Options options)
-                      : Argument(std::move(options))
+                      : ArgumentCommon(std::move(options))
                     {
                     }
 
@@ -1305,7 +1368,7 @@ namespace argparse
                     }
             };
 
-            using argument_uptr = std::unique_ptr<Argument>;
+            using argument_uptr = std::unique_ptr<ArgumentCommon>;
             using argument_uptrs = std::vector<argument_uptr>;
 
             class Formatter
@@ -1361,7 +1424,7 @@ namespace argparse
                         auto positionals = std::string();
 
                         for (auto const & arg : arguments
-                            | std::views::filter(&Argument::is_positional))
+                            | std::views::filter(&ArgumentCommon::is_positional))
                         {
                             if (arg->has_nargs())
                             {
@@ -1438,11 +1501,11 @@ namespace argparse
                         auto positionals = std::string();
 
                         for (auto const & arg : arguments
-                            | std::views::filter(&Argument::is_positional))
+                            | std::views::filter(&ArgumentCommon::is_positional))
                         {
                             auto arg_line = "  " + format_arg(*arg);
 
-                            if (auto const & help = arg->get_help_message(); !help.empty())
+                            if (auto const & help = arg->get_help(); !help.empty())
                             {
                                 arg_line += help_string_separation(arg_line.size());
                                 arg_line += replace_prog(help, prog);
@@ -1475,7 +1538,7 @@ namespace argparse
                                 arg_line += formatted_arg;
                             }
 
-                            if (auto const & help = arg->get_help_message(); !help.empty())
+                            if (auto const & help = arg->get_help(); !help.empty())
                             {
                                 arg_line += help_string_separation(arg_line.size());
                                 arg_line += replace_prog(help, prog);
@@ -1487,7 +1550,7 @@ namespace argparse
                         return optionals;
                     }
 
-                    auto format(Argument const & argument) const -> std::string
+                    auto format(ArgumentCommon const & argument) const -> std::string
                     {
                         if (!argument.expects_argument())
                         {
@@ -1504,14 +1567,14 @@ namespace argparse
                         }
                     }
 
-                    auto format_arg(Argument const & argument) const -> std::string
+                    auto format_arg(ArgumentCommon const & argument) const -> std::string
                     {
                         return argument.has_choices()
                             ? "{" + argument.get_joined_choices(",") + "}"
                             : argument.get_metavar_name();
                     }
 
-                    auto format_nargs(Argument const & argument) const -> std::string
+                    auto format_nargs(ArgumentCommon const & argument) const -> std::string
                     {
                         auto result = std::string();
                         auto const formatted_arg = format_arg(argument);
