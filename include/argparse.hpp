@@ -727,9 +727,9 @@ namespace argparse
                         return get_action() == version;
                     }
 
-                    auto get_help_message() const -> std::string const &
+                    auto get_help() const -> std::string const &
                     {
-                        return get_help();
+                        return OptionsHolder::get_help();
                     }
 
                     auto has_choices() const -> bool
@@ -1482,7 +1482,7 @@ namespace argparse
                         {
                             auto arg_line = "  " + format_arg(*arg);
 
-                            if (auto const & help = arg->get_help_message(); !help.empty())
+                            if (auto const & help = arg->get_help(); !help.empty())
                             {
                                 arg_line += help_string_separation(arg_line.size());
                                 arg_line += replace_prog(help, prog);
@@ -1515,7 +1515,7 @@ namespace argparse
                                 arg_line += formatted_arg;
                             }
 
-                            if (auto const & help = arg->get_help_message(); !help.empty())
+                            if (auto const & help = arg->get_help(); !help.empty())
                             {
                                 arg_line += help_string_separation(arg_line.size());
                                 arg_line += replace_prog(help, prog);
