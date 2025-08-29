@@ -677,7 +677,7 @@ namespace argparse
                     Options m_options;
             };
 
-            class ArgumentCommon : public OptionsHolder
+            class ArgumentCommon : public Formattable, public OptionsHolder
             {
                 public:
                     explicit ArgumentCommon(Options options)
@@ -695,7 +695,7 @@ namespace argparse
                     virtual auto is_positional() const -> bool = 0;
                     virtual auto is_present() const -> bool = 0;
 
-                    auto get_name() const -> std::string
+                    auto get_name() const -> std::string const &
                     {
                         return get_names().front();
                     }
@@ -735,9 +735,9 @@ namespace argparse
                         return get_mutually_exclusive_group() != nullptr;
                     }
 
-                    auto is_mutually_exclusive_with(ArgumentCommon const & other) const -> bool
+                    auto is_mutually_exclusive_with(Formattable const & other) const -> bool
                     {
-                        return (get_mutually_exclusive_group() != nullptr) && (get_mutually_exclusive_group() == other.get_mutually_exclusive_group());
+                        return (get_mutually_exclusive_group() != nullptr) && (get_mutually_exclusive_group() == static_cast<ArgumentCommon const &>(other).get_mutually_exclusive_group());
                     }
 
                     auto expects_argument() const -> bool
