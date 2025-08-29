@@ -396,7 +396,7 @@ namespace argparse
             auto parse_positional_arguments(tokens & args) -> void
             {
                 for (auto const & arg : m_arguments
-                    | std::views::filter(&Argument::is_positional))
+                    | std::views::filter(&ArgumentCommon::is_positional))
                 {
                     arg->parse_args(args);
                 }
@@ -654,14 +654,14 @@ namespace argparse
                     Options m_options;
             };
 
-            class Argument : public OptionsHolder
+            class ArgumentCommon : public OptionsHolder
             {
                 public:
-                    explicit Argument(Options options)
+                    explicit ArgumentCommon(Options options)
                       : OptionsHolder(std::move(options))
                     {
                     }
-                    virtual ~Argument() = default;
+                    virtual ~ArgumentCommon() = default;
 
                     virtual auto parse_args(tokens & args) -> void = 0;
                     virtual auto get_dest_name() const -> std::string = 0;
@@ -712,7 +712,7 @@ namespace argparse
                         return get_mutually_exclusive_group() != nullptr;
                     }
 
-                    auto is_mutually_exclusive_with(Argument const & other) const -> bool
+                    auto is_mutually_exclusive_with(ArgumentCommon const & other) const -> bool
                     {
                         return (get_mutually_exclusive_group() != nullptr) && (get_mutually_exclusive_group() == other.get_mutually_exclusive_group());
                     }
@@ -817,7 +817,7 @@ namespace argparse
                     }
             };
 
-            class PositionalArgument final : public Argument
+            class PositionalArgument final : public ArgumentCommon
             {
                 private:
                     auto parse_arguments_option(std::ranges::view auto args) -> void
@@ -885,7 +885,7 @@ namespace argparse
 
                 public:
                     explicit PositionalArgument(Options options)
-                      : Argument(std::move(options))
+                      : ArgumentCommon(std::move(options))
                     {
                     }
 
@@ -958,7 +958,7 @@ namespace argparse
                     std::any m_value;
             };
 
-            class OptionalArgument final : public Argument
+            class OptionalArgument final : public ArgumentCommon
             {
                 private:
                     auto perform_action(std::string const & value, std::ranges::view auto args) -> void
@@ -1253,7 +1253,7 @@ namespace argparse
 
                 public:
                     explicit OptionalArgument(Options options)
-                      : Argument(std::move(options))
+                      : ArgumentCommon(std::move(options))
                     {
                     }
 
@@ -1345,7 +1345,7 @@ namespace argparse
                     }
             };
 
-            using argument_uptr = std::unique_ptr<Argument>;
+            using argument_uptr = std::unique_ptr<ArgumentCommon>;
             using argument_uptrs = std::vector<argument_uptr>;
 
             class Formatter
@@ -1401,7 +1401,7 @@ namespace argparse
                         auto positionals = std::string();
 
                         for (auto const & arg : arguments
-                            | std::views::filter(&Argument::is_positional))
+                            | std::views::filter(&ArgumentCommon::is_positional))
                         {
                             if (arg->has_nargs())
                             {
@@ -1478,7 +1478,7 @@ namespace argparse
                         auto positionals = std::string();
 
                         for (auto const & arg : arguments
-                            | std::views::filter(&Argument::is_positional))
+                            | std::views::filter(&ArgumentCommon::is_positional))
                         {
                             auto arg_line = "  " + format_arg(*arg);
 
@@ -1527,7 +1527,7 @@ namespace argparse
                         return optionals;
                     }
 
-                    auto format(Argument const & argument) const -> std::string
+                    auto format(ArgumentCommon const & argument) const -> std::string
                     {
                         if (!argument.expects_argument())
                         {
@@ -1544,14 +1544,14 @@ namespace argparse
                         }
                     }
 
-                    auto format_arg(Argument const & argument) const -> std::string
+                    auto format_arg(ArgumentCommon const & argument) const -> std::string
                     {
                         return argument.has_choices()
                             ? "{" + argument.get_joined_choices(",") + "}"
                             : argument.get_metavar_name();
                     }
 
-                    auto format_nargs(Argument const & argument) const -> std::string
+                    auto format_nargs(ArgumentCommon const & argument) const -> std::string
                     {
                         auto result = std::string();
                         auto const formatted_arg = format_arg(argument);
