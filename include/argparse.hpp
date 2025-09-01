@@ -1522,7 +1522,7 @@ namespace argparse
                         auto optionals = std::string();
 
                         for (auto const & arg : arguments
-                            | std::views::filter([](auto const & arg) { return !arg->is_positional(); }))
+                            | std::views::filter([](auto const & a) { return !a->is_positional(); }))
                         {
                             auto arg_line = std::string("  ");
                             auto const formatted_arg = format(*arg);
