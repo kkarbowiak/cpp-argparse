@@ -306,13 +306,13 @@ namespace argparse
             auto format_usage() const -> std::string
             {
                 auto const formatter = Formatter();
-                return formatter.format_usage(m_arguments, m_usage, m_prog);
+                return formatter.format_usage(m_arguments | std::views::all, m_usage, m_prog);
             }
 
             auto format_help() const -> std::string
             {
                 auto const formatter = Formatter();
-                return formatter.format_help(m_arguments, m_prog, m_usage, m_description, m_epilog);
+                return formatter.format_help(m_arguments | std::views::all, m_prog, m_usage, m_description, m_epilog);
             }
 
             auto format_version() const -> std::string
@@ -1374,7 +1374,7 @@ namespace argparse
             class Formatter
             {
                 public:
-                    auto format_usage(argument_uptrs const & arguments, optstring const & usage, optstring const & prog) const -> std::string
+                    auto format_usage(std::ranges::view auto arguments, optstring const & usage, optstring const & prog) const -> std::string
                     {
                         if (usage)
                         {
@@ -1384,7 +1384,7 @@ namespace argparse
                         return std::format("usage: {}{}{}", *prog, format_usage_optionals(arguments), format_usage_positionals(arguments));
                     }
 
-                    auto format_help(argument_uptrs const & arguments, optstring const & prog, optstring const & usage, optstring const & description, optstring const & epilog) const -> std::string
+                    auto format_help(std::ranges::view auto arguments, optstring const & prog, optstring const & usage, optstring const & description, optstring const & epilog) const -> std::string
                     {
                         auto message = format_usage(arguments, usage, prog);
                         auto positionals = format_help_positionals(arguments, prog);
@@ -1419,7 +1419,7 @@ namespace argparse
                     }
 
                 private:
-                    auto format_usage_positionals(argument_uptrs const & arguments) const -> std::string
+                    auto format_usage_positionals(std::ranges::view auto arguments) const -> std::string
                     {
                         auto positionals = std::string();
 
@@ -1440,11 +1440,11 @@ namespace argparse
                         return positionals;
                     }
 
-                    auto format_usage_optionals(argument_uptrs const & arguments) const -> std::string
+                    auto format_usage_optionals(std::ranges::view auto arguments) const -> std::string
                     {
                         auto optionals = std::string();
 
-                        for (auto it = arguments.cbegin(); it != arguments.cend(); ++it)
+                        for (auto it = arguments.begin(); it != arguments.end(); ++it)
                         {
                             auto const & arg = *it;
 
@@ -1454,7 +1454,7 @@ namespace argparse
                                 {
                                     optionals += " ";
                                 }
-                                else if (arg->is_mutually_exclusive() && it != arguments.cbegin() && arg->is_mutually_exclusive_with(**std::prev(it)))
+                                else if (arg->is_mutually_exclusive() && it != arguments.begin() && arg->is_mutually_exclusive_with(**std::prev(it)))
                                 {
                                     optionals += " | ";
                                 }
@@ -1482,7 +1482,7 @@ namespace argparse
                                 {
                                     // skip
                                 }
-                                else if (arg->is_mutually_exclusive() && std::next(it) != arguments.cend() && arg->is_mutually_exclusive_with(**std::next(it)))
+                                else if (arg->is_mutually_exclusive() && std::next(it) != arguments.end() && arg->is_mutually_exclusive_with(**std::next(it)))
                                 {
                                     // skip
                                 }
@@ -1496,7 +1496,7 @@ namespace argparse
                         return optionals;
                     }
 
-                    auto format_help_positionals(argument_uptrs const & arguments, optstring const & prog) const -> std::string
+                    auto format_help_positionals(std::ranges::view auto arguments, optstring const & prog) const -> std::string
                     {
                         auto positionals = std::string();
 
@@ -1517,7 +1517,7 @@ namespace argparse
                         return positionals;
                     }
 
-                    auto format_help_optionals(argument_uptrs const & arguments, optstring const & prog) const -> std::string
+                    auto format_help_optionals(std::ranges::view auto arguments, optstring const & prog) const -> std::string
                     {
                         auto optionals = std::string();
 
