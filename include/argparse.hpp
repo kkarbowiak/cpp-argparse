@@ -306,13 +306,13 @@ namespace argparse
             auto format_usage() const -> std::string
             {
                 auto const formatter = Formatter();
-                return formatter.format_usage(m_arguments | std::views::all, m_usage, m_prog);
+                return formatter.format_usage(m_arguments | std::views::transform([](auto const & ca) { return static_cast<Formattable const *>(ca.get()); }), m_usage, m_prog);
             }
 
             auto format_help() const -> std::string
             {
                 auto const formatter = Formatter();
-                return formatter.format_help(m_arguments | std::views::all, m_prog, m_usage, m_description, m_epilog);
+                return formatter.format_help(m_arguments | std::views::transform([](auto const & ca) { return static_cast<Formattable const *>(ca.get()); }), m_prog, m_usage, m_description, m_epilog);
             }
 
             auto format_version() const -> std::string
