@@ -1424,7 +1424,7 @@ namespace argparse
                         auto positionals = std::string();
 
                         for (auto const & arg : arguments
-                            | std::views::filter(&ArgumentCommon::is_positional))
+                            | std::views::filter(&Formattable::is_positional))
                         {
                             if (arg->has_nargs())
                             {
@@ -1501,7 +1501,7 @@ namespace argparse
                         auto positionals = std::string();
 
                         for (auto const & arg : arguments
-                            | std::views::filter(&ArgumentCommon::is_positional))
+                            | std::views::filter(&Formattable::is_positional))
                         {
                             auto arg_line = "  " + format_arg(*arg);
 
