@@ -1550,7 +1550,7 @@ namespace argparse
                         return optionals;
                     }
 
-                    auto format(ArgumentCommon const & argument) const -> std::string
+                    auto format(Formattable const & argument) const -> std::string
                     {
                         if (!argument.expects_argument())
                         {
@@ -1567,14 +1567,14 @@ namespace argparse
                         }
                     }
 
-                    auto format_arg(ArgumentCommon const & argument) const -> std::string
+                    auto format_arg(Formattable const & argument) const -> std::string
                     {
                         return argument.has_choices()
                             ? "{" + argument.get_joined_choices(",") + "}"
                             : argument.get_metavar_name();
                     }
 
-                    auto format_nargs(ArgumentCommon const & argument) const -> std::string
+                    auto format_nargs(Formattable const & argument) const -> std::string
                     {
                         auto result = std::string();
                         auto const formatted_arg = format_arg(argument);
