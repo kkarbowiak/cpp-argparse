@@ -16,15 +16,11 @@ jobs:
         compiler: [clang++, g++, cl]
         exclude:
           - os: macos-15
-            compiler: g++
-          - os: macos-15
-            compiler: cl
+            compiler: [cl, g++]
           - os: ubuntu-24.04
             compiler: cl
           - os: windows-latest
-            compiler: clang++
-          - os: windows-latest
-            compiler: g++
+            compiler: [clang++, g++]
     steps:
       - uses: actions/checkout@v5
 
