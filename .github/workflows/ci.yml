@@ -8,40 +8,28 @@ on:
 
 jobs:
   build:
-    name: ${{ matrix.config.name }}
-    runs-on: ${{ matrix.config.os }}
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        config:
-          - {
-              name: "Windows latest - MSVC",
-              os: windows-latest,
-              cc: "cl",
-              cxx: "cl",
-            }
-          - {
-              name: "Ubuntu 24.04 - GCC",
-              os: ubuntu-24.04,
-              cc: "gcc",
-              cxx: "g++",
-            }
-          - {
-              name: "Ubuntu 24.04 - Clang",
-              os: ubuntu-24.04,
-              cc: "clang",
-              cxx: "clang++",
-            }
-          - {
-              name: "macOS 15",
-              os: macos-15,
-              cc: "clang",
-              cxx: "clang++",
-            }
+        os: [macos-15, ubuntu-24.04, windows-latest]
+        type: [Debug, Release]
+        compiler: [clang++, g++, cl]
+        exclude:
+          - os: macos-15
+            compiler: g++
+          - os: macos-15
+            compiler: cl
+          - os: ubuntu-24.04
+            compiler: cl
+          - os: windows-latest
+            compiler: clang++
+          - os: windows-latest
+            compiler: g++
     steps:
       - uses: actions/checkout@v5
 
       - name: CMake configure
-        run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=${{ matrix.config.cc }} -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }}
+        run: cmake -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.type }} -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
 
       - name: CMake build
         if: runner.os == 'macOS'
