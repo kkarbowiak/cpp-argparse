@@ -13,12 +13,12 @@ jobs:
       matrix:
         os: [macos-15, ubuntu-24.04, windows-latest]
         type: [Debug, Release]
-        compiler: [clang++, g++, cl]
+        compiler: [cl, clang++, g++]
         exclude:
           - os: macos-15
-            compiler: g++
-          - os: macos-15
             compiler: cl
+          - os: macos-15
+            compiler: g++
           - os: ubuntu-24.04
             compiler: cl
           - os: windows-latest
