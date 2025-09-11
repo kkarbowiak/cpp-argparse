@@ -29,7 +29,7 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: CMake configure
-        run: cmake -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.type }} -DCMAKE_C_COMPILER=${{ matrix.compiler }} -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
+        run: cmake -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.type }} -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
 
       - name: CMake build
         if: runner.os == 'macOS'
