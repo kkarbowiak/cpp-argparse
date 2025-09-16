@@ -380,25 +380,28 @@ namespace argparse
 
             auto parse_optional_arguments(tokens & args) -> void
             {
-                for (auto const & arg : m_arguments
-                    | std::views::filter([](auto const & arg) { return !arg->is_positional() && arg->expects_argument(); }))
+                for (auto & arg : m_arguments
+                    | std::views::transform([](auto const & up) -> Argument & { return *up; })
+                    | std::views::filter([](auto const & arg) { return !arg.is_positional() && arg.expects_argument(); }))
                 {
-                    arg->parse_args(args);
+                    arg.parse_args(args);
                 }
 
-                for (auto const & arg : m_arguments
-                    | std::views::filter([](auto const & arg) { return !arg->is_positional() && !arg->expects_argument(); }))
+                for (auto & arg : m_arguments
+                    | std::views::transform([](auto const & up) -> Argument & { return *up; })
+                    | std::views::filter([](auto const & arg) { return !arg.is_positional() && !arg.expects_argument(); }))
                 {
-                    arg->parse_args(args);
+                    arg.parse_args(args);
                 }
             }
 
             auto parse_positional_arguments(tokens & args) -> void
             {
-                for (auto const & arg : m_arguments
-                    | std::views::filter(&ArgumentCommon::is_positional))
+                for (auto & arg : m_arguments
+                    | std::views::transform([](auto const & up) -> Argument & { return *up; })
+                    | std::views::filter(&Argument::is_positional))
                 {
-                    arg->parse_args(args);
+                    arg.parse_args(args);
                 }
             }
 
@@ -423,14 +426,15 @@ namespace argparse
 
             auto check_excluded_arguments() const -> void
             {
-                auto const filter = [](auto const & arg) { return arg->is_present() && arg->is_mutually_exclusive(); };
-                for (auto const & arg1 : m_arguments | std::views::filter(filter))
+                auto const transform = [](auto const & up) -> Argument const & { return *up; };
+                auto const filter = [](auto const & arg) { return arg.is_present() && arg.is_mutually_exclusive(); };
+                for (auto const & arg1 : m_arguments | std::views::transform(transform) | std::views::filter(filter))
                 {
-                    for (auto const & arg2 : m_arguments | std::views::filter(filter))
+                    for (auto const & arg2 : m_arguments | std::views::transform(transform) | std::views::filter(filter))
                     {
-                        if ((arg2 != arg1) && arg2->is_mutually_exclusive_with(*arg1))
+                        if ((&arg2 != &arg1) && arg2.is_mutually_exclusive_with(arg1))
                         {
-                            throw parsing_error(std::format("argument {}: not allowed with argument {}", arg2->get_joined_names(), arg1->get_joined_names()));
+                            throw parsing_error(std::format("argument {}: not allowed with argument {}", arg2.get_joined_names(), arg1.get_joined_names()));
                         }
                     }
                 }
@@ -441,15 +445,16 @@ namespace argparse
                 auto error_message = optstring();
 
                 for (auto const & arg : m_arguments
-                    | std::views::filter([](auto const & arg) { return arg->is_required() && !arg->has_value(); }))
+                    | std::views::transform([](auto const & up) -> Argument & { return *up; })
+                    | std::views::filter([](auto const & arg) { return arg.is_required() && !arg.has_value(); }))
                 {
                     if (!error_message)
                     {
-                        error_message = "the following arguments are required: " + arg->get_joined_names();
+                        error_message = "the following arguments are required: " + arg.get_joined_names();
                     }
                     else
                     {
-                        *error_message += " " + arg->get_joined_names();
+                        *error_message += " " + arg.get_joined_names();
                     }
                 }
 
@@ -463,9 +468,10 @@ namespace argparse
             {
                 auto result = Parameters();
 
-                for (auto const & arg : m_arguments)
+                for (auto const & arg : m_arguments
+                    | std::views::transform([](auto const & up) -> Argument & { return *up; }))
                 {
-                    result.insert(arg->get_dest_name(), arg->get_value());
+                    result.insert(arg.get_dest_name(), arg.get_value());
                 }
 
                 return result;
@@ -563,6 +569,25 @@ namespace argparse
                     {
                         return std::any_cast<std::vector<T> const &>(value).size();
                     }
+            };
+
+            class Argument
+            {
+                public:
+                    virtual auto parse_args(tokens & args) -> void = 0;
+                    virtual auto is_positional() const -> bool = 0;
+                    virtual auto is_present() const -> bool = 0;
+                    virtual auto is_required() const -> bool = 0;
+                    virtual auto is_mutually_exclusive() const -> bool = 0;
+                    virtual auto is_mutually_exclusive_with(Argument const & other) const -> bool = 0;
+                    virtual auto expects_argument() const -> bool = 0;
+                    virtual auto has_value() const -> bool = 0;
+                    virtual auto get_value() const -> std::any = 0;
+                    virtual auto get_dest_name() const -> std::string = 0;
+                    virtual auto get_joined_names() const -> std::string = 0;
+
+                protected:
+                    ~Argument() = default;
             };
 
             class Formattable
@@ -677,7 +702,7 @@ namespace argparse
                     Options m_options;
             };
 
-            class ArgumentCommon : public Formattable, public OptionsHolder
+            class ArgumentCommon : public Argument, public Formattable, public OptionsHolder
             {
                 public:
                     explicit ArgumentCommon(Options options)
@@ -685,15 +710,6 @@ namespace argparse
                     {
                     }
                     virtual ~ArgumentCommon() = default;
-
-                    virtual auto parse_args(tokens & args) -> void = 0;
-                    virtual auto get_dest_name() const -> std::string = 0;
-                    virtual auto get_metavar_name() const -> std::string = 0;
-                    virtual auto has_value() const -> bool = 0;
-                    virtual auto get_value() const -> std::any = 0;
-                    virtual auto is_required() const -> bool = 0;
-                    virtual auto is_positional() const -> bool = 0;
-                    virtual auto is_present() const -> bool = 0;
 
                     auto get_name() const -> std::string const &
                     {
@@ -733,6 +749,11 @@ namespace argparse
                     auto is_mutually_exclusive() const -> bool
                     {
                         return get_mutually_exclusive_group() != nullptr;
+                    }
+
+                    auto is_mutually_exclusive_with(Argument const & other) const -> bool
+                    {
+                        return (get_mutually_exclusive_group() != nullptr) && (get_mutually_exclusive_group() == static_cast<ArgumentCommon const &>(other).get_mutually_exclusive_group());
                     }
 
                     auto is_mutually_exclusive_with(Formattable const & other) const -> bool
