@@ -1482,7 +1482,7 @@ namespace argparse
                                 {
                                     // skip
                                 }
-                                else if (arg->is_mutually_exclusive() && std::next(it) != arguments.end() && arg->is_mutually_exclusive_with(**std::next(it)))
+                                else if (arg->is_mutually_exclusive() && std::ranges::next(it) != arguments.end() && arg->is_mutually_exclusive_with(**std::ranges::next(it)))
                                 {
                                     // skip
                                 }
