@@ -1266,7 +1266,7 @@ namespace argparse
 
                     auto get_consumable_args(auto it, std::ranges::view auto consumable) const
                     {
-                        return std::ranges::subrange(std::next(it), consumable.end())
+                        return std::ranges::subrange(std::ranges::next(it), consumable.end())
                             | std::views::take_while([](auto const & token) { return !token.m_token.starts_with("-"); });
                     }
 
