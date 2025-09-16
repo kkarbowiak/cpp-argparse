@@ -423,14 +423,15 @@ namespace argparse
 
             auto check_excluded_arguments() const -> void
             {
-                auto const filter = [](auto const & arg) { return arg->is_present() && arg->is_mutually_exclusive(); };
-                for (auto const & arg1 : m_arguments | std::views::filter(filter))
+                auto const transform = [](auto const & up) -> Argument const & { return *up; };
+                auto const filter = [](auto const & arg) { return arg.is_present() && arg.is_mutually_exclusive(); };
+                for (auto const & arg1 : m_arguments | std::views::transform(transform) | std::views::filter(filter))
                 {
-                    for (auto const & arg2 : m_arguments | std::views::filter(filter))
+                    for (auto const & arg2 : m_arguments | std::views::transform(transform) | std::views::filter(filter))
                     {
-                        if ((arg2 != arg1) && arg2->is_mutually_exclusive_with(*arg1))
+                        if ((&arg2 != &arg1) && arg2.is_mutually_exclusive_with(arg1))
                         {
-                            throw parsing_error(std::format("argument {}: not allowed with argument {}", arg2->get_joined_names(), arg1->get_joined_names()));
+                            throw parsing_error(std::format("argument {}: not allowed with argument {}", arg2.get_joined_names(), arg1.get_joined_names()));
                         }
                     }
                 }
@@ -696,7 +697,7 @@ namespace argparse
                     Options m_options;
             };
 
-            class ArgumentCommon : public Formattable, public OptionsHolder
+            class ArgumentCommon : public Argument, public Formattable, public OptionsHolder
             {
                 public:
                     explicit ArgumentCommon(Options options)
@@ -752,6 +753,11 @@ namespace argparse
                     auto is_mutually_exclusive() const -> bool
                     {
                         return get_mutually_exclusive_group() != nullptr;
+                    }
+
+                    auto is_mutually_exclusive_with(Argument const & other) const -> bool
+                    {
+                        return (get_mutually_exclusive_group() != nullptr) && (get_mutually_exclusive_group() == static_cast<ArgumentCommon const &>(other).get_mutually_exclusive_group());
                     }
 
                     auto is_mutually_exclusive_with(Formattable const & other) const -> bool
