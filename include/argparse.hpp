@@ -380,25 +380,28 @@ namespace argparse
 
             auto parse_optional_arguments(tokens & args) -> void
             {
-                for (auto const & arg : m_arguments
-                    | std::views::filter([](auto const & arg) { return !arg->is_positional() && arg->expects_argument(); }))
+                for (auto & arg : m_arguments
+                    | std::views::transform([](auto const & up) -> Argument & { return *up; })
+                    | std::views::filter([](auto const & arg) { return !arg.is_positional() && arg.expects_argument(); }))
                 {
-                    arg->parse_args(args);
+                    arg.parse_args(args);
                 }
 
-                for (auto const & arg : m_arguments
-                    | std::views::filter([](auto const & arg) { return !arg->is_positional() && !arg->expects_argument(); }))
+                for (auto & arg : m_arguments
+                    | std::views::transform([](auto const & up) -> Argument & { return *up; })
+                    | std::views::filter([](auto const & arg) { return !arg.is_positional() && !arg.expects_argument(); }))
                 {
-                    arg->parse_args(args);
+                    arg.parse_args(args);
                 }
             }
 
             auto parse_positional_arguments(tokens & args) -> void
             {
-                for (auto const & arg : m_arguments
-                    | std::views::filter(&ArgumentCommon::is_positional))
+                for (auto & arg : m_arguments
+                    | std::views::transform([](auto const & up) -> Argument & { return *up; })
+                    | std::views::filter(&Argument::is_positional))
                 {
-                    arg->parse_args(args);
+                    arg.parse_args(args);
                 }
             }
 
@@ -442,15 +445,16 @@ namespace argparse
                 auto error_message = optstring();
 
                 for (auto const & arg : m_arguments
-                    | std::views::filter([](auto const & arg) { return arg->is_required() && !arg->has_value(); }))
+                    | std::views::transform([](auto const & up) -> Argument & { return *up; })
+                    | std::views::filter([](auto const & arg) { return arg.is_required() && !arg.has_value(); }))
                 {
                     if (!error_message)
                     {
-                        error_message = "the following arguments are required: " + arg->get_joined_names();
+                        error_message = "the following arguments are required: " + arg.get_joined_names();
                     }
                     else
                     {
-                        *error_message += " " + arg->get_joined_names();
+                        *error_message += " " + arg.get_joined_names();
                     }
                 }
 
@@ -464,9 +468,10 @@ namespace argparse
             {
                 auto result = Parameters();
 
-                for (auto const & arg : m_arguments)
+                for (auto const & arg : m_arguments
+                    | std::views::transform([](auto const & up) -> Argument & { return *up; }))
                 {
-                    result.insert(arg->get_dest_name(), arg->get_value());
+                    result.insert(arg.get_dest_name(), arg.get_value());
                 }
 
                 return result;
