@@ -1454,7 +1454,7 @@ namespace argparse
                                 {
                                     optionals += " ";
                                 }
-                                else if (arg->is_mutually_exclusive() && it != arguments.begin() && arg->is_mutually_exclusive_with(**std::prev(it)))
+                                else if (arg->is_mutually_exclusive() && it != arguments.begin() && arg->is_mutually_exclusive_with(**std::ranges::prev(it)))
                                 {
                                     optionals += " | ";
                                 }
