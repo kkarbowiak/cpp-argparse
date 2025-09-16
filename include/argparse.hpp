@@ -565,6 +565,25 @@ namespace argparse
                     }
             };
 
+            class Argument
+            {
+                public:
+                    virtual auto parse_args(tokens & args) -> void = 0;
+                    virtual auto is_positional() const -> bool = 0;
+                    virtual auto is_present() const -> bool = 0;
+                    virtual auto is_required() const -> bool = 0;
+                    virtual auto is_mutually_exclusive() const -> bool = 0;
+                    virtual auto is_mutually_exclusive_with(Argument const & other) const -> bool = 0;
+                    virtual auto expects_argument() const -> bool = 0;
+                    virtual auto has_value() const -> bool = 0;
+                    virtual auto get_value() const -> std::any = 0;
+                    virtual auto get_dest_name() const -> std::string = 0;
+                    virtual auto get_joined_names() const -> std::string = 0;
+
+                protected:
+                    ~Argument() = default;
+            };
+
             class Formattable
             {
                 public:
