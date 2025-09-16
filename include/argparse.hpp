@@ -711,15 +711,6 @@ namespace argparse
                     }
                     virtual ~ArgumentCommon() = default;
 
-                    virtual auto parse_args(tokens & args) -> void = 0;
-                    virtual auto get_dest_name() const -> std::string = 0;
-                    virtual auto get_metavar_name() const -> std::string = 0;
-                    virtual auto has_value() const -> bool = 0;
-                    virtual auto get_value() const -> std::any = 0;
-                    virtual auto is_required() const -> bool = 0;
-                    virtual auto is_positional() const -> bool = 0;
-                    virtual auto is_present() const -> bool = 0;
-
                     auto get_name() const -> std::string const &
                     {
                         return get_names().front();
