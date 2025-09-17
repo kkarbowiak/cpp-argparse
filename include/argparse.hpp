@@ -1384,8 +1384,8 @@ namespace argparse
                     }
             };
 
-            using argument_uptr = std::unique_ptr<ArgumentCommon>;
-            using ArgumentUptrs = std::vector<argument_uptr>;
+            using ArgumentUptr = std::unique_ptr<ArgumentCommon>;
+            using ArgumentUptrs = std::vector<ArgumentUptr>;
 
             class Formatter
             {
