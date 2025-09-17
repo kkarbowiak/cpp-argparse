@@ -1385,7 +1385,7 @@ namespace argparse
             };
 
             using argument_uptr = std::unique_ptr<ArgumentCommon>;
-            using argument_uptrs = std::vector<argument_uptr>;
+            using ArgumentUptrs = std::vector<argument_uptr>;
 
             class Formatter
             {
@@ -1630,7 +1630,7 @@ namespace argparse
             class MutuallyExclusiveGroup
             {
                 public:
-                    MutuallyExclusiveGroup(argument_uptrs & arguments, OptString & version)
+                    MutuallyExclusiveGroup(ArgumentUptrs & arguments, OptString & version)
                       : m_arguments(arguments)
                       , m_version(version)
                     {
@@ -1643,14 +1643,14 @@ namespace argparse
                     }
 
                 private:
-                    argument_uptrs & m_arguments;
+                    ArgumentUptrs & m_arguments;
                     OptString & m_version;
             };
 
             class ArgumentBuilder
             {
                 public:
-                    ArgumentBuilder(argument_uptrs & arguments, OptString & version, std::vector<std::string> names, MutuallyExclusiveGroup const * group = nullptr)
+                    ArgumentBuilder(ArgumentUptrs & arguments, OptString & version, std::vector<std::string> names, MutuallyExclusiveGroup const * group = nullptr)
                       : m_arguments(arguments)
                       , m_version(version)
                     {
@@ -1768,12 +1768,12 @@ namespace argparse
                     }
 
                 private:
-                    argument_uptrs & m_arguments;
+                    ArgumentUptrs & m_arguments;
                     OptString & m_version;
                     Options m_options;
             };
 
-            argument_uptrs m_arguments;
+            ArgumentUptrs m_arguments;
             OptString m_prog;
             OptString m_usage;
             OptString m_description;
