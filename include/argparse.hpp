@@ -197,7 +197,7 @@ namespace argparse
             };
 
             using Tokens = std::vector<Token>;
-            using optstring = std::optional<std::string>;
+            using OptString = std::optional<std::string>;
 
             class HelpRequested {};
             class VersionRequested {};
@@ -439,7 +439,7 @@ namespace argparse
 
             auto check_missing_arguments(std::ranges::view auto arguments) const -> void
             {
-                auto error_message = optstring();
+                auto error_message = OptString();
 
                 for (auto const & argument : arguments
                     | std::views::filter([](auto const & arg) { return arg.is_required() && !arg.has_value(); }))
@@ -472,7 +472,7 @@ namespace argparse
                 return result;
             }
 
-            static auto replace_prog(std::string text, optstring const & replacement) -> std::string
+            static auto replace_prog(std::string text, OptString const & replacement) -> std::string
             {
                 if (!replacement)
                 {
@@ -1390,7 +1390,7 @@ namespace argparse
             class Formatter
             {
                 public:
-                    auto format_usage(std::ranges::view auto arguments, optstring const & usage, optstring const & prog) const -> std::string
+                    auto format_usage(std::ranges::view auto arguments, OptString const & usage, OptString const & prog) const -> std::string
                     {
                         if (usage)
                         {
@@ -1400,7 +1400,7 @@ namespace argparse
                         return std::format("usage: {}{}{}", *prog, format_usage_optionals(arguments), format_usage_positionals(arguments));
                     }
 
-                    auto format_help(std::ranges::view auto arguments, optstring const & prog, optstring const & usage, optstring const & description, optstring const & epilog) const -> std::string
+                    auto format_help(std::ranges::view auto arguments, OptString const & prog, OptString const & usage, OptString const & description, OptString const & epilog) const -> std::string
                     {
                         auto message = format_usage(arguments, usage, prog);
                         auto positionals = format_help_positionals(arguments, prog);
@@ -1429,7 +1429,7 @@ namespace argparse
                         return message;
                     }
 
-                    auto format_version(optstring const & version, optstring const & prog) const -> std::string
+                    auto format_version(OptString const & version, OptString const & prog) const -> std::string
                     {
                         return replace_prog(*version, prog);
                     }
@@ -1512,7 +1512,7 @@ namespace argparse
                         return optionals;
                     }
 
-                    auto format_help_positionals(std::ranges::view auto arguments, optstring const & prog) const -> std::string
+                    auto format_help_positionals(std::ranges::view auto arguments, OptString const & prog) const -> std::string
                     {
                         auto positionals = std::string();
 
@@ -1533,7 +1533,7 @@ namespace argparse
                         return positionals;
                     }
 
-                    auto format_help_optionals(std::ranges::view auto arguments, optstring const & prog) const -> std::string
+                    auto format_help_optionals(std::ranges::view auto arguments, OptString const & prog) const -> std::string
                     {
                         auto optionals = std::string();
 
@@ -1630,7 +1630,7 @@ namespace argparse
             class MutuallyExclusiveGroup
             {
                 public:
-                    MutuallyExclusiveGroup(argument_uptrs & arguments, optstring & version)
+                    MutuallyExclusiveGroup(argument_uptrs & arguments, OptString & version)
                       : m_arguments(arguments)
                       , m_version(version)
                     {
@@ -1644,13 +1644,13 @@ namespace argparse
 
                 private:
                     argument_uptrs & m_arguments;
-                    optstring & m_version;
+                    OptString & m_version;
             };
 
             class ArgumentBuilder
             {
                 public:
-                    ArgumentBuilder(argument_uptrs & arguments, optstring & version, std::vector<std::string> names, MutuallyExclusiveGroup const * group = nullptr)
+                    ArgumentBuilder(argument_uptrs & arguments, OptString & version, std::vector<std::string> names, MutuallyExclusiveGroup const * group = nullptr)
                       : m_arguments(arguments)
                       , m_version(version)
                     {
@@ -1769,16 +1769,16 @@ namespace argparse
 
                 private:
                     argument_uptrs & m_arguments;
-                    optstring & m_version;
+                    OptString & m_version;
                     Options m_options;
             };
 
             argument_uptrs m_arguments;
-            optstring m_prog;
-            optstring m_usage;
-            optstring m_description;
-            optstring m_epilog;
-            optstring m_version;
+            OptString m_prog;
+            OptString m_usage;
+            OptString m_description;
+            OptString m_epilog;
+            OptString m_version;
             Handle m_handle = Handle::errors_help_version;
     };
 }
