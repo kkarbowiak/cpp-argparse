@@ -350,7 +350,7 @@ namespace argparse
                 consume_pseudo_arguments(args);
 
                 check_unrecognised_arguments(args);
-                check_excluded_arguments(m_arguments);
+                check_excluded_arguments(arguments);
                 check_missing_arguments(m_arguments);
 
                 return get_parameters(m_arguments);
@@ -426,13 +426,12 @@ namespace argparse
                 }
             }
 
-            auto check_excluded_arguments(argument_uptrs const & arguments) const -> void
+            auto check_excluded_arguments(std::ranges::view auto arguments) const -> void
             {
-                auto const transform = [](auto const & up) -> Argument const & { return *up; };
                 auto const filter = [](auto const & arg) { return arg.is_present() && arg.is_mutually_exclusive(); };
-                for (auto const & arg1 : arguments | std::views::transform(transform) | std::views::filter(filter))
+                for (auto const & arg1 : arguments | std::views::filter(filter))
                 {
-                    for (auto const & arg2 : arguments | std::views::transform(transform) | std::views::filter(filter))
+                    for (auto const & arg2 : arguments | std::views::filter(filter))
                     {
                         if ((&arg2 != &arg1) && arg2.is_mutually_exclusive_with(arg1))
                         {
