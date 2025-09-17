@@ -445,17 +445,17 @@ namespace argparse
             {
                 auto error_message = optstring();
 
-                for (auto const & arg : arguments
+                for (auto const & argument : arguments
                     | std::views::transform([](auto const & up) -> Argument & { return *up; })
                     | std::views::filter([](auto const & arg) { return arg.is_required() && !arg.has_value(); }))
                 {
                     if (!error_message)
                     {
-                        error_message = "the following arguments are required: " + arg.get_joined_names();
+                        error_message = "the following arguments are required: " + argument.get_joined_names();
                     }
                     else
                     {
-                        *error_message += " " + arg.get_joined_names();
+                        *error_message += " " + argument.get_joined_names();
                     }
                 }
 
