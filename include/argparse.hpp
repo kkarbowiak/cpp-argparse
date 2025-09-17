@@ -384,18 +384,18 @@ namespace argparse
 
             auto parse_optional_arguments(argument_uptrs const & arguments, tokens & args) -> void
             {
-                for (auto & arg : arguments
+                for (auto & argument : arguments
                     | std::views::transform([](auto const & up) -> Argument & { return *up; })
                     | std::views::filter([](auto const & arg) { return !arg.is_positional() && arg.expects_argument(); }))
                 {
-                    arg.parse_args(args);
+                    argument.parse_args(args);
                 }
 
-                for (auto & arg : arguments
+                for (auto & argument : arguments
                     | std::views::transform([](auto const & up) -> Argument & { return *up; })
                     | std::views::filter([](auto const & arg) { return !arg.is_positional() && !arg.expects_argument(); }))
                 {
-                    arg.parse_args(args);
+                    argument.parse_args(args);
                 }
             }
 
