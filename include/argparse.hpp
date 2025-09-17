@@ -327,10 +327,6 @@ namespace argparse
             }
 
         private:
-            class ArgumentCommon;
-            using argument_uptr = std::unique_ptr<ArgumentCommon>;
-            using argument_uptrs = std::vector<argument_uptr>;
-
             static auto extract_filename(std::string_view path) -> std::string_view
             {
                 if (auto path_separator = path.find_last_of("/\\"); path_separator != std::string_view::npos)
@@ -1387,6 +1383,9 @@ namespace argparse
                         return m_present;
                     }
             };
+
+            using argument_uptr = std::unique_ptr<ArgumentCommon>;
+            using argument_uptrs = std::vector<argument_uptr>;
 
             class Formatter
             {
