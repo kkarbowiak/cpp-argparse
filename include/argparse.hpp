@@ -228,7 +228,7 @@ namespace argparse
                         std::exit(EXIT_SUCCESS);
                     }
 
-                    return get_parameters();
+                    return get_parameters(m_arguments);
                 }
                 catch (VersionRequested const &)
                 {
@@ -238,7 +238,7 @@ namespace argparse
                         std::exit(EXIT_SUCCESS);
                     }
 
-                    return get_parameters();
+                    return get_parameters(m_arguments);
                 }
                 catch (parsing_error const & e)
                 {
@@ -352,7 +352,7 @@ namespace argparse
                 check_excluded_arguments(m_arguments);
                 check_missing_arguments(m_arguments);
 
-                return get_parameters();
+                return get_parameters(m_arguments);
             }
 
             static auto get_tokens(int argc, char const * const argv[]) -> tokens
@@ -468,11 +468,11 @@ namespace argparse
                 }
             }
 
-            auto get_parameters() const -> Parameters
+            auto get_parameters(argument_uptrs const & arguments) const -> Parameters
             {
                 auto result = Parameters();
 
-                for (auto const & arg : m_arguments
+                for (auto const & arg : arguments
                     | std::views::transform([](auto const & up) -> Argument & { return *up; }))
                 {
                     result.insert(arg.get_dest_name(), arg.get_value());
