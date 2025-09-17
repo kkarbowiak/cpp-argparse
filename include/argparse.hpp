@@ -228,7 +228,7 @@ namespace argparse
                         std::exit(EXIT_SUCCESS);
                     }
 
-                    return get_parameters();
+                    return get_parameters(m_arguments | std::views::transform([](auto const & up) -> Argument & { return *up; }));
                 }
                 catch (VersionRequested const &)
                 {
@@ -238,7 +238,7 @@ namespace argparse
                         std::exit(EXIT_SUCCESS);
                     }
 
-                    return get_parameters();
+                    return get_parameters(m_arguments | std::views::transform([](auto const & up) -> Argument & { return *up; }));
                 }
                 catch (parsing_error const & e)
                 {
@@ -339,16 +339,17 @@ namespace argparse
 
             auto parse_args(tokens args) -> Parameters
             {
-                parse_optional_arguments(args);
-                parse_positional_arguments(args);
+                auto arguments = m_arguments | std::views::transform([](auto const & up) -> Argument & { return *up; });
+                parse_optional_arguments(arguments, args);
+                parse_positional_arguments(arguments, args);
 
                 consume_pseudo_arguments(args);
 
                 check_unrecognised_arguments(args);
-                check_excluded_arguments();
-                check_missing_arguments();
+                check_excluded_arguments(arguments);
+                check_missing_arguments(arguments);
 
-                return get_parameters();
+                return get_parameters(arguments);
             }
 
             static auto get_tokens(int argc, char const * const argv[]) -> tokens
@@ -378,30 +379,27 @@ namespace argparse
                 return result;
             }
 
-            auto parse_optional_arguments(tokens & args) -> void
+            auto parse_optional_arguments(std::ranges::view auto arguments, tokens & args) -> void
             {
-                for (auto & arg : m_arguments
-                    | std::views::transform([](auto const & up) -> Argument & { return *up; })
+                for (auto & argument : arguments
                     | std::views::filter([](auto const & arg) { return !arg.is_positional() && arg.expects_argument(); }))
                 {
-                    arg.parse_args(args);
+                    argument.parse_args(args);
                 }
 
-                for (auto & arg : m_arguments
-                    | std::views::transform([](auto const & up) -> Argument & { return *up; })
+                for (auto & argument : arguments
                     | std::views::filter([](auto const & arg) { return !arg.is_positional() && !arg.expects_argument(); }))
                 {
-                    arg.parse_args(args);
+                    argument.parse_args(args);
                 }
             }
 
-            auto parse_positional_arguments(tokens & args) -> void
+            auto parse_positional_arguments(std::ranges::view auto arguments, tokens & args) -> void
             {
-                for (auto & arg : m_arguments
-                    | std::views::transform([](auto const & up) -> Argument & { return *up; })
+                for (auto & argument : arguments
                     | std::views::filter(&Argument::is_positional))
                 {
-                    arg.parse_args(args);
+                    argument.parse_args(args);
                 }
             }
 
@@ -424,37 +422,35 @@ namespace argparse
                 }
             }
 
-            auto check_excluded_arguments() const -> void
+            auto check_excluded_arguments(std::ranges::view auto arguments) const -> void
             {
-                auto const transform = [](auto const & up) -> Argument const & { return *up; };
                 auto const filter = [](auto const & arg) { return arg.is_present() && arg.is_mutually_exclusive(); };
-                for (auto const & arg1 : m_arguments | std::views::transform(transform) | std::views::filter(filter))
+                for (auto const & argument1 : arguments | std::views::filter(filter))
                 {
-                    for (auto const & arg2 : m_arguments | std::views::transform(transform) | std::views::filter(filter))
+                    for (auto const & argument2 : arguments | std::views::filter(filter))
                     {
-                        if ((&arg2 != &arg1) && arg2.is_mutually_exclusive_with(arg1))
+                        if ((&argument2 != &argument1) && argument2.is_mutually_exclusive_with(argument1))
                         {
-                            throw parsing_error(std::format("argument {}: not allowed with argument {}", arg2.get_joined_names(), arg1.get_joined_names()));
+                            throw parsing_error(std::format("argument {}: not allowed with argument {}", argument2.get_joined_names(), argument1.get_joined_names()));
                         }
                     }
                 }
             }
 
-            auto check_missing_arguments() const -> void
+            auto check_missing_arguments(std::ranges::view auto arguments) const -> void
             {
                 auto error_message = optstring();
 
-                for (auto const & arg : m_arguments
-                    | std::views::transform([](auto const & up) -> Argument & { return *up; })
+                for (auto const & argument : arguments
                     | std::views::filter([](auto const & arg) { return arg.is_required() && !arg.has_value(); }))
                 {
                     if (!error_message)
                     {
-                        error_message = "the following arguments are required: " + arg.get_joined_names();
+                        error_message = "the following arguments are required: " + argument.get_joined_names();
                     }
                     else
                     {
-                        *error_message += " " + arg.get_joined_names();
+                        *error_message += " " + argument.get_joined_names();
                     }
                 }
 
@@ -464,14 +460,13 @@ namespace argparse
                 }
             }
 
-            auto get_parameters() const -> Parameters
+            auto get_parameters(std::ranges::view auto arguments) const -> Parameters
             {
                 auto result = Parameters();
 
-                for (auto const & arg : m_arguments
-                    | std::views::transform([](auto const & up) -> Argument & { return *up; }))
+                for (auto const & argument : arguments)
                 {
-                    result.insert(arg.get_dest_name(), arg.get_value());
+                    result.insert(argument.get_dest_name(), argument.get_value());
                 }
 
                 return result;
