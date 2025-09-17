@@ -196,8 +196,8 @@ namespace argparse
                 bool m_consumed = false;
             };
 
-            using tokens = std::vector<Token>;
-            using optstring = std::optional<std::string>;
+            using Tokens = std::vector<Token>;
+            using OptString = std::optional<std::string>;
 
             class HelpRequested {};
             class VersionRequested {};
@@ -337,24 +337,24 @@ namespace argparse
                 return path;
             }
 
-            auto parse_args(tokens args) -> Parameters
+            auto parse_args(Tokens tokens) -> Parameters
             {
                 auto arguments = m_arguments | std::views::transform([](auto const & up) -> Argument & { return *up; });
-                parse_optional_arguments(arguments, args);
-                parse_positional_arguments(arguments, args);
+                parse_optional_arguments(arguments, tokens);
+                parse_positional_arguments(arguments, tokens);
 
-                consume_pseudo_arguments(args);
+                consume_pseudo_arguments(tokens);
 
-                check_unrecognised_arguments(args);
+                check_unrecognised_arguments(tokens);
                 check_excluded_arguments(arguments);
                 check_missing_arguments(arguments);
 
                 return get_parameters(arguments);
             }
 
-            static auto get_tokens(int argc, char const * const argv[]) -> tokens
+            static auto get_tokens(int argc, char const * const argv[]) -> Tokens
             {
-                return tokens(&argv[1], &argv[argc]);
+                return Tokens(&argv[1], &argv[argc]);
             }
 
             static auto join(std::vector<std::string> const & strings, std::string_view separator) -> std::string
@@ -379,42 +379,42 @@ namespace argparse
                 return result;
             }
 
-            auto parse_optional_arguments(std::ranges::view auto arguments, tokens & args) -> void
+            auto parse_optional_arguments(std::ranges::view auto arguments, Tokens & tokens) -> void
             {
                 for (auto & argument : arguments
                     | std::views::filter([](auto const & arg) { return !arg.is_positional() && arg.expects_argument(); }))
                 {
-                    argument.parse_args(args);
+                    argument.parse_args(tokens);
                 }
 
                 for (auto & argument : arguments
                     | std::views::filter([](auto const & arg) { return !arg.is_positional() && !arg.expects_argument(); }))
                 {
-                    argument.parse_args(args);
+                    argument.parse_args(tokens);
                 }
             }
 
-            auto parse_positional_arguments(std::ranges::view auto arguments, tokens & args) -> void
+            auto parse_positional_arguments(std::ranges::view auto arguments, Tokens & tokens) -> void
             {
                 for (auto & argument : arguments
                     | std::views::filter(&Argument::is_positional))
                 {
-                    argument.parse_args(args);
+                    argument.parse_args(tokens);
                 }
             }
 
-            static auto consume_pseudo_arguments(tokens & args) -> void
+            static auto consume_pseudo_arguments(Tokens & tokens) -> void
             {
-                for (auto & arg : args
-                    | std::views::filter([](auto const & arg) { return arg.m_token == "--"; }))
+                for (auto & token : tokens
+                    | std::views::filter([](auto const & t) { return t.m_token == "--"; }))
                 {
-                    arg.m_consumed = true;
+                    token.m_consumed = true;
                 }
             }
 
-            auto check_unrecognised_arguments(tokens const & args) const -> void
+            auto check_unrecognised_arguments(Tokens const & tokens) const -> void
             {
-                auto unconsumed = args
+                auto unconsumed = tokens
                     | std::views::filter([](auto const & token) { return !token.m_consumed; });
                 if (!unconsumed.empty())
                 {
@@ -439,7 +439,7 @@ namespace argparse
 
             auto check_missing_arguments(std::ranges::view auto arguments) const -> void
             {
-                auto error_message = optstring();
+                auto error_message = OptString();
 
                 for (auto const & argument : arguments
                     | std::views::filter([](auto const & arg) { return arg.is_required() && !arg.has_value(); }))
@@ -472,7 +472,7 @@ namespace argparse
                 return result;
             }
 
-            static auto replace_prog(std::string text, optstring const & replacement) -> std::string
+            static auto replace_prog(std::string text, OptString const & replacement) -> std::string
             {
                 if (!replacement)
                 {
@@ -569,7 +569,7 @@ namespace argparse
             class Argument
             {
                 public:
-                    virtual auto parse_args(tokens & args) -> void = 0;
+                    virtual auto parse_args(Tokens & tokens) -> void = 0;
                     virtual auto is_positional() const -> bool = 0;
                     virtual auto is_present() const -> bool = 0;
                     virtual auto is_required() const -> bool = 0;
@@ -896,9 +896,9 @@ namespace argparse
                         return get_dest_name();
                     }
 
-                    auto get_consumable(tokens & args) const
+                    auto get_consumable(Tokens & tokens) const
                     {
-                        return args
+                        return tokens
                             | std::views::drop_while([](auto const & token)
                                 {
                                     return token.m_consumed;
@@ -928,9 +928,9 @@ namespace argparse
                     {
                     }
 
-                    auto parse_args(tokens & args) -> void override
+                    auto parse_args(Tokens & tokens) -> void override
                     {
-                        auto consumable = get_consumable(args);
+                        auto consumable = get_consumable(tokens);
 
                         if (has_nargs())
                         {
@@ -1273,9 +1273,9 @@ namespace argparse
                         }
                     }
 
-                    auto get_consumable(tokens & args) const
+                    auto get_consumable(Tokens & tokens) const
                     {
-                        return args
+                        return tokens
                             | std::views::drop_while([](auto const & token) { return token.m_consumed; })
                             | std::views::take_while([](auto const & token) { return token.m_token != "--"; });
                     }
@@ -1296,9 +1296,9 @@ namespace argparse
                     {
                     }
 
-                    auto parse_args(tokens & args) -> void override
+                    auto parse_args(Tokens & tokens) -> void override
                     {
-                        auto consumable = get_consumable(args);
+                        auto consumable = get_consumable(tokens);
 
                         for (auto it = consumable.begin(); it != consumable.end();)
                         {
@@ -1384,13 +1384,13 @@ namespace argparse
                     }
             };
 
-            using argument_uptr = std::unique_ptr<ArgumentCommon>;
-            using argument_uptrs = std::vector<argument_uptr>;
+            using ArgumentUptr = std::unique_ptr<ArgumentCommon>;
+            using ArgumentUptrs = std::vector<ArgumentUptr>;
 
             class Formatter
             {
                 public:
-                    auto format_usage(std::ranges::view auto arguments, optstring const & usage, optstring const & prog) const -> std::string
+                    auto format_usage(std::ranges::view auto arguments, OptString const & usage, OptString const & prog) const -> std::string
                     {
                         if (usage)
                         {
@@ -1400,7 +1400,7 @@ namespace argparse
                         return std::format("usage: {}{}{}", *prog, format_usage_optionals(arguments), format_usage_positionals(arguments));
                     }
 
-                    auto format_help(std::ranges::view auto arguments, optstring const & prog, optstring const & usage, optstring const & description, optstring const & epilog) const -> std::string
+                    auto format_help(std::ranges::view auto arguments, OptString const & prog, OptString const & usage, OptString const & description, OptString const & epilog) const -> std::string
                     {
                         auto message = format_usage(arguments, usage, prog);
                         auto positionals = format_help_positionals(arguments, prog);
@@ -1429,7 +1429,7 @@ namespace argparse
                         return message;
                     }
 
-                    auto format_version(optstring const & version, optstring const & prog) const -> std::string
+                    auto format_version(OptString const & version, OptString const & prog) const -> std::string
                     {
                         return replace_prog(*version, prog);
                     }
@@ -1512,7 +1512,7 @@ namespace argparse
                         return optionals;
                     }
 
-                    auto format_help_positionals(std::ranges::view auto arguments, optstring const & prog) const -> std::string
+                    auto format_help_positionals(std::ranges::view auto arguments, OptString const & prog) const -> std::string
                     {
                         auto positionals = std::string();
 
@@ -1533,7 +1533,7 @@ namespace argparse
                         return positionals;
                     }
 
-                    auto format_help_optionals(std::ranges::view auto arguments, optstring const & prog) const -> std::string
+                    auto format_help_optionals(std::ranges::view auto arguments, OptString const & prog) const -> std::string
                     {
                         auto optionals = std::string();
 
@@ -1630,7 +1630,7 @@ namespace argparse
             class MutuallyExclusiveGroup
             {
                 public:
-                    MutuallyExclusiveGroup(argument_uptrs & arguments, optstring & version)
+                    MutuallyExclusiveGroup(ArgumentUptrs & arguments, OptString & version)
                       : m_arguments(arguments)
                       , m_version(version)
                     {
@@ -1643,14 +1643,14 @@ namespace argparse
                     }
 
                 private:
-                    argument_uptrs & m_arguments;
-                    optstring & m_version;
+                    ArgumentUptrs & m_arguments;
+                    OptString & m_version;
             };
 
             class ArgumentBuilder
             {
                 public:
-                    ArgumentBuilder(argument_uptrs & arguments, optstring & version, std::vector<std::string> names, MutuallyExclusiveGroup const * group = nullptr)
+                    ArgumentBuilder(ArgumentUptrs & arguments, OptString & version, std::vector<std::string> names, MutuallyExclusiveGroup const * group = nullptr)
                       : m_arguments(arguments)
                       , m_version(version)
                     {
@@ -1768,17 +1768,17 @@ namespace argparse
                     }
 
                 private:
-                    argument_uptrs & m_arguments;
-                    optstring & m_version;
+                    ArgumentUptrs & m_arguments;
+                    OptString & m_version;
                     Options m_options;
             };
 
-            argument_uptrs m_arguments;
-            optstring m_prog;
-            optstring m_usage;
-            optstring m_description;
-            optstring m_epilog;
-            optstring m_version;
+            ArgumentUptrs m_arguments;
+            OptString m_prog;
+            OptString m_usage;
+            OptString m_description;
+            OptString m_epilog;
+            OptString m_version;
             Handle m_handle = Handle::errors_help_version;
     };
 }
