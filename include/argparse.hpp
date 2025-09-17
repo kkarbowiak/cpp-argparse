@@ -351,7 +351,7 @@ namespace argparse
 
                 check_unrecognised_arguments(args);
                 check_excluded_arguments(arguments);
-                check_missing_arguments(m_arguments);
+                check_missing_arguments(arguments);
 
                 return get_parameters(m_arguments);
             }
@@ -441,12 +441,11 @@ namespace argparse
                 }
             }
 
-            auto check_missing_arguments(argument_uptrs const & arguments) const -> void
+            auto check_missing_arguments(std::ranges::view auto arguments) const -> void
             {
                 auto error_message = optstring();
 
                 for (auto const & argument : arguments
-                    | std::views::transform([](auto const & up) -> Argument & { return *up; })
                     | std::views::filter([](auto const & arg) { return arg.is_required() && !arg.has_value(); }))
                 {
                     if (!error_message)
