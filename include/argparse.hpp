@@ -405,10 +405,10 @@ namespace argparse
 
             static auto consume_pseudo_arguments(Tokens & tokens) -> void
             {
-                for (auto & arg : tokens
-                    | std::views::filter([](auto const & arg) { return arg.m_token == "--"; }))
+                for (auto & token : tokens
+                    | std::views::filter([](auto const & t) { return t.m_token == "--"; }))
                 {
-                    arg.m_consumed = true;
+                    token.m_consumed = true;
                 }
             }
 
