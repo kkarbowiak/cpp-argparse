@@ -400,10 +400,10 @@ namespace argparse
 
             auto parse_positional_arguments(std::ranges::view auto arguments, tokens & args) -> void
             {
-                for (auto & arg : arguments
+                for (auto & argument : arguments
                     | std::views::filter(&Argument::is_positional))
                 {
-                    arg.parse_args(args);
+                    argument.parse_args(args);
                 }
             }
 
@@ -429,13 +429,13 @@ namespace argparse
             auto check_excluded_arguments(std::ranges::view auto arguments) const -> void
             {
                 auto const filter = [](auto const & arg) { return arg.is_present() && arg.is_mutually_exclusive(); };
-                for (auto const & arg1 : arguments | std::views::filter(filter))
+                for (auto const & argument1 : arguments | std::views::filter(filter))
                 {
-                    for (auto const & arg2 : arguments | std::views::filter(filter))
+                    for (auto const & argument2 : arguments | std::views::filter(filter))
                     {
-                        if ((&arg2 != &arg1) && arg2.is_mutually_exclusive_with(arg1))
+                        if ((&argument2 != &argument1) && argument2.is_mutually_exclusive_with(argument1))
                         {
-                            throw parsing_error(std::format("argument {}: not allowed with argument {}", arg2.get_joined_names(), arg1.get_joined_names()));
+                            throw parsing_error(std::format("argument {}: not allowed with argument {}", argument2.get_joined_names(), argument1.get_joined_names()));
                         }
                     }
                 }
@@ -468,9 +468,9 @@ namespace argparse
             {
                 auto result = Parameters();
 
-                for (auto const & arg : arguments)
+                for (auto const & argument : arguments)
                 {
-                    result.insert(arg.get_dest_name(), arg.get_value());
+                    result.insert(argument.get_dest_name(), argument.get_value());
                 }
 
                 return result;
