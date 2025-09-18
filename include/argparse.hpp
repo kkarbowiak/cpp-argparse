@@ -306,13 +306,13 @@ namespace argparse
             auto format_usage() const -> std::string
             {
                 auto const formatter = Formatter();
-                return formatter.format_usage(m_arguments | std::views::transform([](auto const & ca) -> Formattable const & { return *ca; }), m_usage, m_prog);
+                return formatter.format_usage(m_arguments | std::views::transform(cast_to_formattable), m_usage, m_prog);
             }
 
             auto format_help() const -> std::string
             {
                 auto const formatter = Formatter();
-                return formatter.format_help(m_arguments | std::views::transform([](auto const & ca) -> Formattable const & { return *ca; }), m_prog, m_usage, m_description, m_epilog);
+                return formatter.format_help(m_arguments | std::views::transform(cast_to_formattable), m_prog, m_usage, m_description, m_epilog);
             }
 
             auto format_version() const -> std::string
@@ -1774,6 +1774,11 @@ namespace argparse
             };
 
             static auto cast_to_argument(ArgumentUptr const & up) -> Argument &
+            {
+                return *up;
+            }
+
+            static auto cast_to_formattable(ArgumentUptr const & up) -> Formattable const &
             {
                 return *up;
             }
