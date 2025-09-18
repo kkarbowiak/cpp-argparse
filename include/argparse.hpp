@@ -228,7 +228,7 @@ namespace argparse
                         std::exit(EXIT_SUCCESS);
                     }
 
-                    return get_parameters(m_arguments | std::views::transform([](auto const & up) -> Argument & { return *up; }));
+                    return get_parameters(m_arguments | std::views::transform(cast_to_argument));
                 }
                 catch (VersionRequested const &)
                 {
@@ -238,7 +238,7 @@ namespace argparse
                         std::exit(EXIT_SUCCESS);
                     }
 
-                    return get_parameters(m_arguments | std::views::transform([](auto const & up) -> Argument & { return *up; }));
+                    return get_parameters(m_arguments | std::views::transform(cast_to_argument));
                 }
                 catch (parsing_error const & e)
                 {
@@ -339,7 +339,7 @@ namespace argparse
 
             auto parse_args(Tokens tokens) -> Parameters
             {
-                auto arguments = m_arguments | std::views::transform([](auto const & up) -> Argument & { return *up; });
+                auto arguments = m_arguments | std::views::transform(cast_to_argument);
                 parse_optional_arguments(arguments, tokens);
                 parse_positional_arguments(arguments, tokens);
 
@@ -1772,6 +1772,11 @@ namespace argparse
                     OptString & m_version;
                     Options m_options;
             };
+
+            static auto cast_to_argument(ArgumentUptr const & up) -> Argument &
+            {
+                return *up;
+            }
 
             ArgumentUptrs m_arguments;
             OptString m_prog;
