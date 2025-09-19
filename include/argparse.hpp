@@ -788,7 +788,7 @@ namespace argparse
 
                     auto parse_arguments(std::ranges::view auto tokens) -> std::any
                     {
-                        auto const values = consume_args(tokens);
+                        auto const values = consume_tokens(tokens);
                         return get_type_handler().transform(values);
                     }
 
@@ -809,7 +809,7 @@ namespace argparse
                         return value;
                     }
 
-                    auto consume_args(std::ranges::view auto tokens) const -> std::vector<std::any>
+                    auto consume_tokens(std::ranges::view auto tokens) const -> std::vector<std::any>
                     {
                         auto result = std::vector<std::any>();
                         auto consumed = std::vector<Token *>();
@@ -884,7 +884,7 @@ namespace argparse
                             }
                             case one_or_more:
                             {
-                                if (auto const values = consume_args(tokens); !values.empty())
+                                if (auto const values = consume_tokens(tokens); !values.empty())
                                 {
                                     m_value = get_transformed(values);
                                 }
@@ -1054,7 +1054,7 @@ namespace argparse
                                 {
                                     if (!m_value.has_value())
                                     {
-                                        auto const values = consume_args(tokens | std::views::take(1));
+                                        auto const values = consume_tokens(tokens | std::views::take(1));
                                         m_value = get_transformed(values);
                                     }
                                     else
@@ -1067,7 +1067,7 @@ namespace argparse
                                 {
                                     if (!m_value.has_value())
                                     {
-                                        auto const values = consume_args(std::views::single(Token{value}));
+                                        auto const values = consume_tokens(std::views::single(Token{value}));
                                         m_value = get_transformed(values);
                                     }
                                     else
@@ -1089,7 +1089,7 @@ namespace argparse
                     auto parse_arguments_number(std::ranges::view auto tokens) -> void
                     {
                         auto const nargs_number = get_nargs_number();
-                        auto const values = consume_args(tokens | std::views::take(nargs_number));
+                        auto const values = consume_tokens(tokens | std::views::take(nargs_number));
                         if (values.size() < nargs_number)
                         {
                             throw parsing_error(std::format("argument {}: expected {} argument{}", get_joined_names(), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
@@ -1120,7 +1120,7 @@ namespace argparse
                             }
                             case one_or_more:
                             {
-                                auto const values = consume_args(tokens);
+                                auto const values = consume_tokens(tokens);
                                 if (values.empty())
                                 {
                                     throw parsing_error(std::format("argument {}: expected at least one argument", get_joined_names()));
