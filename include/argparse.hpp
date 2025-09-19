@@ -792,7 +792,7 @@ namespace argparse
                         return get_type_handler().transform(values);
                     }
 
-                    auto consume_arg(Token & token) const -> std::any
+                    auto consume_token(Token & token) const -> std::any
                     {
                         token.m_consumed = true;
                         return process_arg(token.m_token);
@@ -869,7 +869,7 @@ namespace argparse
                             {
                                 if (!tokens.empty())
                                 {
-                                    m_value = consume_arg(tokens.front());
+                                    m_value = consume_token(tokens.front());
                                 }
                                 else
                                 {
@@ -949,7 +949,7 @@ namespace argparse
                         {
                             if (!consumable.empty())
                             {
-                                m_value = consume_arg(consumable.front());
+                                m_value = consume_token(consumable.front());
                             }
                         }
                     }
@@ -1022,7 +1022,7 @@ namespace argparse
                                 {
                                     if (value.empty())
                                     {
-                                        m_value = consume_arg(tokens.front());
+                                        m_value = consume_token(tokens.front());
                                     }
                                     else
                                     {
@@ -1059,7 +1059,7 @@ namespace argparse
                                     }
                                     else
                                     {
-                                        auto const val = consume_arg(tokens.front());
+                                        auto const val = consume_token(tokens.front());
                                         append_value(val, m_value);
                                     }
                                 }
@@ -1109,7 +1109,7 @@ namespace argparse
                                 }
                                 else
                                 {
-                                    m_value = consume_arg(tokens.front());
+                                    m_value = consume_token(tokens.front());
                                 }
                                 break;
                             }
