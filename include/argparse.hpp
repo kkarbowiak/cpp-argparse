@@ -1439,28 +1439,28 @@ namespace argparse
                 private:
                     auto format_usage_positionals(std::ranges::view auto arguments) const -> std::string
                     {
-                        auto positionals = std::string();
+                        auto usage_text = std::string();
 
                         for (auto const & argument : arguments
                             | std::views::filter(&Formattable::is_positional))
                         {
                             if (argument.has_nargs())
                             {
-                                positionals += format_nargs(argument);
+                                usage_text += format_nargs(argument);
                             }
                             else
                             {
-                                positionals += " ";
-                                positionals += format_arg(argument);
+                                usage_text += " ";
+                                usage_text += format_arg(argument);
                             }
                         }
 
-                        return positionals;
+                        return usage_text;
                     }
 
                     auto format_usage_optionals(std::ranges::view auto arguments) const -> std::string
                     {
-                        auto optionals = std::string();
+                        auto usage_text = std::string();
 
                         auto non_positionals = arguments | std::views::filter([](auto const & arg) { return !arg.is_positional(); });
 
@@ -1470,29 +1470,29 @@ namespace argparse
 
                             if (argument.is_required())
                             {
-                                optionals += " ";
+                                usage_text += " ";
                             }
                             else if (argument.is_mutually_exclusive() && it != non_positionals.begin() && argument.is_mutually_exclusive_with(*std::ranges::prev(it)))
                             {
-                                optionals += " | ";
+                                usage_text += " | ";
                             }
                             else
                             {
-                                optionals += " [";
+                                usage_text += " [";
                             }
 
                             if (argument.has_nargs())
                             {
-                                optionals += argument.get_name();
-                                optionals += format_nargs(argument);
+                                usage_text += argument.get_name();
+                                usage_text += format_nargs(argument);
                             }
                             else
                             {
-                                optionals += argument.get_name();
+                                usage_text += argument.get_name();
                                 if (argument.expects_argument())
                                 {
-                                    optionals += " ";
-                                    optionals += format_arg(argument);
+                                    usage_text += " ";
+                                    usage_text += format_arg(argument);
                                 }
                             }
 
@@ -1506,16 +1506,16 @@ namespace argparse
                             }
                             else
                             {
-                                optionals += "]";
+                                usage_text += "]";
                             }
                         }
 
-                        return optionals;
+                        return usage_text;
                     }
 
                     auto format_help_positionals(std::ranges::view auto arguments, OptString const & prog) const -> std::string
                     {
-                        auto positionals = std::string();
+                        auto help_text = std::string();
 
                         for (auto const & argument : arguments
                             | std::views::filter(&Formattable::is_positional))
@@ -1528,15 +1528,15 @@ namespace argparse
                                 arg_line += replace_prog(help, prog);
                             }
 
-                            positionals += '\n' + arg_line;
+                            help_text += '\n' + arg_line;
                         }
 
-                        return positionals;
+                        return help_text;
                     }
 
                     auto format_help_optionals(std::ranges::view auto arguments, OptString const & prog) const -> std::string
                     {
-                        auto optionals = std::string();
+                        auto help_text = std::string();
 
                         for (auto const & argument : arguments
                             | std::views::filter([](auto const & a) { return !a.is_positional(); }))
@@ -1561,10 +1561,10 @@ namespace argparse
                                 arg_line += replace_prog(help, prog);
                             }
 
-                            optionals += '\n' + arg_line;
+                            help_text += '\n' + arg_line;
                         }
 
-                        return optionals;
+                        return help_text;
                     }
 
                     auto format(Formattable const & argument) const -> std::string
