@@ -798,12 +798,12 @@ namespace argparse
                         return process_token(token.m_token);
                     }
 
-                    auto process_token(std::string const & arg) const -> std::any
+                    auto process_token(std::string const & token) const -> std::any
                     {
-                        auto const value = get_type_handler().from_string(arg);
+                        auto const value = get_type_handler().from_string(token);
                         if (!value.has_value())
                         {
-                            throw parsing_error(std::format("argument {}: invalid value: '{}'", get_name_for_error(), arg));
+                            throw parsing_error(std::format("argument {}: invalid value: '{}'", get_name_for_error(), token));
                         }
                         check_choices(value);
                         return value;
