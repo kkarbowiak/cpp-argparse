@@ -340,6 +340,7 @@ namespace argparse
             auto parse_args(Tokens tokens) -> Parameters
             {
                 auto arguments = m_arguments | std::views::transform(cast_to_argument);
+
                 parse_optional_arguments(arguments, tokens);
                 parse_positional_arguments(arguments, tokens);
 
@@ -425,6 +426,7 @@ namespace argparse
             auto check_excluded_arguments(std::ranges::view auto arguments) const -> void
             {
                 auto const filter = [](auto const & arg) { return arg.is_present() && arg.is_mutually_exclusive(); };
+
                 for (auto const & argument1 : arguments | std::views::filter(filter))
                 {
                     for (auto const & argument2 : arguments | std::views::filter(filter))
