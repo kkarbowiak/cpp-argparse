@@ -795,10 +795,10 @@ namespace argparse
                     auto consume_token(Token & token) const -> std::any
                     {
                         token.m_consumed = true;
-                        return process_arg(token.m_token);
+                        return process_token(token.m_token);
                     }
 
-                    auto process_arg(std::string const & arg) const -> std::any
+                    auto process_token(std::string const & arg) const -> std::any
                     {
                         auto const value = get_type_handler().from_string(arg);
                         if (!value.has_value())
@@ -815,7 +815,7 @@ namespace argparse
                         auto consumed = std::vector<Token *>();
                         for (auto & token : tokens)
                         {
-                            result.push_back(process_arg(token.m_token));
+                            result.push_back(process_token(token.m_token));
                             consumed.push_back(&token);
                         }
                         std::ranges::for_each(consumed, [](auto token) { token->m_consumed = true; });
@@ -1026,7 +1026,7 @@ namespace argparse
                                     }
                                     else
                                     {
-                                        m_value = process_arg(value);
+                                        m_value = process_token(value);
                                     }
                                 }
                                 break;
@@ -1072,7 +1072,7 @@ namespace argparse
                                     }
                                     else
                                     {
-                                        auto const val = process_arg(value);
+                                        auto const val = process_token(value);
                                         append_value(val, m_value);
                                     }
                                 }
