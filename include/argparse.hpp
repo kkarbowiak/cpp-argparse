@@ -1460,52 +1460,51 @@ namespace argparse
                     {
                         auto optionals = std::string();
 
-                        for (auto it = arguments.begin(); it != arguments.end(); ++it)
+                        auto non_positionals = arguments | std::views::filter([](auto const & arg) { return !arg.is_positional(); });
+
+                        for (auto it = non_positionals.begin(); it != non_positionals.end(); ++it)
                         {
                             auto const & arg = *it;
 
-                            if (!arg.is_positional())
+                            if (arg.is_required())
                             {
-                                if (arg.is_required())
+                                optionals += " ";
+                            }
+                            else if (arg.is_mutually_exclusive() && it != non_positionals.begin() && arg.is_mutually_exclusive_with(*std::ranges::prev(it)))
+                            {
+                                optionals += " | ";
+                            }
+                            else
+                            {
+                                optionals += " [";
+                            }
+
+                            if (arg.has_nargs())
+                            {
+                                optionals += arg.get_name();
+                                optionals += format_nargs(arg);
+                            }
+                            else
+                            {
+                                optionals += arg.get_name();
+                                if (arg.expects_argument())
                                 {
                                     optionals += " ";
+                                    optionals += format_arg(arg);
                                 }
-                                else if (arg.is_mutually_exclusive() && it != arguments.begin() && arg.is_mutually_exclusive_with(*std::ranges::prev(it)))
-                                {
-                                    optionals += " | ";
-                                }
-                                else
-                                {
-                                    optionals += " [";
-                                }
+                            }
 
-                                if (arg.has_nargs())
-                                {
-                                    optionals += arg.get_name();
-                                    optionals += format_nargs(arg);
-                                }
-                                else
-                                {
-                                    optionals += arg.get_name();
-                                    if (arg.expects_argument())
-                                    {
-                                        optionals += " ";
-                                        optionals += format_arg(arg);
-                                    }
-                                }
-
-                                if (arg.is_required())
-                                {
-                                    // skip
-                                }
-                                else if (arg.is_mutually_exclusive() && std::ranges::next(it) != arguments.end() && arg.is_mutually_exclusive_with(*std::ranges::next(it)))
-                                {
-                                    // skip
-                                }
-                                else
-                                {
-                                    optionals += "]";
-                                }
+                            if (arg.is_required())
+                            {
+                                // skip
+                            }
+                            else if (arg.is_mutually_exclusive() && std::ranges::next(it) != non_positionals.end() && arg.is_mutually_exclusive_with(*std::ranges::next(it)))
+                            {
+                                // skip
+                            }
+                            else
+                            {
+                                optionals += "]";
                             }
                         }
 
