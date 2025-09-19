@@ -385,13 +385,13 @@ namespace argparse
                 for (auto & argument : arguments
                     | std::views::filter([](auto const & arg) { return !arg.is_positional() && arg.expects_argument(); }))
                 {
-                    argument.parse_args(tokens);
+                    argument.parse_tokens(tokens);
                 }
 
                 for (auto & argument : arguments
                     | std::views::filter([](auto const & arg) { return !arg.is_positional() && !arg.expects_argument(); }))
                 {
-                    argument.parse_args(tokens);
+                    argument.parse_tokens(tokens);
                 }
             }
 
@@ -400,7 +400,7 @@ namespace argparse
                 for (auto & argument : arguments
                     | std::views::filter(&Argument::is_positional))
                 {
-                    argument.parse_args(tokens);
+                    argument.parse_tokens(tokens);
                 }
             }
 
@@ -571,7 +571,7 @@ namespace argparse
             class Argument
             {
                 public:
-                    virtual auto parse_args(Tokens & tokens) -> void = 0;
+                    virtual auto parse_tokens(Tokens & tokens) -> void = 0;
                     virtual auto is_positional() const -> bool = 0;
                     virtual auto is_present() const -> bool = 0;
                     virtual auto is_required() const -> bool = 0;
@@ -786,39 +786,39 @@ namespace argparse
                 protected:
                     virtual auto get_name_for_error() const -> std::string = 0;
 
-                    auto parse_arguments(std::ranges::view auto args) -> std::any
+                    auto parse_arguments(std::ranges::view auto tokens) -> std::any
                     {
-                        auto const values = consume_args(args);
+                        auto const values = consume_tokens(tokens);
                         return get_type_handler().transform(values);
                     }
 
-                    auto consume_arg(Token & arg) const -> std::any
+                    auto consume_token(Token & token) const -> std::any
                     {
-                        arg.m_consumed = true;
-                        return process_arg(arg.m_token);
+                        token.m_consumed = true;
+                        return process_token(token.m_token);
                     }
 
-                    auto process_arg(std::string const & arg) const -> std::any
+                    auto process_token(std::string const & token) const -> std::any
                     {
-                        auto const value = get_type_handler().from_string(arg);
+                        auto const value = get_type_handler().from_string(token);
                         if (!value.has_value())
                         {
-                            throw parsing_error(std::format("argument {}: invalid value: '{}'", get_name_for_error(), arg));
+                            throw parsing_error(std::format("argument {}: invalid value: '{}'", get_name_for_error(), token));
                         }
                         check_choices(value);
                         return value;
                     }
 
-                    auto consume_args(std::ranges::view auto args) const -> std::vector<std::any>
+                    auto consume_tokens(std::ranges::view auto tokens) const -> std::vector<std::any>
                     {
                         auto result = std::vector<std::any>();
                         auto consumed = std::vector<Token *>();
-                        for (auto & arg : args)
+                        for (auto & token : tokens)
                         {
-                            result.push_back(process_arg(arg.m_token));
-                            consumed.push_back(&arg);
+                            result.push_back(process_token(token.m_token));
+                            consumed.push_back(&token);
                         }
-                        std::ranges::for_each(consumed, [](auto arg) { arg->m_consumed = true; });
+                        std::ranges::for_each(consumed, [](auto token) { token->m_consumed = true; });
                         return result;
                     }
 
@@ -861,15 +861,15 @@ namespace argparse
             class PositionalArgument final : public ArgumentCommon
             {
                 private:
-                    auto parse_arguments_option(std::ranges::view auto args) -> void
+                    auto parse_arguments_option(std::ranges::view auto tokens) -> void
                     {
                         switch (get_nargs_option())
                         {
                             case zero_or_one:
                             {
-                                if (!args.empty())
+                                if (!tokens.empty())
                                 {
-                                    m_value = consume_arg(args.front());
+                                    m_value = consume_token(tokens.front());
                                 }
                                 else
                                 {
@@ -879,12 +879,12 @@ namespace argparse
                             }
                             case zero_or_more:
                             {
-                                m_value = parse_arguments(args);
+                                m_value = parse_arguments(tokens);
                                 break;
                             }
                             case one_or_more:
                             {
-                                if (auto const values = consume_args(args); !values.empty())
+                                if (auto const values = consume_tokens(tokens); !values.empty())
                                 {
                                     m_value = get_transformed(values);
                                 }
@@ -930,7 +930,7 @@ namespace argparse
                     {
                     }
 
-                    auto parse_args(Tokens & tokens) -> void override
+                    auto parse_tokens(Tokens & tokens) -> void override
                     {
                         auto consumable = get_consumable(tokens);
 
@@ -949,7 +949,7 @@ namespace argparse
                         {
                             if (!consumable.empty())
                             {
-                                m_value = consume_arg(consumable.front());
+                                m_value = consume_token(consumable.front());
                             }
                         }
                     }
@@ -1002,7 +1002,7 @@ namespace argparse
             class OptionalArgument final : public ArgumentCommon
             {
                 private:
-                    auto perform_action(std::string const & value, std::ranges::view auto args) -> void
+                    auto perform_action(std::string const & value, std::ranges::view auto tokens) -> void
                     {
                         switch (get_action())
                         {
@@ -1011,22 +1011,22 @@ namespace argparse
                                 {
                                     if (has_nargs_number())
                                     {
-                                        parse_arguments_number(args);
+                                        parse_arguments_number(tokens);
                                     }
                                     else
                                     {
-                                        parse_arguments_option(args);
+                                        parse_arguments_option(tokens);
                                     }
                                 }
                                 else
                                 {
                                     if (value.empty())
                                     {
-                                        m_value = consume_arg(args.front());
+                                        m_value = consume_token(tokens.front());
                                     }
                                     else
                                     {
-                                        m_value = process_arg(value);
+                                        m_value = process_token(value);
                                     }
                                 }
                                 break;
@@ -1054,12 +1054,12 @@ namespace argparse
                                 {
                                     if (!m_value.has_value())
                                     {
-                                        auto const values = consume_args(args | std::views::take(1));
+                                        auto const values = consume_tokens(tokens | std::views::take(1));
                                         m_value = get_transformed(values);
                                     }
                                     else
                                     {
-                                        auto const val = consume_arg(args.front());
+                                        auto const val = consume_token(tokens.front());
                                         append_value(val, m_value);
                                     }
                                 }
@@ -1067,12 +1067,12 @@ namespace argparse
                                 {
                                     if (!m_value.has_value())
                                     {
-                                        auto const values = consume_args(std::views::single(Token{value}));
+                                        auto const values = consume_tokens(std::views::single(Token{value}));
                                         m_value = get_transformed(values);
                                     }
                                     else
                                     {
-                                        auto const val = process_arg(value);
+                                        auto const val = process_token(value);
                                         append_value(val, m_value);
                                     }
                                 }
@@ -1086,10 +1086,10 @@ namespace argparse
                         }
                     }
 
-                    auto parse_arguments_number(std::ranges::view auto args) -> void
+                    auto parse_arguments_number(std::ranges::view auto tokens) -> void
                     {
                         auto const nargs_number = get_nargs_number();
-                        auto const values = consume_args(args | std::views::take(nargs_number));
+                        auto const values = consume_tokens(tokens | std::views::take(nargs_number));
                         if (values.size() < nargs_number)
                         {
                             throw parsing_error(std::format("argument {}: expected {} argument{}", get_joined_names(), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
@@ -1097,30 +1097,30 @@ namespace argparse
                         m_value = get_transformed(values);
                     }
 
-                    auto parse_arguments_option(std::ranges::view auto args) -> void
+                    auto parse_arguments_option(std::ranges::view auto tokens) -> void
                     {
                         switch (get_nargs_option())
                         {
                             case zero_or_one:
                             {
-                                if (args.empty())
+                                if (tokens.empty())
                                 {
                                     m_value = get_const();
                                 }
                                 else
                                 {
-                                    m_value = consume_arg(args.front());
+                                    m_value = consume_token(tokens.front());
                                 }
                                 break;
                             }
                             case zero_or_more:
                             {
-                                m_value = parse_arguments(args);
+                                m_value = parse_arguments(tokens);
                                 break;
                             }
                             case one_or_more:
                             {
-                                auto const values = consume_args(args);
+                                auto const values = consume_tokens(tokens);
                                 if (values.empty())
                                 {
                                     throw parsing_error(std::format("argument {}: expected at least one argument", get_joined_names()));
@@ -1223,12 +1223,12 @@ namespace argparse
                         return get_joined_names();
                     }
 
-                    auto check_errors(std::string const & value, std::ranges::view auto args) const -> void
+                    auto check_errors(std::string const & value, std::ranges::view auto tokens) const -> void
                     {
                         switch (get_action())
                         {
                             case store:
-                                if (!has_nargs() && value.empty() && args.empty())
+                                if (!has_nargs() && value.empty() && tokens.empty())
                                 {
                                     throw parsing_error(std::format("argument {}: expected one argument", get_joined_names()));
                                 }
@@ -1243,7 +1243,7 @@ namespace argparse
                                 }
                                 break;
                             case append:
-                                if (value.empty() && args.empty())
+                                if (value.empty() && tokens.empty())
                                 {
                                     throw parsing_error(std::format("argument {}: expected one argument", get_joined_names()));
                                 }
@@ -1298,7 +1298,7 @@ namespace argparse
                     {
                     }
 
-                    auto parse_args(Tokens & tokens) -> void override
+                    auto parse_tokens(Tokens & tokens) -> void override
                     {
                         auto consumable = get_consumable(tokens);
 
