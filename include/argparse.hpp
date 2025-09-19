@@ -385,13 +385,13 @@ namespace argparse
                 for (auto & argument : arguments
                     | std::views::filter([](auto const & arg) { return !arg.is_positional() && arg.expects_argument(); }))
                 {
-                    argument.parse_args(tokens);
+                    argument.parse_tokens(tokens);
                 }
 
                 for (auto & argument : arguments
                     | std::views::filter([](auto const & arg) { return !arg.is_positional() && !arg.expects_argument(); }))
                 {
-                    argument.parse_args(tokens);
+                    argument.parse_tokens(tokens);
                 }
             }
 
@@ -400,7 +400,7 @@ namespace argparse
                 for (auto & argument : arguments
                     | std::views::filter(&Argument::is_positional))
                 {
-                    argument.parse_args(tokens);
+                    argument.parse_tokens(tokens);
                 }
             }
 
@@ -571,7 +571,7 @@ namespace argparse
             class Argument
             {
                 public:
-                    virtual auto parse_args(Tokens & tokens) -> void = 0;
+                    virtual auto parse_tokens(Tokens & tokens) -> void = 0;
                     virtual auto is_positional() const -> bool = 0;
                     virtual auto is_present() const -> bool = 0;
                     virtual auto is_required() const -> bool = 0;
@@ -930,7 +930,7 @@ namespace argparse
                     {
                     }
 
-                    auto parse_args(Tokens & tokens) -> void override
+                    auto parse_tokens(Tokens & tokens) -> void override
                     {
                         auto consumable = get_consumable(tokens);
 
@@ -1298,7 +1298,7 @@ namespace argparse
                     {
                     }
 
-                    auto parse_args(Tokens & tokens) -> void override
+                    auto parse_tokens(Tokens & tokens) -> void override
                     {
                         auto consumable = get_consumable(tokens);
 
