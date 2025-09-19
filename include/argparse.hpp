@@ -340,6 +340,7 @@ namespace argparse
             auto parse_args(Tokens tokens) -> Parameters
             {
                 auto arguments = m_arguments | std::views::transform(cast_to_argument);
+
                 parse_optional_arguments(arguments, tokens);
                 parse_positional_arguments(arguments, tokens);
 
@@ -425,6 +426,7 @@ namespace argparse
             auto check_excluded_arguments(std::ranges::view auto arguments) const -> void
             {
                 auto const filter = [](auto const & arg) { return arg.is_present() && arg.is_mutually_exclusive(); };
+
                 for (auto const & argument1 : arguments | std::views::filter(filter))
                 {
                     for (auto const & argument2 : arguments | std::views::filter(filter))
@@ -1437,114 +1439,114 @@ namespace argparse
                 private:
                     auto format_usage_positionals(std::ranges::view auto arguments) const -> std::string
                     {
-                        auto positionals = std::string();
+                        auto usage_text = std::string();
 
-                        for (auto const & arg : arguments
+                        for (auto const & argument : arguments
                             | std::views::filter(&Formattable::is_positional))
                         {
-                            if (arg.has_nargs())
+                            if (argument.has_nargs())
                             {
-                                positionals += format_nargs(arg);
+                                usage_text += format_nargs(argument);
                             }
                             else
                             {
-                                positionals += " ";
-                                positionals += format_arg(arg);
+                                usage_text += " ";
+                                usage_text += format_arg(argument);
                             }
                         }
 
-                        return positionals;
+                        return usage_text;
                     }
 
                     auto format_usage_optionals(std::ranges::view auto arguments) const -> std::string
                     {
-                        auto optionals = std::string();
+                        auto usage_text = std::string();
 
                         auto non_positionals = arguments | std::views::filter([](auto const & arg) { return !arg.is_positional(); });
 
                         for (auto it = non_positionals.begin(); it != non_positionals.end(); ++it)
                         {
-                            auto const & arg = *it;
+                            auto const & argument = *it;
 
-                            if (arg.is_required())
+                            if (argument.is_required())
                             {
-                                optionals += " ";
+                                usage_text += " ";
                             }
-                            else if (arg.is_mutually_exclusive() && it != non_positionals.begin() && arg.is_mutually_exclusive_with(*std::ranges::prev(it)))
+                            else if (argument.is_mutually_exclusive() && it != non_positionals.begin() && argument.is_mutually_exclusive_with(*std::ranges::prev(it)))
                             {
-                                optionals += " | ";
+                                usage_text += " | ";
                             }
                             else
                             {
-                                optionals += " [";
+                                usage_text += " [";
                             }
 
-                            if (arg.has_nargs())
+                            if (argument.has_nargs())
                             {
-                                optionals += arg.get_name();
-                                optionals += format_nargs(arg);
+                                usage_text += argument.get_name();
+                                usage_text += format_nargs(argument);
                             }
                             else
                             {
-                                optionals += arg.get_name();
-                                if (arg.expects_argument())
+                                usage_text += argument.get_name();
+                                if (argument.expects_argument())
                                 {
-                                    optionals += " ";
-                                    optionals += format_arg(arg);
+                                    usage_text += " ";
+                                    usage_text += format_arg(argument);
                                 }
                             }
 
-                            if (arg.is_required())
+                            if (argument.is_required())
                             {
                                 // skip
                             }
-                            else if (arg.is_mutually_exclusive() && std::ranges::next(it) != non_positionals.end() && arg.is_mutually_exclusive_with(*std::ranges::next(it)))
+                            else if (argument.is_mutually_exclusive() && std::ranges::next(it) != non_positionals.end() && argument.is_mutually_exclusive_with(*std::ranges::next(it)))
                             {
                                 // skip
                             }
                             else
                             {
-                                optionals += "]";
+                                usage_text += "]";
                             }
                         }
 
-                        return optionals;
+                        return usage_text;
                     }
 
                     auto format_help_positionals(std::ranges::view auto arguments, OptString const & prog) const -> std::string
                     {
-                        auto positionals = std::string();
+                        auto help_text = std::string();
 
-                        for (auto const & arg : arguments
+                        for (auto const & argument : arguments
                             | std::views::filter(&Formattable::is_positional))
                         {
-                            auto arg_line = "  " + format_arg(arg);
+                            auto arg_line = "  " + format_arg(argument);
 
-                            if (auto const & help = arg.get_help(); !help.empty())
+                            if (auto const & help = argument.get_help(); !help.empty())
                             {
                                 arg_line += help_string_separation(arg_line.size());
                                 arg_line += replace_prog(help, prog);
                             }
 
-                            positionals += '\n' + arg_line;
+                            help_text += '\n' + arg_line;
                         }
 
-                        return positionals;
+                        return help_text;
                     }
 
                     auto format_help_optionals(std::ranges::view auto arguments, OptString const & prog) const -> std::string
                     {
-                        auto optionals = std::string();
+                        auto help_text = std::string();
 
-                        for (auto const & arg : arguments
+                        for (auto const & argument : arguments
                             | std::views::filter([](auto const & a) { return !a.is_positional(); }))
                         {
                             auto arg_line = std::string("  ");
-                            auto const formatted_arg = format(arg);
+                            auto const formatted_arg = format(argument);
 
-                            for (auto name_it = arg.get_names().begin(); name_it != arg.get_names().end(); ++name_it)
+                            for (auto name_it = argument.get_names().begin(); name_it != argument.get_names().end(); ++name_it)
                             {
-                                if (name_it != arg.get_names().begin())
+                                if (name_it != argument.get_names().begin())
                                 {
                                     arg_line += ", ";
                                 }
@@ -1553,16 +1555,16 @@ namespace argparse
                                 arg_line += formatted_arg;
                             }
 
-                            if (auto const & help = arg.get_help(); !help.empty())
+                            if (auto const & help = argument.get_help(); !help.empty())
                             {
                                 arg_line += help_string_separation(arg_line.size());
                                 arg_line += replace_prog(help, prog);
                             }
 
-                            optionals += '\n' + arg_line;
+                            help_text += '\n' + arg_line;
                         }
 
-                        return optionals;
+                        return help_text;
                     }
 
                     auto format(Formattable const & argument) const -> std::string
