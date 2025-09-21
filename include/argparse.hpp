@@ -508,7 +508,7 @@ namespace argparse
             };
 
             template<typename T>
-            class TypeHandlerT : public TypeHandler
+            class TypeHandlerT final : public TypeHandler
             {
                 public:
                     auto from_string(std::string const & string) const -> std::any override
@@ -1520,15 +1520,15 @@ namespace argparse
                         for (auto const & argument : arguments
                             | std::views::filter(&Formattable::is_positional))
                         {
-                            auto arg_line = "  " + format_arg(argument);
+                            auto help_line = "  " + format_arg(argument);
 
                             if (auto const & help = argument.get_help(); !help.empty())
                             {
-                                arg_line += help_string_separation(arg_line.size());
-                                arg_line += replace_prog(help, prog);
+                                help_line += help_string_separation(help_line.size());
+                                help_line += replace_prog(help, prog);
                             }
 
-                            help_text += '\n' + arg_line;
+                            help_text += '\n' + help_line;
                         }
 
                         return help_text;
@@ -1541,27 +1541,27 @@ namespace argparse
                         for (auto const & argument : arguments
                             | std::views::filter([](auto const & a) { return !a.is_positional(); }))
                         {
-                            auto arg_line = std::string("  ");
+                            auto help_line = std::string("  ");
                             auto const formatted_arg = format(argument);
 
                             for (auto name_it = argument.get_names().begin(); name_it != argument.get_names().end(); ++name_it)
                             {
                                 if (name_it != argument.get_names().begin())
                                 {
-                                    arg_line += ", ";
+                                    help_line += ", ";
                                 }
 
-                                arg_line += *name_it;
-                                arg_line += formatted_arg;
+                                help_line += *name_it;
+                                help_line += formatted_arg;
                             }
 
                             if (auto const & help = argument.get_help(); !help.empty())
                             {
-                                arg_line += help_string_separation(arg_line.size());
-                                arg_line += replace_prog(help, prog);
+                                help_line += help_string_separation(help_line.size());
+                                help_line += replace_prog(help, prog);
                             }
 
-                            help_text += '\n' + arg_line;
+                            help_text += '\n' + help_line;
                         }
 
                         return help_text;
@@ -1619,11 +1619,11 @@ namespace argparse
                         return result;
                     }
 
-                    auto help_string_separation(std::size_t arg_line_length) const -> std::string_view
+                    auto help_string_separation(std::size_t help_line_length) const -> std::string_view
                     {
                         constexpr auto fill = std::string_view("\n                        ");
-                        return arg_line_length < 23
-                            ? fill.substr(arg_line_length + 1)
+                        return help_line_length < 23
+                            ? fill.substr(help_line_length + 1)
                             : fill;
                     }
             };
