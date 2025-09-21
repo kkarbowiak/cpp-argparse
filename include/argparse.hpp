@@ -508,7 +508,7 @@ namespace argparse
             };
 
             template<typename T>
-            class TypeHandlerT : public TypeHandler
+            class TypeHandlerT final : public TypeHandler
             {
                 public:
                     auto from_string(std::string const & string) const -> std::any override
