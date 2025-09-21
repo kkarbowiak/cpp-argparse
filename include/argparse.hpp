@@ -1619,11 +1619,11 @@ namespace argparse
                         return result;
                     }
 
-                    auto help_string_separation(std::size_t arg_line_length) const -> std::string_view
+                    auto help_string_separation(std::size_t help_line_length) const -> std::string_view
                     {
                         constexpr auto fill = std::string_view("\n                        ");
-                        return arg_line_length < 23
-                            ? fill.substr(arg_line_length + 1)
+                        return help_line_length < 23
+                            ? fill.substr(help_line_length + 1)
                             : fill;
                     }
             };
