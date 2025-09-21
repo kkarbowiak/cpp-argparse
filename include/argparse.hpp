@@ -1520,15 +1520,15 @@ namespace argparse
                         for (auto const & argument : arguments
                             | std::views::filter(&Formattable::is_positional))
                         {
-                            auto arg_line = "  " + format_arg(argument);
+                            auto help_line = "  " + format_arg(argument);
 
                             if (auto const & help = argument.get_help(); !help.empty())
                             {
-                                arg_line += help_string_separation(arg_line.size());
-                                arg_line += replace_prog(help, prog);
+                                help_line += help_string_separation(help_line.size());
+                                help_line += replace_prog(help, prog);
                             }
 
-                            help_text += '\n' + arg_line;
+                            help_text += '\n' + help_line;
                         }
 
                         return help_text;
