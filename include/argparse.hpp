@@ -1541,27 +1541,27 @@ namespace argparse
                         for (auto const & argument : arguments
                             | std::views::filter([](auto const & a) { return !a.is_positional(); }))
                         {
-                            auto arg_line = std::string("  ");
+                            auto help_line = std::string("  ");
                             auto const formatted_arg = format(argument);
 
                             for (auto name_it = argument.get_names().begin(); name_it != argument.get_names().end(); ++name_it)
                             {
                                 if (name_it != argument.get_names().begin())
                                 {
-                                    arg_line += ", ";
+                                    help_line += ", ";
                                 }
 
-                                arg_line += *name_it;
-                                arg_line += formatted_arg;
+                                help_line += *name_it;
+                                help_line += formatted_arg;
                             }
 
                             if (auto const & help = argument.get_help(); !help.empty())
                             {
-                                arg_line += help_string_separation(arg_line.size());
-                                arg_line += replace_prog(help, prog);
+                                help_line += help_string_separation(help_line.size());
+                                help_line += replace_prog(help, prog);
                             }
 
-                            help_text += '\n' + arg_line;
+                            help_text += '\n' + help_line;
                         }
 
                         return help_text;
