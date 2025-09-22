@@ -852,6 +852,89 @@ namespace argparse
                     Options m_options;
             };
 
+            class ArgumentCommonBase : public Argument, public Formattable
+            {
+                public:
+                    explicit ArgumentCommonBase(Options options)
+                      : m_impl(std::move(options))
+                    {
+                    }
+                    virtual ~ArgumentCommonBase() = default;
+
+                    auto get_name() const -> std::string const & override
+                    {
+                        return m_impl.get_name();
+                    }
+
+                    auto get_names() const -> std::vector<std::string> const & override
+                    {
+                        return m_impl.get_names();
+                    }
+
+                    auto is_mutually_exclusive() const -> bool override
+                    {
+                        return m_impl.is_mutually_exclusive();
+                    }
+
+                    auto is_mutually_exclusive_with(Argument const & other) const -> bool override
+                    {
+                        return m_impl.is_mutually_exclusive_with(static_cast<ArgumentCommonBase const &>(other).m_impl);
+                    }
+
+                    auto is_mutually_exclusive_with(Formattable const & other) const -> bool override
+                    {
+                        return m_impl.is_mutually_exclusive_with(static_cast<ArgumentCommonBase const &>(other).m_impl);
+                    }
+
+                    auto expects_argument() const -> bool override
+                    {
+                        return m_impl.expects_argument();
+                    }
+
+                    auto get_joined_names() const -> std::string override
+                    {
+                        m_impl.get_joined_names();
+                    }
+
+                    auto get_help() const -> std::string const & override
+                    {
+                        return m_impl.get_help();
+                    }
+
+                    auto has_nargs() const -> bool override
+                    {
+                        return m_impl.has_nargs();
+                    }
+
+                    auto has_nargs_number() const -> bool override
+                    {
+                        return m_impl.has_nargs_number();
+                    }
+
+                    auto has_choices() const -> bool override
+                    {
+                        return m_impl.has_choices();
+                    }
+
+                    auto get_joined_choices(std::string_view separator) const -> std::string override
+                    {
+                        return m_impl.get_joined_choices(separator);
+                    }
+
+                    auto get_nargs_number() const -> std::size_t override
+                    {
+                        return m_impl.get_nargs_number();
+                    }
+
+                    auto get_nargs_option() const -> Nargs override
+                    {
+                        return m_impl.get_nargs_option();
+                    }
+
+                private:
+                    ArgumentCommonImpl m_impl;
+            };
+
             class ArgumentCommon : public Argument, public Formattable, public OptionsHolder
             {
                 public:
