@@ -699,6 +699,159 @@ namespace argparse
                     Options m_options;
             };
 
+            class ArgumentCommonImpl
+            {
+                public:
+                    explicit ArgumentCommonImpl(Options options)
+                      : m_options(std::move(options))
+                    {
+                    }
+
+                    auto get_name() const -> std::string const &
+                    {
+                        return m_options.names.front();
+                    }
+
+                    auto get_names() const -> std::vector<std::string> const &
+                    {
+                        return m_options.names;
+                    }
+
+                    auto get_joined_names() const -> std::string
+                    {
+                        return join(m_options.names, "/");
+                    }
+
+                    auto has_nargs() const -> bool
+                    {
+                        return m_options.nargs.has_value();
+                    }
+
+                    auto has_nargs_number() const -> bool
+                    {
+                        return std::holds_alternative<std::size_t>(*m_options.nargs);
+                    }
+
+                    auto get_nargs_number() const -> std::size_t
+                    {
+                        return std::get<std::size_t>(*m_options.nargs);
+                    }
+
+                    auto get_nargs_option() const -> Nargs
+                    {
+                        return std::get<Nargs>(*m_options.nargs);
+                    }
+
+                    auto is_mutually_exclusive() const -> bool
+                    {
+                        return m_options.mutually_exclusive_group != nullptr;
+                    }
+
+                    auto is_mutually_exclusive_with(ArgumentCommonImpl const & other) const -> bool
+                    {
+                        return (m_options.mutually_exclusive_group != nullptr) && (m_options.mutually_exclusive_group == other.m_options.mutually_exclusive_group);
+                    }
+
+                    auto expects_argument() const -> bool
+                    {
+                        return m_options.action == store || m_options.action == append;
+                    }
+
+                    auto has_version_action() const -> bool
+                    {
+                        return m_options.action == version;
+                    }
+
+                    auto get_help() const -> std::string const &
+                    {
+                        return m_options.help;
+                    }
+
+                    auto has_choices() const -> bool
+                    {
+                        return !m_options.choices.empty();
+                    }
+
+                    auto get_joined_choices(std::string_view separator) const -> std::string
+                    {
+                        return join(m_options.choices | std::views::transform([&](auto const & choice) { return m_options.type_handler->to_string(choice); }), separator);
+                    }
+
+                    auto parse_arguments(std::ranges::view auto tokens) -> std::any
+                    {
+                        auto const values = consume_tokens(tokens);
+                        return m_options.type_handler->transform(values);
+                    }
+
+                    auto consume_token(Token & token) const -> std::any
+                    {
+                        token.m_consumed = true;
+                        return process_token(token.m_token);
+                    }
+
+                    auto process_token(std::string const & token) const -> std::any
+                    {
+                        auto const value = m_options.type_handler->from_string(token);
+                        if (!value.has_value())
+                        {
+                            throw parsing_error(std::format("argument {}: invalid value: '{}'", "name-for-error", token));
+                        }
+                        check_choices(value);
+                        return value;
+                    }
+
+                    auto consume_tokens(std::ranges::view auto tokens) const -> std::vector<std::any>
+                    {
+                        auto result = std::vector<std::any>();
+                        auto consumed = std::vector<Token *>();
+                        for (auto & token : tokens)
+                        {
+                            result.push_back(process_token(token.m_token));
+                            consumed.push_back(&token);
+                        }
+                        std::ranges::for_each(consumed, [](auto token) { token->m_consumed = true; });
+                        return result;
+                    }
+
+                    auto check_choices(std::any const & value) const -> void
+                    {
+                        if (m_options.choices.empty())
+                        {
+                            return;
+                        }
+
+                        if (!std::ranges::any_of(
+                            m_options.choices,
+                            [&](auto const & rhs) { return m_options.type_handler->compare(value, rhs); }))
+                        {
+                            auto const message = std::format(
+                                "argument {}: invalid choice: {} (choose from {})",
+                                get_joined_names(),
+                                m_options.type_handler->to_string(value),
+                                get_joined_choices(", "));
+                            throw parsing_error(message);
+                        }
+                    }
+
+                    auto get_transformed(std::vector<std::any> const & values) const -> std::any
+                    {
+                        return m_options.type_handler->transform(values);
+                    }
+
+                    auto get_size(std::any const & value) const -> std::size_t
+                    {
+                        return m_options.type_handler->size(value);
+                    }
+
+                    auto append_value(std::any const & value, std::any & values) const -> void
+                    {
+                        m_options.type_handler->append(value, values);
+                    }
+
+                private:
+                    Options m_options;
+            };
+
             class ArgumentCommon : public Argument, public Formattable, public OptionsHolder
             {
                 public:
