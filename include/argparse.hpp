@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <any>
 #include <format>
+#include <functional>
 #include <iostream>
 #include <map>
 #include <memory>
@@ -626,23 +627,83 @@ namespace argparse
                 std::unique_ptr<TypeHandler> type_handler = std::make_unique<TypeHandlerT<std::string>>();
             };
 
-            class OptionsHolder
+            class ArgumentCommonImpl
             {
-                protected:
-                    explicit OptionsHolder(Options options)
+                public:
+                    ArgumentCommonImpl(Options options, std::function<std::string()> name_for_error)
                       : m_options(std::move(options))
+                      , m_name_for_error(name_for_error)
                     {
                     }
-                    ~OptionsHolder() = default;
+
+                    auto get_name() const -> std::string const &
+                    {
+                        return m_options.names.front();
+                    }
 
                     auto get_names() const -> std::vector<std::string> const &
                     {
                         return m_options.names;
                     }
 
+                    auto get_joined_names() const -> std::string
+                    {
+                        return join(m_options.names, "/");
+                    }
+
+                    auto has_nargs() const -> bool
+                    {
+                        return m_options.nargs.has_value();
+                    }
+
+                    auto has_nargs_number() const -> bool
+                    {
+                        return std::holds_alternative<std::size_t>(*m_options.nargs);
+                    }
+
+                    auto get_nargs_number() const -> std::size_t
+                    {
+                        return std::get<std::size_t>(*m_options.nargs);
+                    }
+
+                    auto get_nargs_option() const -> Nargs
+                    {
+                        return std::get<Nargs>(*m_options.nargs);
+                    }
+
+                    auto is_mutually_exclusive() const -> bool
+                    {
+                        return m_options.mutually_exclusive_group != nullptr;
+                    }
+
+                    auto is_mutually_exclusive_with(ArgumentCommonImpl const & other) const -> bool
+                    {
+                        return (m_options.mutually_exclusive_group != nullptr) && (m_options.mutually_exclusive_group == other.m_options.mutually_exclusive_group);
+                    }
+
+                    auto expects_argument() const -> bool
+                    {
+                        return m_options.action == store || m_options.action == append;
+                    }
+
+                    auto has_version_action() const -> bool
+                    {
+                        return m_options.action == version;
+                    }
+
                     auto get_help() const -> std::string const &
                     {
                         return m_options.help;
+                    }
+
+                    auto get_default() const -> std::any const &
+                    {
+                        return m_options.default_;
+                    }
+
+                    auto get_const() const -> std::any const &
+                    {
+                        return m_options.const_;
                     }
 
                     auto get_metavar() const -> std::string const &
@@ -655,141 +716,30 @@ namespace argparse
                         return m_options.dest;
                     }
 
-                    auto get_action() const -> Action
-                    {
-                        return m_options.action;
-                    }
-
-                    auto get_const() const -> std::any const &
-                    {
-                        return m_options.const_;
-                    }
-
-                    auto get_default() const -> std::any const &
-                    {
-                        return m_options.default_;
-                    }
-
                     auto get_required() const -> bool
                     {
                         return m_options.required;
                     }
 
-                    auto get_choices() const -> std::vector<std::any> const &
+                    auto get_action() const -> Action
                     {
-                        return m_options.choices;
-                    }
-
-                    auto get_nargs() const -> std::optional<std::variant<std::size_t, Nargs>> const &
-                    {
-                        return m_options.nargs;
-                    }
-
-                    auto get_mutually_exclusive_group() const -> MutuallyExclusiveGroup const *
-                    {
-                        return m_options.mutually_exclusive_group;
-                    }
-
-                    auto get_type_handler() const -> TypeHandler const &
-                    {
-                        return *m_options.type_handler;
-                    }
-
-                private:
-                    Options m_options;
-            };
-
-            class ArgumentCommon : public Argument, public Formattable, public OptionsHolder
-            {
-                public:
-                    explicit ArgumentCommon(Options options)
-                      : OptionsHolder(std::move(options))
-                    {
-                    }
-                    virtual ~ArgumentCommon() = default;
-
-                    auto get_name() const -> std::string const &
-                    {
-                        return get_names().front();
-                    }
-
-                    auto get_names() const -> std::vector<std::string> const &
-                    {
-                        return OptionsHolder::get_names();
-                    }
-
-                    auto get_joined_names() const -> std::string
-                    {
-                        return join(get_names(), "/");
-                    }
-
-                    auto has_nargs() const -> bool
-                    {
-                        return get_nargs().has_value();
-                    }
-
-                    auto has_nargs_number() const -> bool
-                    {
-                        return std::holds_alternative<std::size_t>(*get_nargs());
-                    }
-
-                    auto get_nargs_number() const -> std::size_t
-                    {
-                        return std::get<std::size_t>(*get_nargs());
-                    }
-
-                    auto get_nargs_option() const -> Nargs
-                    {
-                        return std::get<Nargs>(*get_nargs());
-                    }
-
-                    auto is_mutually_exclusive() const -> bool
-                    {
-                        return get_mutually_exclusive_group() != nullptr;
-                    }
-
-                    auto is_mutually_exclusive_with(Argument const & other) const -> bool
-                    {
-                        return (get_mutually_exclusive_group() != nullptr) && (get_mutually_exclusive_group() == static_cast<ArgumentCommon const &>(other).get_mutually_exclusive_group());
-                    }
-
-                    auto is_mutually_exclusive_with(Formattable const & other) const -> bool
-                    {
-                        return (get_mutually_exclusive_group() != nullptr) && (get_mutually_exclusive_group() == static_cast<ArgumentCommon const &>(other).get_mutually_exclusive_group());
-                    }
-
-                    auto expects_argument() const -> bool
-                    {
-                        return get_action() == store || get_action() == append;
-                    }
-
-                    auto has_version_action() const -> bool
-                    {
-                        return get_action() == version;
-                    }
-
-                    auto get_help() const -> std::string const &
-                    {
-                        return OptionsHolder::get_help();
+                        return m_options.action;
                     }
 
                     auto has_choices() const -> bool
                     {
-                        return !get_choices().empty();
+                        return !m_options.choices.empty();
                     }
 
                     auto get_joined_choices(std::string_view separator) const -> std::string
                     {
-                        return join(get_choices() | std::views::transform([&](auto const & choice) { return get_type_handler().to_string(choice); }), separator);
+                        return join(m_options.choices | std::views::transform([&](auto const & choice) { return m_options.type_handler->to_string(choice); }), separator);
                     }
-
-                protected:
-                    virtual auto get_name_for_error() const -> std::string = 0;
 
                     auto parse_arguments(std::ranges::view auto tokens) -> std::any
                     {
                         auto const values = consume_tokens(tokens);
-                        return get_type_handler().transform(values);
+                        return m_options.type_handler->transform(values);
                     }
 
                     auto consume_token(Token & token) const -> std::any
@@ -800,10 +750,10 @@ namespace argparse
 
                     auto process_token(std::string const & token) const -> std::any
                     {
-                        auto const value = get_type_handler().from_string(token);
+                        auto const value = m_options.type_handler->from_string(token);
                         if (!value.has_value())
                         {
-                            throw parsing_error(std::format("argument {}: invalid value: '{}'", get_name_for_error(), token));
+                            throw parsing_error(std::format("argument {}: invalid value: '{}'", m_name_for_error(), token));
                         }
                         check_choices(value);
                         return value;
@@ -824,19 +774,19 @@ namespace argparse
 
                     auto check_choices(std::any const & value) const -> void
                     {
-                        if (get_choices().empty())
+                        if (m_options.choices.empty())
                         {
                             return;
                         }
 
                         if (!std::ranges::any_of(
-                            get_choices(),
-                            [&](auto const & rhs) { return get_type_handler().compare(value, rhs); }))
+                            m_options.choices,
+                            [&](auto const & rhs) { return m_options.type_handler->compare(value, rhs); }))
                         {
                             auto const message = std::format(
                                 "argument {}: invalid choice: {} (choose from {})",
                                 get_joined_names(),
-                                get_type_handler().to_string(value),
+                                m_options.type_handler->to_string(value),
                                 get_joined_choices(", "));
                             throw parsing_error(message);
                         }
@@ -844,21 +794,181 @@ namespace argparse
 
                     auto get_transformed(std::vector<std::any> const & values) const -> std::any
                     {
-                        return get_type_handler().transform(values);
+                        return m_options.type_handler->transform(values);
                     }
 
                     auto get_size(std::any const & value) const -> std::size_t
                     {
-                        return get_type_handler().size(value);
+                        return m_options.type_handler->size(value);
                     }
 
                     auto append_value(std::any const & value, std::any & values) const -> void
                     {
-                        get_type_handler().append(value, values);
+                        m_options.type_handler->append(value, values);
                     }
+
+                private:
+                    Options m_options;
+                    std::function<std::string()> m_name_for_error;
             };
 
-            class PositionalArgument final : public ArgumentCommon
+            class ArgumentCommonBase : public Argument, public Formattable
+            {
+                public:
+                    explicit ArgumentCommonBase(Options options)
+                      : m_impl(std::move(options), [this]() { return this->get_name_for_error(); })
+                    {
+                    }
+                    virtual ~ArgumentCommonBase() = default;
+
+                    auto get_name() const -> std::string const & override
+                    {
+                        return m_impl.get_name();
+                    }
+
+                    auto get_names() const -> std::vector<std::string> const & override
+                    {
+                        return m_impl.get_names();
+                    }
+
+                    auto is_mutually_exclusive() const -> bool override
+                    {
+                        return m_impl.is_mutually_exclusive();
+                    }
+
+                    auto is_mutually_exclusive_with(Argument const & other) const -> bool override
+                    {
+                        return m_impl.is_mutually_exclusive_with(static_cast<ArgumentCommonBase const &>(other).m_impl);
+                    }
+
+                    auto is_mutually_exclusive_with(Formattable const & other) const -> bool override
+                    {
+                        return m_impl.is_mutually_exclusive_with(static_cast<ArgumentCommonBase const &>(other).m_impl);
+                    }
+
+                    auto expects_argument() const -> bool override
+                    {
+                        return m_impl.expects_argument();
+                    }
+
+                    auto get_joined_names() const -> std::string override
+                    {
+                        return m_impl.get_joined_names();
+                    }
+
+                    auto get_help() const -> std::string const & override
+                    {
+                        return m_impl.get_help();
+                    }
+
+                    auto has_nargs() const -> bool override
+                    {
+                        return m_impl.has_nargs();
+                    }
+
+                    auto has_nargs_number() const -> bool override
+                    {
+                        return m_impl.has_nargs_number();
+                    }
+
+                    auto has_choices() const -> bool override
+                    {
+                        return m_impl.has_choices();
+                    }
+
+                    auto get_joined_choices(std::string_view separator) const -> std::string override
+                    {
+                        return m_impl.get_joined_choices(separator);
+                    }
+
+                    auto get_nargs_number() const -> std::size_t override
+                    {
+                        return m_impl.get_nargs_number();
+                    }
+
+                    auto get_nargs_option() const -> Nargs override
+                    {
+                        return m_impl.get_nargs_option();
+                    }
+
+                protected:
+                    auto get_default() const -> std::any const &
+                    {
+                        return m_impl.get_default();
+                    }
+
+                    auto get_const() const -> std::any const &
+                    {
+                        return m_impl.get_const();
+                    }
+
+                    auto get_metavar() const -> std::string const &
+                    {
+                        return m_impl.get_metavar();
+                    }
+
+                    auto get_dest() const -> std::string const &
+                    {
+                        return m_impl.get_dest();
+                    }
+
+                    auto get_required() const -> bool
+                    {
+                        return m_impl.get_required();
+                    }
+
+                    auto get_action() const -> Action
+                    {
+                        return m_impl.get_action();
+                    }
+
+                    auto parse_arguments(std::ranges::view auto tokens) -> std::any
+                    {
+                        return m_impl.parse_arguments(tokens);
+                    }
+
+                    auto consume_token(Token & token) const -> std::any
+                    {
+                        return m_impl.consume_token(token);
+                    }
+
+                    auto process_token(std::string const & token) const -> std::any
+                    {
+                        return m_impl.process_token(token);
+                    }
+
+                    auto consume_tokens(std::ranges::view auto tokens) const -> std::vector<std::any>
+                    {
+                        return m_impl.consume_tokens(tokens);
+                    }
+
+                    auto check_choices(std::any const & value) const -> void
+                    {
+                        m_impl.check_choices(value);
+                    }
+
+                    auto get_transformed(std::vector<std::any> const & values) const -> std::any
+                    {
+                        return m_impl.get_transformed(values);
+                    }
+
+                    auto get_size(std::any const & value) const -> std::size_t
+                    {
+                        return m_impl.get_size(value);
+                    }
+
+                    auto append_value(std::any const & value, std::any & values) const -> void
+                    {
+                        m_impl.append_value(value, values);
+                    }
+
+                    virtual auto get_name_for_error() const -> std::string = 0;
+
+                private:
+                    ArgumentCommonImpl m_impl;
+            };
+
+            class PositionalArgument final : public ArgumentCommonBase
             {
                 private:
                     auto parse_arguments_option(std::ranges::view auto tokens) -> void
@@ -926,7 +1036,7 @@ namespace argparse
 
                 public:
                     explicit PositionalArgument(Options options)
-                      : ArgumentCommon(std::move(options))
+                      : ArgumentCommonBase(std::move(options))
                     {
                     }
 
@@ -999,7 +1109,7 @@ namespace argparse
                     std::any m_value;
             };
 
-            class OptionalArgument final : public ArgumentCommon
+            class OptionalArgument final : public ArgumentCommonBase
             {
                 private:
                     auto perform_action(std::string const & value, std::ranges::view auto tokens) -> void
@@ -1294,7 +1404,7 @@ namespace argparse
 
                 public:
                     explicit OptionalArgument(Options options)
-                      : ArgumentCommon(std::move(options))
+                      : ArgumentCommonBase(std::move(options))
                     {
                     }
 
@@ -1386,7 +1496,7 @@ namespace argparse
                     }
             };
 
-            using ArgumentUptr = std::unique_ptr<ArgumentCommon>;
+            using ArgumentUptr = std::unique_ptr<ArgumentCommonBase>;
             using ArgumentUptrs = std::vector<ArgumentUptr>;
 
             class Formatter
