@@ -889,7 +889,7 @@ namespace argparse
             {
                 public:
                     explicit ArgumentCommonBase(Options options)
-                      : m_impl(std::move(options))
+                      : m_impl(std::move(options), [this]() { return this->get_name_for_error(); })
                     {
                     }
                     virtual ~ArgumentCommonBase() = default;
@@ -926,12 +926,42 @@ namespace argparse
 
                     auto get_joined_names() const -> std::string override
                     {
-                        m_impl.get_joined_names();
+                        return m_impl.get_joined_names();
                     }
 
                     auto get_help() const -> std::string const & override
                     {
                         return m_impl.get_help();
+                    }
+
+                    auto get_default() const -> std::any const &
+                    {
+                        return m_impl.get_default();
+                    }
+
+                    auto get_const() const -> std::any const &
+                    {
+                        return m_impl.get_const();
+                    }
+
+                    auto get_metavar() const -> std::string const &
+                    {
+                        return m_impl.get_metavar();
+                    }
+
+                    auto get_dest() const -> std::string const &
+                    {
+                        return m_impl.get_dest();
+                    }
+
+                    auto get_required() const -> bool
+                    {
+                        return m_impl.get_required();
+                    }
+
+                    auto get_action() const -> Action
+                    {
+                        return m_impl.get_action();
                     }
 
                     auto has_nargs() const -> bool override
@@ -963,6 +993,48 @@ namespace argparse
                     {
                         return m_impl.get_nargs_option();
                     }
+
+                    auto parse_arguments(std::ranges::view auto tokens) -> std::any
+                    {
+                        return m_impl.parse_arguments(tokens);
+                    }
+
+                    auto consume_token(Token & token) const -> std::any
+                    {
+                        return m_impl.consume_token(token);
+                    }
+
+                    auto process_token(std::string const & token) const -> std::any
+                    {
+                        return m_impl.process_token(token);
+                    }
+
+                    auto consume_tokens(std::ranges::view auto tokens) const -> std::vector<std::any>
+                    {
+                        return m_impl.consume_tokens(tokens);
+                    }
+
+                    auto check_choices(std::any const & value) const -> void
+                    {
+                        m_impl.check_choices(value);
+                    }
+
+                    auto get_transformed(std::vector<std::any> const & values) const -> std::any
+                    {
+                        return m_impl.get_transformed(values);
+                    }
+
+                    auto get_size(std::any const & value) const -> std::size_t
+                    {
+                        return m_impl.get_size(value);
+                    }
+
+                    auto append_value(std::any const & value, std::any & values) const -> void
+                    {
+                        m_impl.append_value(value, values);
+                    }
+
+                    virtual auto get_name_for_error() const -> std::string = 0;
 
                 private:
                     ArgumentCommonImpl m_impl;
