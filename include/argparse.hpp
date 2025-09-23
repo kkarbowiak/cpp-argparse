@@ -1298,7 +1298,7 @@ namespace argparse
                                     {
                                         auto const prefix = it->m_token.substr(0, pos);
                                         auto const value = it->m_token.substr(pos);
-                                        *it = Token{prefix};
+                                        it->m_token = prefix;
                                         return value;
                                     }
                                 }
