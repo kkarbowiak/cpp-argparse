@@ -608,7 +608,7 @@ namespace argparse
                     virtual auto get_nargs_option() const -> Nargs = 0;
 
                 protected:
-                    virtual ~Formattable() = default;
+                    ~Formattable() = default;
             };
 
             struct Options
