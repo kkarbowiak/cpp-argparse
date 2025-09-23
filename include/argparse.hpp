@@ -608,7 +608,7 @@ namespace argparse
                     virtual auto get_nargs_option() const -> Nargs = 0;
 
                 protected:
-                    virtual ~Formattable() = default;
+                    ~Formattable() = default;
             };
 
             struct Options
@@ -1298,7 +1298,7 @@ namespace argparse
                                     {
                                         auto const prefix = it->m_token.substr(0, pos);
                                         auto const value = it->m_token.substr(pos);
-                                        *it = Token{prefix};
+                                        it->m_token = prefix;
                                         return value;
                                     }
                                 }
