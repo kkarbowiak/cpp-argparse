@@ -1199,7 +1199,7 @@ namespace argparse
                     }
             };
 
-            class PositionalArgument final : public ArgumentCommon
+            class PositionalArgument final : public ArgumentCommonBase
             {
                 private:
                     auto parse_arguments_option(std::ranges::view auto tokens) -> void
@@ -1267,7 +1267,7 @@ namespace argparse
 
                 public:
                     explicit PositionalArgument(Options options)
-                      : ArgumentCommon(std::move(options))
+                      : ArgumentCommonBase(std::move(options))
                     {
                     }
 
@@ -1340,7 +1340,7 @@ namespace argparse
                     std::any m_value;
             };
 
-            class OptionalArgument final : public ArgumentCommon
+            class OptionalArgument final : public ArgumentCommonBase
             {
                 private:
                     auto perform_action(std::string const & value, std::ranges::view auto tokens) -> void
@@ -1635,7 +1635,7 @@ namespace argparse
 
                 public:
                     explicit OptionalArgument(Options options)
-                      : ArgumentCommon(std::move(options))
+                      : ArgumentCommonBase(std::move(options))
                     {
                     }
 
@@ -1727,7 +1727,7 @@ namespace argparse
                     }
             };
 
-            using ArgumentUptr = std::unique_ptr<ArgumentCommon>;
+            using ArgumentUptr = std::unique_ptr<ArgumentCommonBase>;
             using ArgumentUptrs = std::vector<ArgumentUptr>;
 
             class Formatter
