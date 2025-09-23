@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <any>
 #include <format>
+#include <functional>
 #include <iostream>
 #include <map>
 #include <memory>
@@ -702,8 +703,9 @@ namespace argparse
             class ArgumentCommonImpl
             {
                 public:
-                    explicit ArgumentCommonImpl(Options options)
+                    ArgumentCommonImpl(Options options, std::function<std::string()> name_for_error)
                       : m_options(std::move(options))
+                      , m_name_for_error(name_for_error)
                     {
                     }
 
@@ -767,6 +769,36 @@ namespace argparse
                         return m_options.help;
                     }
 
+                    auto get_default() const -> std::any const &
+                    {
+                        return m_options.default_;
+                    }
+
+                    auto get_const() const -> std::any const &
+                    {
+                        return m_options.const_;
+                    }
+
+                    auto get_metavar() const -> std::string const &
+                    {
+                        return m_options.metavar;
+                    }
+
+                    auto get_dest() const -> std::string const &
+                    {
+                        return m_options.dest;
+                    }
+
+                    auto get_required() const -> bool
+                    {
+                        return m_options.required;
+                    }
+
+                    auto get_action() const -> Action
+                    {
+                        return m_options.action;
+                    }
+
                     auto has_choices() const -> bool
                     {
                         return !m_options.choices.empty();
@@ -794,7 +826,7 @@ namespace argparse
                         auto const value = m_options.type_handler->from_string(token);
                         if (!value.has_value())
                         {
-                            throw parsing_error(std::format("argument {}: invalid value: '{}'", "name-for-error", token));
+                            throw parsing_error(std::format("argument {}: invalid value: '{}'", m_name_for_error(), token));
                         }
                         check_choices(value);
                         return value;
@@ -850,6 +882,7 @@ namespace argparse
 
                 private:
                     Options m_options;
+                    std::function<std::string()> m_name_for_error;
             };
 
             class ArgumentCommonBase : public Argument, public Formattable
