@@ -861,36 +861,6 @@ namespace argparse
                         return m_impl.get_help();
                     }
 
-                    auto get_default() const -> std::any const &
-                    {
-                        return m_impl.get_default();
-                    }
-
-                    auto get_const() const -> std::any const &
-                    {
-                        return m_impl.get_const();
-                    }
-
-                    auto get_metavar() const -> std::string const &
-                    {
-                        return m_impl.get_metavar();
-                    }
-
-                    auto get_dest() const -> std::string const &
-                    {
-                        return m_impl.get_dest();
-                    }
-
-                    auto get_required() const -> bool
-                    {
-                        return m_impl.get_required();
-                    }
-
-                    auto get_action() const -> Action
-                    {
-                        return m_impl.get_action();
-                    }
-
                     auto has_nargs() const -> bool override
                     {
                         return m_impl.has_nargs();
@@ -919,6 +889,37 @@ namespace argparse
                     auto get_nargs_option() const -> Nargs override
                     {
                         return m_impl.get_nargs_option();
+                    }
+
+                protected:
+                    auto get_default() const -> std::any const &
+                    {
+                        return m_impl.get_default();
+                    }
+
+                    auto get_const() const -> std::any const &
+                    {
+                        return m_impl.get_const();
+                    }
+
+                    auto get_metavar() const -> std::string const &
+                    {
+                        return m_impl.get_metavar();
+                    }
+
+                    auto get_dest() const -> std::string const &
+                    {
+                        return m_impl.get_dest();
+                    }
+
+                    auto get_required() const -> bool
+                    {
+                        return m_impl.get_required();
+                    }
+
+                    auto get_action() const -> Action
+                    {
+                        return m_impl.get_action();
                     }
 
                     auto parse_arguments(std::ranges::view auto tokens) -> std::any
