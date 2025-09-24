@@ -930,7 +930,7 @@ The library could act smart here and automatically convert the `const char*` typ
 
 You may wonder whether this library allows using types other than the built-in ones (`int`, `float`, `double`, etc.) or `std::string`. Actually, yes, it does!
 
-You can parse directly to any custom type, provided that this type is default-constructible and you provide a way to do string-type and type-string conversion as well as equality comparison. This may sound complicated, but basically boils down to specialising three template functions: `argparse::from_string`, `argparse::to_string`, and `argparse::are_equal`, which are the library's customisation points. Let's have a look at an example (`custom.cpp`):
+You can parse directly to any custom type, provided that this type is default-constructible and you provide a way to do string-type and type-string conversion as well as equality comparison. This may sound complicated, but basically boils down to specialising three template functions: `argparse::from_string`, `argparse::to_string`, and `argparse::are_equal`, which are the library's customisation points. Let's have a look at an example (`custom1.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <string>
@@ -990,9 +990,9 @@ auto main(int argc, char * argv[]) -> int
 ```
 And the output:
 ```
-$ custom
+$ custom1
 the following arguments are required: start end
-usage: custom [-h] start end
+usage: custom1 [-h] start end
 
 positional arguments:
   start
@@ -1000,7 +1000,7 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-$ custom 0,0 1,1
+$ custom1 0,0 1,1
 The distance is 1.41421
 ```
 The return value of `argparse::from_string` indicates whether the conversion succeeded. You can use it to your advantage (`custom2.cpp`):
