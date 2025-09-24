@@ -28,13 +28,13 @@ target_link_libraries(unittest PRIVATE
 
 target_compile_features(unittest PRIVATE cxx_std_20)
 target_compile_options(unittest PRIVATE
-                           $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
-                               -Wall -Wextra -Wmisleading-indentation -Wunused
-                               -Wuninitialized -Wshadow -Wconversion -Wsign-conversion
-                               -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Woverloaded-virtual
-                               -Werror -pedantic-errors $ENV{COMPILER_OPTIONS}>
-                           $<$<CXX_COMPILER_ID:MSVC>:
-                               /W4 /WX /permissive->)
+    $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
+        -Wall -Wextra -Wmisleading-indentation -Wunused
+        -Wuninitialized -Wshadow -Wconversion -Wsign-conversion
+        -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Woverloaded-virtual
+        -Werror -pedantic-errors $ENV{COMPILER_OPTIONS}>
+    $<$<CXX_COMPILER_ID:MSVC>:
+        /W4 /WX /permissive->)
 target_link_options(unittest PRIVATE $ENV{LINKER_OPTIONS})
 
 add_test(NAME unit-test COMMAND unittest)
