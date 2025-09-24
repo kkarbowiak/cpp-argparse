@@ -1,32 +1,33 @@
 cmake_minimum_required(VERSION 3.15)
 
 set(targets
-    advanced
     advanced1
+    advanced2
     basic
-    complex
     complex1
     complex2
     complex3
-    conflicting
+    complex4
     conflicting1
-    count
+    conflicting2
+    count1
     count2
     count3
     count4
-    custom
     custom1
     custom2
-    nohandling
+    custom3
     nohandling1
     nohandling2
+    nohandling3
     nohelp
-    optional
     optional1
     optional2
-    positional
+    optional3
     positional1
-    positional3
+    positional2
+    # positional3 -- intentionally skipped as it does not compile
+    positional4
     string
     types
     undesired

@@ -4,8 +4,7 @@
 auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
-    parser.add_argument("square").help("display a square of a given number");
+    parser.add_argument("echo").help("echo the string you use here");
     auto parsed = parser.parse_args(argc, argv);
-    auto value = parsed.get_value("square");
-    std::cout << value * value << '\n';
+    std::cout << parsed.get_value("echo") << '\n';
 }

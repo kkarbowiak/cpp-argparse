@@ -4,7 +4,7 @@
 
 auto main(int argc, char * argv[]) -> int
 {
-    auto parser = argparse::ArgumentParser();
+    auto parser = argparse::ArgumentParser().description("calculate X to the power of Y");
     auto group = parser.add_mutually_exclusive_group();
     group.add_argument("-v", "--verbose").action(argparse::store_true);
     group.add_argument("-q", "--quiet").action(argparse::store_true);

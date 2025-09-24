@@ -10,7 +10,7 @@ Let's start with a very simple example that doesn't do much (`basic.cpp`):
 ```c++
 #include "argparse.hpp"
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.parse_args(argc, argv);
@@ -45,12 +45,12 @@ Here is what is happening:
 
  ## Introducing Positional arguments
 
-An example (`positional.cpp`):
+An example (`positional1.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("echo");
@@ -60,24 +60,24 @@ int main(int argc, char * argv[])
 ```
 And running the code:
 ```
-$ positional
+$ positional1
 the following arguments are required: echo
-usage: positional [-h] echo
+usage: positional1 [-h] echo
 
 positional arguments:
   echo
 
 optional arguments:
   -h, --help            show this help message and exit
-$ positional --help
-usage: positional [-h] echo
+$ positional1 --help
+usage: positional1 [-h] echo
 
 positional arguments:
   echo
 
 optional arguments:
   -h, --help            show this help message and exit
-$ positional foo
+$ positional1 foo
 foo
 ```
 Here is what is happening:
@@ -86,12 +86,12 @@ Here is what is happening:
  * The `parse_args` function actually returns the result of parsing. You can get the argument's value by calling `get_value` on the returned object and giving the option name.
  * By default, the returned value is of type `std::string`.
 
-Note that while the help message looks nice, it is not as helpful as it could be. For example we see that we got `echo` as a positional argument, but we don't know what it does. Let's make it a bit more useful  (`positional1.cpp`):
+Note that while the help message looks nice, it is not as helpful as it could be. For example we see that we got `echo` as a positional argument, but we don't know what it does. Let's make it a bit more useful  (`positional2.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("echo").help("echo the string you use here");
@@ -101,8 +101,8 @@ int main(int argc, char * argv[])
 ```
 And we get:
 ```
-$ positional1 --help
-usage: positional1 [-h] echo
+$ positional2 --help
+usage: positional2 [-h] echo
 
 positional arguments:
   echo                  echo the string you use here
@@ -110,12 +110,12 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
 ```
-Now, how about doing some math  (`positional2.cpp`):
+Now, how about doing some math  (`positional3.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("square").help("display a square of a given number");
@@ -124,12 +124,12 @@ int main(int argc, char * argv[])
     std::cout << value * value << '\n';
 }
 ```
-Well, this won't compile and your compiler will complain that the `std::string` type does not define a binary `*` operator. As I mentioned, the default type for all options is `std::string`. Let's tell the parser to treat the `square` option as an integer  (`positional3.cpp`):
+Well, this won't compile and your compiler will complain that the `std::string` type does not define a binary `*` operator. As I mentioned, the default type for all options is `std::string`. Let's tell the parser to treat the `square` option as an integer  (`positional4.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("square").help("display a square of a given number").type<int>();
@@ -140,11 +140,11 @@ int main(int argc, char * argv[])
 ```
 Follwoing is the result of running the code:
 ```
-$ positional3 4
+$ positional4 4
 16
-$ positional3 four
+$ positional4 four
 argument square: invalid value: 'four'
-usage: positional3 [-h] square
+usage: positional4 [-h] square
 
 positional arguments:
   square                display a square of a given number
@@ -156,12 +156,12 @@ That went well. The program now even detects an invalid value and quits with an 
 
 ## Introducing Optional arguments
 
-So far we have been playing with positional arguments. Let's see how to add optional ones (`optional.cpp`):
+So far we have been playing with positional arguments. Let's see how to add optional ones (`optional1.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("--verbosity").help("increase output verbosity");
@@ -174,19 +174,19 @@ int main(int argc, char * argv[])
 ```
 And the output:
 ```
-$ optional --verbosity 1
+$ optional1 --verbosity 1
 verbosity turned on
-$ optional
-$ optional --help
-usage: optional [-h] [--verbosity VERBOSITY]
+$ optional1
+$ optional1 --help
+usage: optional1 [-h] [--verbosity VERBOSITY]
 
 optional arguments:
   -h, --help            show this help message and exit
   --verbosity VERBOSITY
                         increase output verbosity
-$ optional --verbosity
+$ optional1 --verbosity
 argument --verbosity: expected one argument
-usage: optional [-h] [--verbosity VERBOSITY]
+usage: optional1 [-h] [--verbosity VERBOSITY]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -199,12 +199,12 @@ Here is what is happening:
  * The help message is a bit different.
  * When using the `--verbosity` option, one must specify some arbitrary value.
 
-The above example accepts arbitrary values for `--verbosity`, but for our simple program, only two values are actually useful, `true` and `false`. Let's modify the code accordingly (`optional1.cpp`):
+The above example accepts arbitrary values for `--verbosity`, but for our simple program, only two values are actually useful, `true` and `false`. Let's modify the code accordingly (`optional2.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("--verbose").help("increase output verbosity").action(argparse::store_true);
@@ -217,17 +217,17 @@ int main(int argc, char * argv[])
 ```
 And the output:
 ```
-$ optional1 --verbose
+$ optional2 --verbose
 verbosity turned on
-$ optional1 --verbose 1
+$ optional2 --verbose 1
 unrecognised arguments: 1
-usage: optional1 [-h] [--verbose]
+usage: optional2 [-h] [--verbose]
 
 optional arguments:
   -h, --help            show this help message and exit
   --verbose             increase output verbosity
-$ optional1 --help
-usage: optional1 [-h] [--verbose]
+$ optional2 --help
+usage: optional2 [-h] [--verbose]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -241,12 +241,12 @@ Here is what is happening:
 
 ### Short options
 
-If you are familiar with command line usage, you will notice that I haven't touched on the topic of short versions of the options. It's quite simple (`optional2.cpp`):
+If you are familiar with command line usage, you will notice that I haven't touched on the topic of short versions of the options. It's quite simple (`optional3.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-v", "--verbose").help("increase output verbosity").action(argparse::store_true);
@@ -259,10 +259,10 @@ int main(int argc, char * argv[])
 ```
 And the output:
 ```
-$ optional2 -v
+$ optional3 -v
 verbosity turned on
-$ optional2 --help
-usage: optional2 [-h] [-v]
+$ optional3 --help
+usage: optional3 [-h] [-v]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -272,12 +272,12 @@ Note that the new ability is also reflected in the help text.
 
 ## Combining Positional and Optional arguments
 
-Our program keeps growing in complexity (`complex.cpp`):
+Our program keeps growing in complexity (`complex1.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("square").help("display a square of a given number").type<int>();
@@ -297,9 +297,9 @@ int main(int argc, char * argv[])
 ```
 And now the output:
 ```
-$ complex
+$ complex1
 the following arguments are required: square
-usage: complex [-h] [-v] square
+usage: complex1 [-h] [-v] square
 
 positional arguments:
   square                display a square of a given number
@@ -307,22 +307,22 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -v, --verbose         increase output verbosity
-$ complex 4
+$ complex1 4
 16
-$ complex 4 --verbose
+$ complex1 4 --verbose
 the square of 4 equals 16
-$ complex --verbose 4
+$ complex1 --verbose 4
 the square of 4 equals 16
 ```
  * We have brought back a positional argument, hence the complaint.
  * Note that the order does not matter.
 
-How about we give this program of ours back the ability to have multiple verbosity values, and actually get to use them (`complex1.cpp`):
+How about we give this program of ours back the ability to have multiple verbosity values, and actually get to use them (`complex2.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("square").help("display a square of a given number").type<int>();
@@ -349,11 +349,11 @@ One new thing to note here is the new way of extracting a value for the argument
 
 And the output:
 ```
-$ complex1 4
+$ complex2 4
 16
 $ complex 4 -v
 argument -v/--verbosity: expected one argument
-usage: complex1 [-h] [-v VERBOSITY] square
+usage: complex2 [-h] [-v VERBOSITY] square
 
 positional arguments:
   square                display a square of a given number
@@ -362,19 +362,19 @@ optional arguments:
   -h, --help            show this help message and exit
   -v VERBOSITY, --verbosity VERBOSITY
                         increase output verbosity
-$ complex1 4 -v 1
+$ complex2 4 -v 1
 4^2 == 16
-$ complex1 4 -v 2
+$ complex2 4 -v 2
 the square of 4 equals 16
-$ complex1 4 -v 3
+$ complex2 4 -v 3
 16
 ```
-The above outputs all look good except the last one, which exposes a bug in our program. Let's fix it by restricting the values the `--verbosity` option can accept (`complex2.cpp`):
+The above outputs all look good except the last one, which exposes a bug in our program. Let's fix it by restricting the values the `--verbosity` option can accept (`complex3.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("square").help("display a square of a given number").type<int>();
@@ -399,9 +399,9 @@ int main(int argc, char * argv[])
 ```
 And the output:
 ```
-$ complex2 -v 3
+$ complex3 -v 3
 argument -v/--verbosity: invalid choice: 3 (choose from 0, 1, 2)
-usage: complex2 [-h] [-v {0,1,2}] square
+usage: complex3 [-h] [-v {0,1,2}] square
 
 positional arguments:
   square                display a square of a given number
@@ -413,12 +413,12 @@ optional arguments:
 ```
 Note that the change reflects in both the error message and the help string.
 
-Let us now try out a different approach of playing with verbosity, which is pretty common (`count.cpp`):
+Let us now try out a different approach of playing with verbosity, which is pretty common (`count1.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("square").help("display a square of a given number").type<int>();
@@ -445,17 +445,17 @@ We have introduced another action, “count”, to count the number of occurrenc
 
 And the output:
 ```
-$ count 4
+$ count1 4
 16
-$ count 4 -v
+$ count1 4 -v
 4^2 == 16
-$ count 4 -vv
+$ count1 4 -vv
 the square of 4 equals 16
-$ count 4 --verbosity --verbosity
+$ count1 4 --verbosity --verbosity
 the square of 4 equals 16
-$ count 4 -v 1
+$ count1 4 -v 1
 unrecognised arguments: 1
-usage: count [-h] [-v] square
+usage: count1 [-h] [-v] square
 
 positional arguments:
   square                display a square of a given number
@@ -463,7 +463,7 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -v, --verbosity       increase output verbosity
-$ count 4 -vvv
+$ count1 4 -vvv
 16
 ```
  * The option is more of a flag now (similar to `action(argparse::store_true)` in the previous version of the program). This is where the complaint comes from.
@@ -479,7 +479,7 @@ Let's fix it (`count2.cpp`):
 #include "argparse.hpp"
 #include <iostream>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("square").help("display a square of a given number").type<int>();
@@ -519,7 +519,7 @@ The crash is due to an unhandled exception. Let's add a `try/catch` block to see
 #include "argparse.hpp"
 #include <iostream>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     try
     {
@@ -566,7 +566,7 @@ Ok, let's fix it (`count4.cpp`):
 #include "argparse.hpp"
 #include <iostream>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("square").help("display a square of a given number").type<int>();
@@ -607,12 +607,12 @@ $ count4 4
 
 ### Default values
 
-One way to remove the need of getting the value object and doing a boolean test before extracting the value is to give the option a default value (`complex3.cpp`):
+One way to remove the need of getting the value object and doing a boolean test before extracting the value is to give the option a default value (`complex4.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("square").help("display a square of a given number").type<int>();
@@ -639,24 +639,24 @@ Note that the function for specifying a default value is spelled with an undersc
 
 The output:
 ```
-$ complex3 4
+$ complex4 4
 16
-$ complex3 4 --verbosity 1
+$ complex4 4 --verbosity 1
 4^2 == 16
-$ complex3 4 --verbosity 2
+$ complex4 4 --verbosity 2
 the square of 4 equals 16
 ```
 As expected, if the argument is not specified, it assumes its default value.
 
 ## Getting a little more advanced
 
-What if we wanted to expand our tiny program to perform other powers, not just squares (`advanced.cpp`):
+What if we wanted to expand our tiny program to perform other powers, not just squares (`advanced1.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
 #include <cmath>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("x").type<int>().help("the base");
@@ -683,9 +683,9 @@ int main(int argc, char * argv[])
 ```
 Output:
 ```
-$ advanced
+$ advanced1
 the following arguments are required: x y
-usage: advanced [-h] [-v VERBOSITY] x y
+usage: advanced1 [-h] [-v VERBOSITY] x y
 
 positional arguments:
   x                     the base
@@ -694,16 +694,16 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -v VERBOSITY, --verbosity VERBOSITY
-$ advanced 4 2 -v 1
+$ advanced1 4 2 -v 1
 4^2 == 16
 ```
-Notice that so far we've been using verbosity to *change* the text that gets displayed. The following example instead uses verbosity to display *more* text instead (`advanced1.cpp`):
+Notice that so far we've been using verbosity to *change* the text that gets displayed. The following example instead uses verbosity to display *more* text instead (`advanced2.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
 #include <cmath>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("x").type<int>().help("the base");
@@ -728,24 +728,24 @@ int main(int argc, char * argv[])
 ```
 Output:
 ```
-$ advanced1 4 2
+$ advanced2 4 2
 16
-$ advanced1 4 2 -v 1
+$ advanced2 4 2 -v 1
 4^2 == 16
-$ advanced1 4 2 -v 2
-Running 'advanced1'
+$ advanced2 4 2 -v 2
+Running 'advanced2'
 4^2 == 16
 ```
 
 ### Conflicting options
 
-So far we have been using two member functions of `argparse::ArgumentParser` class. Let's introduce a third one, `add_mutually_exclusive_group()`. It allows us to specify options that conflict with each other. Let's also change the rest of the program so that the new functionality makes more sense: we'll introduce the `--quiet` option, which will be the opposite of the `--verbose` one (`conflicting.cpp`):
+So far we have been using two member functions of `argparse::ArgumentParser` class. Let's introduce a third one, `add_mutually_exclusive_group()`. It allows us to specify options that conflict with each other. Let's also change the rest of the program so that the new functionality makes more sense: we'll introduce the `--quiet` option, which will be the opposite of the `--verbose` one (`conflicting1.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
 #include <cmath>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     auto group = parser.add_mutually_exclusive_group();
@@ -773,15 +773,15 @@ int main(int argc, char * argv[])
 ```
 Our program is now simpler, and we've lost some functionality for the sake of demonstration. Anyways, here's the output:
 ```
-$ conflicting 4 2
+$ conflicting1 4 2
 4^2 == 16
-$ conflicting 4 2 -q
+$ conflicting1 4 2 -q
 16
-$ conflicting 4 2 -v
+$ conflicting1 4 2 -v
 4 to the power 2 equals 16
-$ conflicting 4 2 -q -v
+$ conflicting1 4 2 -q -v
 argument -q/--quiet: not allowed with argument -v/--verbose
-usage: conflicting [-h] [-v | -q] x y
+usage: conflicting1 [-h] [-v | -q] x y
 
 positional arguments:
   x                     the base
@@ -794,13 +794,13 @@ optional arguments:
 ```
 That should be easy to follow. Note that slight difference in the usage text. Note the `[-v | -q]`, which tells us that we can either use `-v` or `-q`, but not both at the same time.
 
-Before we end this part, you probably want to tell your users the main purpose of your program, just in case they don't know (`conflicting1.cpp`):
+Before we end this part, you probably want to tell your users the main purpose of your program, just in case they don't know (`conflicting2.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
 #include <cmath>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser().description("calculate X to the power of Y");
     auto group = parser.add_mutually_exclusive_group();
@@ -829,8 +829,8 @@ int main(int argc, char * argv[])
 
 This results in additional information in help message:
 ```
-$ conflicting1 --help
-usage: conflicting1 [-h] [-v | -q] x y
+$ conflicting2 --help
+usage: conflicting2 [-h] [-v | -q] x y
 
 calculate X to the power of Y
 
@@ -855,7 +855,7 @@ When you want to use default values, choices, or const values in conjunction wit
 #include "argparse.hpp"
 #include <iostream>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("pos").type<int>().choices({1, 2, 3});
@@ -900,7 +900,7 @@ When using `std::string`, **beware not to use** `const char*` by accident. The e
 #include <string>
 #include <iostream>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     using namespace std::string_literals;
 
@@ -930,7 +930,7 @@ The library could act smart here and automatically convert the `const char*` typ
 
 You may wonder whether this library allows using types other than the built-in ones (`int`, `float`, `double`, etc.) or `std::string`. Actually, yes, it does!
 
-You can parse directly to any custom type, provided that this type is default-constructible and you provide a way to do string-type and type-string conversion as well as equality comparison. This may sound complicated, but basically boils down to specialising three template functions: `argparse::from_string`, `argparse::to_string`, and `argparse::are_equal`, which are the library's customisation points. Let's have a look at an example (`custom.cpp`):
+You can parse directly to any custom type, provided that this type is default-constructible and you provide a way to do string-type and type-string conversion as well as equality comparison. This may sound complicated, but basically boils down to specialising three template functions: `argparse::from_string`, `argparse::to_string`, and `argparse::are_equal`, which are the library's customisation points. Let's have a look at an example (`custom1.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <string>
@@ -976,7 +976,7 @@ inline auto are_equal(geometry::Point const & l, geometry::Point const & r) -> b
 }
 }
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("start").type<geometry::Point>();
@@ -990,9 +990,9 @@ int main(int argc, char * argv[])
 ```
 And the output:
 ```
-$ custom
+$ custom1
 the following arguments are required: start end
-usage: custom [-h] start end
+usage: custom1 [-h] start end
 
 positional arguments:
   start
@@ -1000,10 +1000,10 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-$ custom 0,0 1,1
+$ custom1 0,0 1,1
 The distance is 1.41421
 ```
-The return value of `argparse::from_string` indicates whether the conversion succeeded. You can use it to your advantage (`custom1.cpp`):
+The return value of `argparse::from_string` indicates whether the conversion succeeded. You can use it to your advantage (`custom2.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <string>
@@ -1049,7 +1049,7 @@ inline auto are_equal(geometry::Point const & l, geometry::Point const & r) -> b
 }
 }
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("start").type<geometry::Point>();
@@ -1063,11 +1063,11 @@ int main(int argc, char * argv[])
 ```
 Let's see how it works:
 ```
-$ custom1 0,0 -1,-1
+$ custom2 0,0 -1,-1
 The distance is 1.41421
-$ custom1 foo bar
+$ custom2 foo bar
 argument start: invalid value: 'foo'
-usage: custom1 [-h] start end
+usage: custom2 [-h] start end
 
 positional arguments:
   start
@@ -1078,7 +1078,7 @@ optional arguments:
 ```
 Of course it would be even better to let the user know what is the proper format of the arguments instead of having them guess. This can be done via arguments' help messages, but is left here as an excercise for the readers.
 
-At this point you may wonder what the type-string conversion and comparison are needed for. They become important when you want to use choices (`custom2.cpp`):
+At this point you may wonder what the type-string conversion and comparison are needed for. They become important when you want to use choices (`custom3.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <string>
@@ -1124,7 +1124,7 @@ inline auto are_equal(geometry::Point const & l, geometry::Point const & r) -> b
 }
 }
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("start").type<geometry::Point>().choices({geometry::Point(0, 0), geometry::Point(1, 1), geometry::Point(2, 2)});
@@ -1138,11 +1138,11 @@ int main(int argc, char * argv[])
 ```
 And the output:
 ```
-$ custom2 0,0 9,9
+$ custom3 0,0 9,9
 The distance is 12.7279
-$ custom2 1,0 9,9
+$ custom3 1,0 9,9
 argument start: invalid choice: 1,0 (choose from 0,0, 1,1, 2,2)
-usage: custom2 [-h] {0,0,1,1,2,2} end
+usage: custom3 [-h] {0,0,1,1,2,2} end
 
 positional arguments:
   {0,0,1,1,2,2}
@@ -1160,7 +1160,7 @@ You can disable adding the `--help` option like this (`nohelp.cpp`):
 ```c++
 #include "argparse.hpp"
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser().add_help(false);
     parser.parse_args(argc, argv);
@@ -1191,7 +1191,7 @@ class Logger
         }
 };
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     Logger logger;
     auto parser = argparse::ArgumentParser();
@@ -1217,7 +1217,7 @@ usage: undesired [-h]
 optional arguments:
   -h, --help            show this help message and exit
 ```
-To improve this situation, you may tell the logger not to handle help, version, and errors (`nohandling.cpp`):
+To improve this situation, you may tell the logger not to handle help, version, and errors (`nohandling1.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
@@ -1236,14 +1236,14 @@ class Logger
         }
 };
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     Logger logger;
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
     parser.parse_args(argc, argv);
 }
 ```
-In such a case, you'll most likely want to handle help and version requests yourself. Also, you will now **need** to handle errors, otherwise you will encounter unhandled exceptions. Let's extend the program (`nohandling1.cpp`):
+In such a case, you'll most likely want to handle help and version requests yourself. Also, you will now **need** to handle errors, otherwise you will encounter unhandled exceptions. Let's extend the program (`nohandling2.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
@@ -1262,7 +1262,7 @@ class Logger
         }
 };
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     Logger logger;
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
@@ -1284,27 +1284,27 @@ int main(int argc, char * argv[])
 ```
 This version outputs:
 ```
-$ nohandling1
+$ nohandling2
 Log started
 Log ended
-$ nohandling1 --help
+$ nohandling2 --help
 Log started
-usage: nohandling1 [-h]
+usage: nohandling2 [-h]
 
 optional arguments:
   -h, --help            show this help message and exit
 Log ended
-$ nohandling1 foo
+$ nohandling2 foo
 Log started
 unrecognised arguments: foo
 Log ended
 ```
-The following example illustrates handling version requests (`nohandling2.cpp`):
+The following example illustrates handling version requests (`nohandling3.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::errors_and_help);
     parser.add_argument("--version").action(argparse::version);
@@ -1318,8 +1318,8 @@ int main(int argc, char * argv[])
 ```
 Its automatically generated help message looks like this:
 ```
-$ nohandling2 --help
-usage: nohandling2 [-h] [--version]
+$ nohandling3 --help
+usage: nohandling3 [-h] [--version]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -1327,14 +1327,14 @@ optional arguments:
 ```
 Let's see how it prints version:
 ```
-$ nohandling2 --version
+$ nohandling3 --version
 This is program version 1.0.0
 ```
 Of course, handling version requests can be fully automatic (`version.cpp`):
 ```c++
 #include "argparse.hpp"
 
-int main(int argc, char * argv[])
+auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("--version").action(argparse::version).version("1.0.0-rc1");

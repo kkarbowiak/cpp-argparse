@@ -26,7 +26,7 @@ inline auto from_string(std::string const & s, geometry::Point & p) -> bool
     std::istringstream iss(s);
     char comma;
     iss >> p.x >> comma >> p.y;
-    return true;
+    return !iss.fail();
 }
 
 template<>
@@ -45,7 +45,7 @@ inline auto are_equal(geometry::Point const & l, geometry::Point const & r) -> b
 auto main(int argc, char * argv[]) -> int
 {
     auto parser = argparse::ArgumentParser();
-    parser.add_argument("start").type<geometry::Point>();
+    parser.add_argument("start").type<geometry::Point>().choices({geometry::Point(0, 0), geometry::Point(1, 1), geometry::Point(2, 2)});
     parser.add_argument("end").type<geometry::Point>();
     auto parsed = parser.parse_args(argc, argv);
     auto start = parsed.get_value<geometry::Point>("start");

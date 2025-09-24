@@ -15,14 +15,12 @@ auto main(int argc, char * argv[]) -> int
     auto verbosity = parsed.get_value<int>("verbosity");
     if (verbosity >= 2)
     {
-        std::cout << base << " to the power " << exp << " equals " << answer << '\n';
+        std::cout << "Running '" << argv[0] << "'\n";
     }
-    else if (verbosity >= 1)
+    if (verbosity >= 1)
     {
-        std::cout << base << "^" << exp << " == " << answer << '\n';
+        std::cout << base << "^" << exp << " == ";
     }
-    else
-    {
-        std::cout << answer << '\n';
-    }
+
+    std::cout << answer << '\n';
 }

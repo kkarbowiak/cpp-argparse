@@ -1,14 +1,36 @@
 #include "argparse.hpp"
 #include <iostream>
 
+class Logger
+{
+    public:
+        Logger()
+        {
+            std::cout << "Log started\n";
+        }
+
+        ~Logger()
+        {
+            std::cout << "Log ended\n";
+        }
+};
+
 auto main(int argc, char * argv[]) -> int
 {
-    auto parser = argparse::ArgumentParser().handle(argparse::Handle::errors_and_help);
-    parser.add_argument("--version").action(argparse::version);
-    auto parsed = parser.parse_args(argc, argv);
-    if (parsed.get_value<bool>("version"))
+    Logger logger;
+    auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
+    try
     {
-        std::cout << "This is program version 1.0.0\n";
+        auto parsed = parser.parse_args(argc, argv);
+        if (parsed.get_value<bool>("help"))
+        {
+            std::cout << parser.format_help() << '\n';
+            return 0;
+        }
     }
-    return 0;
+    catch (argparse::parsing_error const & e)
+    {
+        std::cout << e.what() << '\n';
+        return 1;
+    }
 }
