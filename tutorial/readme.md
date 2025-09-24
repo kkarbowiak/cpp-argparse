@@ -1003,7 +1003,7 @@ optional arguments:
 $ custom 0,0 1,1
 The distance is 1.41421
 ```
-The return value of `argparse::from_string` indicates whether the conversion succeeded. You can use it to your advantage (`custom1.cpp`):
+The return value of `argparse::from_string` indicates whether the conversion succeeded. You can use it to your advantage (`custom2.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <string>
@@ -1063,11 +1063,11 @@ auto main(int argc, char * argv[]) -> int
 ```
 Let's see how it works:
 ```
-$ custom1 0,0 -1,-1
+$ custom2 0,0 -1,-1
 The distance is 1.41421
-$ custom1 foo bar
+$ custom2 foo bar
 argument start: invalid value: 'foo'
-usage: custom1 [-h] start end
+usage: custom2 [-h] start end
 
 positional arguments:
   start
