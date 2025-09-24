@@ -739,7 +739,7 @@ Running 'advanced2'
 
 ### Conflicting options
 
-So far we have been using two member functions of `argparse::ArgumentParser` class. Let's introduce a third one, `add_mutually_exclusive_group()`. It allows us to specify options that conflict with each other. Let's also change the rest of the program so that the new functionality makes more sense: we'll introduce the `--quiet` option, which will be the opposite of the `--verbose` one (`conflicting.cpp`):
+So far we have been using two member functions of `argparse::ArgumentParser` class. Let's introduce a third one, `add_mutually_exclusive_group()`. It allows us to specify options that conflict with each other. Let's also change the rest of the program so that the new functionality makes more sense: we'll introduce the `--quiet` option, which will be the opposite of the `--verbose` one (`conflicting1.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
@@ -773,15 +773,15 @@ auto main(int argc, char * argv[]) -> int
 ```
 Our program is now simpler, and we've lost some functionality for the sake of demonstration. Anyways, here's the output:
 ```
-$ conflicting 4 2
+$ conflicting1 4 2
 4^2 == 16
-$ conflicting 4 2 -q
+$ conflicting1 4 2 -q
 16
-$ conflicting 4 2 -v
+$ conflicting1 4 2 -v
 4 to the power 2 equals 16
-$ conflicting 4 2 -q -v
+$ conflicting1 4 2 -q -v
 argument -q/--quiet: not allowed with argument -v/--verbose
-usage: conflicting [-h] [-v | -q] x y
+usage: conflicting1 [-h] [-v | -q] x y
 
 positional arguments:
   x                     the base
