@@ -23,23 +23,33 @@ def check_contents_in_readme(cpp_files):
         readme_content = f.read()
     sources = extract_code_blocks(readme_content)
     sources_names = sorted([fname for fname in sources.keys()])
-    sym_diff = list(set(cpp_files) ^ set(sources_names))
-    if sym_diff:
-        print("The following files are mismatched between readme.md and the directory:")
-        for fname in sym_diff:
-            print(f"  {fname}")
-    for cpp_file in cpp_files:
-        with open(cpp_file, "r") as f:
-            code_in_file = f.read()
-        code_in_readme = sources.get(cpp_file, "")
-        if code_in_file != code_in_readme:
-            print(f"Warning: Content mismatch for {cpp_file} between file and readme.md")
+
+    check_file_lists(cpp_files, sources_names)
+
+    check_file_contents(cpp_files, sources)
 
 
 def extract_code_blocks(readme_content):
     # Match: "(`filename.cpp``):\n```c++(...)```"
     pattern = r"\(`([a-zA-Z0-9_]+\.cpp)`\):\s*```c\+\+\s*([\s\S]*?)```"
     return dict(re.findall(pattern, readme_content))
+
+
+def check_file_lists(cpp_files, readme_files):
+    sym_diff = list(set(cpp_files) ^ set(readme_files))
+    if sym_diff:
+        print("The following files are mismatched between readme.md and the directory:")
+        for fname in sym_diff:
+            print(f"  {fname}")
+
+
+def check_file_contents(cpp_files, sources):
+    for cpp_file in cpp_files:
+        with open(cpp_file, "r") as f:
+            code_in_file = f.read()
+        code_in_readme = sources.get(cpp_file, "")
+        if code_in_file != code_in_readme:
+            print(f"Warning: Content mismatch for {cpp_file} between file and readme.md")
 
 
 if __name__ == '__main__':
