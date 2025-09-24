@@ -241,7 +241,7 @@ Here is what is happening:
 
 ### Short options
 
-If you are familiar with command line usage, you will notice that I haven't touched on the topic of short versions of the options. It's quite simple (`optional2.cpp`):
+If you are familiar with command line usage, you will notice that I haven't touched on the topic of short versions of the options. It's quite simple (`optional3.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
@@ -259,10 +259,10 @@ auto main(int argc, char * argv[]) -> int
 ```
 And the output:
 ```
-$ optional2 -v
+$ optional3 -v
 verbosity turned on
-$ optional2 --help
-usage: optional2 [-h] [-v]
+$ optional3 --help
+usage: optional3 [-h] [-v]
 
 optional arguments:
   -h, --help            show this help message and exit
