@@ -1243,7 +1243,7 @@ auto main(int argc, char * argv[]) -> int
     parser.parse_args(argc, argv);
 }
 ```
-In such a case, you'll most likely want to handle help and version requests yourself. Also, you will now **need** to handle errors, otherwise you will encounter unhandled exceptions. Let's extend the program (`nohandling1.cpp`):
+In such a case, you'll most likely want to handle help and version requests yourself. Also, you will now **need** to handle errors, otherwise you will encounter unhandled exceptions. Let's extend the program (`nohandling2.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
@@ -1284,17 +1284,17 @@ auto main(int argc, char * argv[]) -> int
 ```
 This version outputs:
 ```
-$ nohandling1
+$ nohandling2
 Log started
 Log ended
-$ nohandling1 --help
+$ nohandling2 --help
 Log started
-usage: nohandling1 [-h]
+usage: nohandling2 [-h]
 
 optional arguments:
   -h, --help            show this help message and exit
 Log ended
-$ nohandling1 foo
+$ nohandling2 foo
 Log started
 unrecognised arguments: foo
 Log ended

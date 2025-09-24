@@ -18,7 +18,7 @@ set(targets
     custom2
     custom3
     nohandling
-    nohandling1
+    nohandling2
     nohandling3
     nohelp
     optional
