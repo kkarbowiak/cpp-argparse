@@ -6,7 +6,6 @@ import re
 def main():
     cpp_files = glob.glob("*.cpp")
     check_presence_in_cmakelists(cpp_files)
-    check_presence_in_readme(cpp_files)
     check_contents_in_readme(cpp_files)
 
 
@@ -17,14 +16,6 @@ def check_presence_in_cmakelists(cpp_files):
         cpp_target = os.path.splitext(cpp_file)[0]
         if cpp_target not in cmake_content:
             print(f"Warning: {cpp_target} is not listed in CMakeLists.txt")
-
-
-def check_presence_in_readme(cpp_files):
-    with open("readme.md", "r") as f:
-        readme_content = f.read()
-    for cpp_file in cpp_files:
-        if cpp_file not in readme_content:
-            print(f"Warning: {cpp_file} is not mentioned in readme.md")
 
 
 def check_contents_in_readme(cpp_files):
