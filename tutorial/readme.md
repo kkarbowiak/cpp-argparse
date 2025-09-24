@@ -1217,7 +1217,7 @@ usage: undesired [-h]
 optional arguments:
   -h, --help            show this help message and exit
 ```
-To improve this situation, you may tell the logger not to handle help, version, and errors (`nohandling.cpp`):
+To improve this situation, you may tell the logger not to handle help, version, and errors (`nohandling1.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
