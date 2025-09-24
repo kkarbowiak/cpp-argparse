@@ -697,7 +697,7 @@ optional arguments:
 $ advanced 4 2 -v 1
 4^2 == 16
 ```
-Notice that so far we've been using verbosity to *change* the text that gets displayed. The following example instead uses verbosity to display *more* text instead (`advanced1.cpp`):
+Notice that so far we've been using verbosity to *change* the text that gets displayed. The following example instead uses verbosity to display *more* text instead (`advanced2.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
@@ -728,12 +728,12 @@ auto main(int argc, char * argv[]) -> int
 ```
 Output:
 ```
-$ advanced1 4 2
+$ advanced2 4 2
 16
-$ advanced1 4 2 -v 1
+$ advanced2 4 2 -v 1
 4^2 == 16
-$ advanced1 4 2 -v 2
-Running 'advanced1'
+$ advanced2 4 2 -v 2
+Running 'advanced2'
 4^2 == 16
 ```
 

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 
 set(targets
     advanced
-    advanced1
+    advanced2
     basic
     complex
     complex1
