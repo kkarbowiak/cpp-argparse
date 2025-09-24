@@ -26,6 +26,7 @@ set(targets
     optional3
     positional
     positional1
+    positional3
     positional4
     string
     types

@@ -110,7 +110,7 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
 ```
-Now, how about doing some math  (`positional2.cpp`):
+Now, how about doing some math  (`positional3.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
