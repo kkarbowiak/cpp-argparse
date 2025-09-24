@@ -124,7 +124,7 @@ auto main(int argc, char * argv[]) -> int
     std::cout << value * value << '\n';
 }
 ```
-Well, this won't compile and your compiler will complain that the `std::string` type does not define a binary `*` operator. As I mentioned, the default type for all options is `std::string`. Let's tell the parser to treat the `square` option as an integer  (`positional3.cpp`):
+Well, this won't compile and your compiler will complain that the `std::string` type does not define a binary `*` operator. As I mentioned, the default type for all options is `std::string`. Let's tell the parser to treat the `square` option as an integer  (`positional4.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
@@ -140,11 +140,11 @@ auto main(int argc, char * argv[]) -> int
 ```
 Follwoing is the result of running the code:
 ```
-$ positional3 4
+$ positional4 4
 16
-$ positional3 four
+$ positional4 four
 argument square: invalid value: 'four'
-usage: positional3 [-h] square
+usage: positional4 [-h] square
 
 positional arguments:
   square                display a square of a given number
