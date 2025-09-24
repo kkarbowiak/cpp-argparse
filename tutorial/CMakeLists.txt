@@ -22,7 +22,7 @@ set(targets
     nohandling3
     nohelp
     optional
-    optional1
+    optional2
     optional3
     positional
     positional1

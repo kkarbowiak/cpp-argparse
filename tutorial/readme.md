@@ -199,7 +199,7 @@ Here is what is happening:
  * The help message is a bit different.
  * When using the `--verbosity` option, one must specify some arbitrary value.
 
-The above example accepts arbitrary values for `--verbosity`, but for our simple program, only two values are actually useful, `true` and `false`. Let's modify the code accordingly (`optional1.cpp`):
+The above example accepts arbitrary values for `--verbosity`, but for our simple program, only two values are actually useful, `true` and `false`. Let's modify the code accordingly (`optional2.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
@@ -217,17 +217,17 @@ auto main(int argc, char * argv[]) -> int
 ```
 And the output:
 ```
-$ optional1 --verbose
+$ optional2 --verbose
 verbosity turned on
-$ optional1 --verbose 1
+$ optional2 --verbose 1
 unrecognised arguments: 1
-usage: optional1 [-h] [--verbose]
+usage: optional2 [-h] [--verbose]
 
 optional arguments:
   -h, --help            show this help message and exit
   --verbose             increase output verbosity
-$ optional1 --help
-usage: optional1 [-h] [--verbose]
+$ optional2 --help
+usage: optional2 [-h] [--verbose]
 
 optional arguments:
   -h, --help            show this help message and exit
