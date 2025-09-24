@@ -45,7 +45,7 @@ Here is what is happening:
 
  ## Introducing Positional arguments
 
-An example (`positional.cpp`):
+An example (`positional1.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
@@ -60,24 +60,24 @@ auto main(int argc, char * argv[]) -> int
 ```
 And running the code:
 ```
-$ positional
+$ positional1
 the following arguments are required: echo
-usage: positional [-h] echo
+usage: positional1 [-h] echo
 
 positional arguments:
   echo
 
 optional arguments:
   -h, --help            show this help message and exit
-$ positional --help
-usage: positional [-h] echo
+$ positional1 --help
+usage: positional1 [-h] echo
 
 positional arguments:
   echo
 
 optional arguments:
   -h, --help            show this help message and exit
-$ positional foo
+$ positional1 foo
 foo
 ```
 Here is what is happening:
