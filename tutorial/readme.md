@@ -413,7 +413,7 @@ optional arguments:
 ```
 Note that the change reflects in both the error message and the help string.
 
-Let us now try out a different approach of playing with verbosity, which is pretty common (`count.cpp`):
+Let us now try out a different approach of playing with verbosity, which is pretty common (`count1.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
@@ -445,17 +445,17 @@ We have introduced another action, “count”, to count the number of occurrenc
 
 And the output:
 ```
-$ count 4
+$ count1 4
 16
-$ count 4 -v
+$ count1 4 -v
 4^2 == 16
-$ count 4 -vv
+$ count1 4 -vv
 the square of 4 equals 16
-$ count 4 --verbosity --verbosity
+$ count1 4 --verbosity --verbosity
 the square of 4 equals 16
-$ count 4 -v 1
+$ count1 4 -v 1
 unrecognised arguments: 1
-usage: count [-h] [-v] square
+usage: count1 [-h] [-v] square
 
 positional arguments:
   square                display a square of a given number
@@ -463,7 +463,7 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -v, --verbosity       increase output verbosity
-$ count 4 -vvv
+$ count1 4 -vvv
 16
 ```
  * The option is more of a flag now (similar to `action(argparse::store_true)` in the previous version of the program). This is where the complaint comes from.

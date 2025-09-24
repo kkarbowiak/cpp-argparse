@@ -10,7 +10,7 @@ set(targets
     complex4
     conflicting1
     conflicting2
-    count
+    count1
     count2
     count3
     count4
