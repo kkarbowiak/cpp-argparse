@@ -272,7 +272,7 @@ Note that the new ability is also reflected in the help text.
 
 ## Combining Positional and Optional arguments
 
-Our program keeps growing in complexity (`complex.cpp`):
+Our program keeps growing in complexity (`complex1.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
@@ -297,9 +297,9 @@ auto main(int argc, char * argv[]) -> int
 ```
 And now the output:
 ```
-$ complex
+$ complex1
 the following arguments are required: square
-usage: complex [-h] [-v] square
+usage: complex1 [-h] [-v] square
 
 positional arguments:
   square                display a square of a given number
@@ -307,11 +307,11 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -v, --verbose         increase output verbosity
-$ complex 4
+$ complex1 4
 16
-$ complex 4 --verbose
+$ complex1 4 --verbose
 the square of 4 equals 16
-$ complex --verbose 4
+$ complex1 --verbose 4
 the square of 4 equals 16
 ```
  * We have brought back a positional argument, hence the complaint.
