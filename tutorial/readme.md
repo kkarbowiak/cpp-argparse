@@ -317,7 +317,7 @@ the square of 4 equals 16
  * We have brought back a positional argument, hence the complaint.
  * Note that the order does not matter.
 
-How about we give this program of ours back the ability to have multiple verbosity values, and actually get to use them (`complex1.cpp`):
+How about we give this program of ours back the ability to have multiple verbosity values, and actually get to use them (`complex2.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
@@ -349,11 +349,11 @@ One new thing to note here is the new way of extracting a value for the argument
 
 And the output:
 ```
-$ complex1 4
+$ complex2 4
 16
 $ complex 4 -v
 argument -v/--verbosity: expected one argument
-usage: complex1 [-h] [-v VERBOSITY] square
+usage: complex2 [-h] [-v VERBOSITY] square
 
 positional arguments:
   square                display a square of a given number
@@ -362,11 +362,11 @@ optional arguments:
   -h, --help            show this help message and exit
   -v VERBOSITY, --verbosity VERBOSITY
                         increase output verbosity
-$ complex1 4 -v 1
+$ complex2 4 -v 1
 4^2 == 16
-$ complex1 4 -v 2
+$ complex2 4 -v 2
 the square of 4 equals 16
-$ complex1 4 -v 3
+$ complex2 4 -v 3
 16
 ```
 The above outputs all look good except the last one, which exposes a bug in our program. Let's fix it by restricting the values the `--verbosity` option can accept (`complex3.cpp`):

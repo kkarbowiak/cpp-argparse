@@ -5,7 +5,7 @@ set(targets
     advanced2
     basic
     complex
-    complex1
+    complex2
     complex3
     complex4
     conflicting
