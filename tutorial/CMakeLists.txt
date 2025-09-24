@@ -19,7 +19,7 @@ set(targets
     custom3
     nohandling
     nohandling1
-    nohandling2
+    nohandling3
     nohelp
     optional
     optional1

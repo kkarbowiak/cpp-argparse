@@ -1299,7 +1299,7 @@ Log started
 unrecognised arguments: foo
 Log ended
 ```
-The following example illustrates handling version requests (`nohandling2.cpp`):
+The following example illustrates handling version requests (`nohandling3.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
@@ -1318,8 +1318,8 @@ auto main(int argc, char * argv[]) -> int
 ```
 Its automatically generated help message looks like this:
 ```
-$ nohandling2 --help
-usage: nohandling2 [-h] [--version]
+$ nohandling3 --help
+usage: nohandling3 [-h] [--version]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -1327,7 +1327,7 @@ optional arguments:
 ```
 Let's see how it prints version:
 ```
-$ nohandling2 --version
+$ nohandling3 --version
 This is program version 1.0.0
 ```
 Of course, handling version requests can be fully automatic (`version.cpp`):
