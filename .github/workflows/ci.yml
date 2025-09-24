@@ -48,7 +48,7 @@ jobs:
 
       - name: Install clang-tidy
         run: |
-          sudo apt-get update
+          sudo apt update
           sudo apt install -y clang-tidy
 
       - name: CMake configure
@@ -89,7 +89,7 @@ jobs:
 
       - name: Install Valgrind
         run: |
-          sudo apt-get update
+          sudo apt update
           sudo apt install -y valgrind
 
       - name: CMake configure
@@ -111,7 +111,7 @@ jobs:
 
       - name: Install lcov
         run: |
-          sudo apt-get update
+          sudo apt update
           sudo apt install -y lcov
 
       - name: CMake configure
