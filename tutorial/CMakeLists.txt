@@ -25,7 +25,7 @@ set(targets
     optional2
     optional3
     positional
-    positional1
+    positional2
     positional3
     positional4
     string

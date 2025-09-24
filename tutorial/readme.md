@@ -86,7 +86,7 @@ Here is what is happening:
  * The `parse_args` function actually returns the result of parsing. You can get the argument's value by calling `get_value` on the returned object and giving the option name.
  * By default, the returned value is of type `std::string`.
 
-Note that while the help message looks nice, it is not as helpful as it could be. For example we see that we got `echo` as a positional argument, but we don't know what it does. Let's make it a bit more useful  (`positional1.cpp`):
+Note that while the help message looks nice, it is not as helpful as it could be. For example we see that we got `echo` as a positional argument, but we don't know what it does. Let's make it a bit more useful  (`positional2.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
@@ -101,8 +101,8 @@ auto main(int argc, char * argv[]) -> int
 ```
 And we get:
 ```
-$ positional1 --help
-usage: positional1 [-h] echo
+$ positional2 --help
+usage: positional2 [-h] echo
 
 positional arguments:
   echo                  echo the string you use here
