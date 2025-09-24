@@ -1078,7 +1078,7 @@ optional arguments:
 ```
 Of course it would be even better to let the user know what is the proper format of the arguments instead of having them guess. This can be done via arguments' help messages, but is left here as an excercise for the readers.
 
-At this point you may wonder what the type-string conversion and comparison are needed for. They become important when you want to use choices (`custom2.cpp`):
+At this point you may wonder what the type-string conversion and comparison are needed for. They become important when you want to use choices (`custom3.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <string>
@@ -1138,11 +1138,11 @@ auto main(int argc, char * argv[]) -> int
 ```
 And the output:
 ```
-$ custom2 0,0 9,9
+$ custom3 0,0 9,9
 The distance is 12.7279
-$ custom2 1,0 9,9
+$ custom3 1,0 9,9
 argument start: invalid choice: 1,0 (choose from 0,0, 1,1, 2,2)
-usage: custom2 [-h] {0,0,1,1,2,2} end
+usage: custom3 [-h] {0,0,1,1,2,2} end
 
 positional arguments:
   {0,0,1,1,2,2}

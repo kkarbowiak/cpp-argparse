@@ -16,7 +16,7 @@ set(targets
     count4
     custom
     custom1
-    custom2
+    custom3
     nohandling
     nohandling1
     nohandling2
