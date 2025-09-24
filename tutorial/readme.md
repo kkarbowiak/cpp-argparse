@@ -794,7 +794,7 @@ optional arguments:
 ```
 That should be easy to follow. Note that slight difference in the usage text. Note the `[-v | -q]`, which tells us that we can either use `-v` or `-q`, but not both at the same time.
 
-Before we end this part, you probably want to tell your users the main purpose of your program, just in case they don't know (`conflicting1.cpp`):
+Before we end this part, you probably want to tell your users the main purpose of your program, just in case they don't know (`conflicting2.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
@@ -829,8 +829,8 @@ auto main(int argc, char * argv[]) -> int
 
 This results in additional information in help message:
 ```
-$ conflicting1 --help
-usage: conflicting1 [-h] [-v | -q] x y
+$ conflicting2 --help
+usage: conflicting2 [-h] [-v | -q] x y
 
 calculate X to the power of Y
 

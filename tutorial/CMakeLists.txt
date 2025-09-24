@@ -9,7 +9,7 @@ set(targets
     complex3
     complex4
     conflicting
-    conflicting1
+    conflicting2
     count
     count2
     count3
