@@ -650,7 +650,7 @@ As expected, if the argument is not specified, it assumes its default value.
 
 ## Getting a little more advanced
 
-What if we wanted to expand our tiny program to perform other powers, not just squares (`advanced.cpp`):
+What if we wanted to expand our tiny program to perform other powers, not just squares (`advanced1.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
@@ -683,9 +683,9 @@ auto main(int argc, char * argv[]) -> int
 ```
 Output:
 ```
-$ advanced
+$ advanced1
 the following arguments are required: x y
-usage: advanced [-h] [-v VERBOSITY] x y
+usage: advanced1 [-h] [-v VERBOSITY] x y
 
 positional arguments:
   x                     the base
@@ -694,7 +694,7 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -v VERBOSITY, --verbosity VERBOSITY
-$ advanced 4 2 -v 1
+$ advanced1 4 2 -v 1
 4^2 == 16
 ```
 Notice that so far we've been using verbosity to *change* the text that gets displayed. The following example instead uses verbosity to display *more* text instead (`advanced2.cpp`):
