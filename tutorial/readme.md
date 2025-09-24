@@ -607,7 +607,7 @@ $ count4 4
 
 ### Default values
 
-One way to remove the need of getting the value object and doing a boolean test before extracting the value is to give the option a default value (`complex3.cpp`):
+One way to remove the need of getting the value object and doing a boolean test before extracting the value is to give the option a default value (`complex4.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
@@ -639,11 +639,11 @@ Note that the function for specifying a default value is spelled with an undersc
 
 The output:
 ```
-$ complex3 4
+$ complex4 4
 16
-$ complex3 4 --verbosity 1
+$ complex4 4 --verbosity 1
 4^2 == 16
-$ complex3 4 --verbosity 2
+$ complex4 4 --verbosity 2
 the square of 4 equals 16
 ```
 As expected, if the argument is not specified, it assumes its default value.
