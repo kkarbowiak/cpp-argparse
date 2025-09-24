@@ -156,7 +156,7 @@ That went well. The program now even detects an invalid value and quits with an 
 
 ## Introducing Optional arguments
 
-So far we have been playing with positional arguments. Let's see how to add optional ones (`optional.cpp`):
+So far we have been playing with positional arguments. Let's see how to add optional ones (`optional1.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
@@ -174,19 +174,19 @@ auto main(int argc, char * argv[]) -> int
 ```
 And the output:
 ```
-$ optional --verbosity 1
+$ optional1 --verbosity 1
 verbosity turned on
-$ optional
-$ optional --help
-usage: optional [-h] [--verbosity VERBOSITY]
+$ optional1
+$ optional1 --help
+usage: optional1 [-h] [--verbosity VERBOSITY]
 
 optional arguments:
   -h, --help            show this help message and exit
   --verbosity VERBOSITY
                         increase output verbosity
-$ optional --verbosity
+$ optional1 --verbosity
 argument --verbosity: expected one argument
-usage: optional [-h] [--verbosity VERBOSITY]
+usage: optional1 [-h] [--verbosity VERBOSITY]
 
 optional arguments:
   -h, --help            show this help message and exit
