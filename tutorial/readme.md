@@ -369,7 +369,7 @@ the square of 4 equals 16
 $ complex1 4 -v 3
 16
 ```
-The above outputs all look good except the last one, which exposes a bug in our program. Let's fix it by restricting the values the `--verbosity` option can accept (`complex2.cpp`):
+The above outputs all look good except the last one, which exposes a bug in our program. Let's fix it by restricting the values the `--verbosity` option can accept (`complex3.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <iostream>
@@ -399,9 +399,9 @@ auto main(int argc, char * argv[]) -> int
 ```
 And the output:
 ```
-$ complex2 -v 3
+$ complex3 -v 3
 argument -v/--verbosity: invalid choice: 3 (choose from 0, 1, 2)
-usage: complex2 [-h] [-v {0,1,2}] square
+usage: complex3 [-h] [-v {0,1,2}] square
 
 positional arguments:
   square                display a square of a given number

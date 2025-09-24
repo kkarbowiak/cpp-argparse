@@ -6,7 +6,7 @@ set(targets
     basic
     complex
     complex1
-    complex2
+    complex3
     complex4
     conflicting
     conflicting1
