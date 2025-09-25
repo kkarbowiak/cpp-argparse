@@ -99,6 +99,32 @@ namespace argparse
         return static_cast<int>(lhs) & static_cast<int>(rhs);
     }
 
+    template<typename T>
+    class Converter
+    {
+        public:
+            auto from_string(std::string const & s, T & t) const -> bool
+            {
+                auto iss = std::istringstream(s);
+                iss >> t;
+
+                return !iss.fail() && (iss.eof() || iss.peek() == std::istringstream::traits_type::eof());
+            }
+
+            auto to_string(T const & t) const -> std::string
+            {
+                auto ostr = std::ostringstream();
+                ostr << t;
+
+                return ostr.str();
+            }
+
+            auto are_equal(T const & lhs, T const & rhs) const -> bool
+            {
+                return lhs == rhs;
+            }
+    };
+
     inline auto from_string(std::string const & s, auto & t) -> bool
     {
         auto iss = std::istringstream(s);
