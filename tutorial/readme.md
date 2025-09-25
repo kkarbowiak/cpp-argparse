@@ -1030,25 +1030,27 @@ namespace geometry
 namespace argparse
 {
 template<>
-inline auto from_string(std::string const & s, geometry::Point & p) -> bool
+class Converter<geometry::Point>
 {
-    std::istringstream iss(s);
-    char comma;
-    iss >> p.x >> comma >> p.y;
-    return !iss.fail();
-}
+    public:
+        auto from_string(std::string const & s, geometry::Point & p) const -> bool
+        {
+            std::istringstream iss(s);
+            char comma;
+            iss >> p.x >> comma >> p.y;
+            return !iss.fail();
+        }
 
-template<>
-inline auto to_string(geometry::Point const & p) -> std::string
-{
-    return std::to_string(p.x) + "," + std::to_string(p.y);
-}
+        auto to_string(geometry::Point const & p) const -> std::string
+        {
+            return std::to_string(p.x) + "," + std::to_string(p.y);
+        }
 
-template<>
-inline auto are_equal(geometry::Point const & l, geometry::Point const & r) -> bool
-{
-    return l.x == r.x && l.y == r.y;
-}
+        auto are_equal(geometry::Point const & l, geometry::Point const & r) const -> bool
+        {
+            return l.x == r.x && l.y == r.y;
+        }
+};
 }
 
 auto main(int argc, char * argv[]) -> int
