@@ -125,12 +125,11 @@ namespace argparse
             }
     };
 
-    inline auto from_string(std::string const & s, auto & t) -> bool
+    template<typename T>
+    inline auto from_string(std::string const & s, T & t) -> bool
     {
-        auto iss = std::istringstream(s);
-        iss >> t;
-
-        return !iss.fail() && (iss.eof() || iss.peek() == std::istringstream::traits_type::eof());
+        auto const conv = Converter<T>();
+        return conv.from_string(s, t);
     }
 
     inline auto to_string(auto const & t) -> std::string
