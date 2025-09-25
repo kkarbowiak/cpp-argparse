@@ -1,6 +1,7 @@
 #ifndef CUSTOMA_H
 #define CUSTOMA_H
 
+#include "argparse.hpp"
 #include <string>
 
 
@@ -20,23 +21,28 @@ namespace foo
     };
 }
 
-namespace foo
+namespace argparse
 {
-inline auto operator==(Custom const & lhs, Custom const & rhs) -> bool
+template<>
+class Converter<foo::Custom>
 {
-    return lhs.m_text == rhs.m_text;
-}
+    public:
+        auto from_string(std::string const & s, foo::Custom & t) const -> bool
+        {
+            t = foo::Custom(s);
+            return true;
+        }
 
-inline auto from_string(std::string const & s, Custom & c) -> bool
-{
-    c = Custom(s);
-    return true;
-}
+        auto to_string(foo::Custom const & t) const -> std::string
+        {
+            return "<Custom: " + t.m_text + ">";
+        }
 
-inline auto to_string(Custom const& c) -> std::string
-{
-    return "<Custom: " + c.m_text + ">";
-}
+        auto are_equal(foo::Custom const & lhs, foo::Custom const & rhs) const -> bool
+        {
+            return lhs.m_text == rhs.m_text;
+        }
+};
 }
 
 #endif /* CUSTOMA_H */
