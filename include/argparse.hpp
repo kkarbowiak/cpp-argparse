@@ -139,9 +139,11 @@ namespace argparse
         return conv.to_string(t);
     }
 
-    inline auto are_equal(auto const & lhs, auto const & rhs) -> bool
+    template<typename T>
+    inline auto are_equal(T const & lhs, T const & rhs) -> bool
     {
-        return lhs == rhs;
+        auto const conv = Converter<T>();
+        return conv.are_equal(lhs, rhs);
     }
 
     class ArgumentParser
