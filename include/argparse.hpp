@@ -546,9 +546,8 @@ namespace argparse
                         }
                         else
                         {
-                            using argparse::from_string;
                             auto value = T();
-                            if (from_string(string, value))
+                            if (argparse::from_string(string, value))
                             {
                                 return std::any(value);
                             }
@@ -567,14 +566,13 @@ namespace argparse
                         }
                         else
                         {
-                            using argparse::to_string;
-                            return to_string(std::any_cast<T>(value));
+                            return argparse::to_string(std::any_cast<T>(value));
                         }
                     }
 
                     auto compare(std::any const & lhs, std::any const & rhs) const -> bool override
                     {
-                        return are_equal(std::any_cast<T>(lhs), std::any_cast<T>(rhs));
+                        return argparse::are_equal(std::any_cast<T>(lhs), std::any_cast<T>(rhs));
                     }
 
                     auto transform(std::vector<std::any> const & values) const -> std::any override
