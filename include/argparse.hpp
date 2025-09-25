@@ -132,12 +132,11 @@ namespace argparse
         return conv.from_string(s, t);
     }
 
-    inline auto to_string(auto const & t) -> std::string
+    template<typename T>
+    inline auto to_string(T const & t) -> std::string
     {
-        auto ostr = std::ostringstream();
-        ostr << t;
-
-        return ostr.str();
+        auto const conv = Converter<T>();
+        return conv.to_string(t);
     }
 
     inline auto are_equal(auto const & lhs, auto const & rhs) -> bool
