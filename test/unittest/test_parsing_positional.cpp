@@ -1944,3 +1944,13 @@ TEST_CASE("Parsing a positional argument yields correct value for negative numbe
 
     CHECK(args.get_value<int>("num") == -65);
 }
+
+TEST_CASE("Parsing a positional argument yields correct value for negative number")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("num").type<int>();
+
+    auto const args = parser.parse_args(3, cstr_arr{"prog", "--", "-65"});
+
+    CHECK(args.get_value<int>("num") == -65);
+}
