@@ -2868,3 +2868,13 @@ TEST_CASE("Parsing an optional argument yields correct value for negative number
 
     CHECK(args.get_value<int>("n") == -65);
 }
+
+TEST_CASE("Parsing an optional argument yields correct value for negative number" * doctest::skip())
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("--number").type<int>();
+
+    auto const args = parser.parse_args(3, cstr_arr{"prog", "--number", "-65"});
+
+    CHECK(args.get_value<int>("number") == -65);
+}
