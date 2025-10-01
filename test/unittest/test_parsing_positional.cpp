@@ -1914,3 +1914,13 @@ TEST_CASE("Parsing missing positional argument with nargs set throws an exceptio
 
     CHECK_THROWS_WITH_AS(parser.parse_args(1, cstr_arr{"prog"}), "the following arguments are required: p1 p2 p3", argparse::parsing_error);
 }
+
+TEST_CASE("Parsing a positional argument yields correct value for positive number")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("num").type<int>();
+
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "65"});
+
+    CHECK(args.get_value<int>("num") == 65);
+}
