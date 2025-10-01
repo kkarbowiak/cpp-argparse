@@ -2818,3 +2818,13 @@ TEST_CASE("Parsing an optional argument yields correct value for positive number
 
     CHECK(args.get_value<int>("n") == 65);
 }
+
+TEST_CASE("Parsing an optional argument yields correct value for positive number")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-n").type<int>();
+
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-n65"});
+
+    CHECK(args.get_value<int>("n") == 65);
+}
