@@ -2808,3 +2808,83 @@ TEST_CASE("Parsing joined flags does not affect long options")
     CHECK(args.get_value<bool>("a") == true);
     CHECK(args.get_value<bool>("r") == true);
 }
+
+TEST_CASE("Parsing an optional argument yields correct value for positive number")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-n").type<int>();
+
+    auto const args = parser.parse_args(3, cstr_arr{"prog", "-n", "65"});
+
+    CHECK(args.get_value<int>("n") == 65);
+}
+
+TEST_CASE("Parsing an optional argument yields correct value for positive number")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-n").type<int>();
+
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-n65"});
+
+    CHECK(args.get_value<int>("n") == 65);
+}
+
+TEST_CASE("Parsing an optional argument yields correct value for positive number")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("--number").type<int>();
+
+    auto const args = parser.parse_args(3, cstr_arr{"prog", "--number", "65"});
+
+    CHECK(args.get_value<int>("number") == 65);
+}
+
+TEST_CASE("Parsing an optional argument yields correct value for positive number")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("--number").type<int>();
+
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "--number=65"});
+
+    CHECK(args.get_value<int>("number") == 65);
+}
+
+TEST_CASE("Parsing an optional argument yields correct value for negative number" * doctest::skip())
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-n").type<int>();
+
+    auto const args = parser.parse_args(3, cstr_arr{"prog", "-n", "-65"});
+
+    CHECK(args.get_value<int>("n") == -65);
+}
+
+TEST_CASE("Parsing an optional argument yields correct value for negative number")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("-n").type<int>();
+
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "-n-65"});
+
+    CHECK(args.get_value<int>("n") == -65);
+}
+
+TEST_CASE("Parsing an optional argument yields correct value for negative number" * doctest::skip())
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("--number").type<int>();
+
+    auto const args = parser.parse_args(3, cstr_arr{"prog", "--number", "-65"});
+
+    CHECK(args.get_value<int>("number") == -65);
+}
+
+TEST_CASE("Parsing an optional argument yields correct value for negative number")
+{
+    auto parser = argparse::ArgumentParser();
+    parser.add_argument("--number").type<int>();
+
+    auto const args = parser.parse_args(2, cstr_arr{"prog", "--number=-65"});
+
+    CHECK(args.get_value<int>("number") == -65);
+}
