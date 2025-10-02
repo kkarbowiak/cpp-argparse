@@ -1934,14 +1934,23 @@ TEST_CASE_TEMPLATE("Parsing a positional argument yields correct value for posit
     }
 }
 
-TEST_CASE("Parsing a positional argument yields correct value for positive number")
+TEST_CASE_TEMPLATE("Parsing a positional argument yields correct value for positive number", T, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double)
 {
     auto parser = argparse::ArgumentParser();
-    parser.add_argument("num").type<int>();
+    parser.add_argument("num").type<T>();
 
-    auto const args = parser.parse_args(3, cstr_arr{"prog", "--", "65"});
+    if constexpr (std::is_integral_v<T>)
+    {
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "--", "65"});
 
-    CHECK(args.get_value<int>("num") == 65);
+        CHECK(args.get_value<T>("num") == T(65));
+    }
+    else
+    {
+        auto const args = parser.parse_args(3, cstr_arr{"prog", "--", "1.125"});
+
+        CHECK(args.get_value<T>("num") == T(1.125));
+    }
 }
 
 TEST_CASE("Parsing a positional argument yields correct value for negative number")
