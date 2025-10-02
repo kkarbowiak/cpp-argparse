@@ -1030,7 +1030,18 @@ namespace argparse
                                         past_pseudo_arg = true;
                                         return false;
                                     }
-                                    return !token.m_token.starts_with("-");
+                                    if (!token.m_token.starts_with("-"))
+                                    {
+                                        return true;
+                                    }
+                                    auto iss = std::istringstream(token.m_token);
+                                    auto num = double();
+                                    iss >> num;
+                                    if (!iss.fail() && (iss.eof() || iss.peek() == std::istringstream::traits_type::eof()))
+                                    {
+                                        return true;
+                                    }
+                                    return false;
                                 });
                     }
 
