@@ -2849,7 +2849,7 @@ TEST_CASE("Parsing an optional argument yields correct value for positive number
     CHECK(args.get_value<int>("number") == 65);
 }
 
-TEST_CASE("Parsing an optional argument yields correct value for negative number" * doctest::skip())
+TEST_CASE("Parsing an optional argument yields correct value for negative number")
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-n").type<int>();
