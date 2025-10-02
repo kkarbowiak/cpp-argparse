@@ -1406,7 +1406,21 @@ namespace argparse
                     auto get_consumable_args(auto it, std::ranges::view auto consumable) const
                     {
                         return std::ranges::subrange(std::ranges::next(it), consumable.end())
-                            | std::views::take_while([](auto const & token) { return !token.m_token.starts_with("-"); });
+                            | std::views::take_while([](auto const & token)
+                                {
+                                    if (!token.m_token.starts_with("-"))
+                                    {
+                                        return true;
+                                    }
+                                    auto iss = std::istringstream(token.m_token);
+                                    auto num = double();
+                                    iss >> num;
+                                    if (!iss.fail() && (iss.eof() || iss.peek() == std::istringstream::traits_type::eof()))
+                                    {
+                                        return true;
+                                    }
+                                    return false;
+                                });
                     }
 
                 private:
