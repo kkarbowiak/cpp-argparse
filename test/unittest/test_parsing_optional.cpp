@@ -2828,14 +2828,23 @@ TEST_CASE_TEMPLATE("Parsing an optional argument yields correct value for positi
     }
 }
 
-TEST_CASE("Parsing an optional argument yields correct value for positive number")
+TEST_CASE_TEMPLATE("Parsing an optional argument yields correct value for positive number", T, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double)
 {
     auto parser = argparse::ArgumentParser();
-    parser.add_argument("-n").type<int>();
+    parser.add_argument("-n").type<T>();
 
-    auto const args = parser.parse_args(2, cstr_arr{"prog", "-n65"});
+    if constexpr (std::is_integral_v<T>)
+    {
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "-n65"});
 
-    CHECK(args.get_value<int>("n") == 65);
+        CHECK(args.get_value<T>("n") == T(65));
+    }
+    else
+    {
+        auto const args = parser.parse_args(2, cstr_arr{"prog", "-n1.125"});
+
+        CHECK(args.get_value<T>("n") == T(1.125));
+    }
 }
 
 TEST_CASE("Parsing an optional argument yields correct value for positive number")
