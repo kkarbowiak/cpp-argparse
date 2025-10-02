@@ -1035,7 +1035,7 @@ namespace argparse
                                         return true;
                                     }
                                     auto iss = std::istringstream(token.m_token);
-                                    auto num = int();
+                                    auto num = double();
                                     iss >> num;
                                     if (!iss.fail() && (iss.eof() || iss.peek() == std::istringstream::traits_type::eof()))
                                     {
