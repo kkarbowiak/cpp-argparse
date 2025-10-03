@@ -12,6 +12,13 @@
 
 using namespace std::string_literals;
 
+namespace foo
+{
+inline auto operator==(Custom const & lhs, Custom const & rhs) -> bool
+{
+    return lhs.m_text == rhs.m_text;
+}
+}
 namespace bar
 {
 inline auto operator==(Custom const & lhs, Custom const & rhs) -> bool

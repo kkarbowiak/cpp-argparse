@@ -99,25 +99,51 @@ namespace argparse
         return static_cast<int>(lhs) & static_cast<int>(rhs);
     }
 
-    inline auto from_string(std::string const & s, auto & t) -> bool
+    template<typename T>
+    class Converter
     {
-        auto iss = std::istringstream(s);
-        iss >> t;
+        public:
+            auto from_string(std::string const & s, T & t) const -> bool
+            {
+                auto iss = std::istringstream(s);
+                iss >> t;
 
-        return !iss.fail() && (iss.eof() || iss.peek() == std::istringstream::traits_type::eof());
+                return !iss.fail() && (iss.eof() || iss.peek() == std::istringstream::traits_type::eof());
+            }
+
+            auto to_string(T const & t) const -> std::string
+            {
+                auto ostr = std::ostringstream();
+                ostr << t;
+
+                return ostr.str();
+            }
+
+            auto are_equal(T const & lhs, T const & rhs) const -> bool
+            {
+                return lhs == rhs;
+            }
+    };
+
+    template<typename T>
+    inline auto from_string(std::string const & s, T & t) -> bool
+    {
+        auto const conv = Converter<T>();
+        return conv.from_string(s, t);
     }
 
-    inline auto to_string(auto const & t) -> std::string
+    template<typename T>
+    inline auto to_string(T const & t) -> std::string
     {
-        auto ostr = std::ostringstream();
-        ostr << t;
-
-        return ostr.str();
+        auto const conv = Converter<T>();
+        return conv.to_string(t);
     }
 
-    inline auto are_equal(auto const & lhs, auto const & rhs) -> bool
+    template<typename T>
+    inline auto are_equal(T const & lhs, T const & rhs) -> bool
     {
-        return lhs == rhs;
+        auto const conv = Converter<T>();
+        return conv.are_equal(lhs, rhs);
     }
 
     class ArgumentParser
@@ -520,9 +546,8 @@ namespace argparse
                         }
                         else
                         {
-                            using argparse::from_string;
                             auto value = T();
-                            if (from_string(string, value))
+                            if (argparse::from_string(string, value))
                             {
                                 return std::any(value);
                             }
@@ -541,14 +566,13 @@ namespace argparse
                         }
                         else
                         {
-                            using argparse::to_string;
-                            return to_string(std::any_cast<T>(value));
+                            return argparse::to_string(std::any_cast<T>(value));
                         }
                     }
 
                     auto compare(std::any const & lhs, std::any const & rhs) const -> bool override
                     {
-                        return are_equal(std::any_cast<T>(lhs), std::any_cast<T>(rhs));
+                        return argparse::are_equal(std::any_cast<T>(lhs), std::any_cast<T>(rhs));
                     }
 
                     auto transform(std::vector<std::any> const & values) const -> std::any override
