@@ -1342,7 +1342,7 @@ namespace argparse
                         {
                             if (name[1] != '-')
                             {
-                                if (it->m_token.starts_with("-") && !it->m_token.starts_with("--") && it->m_token.find(name[1]) != std::string::npos)
+                                if (it->m_token.starts_with("-") && !it->m_token.starts_with("--") && it->m_token.contains(name[1]))
                                 {
                                     return name;
                                 }
