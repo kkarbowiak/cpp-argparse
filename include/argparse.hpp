@@ -103,12 +103,17 @@ namespace argparse
     class Converter
     {
         public:
-            auto from_string(std::string const & s, T & t) const -> bool
+            auto from_string(std::string const & s) const -> std::optional<T>
             {
                 auto iss = std::istringstream(s);
+                auto t = T();
                 iss >> t;
 
-                return !iss.fail() && (iss.eof() || iss.peek() == std::istringstream::traits_type::eof());
+                if (!iss.fail() && (iss.eof() || iss.peek() == std::istringstream::traits_type::eof()))
+                {
+                    return t;
+                }
+                return std::nullopt;
             }
 
             auto to_string(T const & t) const -> std::string
@@ -126,10 +131,10 @@ namespace argparse
     };
 
     template<typename T>
-    inline auto from_string(std::string const & s, T & t) -> bool
+    inline auto from_string(std::string const & s) -> std::optional<T>
     {
         auto const conv = Converter<T>();
-        return conv.from_string(s, t);
+        return conv.from_string(s);
     }
 
     template<typename T>
@@ -546,10 +551,9 @@ namespace argparse
                         }
                         else
                         {
-                            auto value = T();
-                            if (argparse::from_string(string, value))
+                            if (auto const optvalue = argparse::from_string<T>(string); optvalue.has_value())
                             {
-                                return std::any(value);
+                                return std::any(*optvalue);
                             }
                             else
                             {
@@ -990,7 +994,7 @@ namespace argparse
 
                     static auto is_negative_number(std::string const & token) -> bool
                     {
-                        if (auto num = double(); from_string(token, num))
+                        if (auto const parsed = from_string<double>(token); parsed.has_value())
                         {
                             return true;
                         }

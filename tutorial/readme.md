@@ -958,12 +958,13 @@ template<>
 class Converter<geometry::Point>
 {
     public:
-        auto from_string(std::string const & s, geometry::Point & p) const -> bool
+        auto from_string(std::string const & s) const -> std::optional<geometry::Point>
         {
             std::istringstream iss(s);
+            auto p = geometry::Point();
             char comma;
             iss >> p.x >> comma >> p.y;
-            return true;
+            return p;
         }
 
         auto to_string(geometry::Point const & p) const -> std::string
@@ -1005,7 +1006,7 @@ optional arguments:
 $ custom1 0,0 1,1
 The distance is 1.41421
 ```
-The return value of `argparse::Converter::from_string` indicates whether the conversion succeeded. You can use it to your advantage (`custom2.cpp`):
+The `argparse::Converter::from_string` function should return an empty optional to indicate conversion failure. You can use it to your advantage (`custom2.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <string>
@@ -1033,12 +1034,15 @@ template<>
 class Converter<geometry::Point>
 {
     public:
-        auto from_string(std::string const & s, geometry::Point & p) const -> bool
+        auto from_string(std::string const & s) const -> std::optional<geometry::Point>
         {
             std::istringstream iss(s);
+            auto p = geometry::Point();
             char comma;
             iss >> p.x >> comma >> p.y;
-            return !iss.fail();
+            return !iss.fail()
+                ? std::optional<geometry::Point>(p)
+                : std::nullopt;
         }
 
         auto to_string(geometry::Point const & p) const -> std::string
@@ -1110,12 +1114,15 @@ template<>
 class Converter<geometry::Point>
 {
     public:
-        auto from_string(std::string const & s, geometry::Point & p) const -> bool
+        auto from_string(std::string const & s) const -> std::optional<geometry::Point>
         {
             std::istringstream iss(s);
+            auto p = geometry::Point();
             char comma;
             iss >> p.x >> comma >> p.y;
-            return !iss.fail();
+            return !iss.fail()
+                ? std::optional<geometry::Point>(p)
+                : std::nullopt;
         }
 
         auto to_string(geometry::Point const & p) const -> std::string
