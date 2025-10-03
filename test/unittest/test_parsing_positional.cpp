@@ -1,8 +1,7 @@
 #include "argparse.hpp"
 
 #include "cstring_array.h"
-#include "custom_a.h"
-#include "custom_b.h"
+#include "custom.h"
 
 #include "doctest.h"
 
@@ -13,13 +12,6 @@
 using namespace std::string_literals;
 
 namespace foo
-{
-inline auto operator==(Custom const & lhs, Custom const & rhs) -> bool
-{
-    return lhs.m_text == rhs.m_text;
-}
-}
-namespace bar
 {
 inline auto operator==(Custom const & lhs, Custom const & rhs) -> bool
 {
@@ -37,7 +29,7 @@ TEST_CASE("Parsing a positional argument yields its value")
     CHECK(args.get_value("p1") == "v1");
 }
 
-TEST_CASE_TEMPLATE("Parsing a positional argument yields its requested type", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom, bar::Custom)
+TEST_CASE_TEMPLATE("Parsing a positional argument yields its requested type", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom)
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("pos").type<T>();
@@ -147,7 +139,7 @@ TEST_CASE("The resulting attribute name for positional argument is based on dest
     CHECK(args.get("bar"));
 }
 
-TEST_CASE_TEMPLATE("Parsing a positional argument with choices set accepts one of the values", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
+TEST_CASE_TEMPLATE("Parsing a positional argument with choices set accepts one of the values", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
@@ -181,7 +173,7 @@ TEST_CASE_TEMPLATE("Parsing a positional argument with choices set accepts one o
     }
 }
 
-TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exception on incorrect value", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
+TEST_CASE_TEMPLATE("Parsing a positional argument with choices set throws an exception on incorrect value", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 

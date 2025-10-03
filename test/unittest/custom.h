@@ -1,5 +1,5 @@
-#ifndef CUSTOMA_H
-#define CUSTOMA_H
+#ifndef CUSTOM_H
+#define CUSTOM_H
 
 #include "argparse.hpp"
 #include <string>
@@ -45,4 +45,4 @@ class Converter<foo::Custom>
 };
 }
 
-#endif /* CUSTOMA_H */
+#endif /* CUSTOM_H */

@@ -6,8 +6,7 @@ add_executable(unittest)
 target_sources(unittest
     PRIVATE
     cstring_array.h
-    custom_a.h
-    custom_b.h
+    custom.h
     main.cpp
     test_argument_parser.cpp
     test_error_message.cpp
