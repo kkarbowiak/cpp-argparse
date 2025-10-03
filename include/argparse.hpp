@@ -966,10 +966,8 @@ namespace argparse
 
                     static auto is_negative_number(std::string const & token) -> bool
                     {
-                        auto iss = std::istringstream(token);
                         auto num = double();
-                        iss >> num;
-                        if (!iss.fail() && (iss.eof() || iss.peek() == std::istringstream::traits_type::eof()))
+                        if (from_string(token, num))
                         {
                             return true;
                         }
