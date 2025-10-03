@@ -394,19 +394,8 @@ namespace argparse
 
             static auto join(std::ranges::view auto strings, std::string_view separator) -> std::string
             {
-                auto result = std::string();
-
-                for (auto const & string : strings | std::views::take(1))
-                {
-                    result += string;
-                }
-                for (auto const & string : strings | std::views::drop(1))
-                {
-                    result += separator;
-                    result += string;
-                }
-
-                return result;
+                auto const joined = std::ranges::fold_left_first(strings, [=](auto l, auto const & r) { l += separator; l += r; return std::move(l); });
+                return joined.value_or(std::string());
             }
 
             static auto parse_optional_arguments(std::ranges::view auto arguments, Tokens & tokens) -> void
