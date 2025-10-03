@@ -2,7 +2,6 @@
 
 #include "cstring_array.h"
 #include "custom_a.h"
-#include "custom_b.h"
 
 #include "doctest.h"
 
@@ -13,13 +12,6 @@
 using namespace std::string_literals;
 
 namespace foo
-{
-inline auto operator==(Custom const & lhs, Custom const & rhs) -> bool
-{
-    return lhs.m_text == rhs.m_text;
-}
-}
-namespace bar
 {
 inline auto operator==(Custom const & lhs, Custom const & rhs) -> bool
 {
@@ -95,7 +87,7 @@ TEST_CASE("Parsing an optional argument with store false action yields false whe
     CHECK(args.get_value<bool>("o") == false);
 }
 
-TEST_CASE_TEMPLATE("Parsing an optional argument with store const action yields false when it's missing", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
+TEST_CASE_TEMPLATE("Parsing an optional argument with store const action yields false when it's missing", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom)
 {
     auto parser = argparse::ArgumentParser();
 
@@ -117,7 +109,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with store const action yields 
     CHECK(!args.get("o"));
 }
 
-TEST_CASE_TEMPLATE("Parsing an optional argument with store const action yields const value", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
+TEST_CASE_TEMPLATE("Parsing an optional argument with store const action yields const value", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom)
 {
     auto parser = argparse::ArgumentParser();
 
@@ -248,7 +240,7 @@ TEST_CASE("Parsing an optional argument with append action yields a list of argu
     CHECK(args.get_value<std::vector<std::string>>("a") == std::vector<std::string>{"one", "two", "three"});
 }
 
-TEST_CASE_TEMPLATE("Parsing an optional argument with append action yields its requested type", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom, bar::Custom)
+TEST_CASE_TEMPLATE("Parsing an optional argument with append action yields its requested type", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom)
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-a").action(argparse::append).type<T>();
@@ -339,7 +331,7 @@ TEST_CASE("Optional argument can be used with its long name")
     CHECK(args.get_value("option") == "val");
 }
 
-TEST_CASE_TEMPLATE("Parsing an optional argument yields its requested type", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom, bar::Custom)
+TEST_CASE_TEMPLATE("Parsing an optional argument yields its requested type", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom)
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o").type<T>();
@@ -379,7 +371,7 @@ TEST_CASE("Parsing an optional argument with invalid value throws an exception")
     CHECK_THROWS_WITH_AS(parser.parse_args(3, cstr_arr{"prog", "-o", "10gibberish"}), "argument -o: invalid value: '10gibberish'", argparse::parsing_error);
 }
 
-TEST_CASE_TEMPLATE("Parsing an optional argument with default value yields the default value when it's missing", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
+TEST_CASE_TEMPLATE("Parsing an optional argument with default value yields the default value when it's missing", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom)
 {
     auto parser = argparse::ArgumentParser();
 
@@ -412,7 +404,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with default value yields the d
     }
 }
 
-TEST_CASE_TEMPLATE("Parsing an optional argument with default value yields value of the argument's type", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
+TEST_CASE_TEMPLATE("Parsing an optional argument with default value yields value of the argument's type", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom)
 {
     auto parser = argparse::ArgumentParser();
 
@@ -525,7 +517,7 @@ TEST_CASE("Parsing a missing optional argument with required false does not thro
     CHECK_NOTHROW(parser.parse_args(1, cstr_arr{"prog"}));
 }
 
-TEST_CASE_TEMPLATE("Parsing an optional argument with choices set accepts one of the values", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
+TEST_CASE_TEMPLATE("Parsing an optional argument with choices set accepts one of the values", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
@@ -559,7 +551,7 @@ TEST_CASE_TEMPLATE("Parsing an optional argument with choices set accepts one of
     }
 }
 
-TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exception on incorrect value", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom, bar::Custom)
+TEST_CASE_TEMPLATE("Parsing an optional argument with choices set throws an exception on incorrect value", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);
 
@@ -2568,7 +2560,7 @@ TEST_CASE("Parsing long option with joined argument yields its value")
     CHECK(args.get_value("long") == "value");
 }
 
-TEST_CASE_TEMPLATE("Parsing long option with joined argument yields its value", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom, bar::Custom)
+TEST_CASE_TEMPLATE("Parsing long option with joined argument yields its value", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom)
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("--long").type<T>();
@@ -2639,7 +2631,7 @@ TEST_CASE("Parsing short option with joined argument yields its value")
     CHECK(args.get_value("o") == "value");
 }
 
-TEST_CASE_TEMPLATE("Parsing short option with joined argument yields its value", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom, bar::Custom)
+TEST_CASE_TEMPLATE("Parsing short option with joined argument yields its value", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, foo::Custom)
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("-o").type<T>();
