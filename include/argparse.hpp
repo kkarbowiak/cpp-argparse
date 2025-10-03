@@ -966,8 +966,7 @@ namespace argparse
 
                     static auto is_negative_number(std::string const & token) -> bool
                     {
-                        auto num = double();
-                        if (from_string(token, num))
+                        if (auto num = double(); from_string(token, num))
                         {
                             return true;
                         }
