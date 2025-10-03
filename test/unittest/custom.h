@@ -27,10 +27,10 @@ template<>
 class Converter<foo::Custom>
 {
     public:
-        auto from_string(std::string const & s, foo::Custom & t) const -> bool
+        auto from_string(std::string const & s) const -> std::optional<foo::Custom>
         {
-            t = foo::Custom(s);
-            return true;
+            auto t = foo::Custom(s);
+            return t;
         }
 
         auto to_string(foo::Custom const & t) const -> std::string
