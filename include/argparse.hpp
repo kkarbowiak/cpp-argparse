@@ -964,6 +964,18 @@ namespace argparse
 
                     virtual auto get_name_for_error() const -> std::string = 0;
 
+                    static auto is_negative_number(std::string const & token) -> bool
+                    {
+                        auto iss = std::istringstream(token);
+                        auto num = double();
+                        iss >> num;
+                        if (!iss.fail() && (iss.eof() || iss.peek() == std::istringstream::traits_type::eof()))
+                        {
+                            return true;
+                        }
+                        return false;
+                    }
+
                 private:
                     ArgumentCommonImpl m_impl;
             };
@@ -1034,10 +1046,7 @@ namespace argparse
                                     {
                                         return true;
                                     }
-                                    auto iss = std::istringstream(token.m_token);
-                                    auto num = double();
-                                    iss >> num;
-                                    if (!iss.fail() && (iss.eof() || iss.peek() == std::istringstream::traits_type::eof()))
+                                    if (is_negative_number(token.m_token))
                                     {
                                         return true;
                                     }
@@ -1412,10 +1421,7 @@ namespace argparse
                                     {
                                         return true;
                                     }
-                                    auto iss = std::istringstream(token.m_token);
-                                    auto num = double();
-                                    iss >> num;
-                                    if (!iss.fail() && (iss.eof() || iss.peek() == std::istringstream::traits_type::eof()))
+                                    if (is_negative_number(token.m_token))
                                     {
                                         return true;
                                     }
