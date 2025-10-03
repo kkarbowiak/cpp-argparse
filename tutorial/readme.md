@@ -1006,7 +1006,7 @@ optional arguments:
 $ custom1 0,0 1,1
 The distance is 1.41421
 ```
-The return value of `argparse::Converter::from_string` indicates whether the conversion succeeded. You can use it to your advantage (`custom2.cpp`):
+The `argparse::Converter::from_string` function should return an empty optional to indicate conversion failure. You can use it to your advantage (`custom2.cpp`):
 ```c++
 #include "argparse.hpp"
 #include <string>
