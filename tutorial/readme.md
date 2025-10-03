@@ -958,12 +958,13 @@ template<>
 class Converter<geometry::Point>
 {
     public:
-        auto from_string(std::string const & s, geometry::Point & p) const -> bool
+        auto from_string(std::string const & s) const -> std::optional<geometry::Point>
         {
             std::istringstream iss(s);
+            auto p = geometry::Point();
             char comma;
             iss >> p.x >> comma >> p.y;
-            return true;
+            return p;
         }
 
         auto to_string(geometry::Point const & p) const -> std::string
