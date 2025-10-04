@@ -25,6 +25,7 @@
 #include <string_view>
 #include <type_traits>
 #include <typeinfo>
+#include <utility>
 #include <variant>
 #include <vector>
 #include <cstdlib>
@@ -91,12 +92,12 @@ namespace argparse
 
     inline auto operator|(Handle lhs, Handle rhs) -> Handle
     {
-        return static_cast<Handle>(static_cast<int>(lhs) | static_cast<int>(rhs));
+        return static_cast<Handle>(std::to_underlying(lhs) | std::to_underlying(rhs));
     }
 
     inline auto operator&(Handle lhs, Handle rhs) -> int
     {
-        return static_cast<int>(lhs) & static_cast<int>(rhs);
+        return std::to_underlying(lhs) & std::to_underlying(rhs);
     }
 
     template<typename T>
@@ -397,19 +398,8 @@ namespace argparse
 
             static auto join(std::ranges::view auto strings, std::string_view separator) -> std::string
             {
-                auto result = std::string();
-
-                for (auto const & string : strings | std::views::take(1))
-                {
-                    result += string;
-                }
-                for (auto const & string : strings | std::views::drop(1))
-                {
-                    result += separator;
-                    result += string;
-                }
-
-                return result;
+                auto const joined = std::ranges::fold_left_first(strings, [=](auto l, auto const & r) { l += separator; l += r; return std::move(l); });
+                return joined.value_or(std::string());
             }
 
             auto parse_optional_arguments(std::ranges::view auto arguments, Tokens & tokens) -> void
@@ -1292,7 +1282,7 @@ namespace argparse
                         {
                             if (name[1] != '-')
                             {
-                                if (it->m_token.starts_with("-") && !it->m_token.starts_with("--") && it->m_token.find(name[1]) != std::string::npos)
+                                if (it->m_token.starts_with("-") && !it->m_token.starts_with("--") && it->m_token.contains(name[1]))
                                 {
                                     return name;
                                 }
