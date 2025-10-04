@@ -25,6 +25,7 @@
 #include <string_view>
 #include <type_traits>
 #include <typeinfo>
+#include <utility>
 #include <variant>
 #include <vector>
 #include <cstdlib>
@@ -91,12 +92,12 @@ namespace argparse
 
     inline auto operator|(Handle lhs, Handle rhs) -> Handle
     {
-        return static_cast<Handle>(static_cast<int>(lhs) | static_cast<int>(rhs));
+        return static_cast<Handle>(std::to_underlying(lhs) | std::to_underlying(rhs));
     }
 
     inline auto operator&(Handle lhs, Handle rhs) -> int
     {
-        return static_cast<int>(lhs) & static_cast<int>(rhs);
+        return std::to_underlying(lhs) & std::to_underlying(rhs);
     }
 
     template<typename T>
