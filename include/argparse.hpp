@@ -14,10 +14,10 @@
 #include <any>
 #include <format>
 #include <functional>
-#include <iostream>
 #include <map>
 #include <memory>
 #include <optional>
+#include <print>
 #include <ranges>
 #include <sstream>
 #include <stdexcept>
@@ -257,7 +257,7 @@ namespace argparse
                 {
                     if (m_handle & Handle::help)
                     {
-                        std::cout << format_help() << std::endl;
+                        std::println("{}", format_help());
                         std::exit(EXIT_SUCCESS);
                     }
 
@@ -267,7 +267,7 @@ namespace argparse
                 {
                     if (m_handle & Handle::version)
                     {
-                        std::cout << format_version() << std::endl;
+                        std::println("{}", format_version());
                         std::exit(EXIT_SUCCESS);
                     }
 
@@ -277,8 +277,8 @@ namespace argparse
                 {
                     if (m_handle & Handle::errors)
                     {
-                        std::cout << e.what() << '\n';
-                        std::cout << format_help() << std::endl;
+                        std::println("{}", e.what());
+                        std::println("{}", format_help());
                         std::exit(EXIT_FAILURE);
                     }
 
