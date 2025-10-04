@@ -1,4 +1,5 @@
 #include "argparse.hpp"
+#include <iostream>
 #include <string>
 #include <sstream>
 #include <cmath>
