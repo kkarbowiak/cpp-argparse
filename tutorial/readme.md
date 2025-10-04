@@ -933,6 +933,7 @@ You may wonder whether this library allows using types other than the built-in o
 You can parse directly to any custom type, provided that this type is default-constructible and you provide a way to do string-type and type-string conversion as well as equality comparison. This may sound complicated, but basically boils down to specialising the `argparse::Converter` template class, which is the library's customisation point. Let's have a look at an example (`custom1.cpp`):
 ```c++
 #include "argparse.hpp"
+#include <iostream>
 #include <string>
 #include <sstream>
 #include <cmath>
@@ -1009,6 +1010,7 @@ The distance is 1.41421
 The `argparse::Converter::from_string` function should return an empty optional to indicate conversion failure. You can use it to your advantage (`custom2.cpp`):
 ```c++
 #include "argparse.hpp"
+#include <iostream>
 #include <string>
 #include <sstream>
 #include <cmath>
@@ -1089,6 +1091,7 @@ Of course it would be even better to let the user know what is the proper format
 At this point you may wonder what the type-string conversion and comparison are needed for. They become important when you want to use choices (`custom3.cpp`):
 ```c++
 #include "argparse.hpp"
+#include <iostream>
 #include <string>
 #include <sstream>
 #include <cmath>
