@@ -1045,7 +1045,7 @@ namespace argparse
                         return get_dest_name();
                     }
 
-                    auto get_consumable(Tokens & tokens) const
+                    static auto get_consumable(Tokens & tokens)
                     {
                         return tokens
                             | std::views::drop_while([](auto const & token)
@@ -1430,14 +1430,14 @@ namespace argparse
                         }
                     }
 
-                    auto get_consumable(Tokens & tokens) const
+                    static auto get_consumable(Tokens & tokens)
                     {
                         return tokens
                             | std::views::drop_while([](auto const & token) { return token.m_consumed; })
                             | std::views::take_while([](auto const & token) { return token.m_token != "--"; });
                     }
 
-                    auto get_consumable_args(auto it, std::ranges::view auto consumable) const
+                    static auto get_consumable_args(auto it, std::ranges::view auto consumable)
                     {
                         return std::ranges::subrange(std::ranges::next(it), consumable.end())
                             | std::views::take_while([](auto const & token)
