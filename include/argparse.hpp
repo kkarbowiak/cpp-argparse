@@ -412,7 +412,7 @@ namespace argparse
                 return result;
             }
 
-            auto parse_optional_arguments(std::ranges::view auto arguments, Tokens & tokens) -> void
+            static auto parse_optional_arguments(std::ranges::view auto arguments, Tokens & tokens) -> void
             {
                 for (auto & argument : arguments
                     | std::views::filter([](auto const & arg) { return !arg.is_positional() && arg.expects_argument(); }))
@@ -427,7 +427,7 @@ namespace argparse
                 }
             }
 
-            auto parse_positional_arguments(std::ranges::view auto arguments, Tokens & tokens) -> void
+            static auto parse_positional_arguments(std::ranges::view auto arguments, Tokens & tokens) -> void
             {
                 for (auto & argument : arguments
                     | std::views::filter(&Argument::is_positional))
@@ -445,7 +445,7 @@ namespace argparse
                 }
             }
 
-            auto check_unrecognised_arguments(Tokens const & tokens) const -> void
+            static auto check_unrecognised_arguments(Tokens const & tokens) -> void
             {
                 auto unconsumed = tokens
                     | std::views::filter([](auto const & token) { return !token.m_consumed; });
@@ -455,7 +455,7 @@ namespace argparse
                 }
             }
 
-            auto check_excluded_arguments(std::ranges::view auto arguments) const -> void
+            static auto check_excluded_arguments(std::ranges::view auto arguments) -> void
             {
                 auto const filter = [](auto const & arg) { return arg.is_present() && arg.is_mutually_exclusive(); };
 
@@ -471,7 +471,7 @@ namespace argparse
                 }
             }
 
-            auto check_missing_arguments(std::ranges::view auto arguments) const -> void
+            static auto check_missing_arguments(std::ranges::view auto arguments) -> void
             {
                 auto error_message = OptString();
 
@@ -494,7 +494,7 @@ namespace argparse
                 }
             }
 
-            auto get_parameters(std::ranges::view auto arguments) const -> Parameters
+            static auto get_parameters(std::ranges::view auto arguments) -> Parameters
             {
                 auto result = Parameters();
 
