@@ -412,7 +412,7 @@ namespace argparse
                 return result;
             }
 
-            auto parse_optional_arguments(std::ranges::view auto arguments, Tokens & tokens) -> void
+            static auto parse_optional_arguments(std::ranges::view auto arguments, Tokens & tokens) -> void
             {
                 for (auto & argument : arguments
                     | std::views::filter([](auto const & arg) { return !arg.is_positional() && arg.expects_argument(); }))
@@ -427,7 +427,7 @@ namespace argparse
                 }
             }
 
-            auto parse_positional_arguments(std::ranges::view auto arguments, Tokens & tokens) -> void
+            static auto parse_positional_arguments(std::ranges::view auto arguments, Tokens & tokens) -> void
             {
                 for (auto & argument : arguments
                     | std::views::filter(&Argument::is_positional))
@@ -445,7 +445,7 @@ namespace argparse
                 }
             }
 
-            auto check_unrecognised_arguments(Tokens const & tokens) const -> void
+            static auto check_unrecognised_arguments(Tokens const & tokens) -> void
             {
                 auto unconsumed = tokens
                     | std::views::filter([](auto const & token) { return !token.m_consumed; });
@@ -455,7 +455,7 @@ namespace argparse
                 }
             }
 
-            auto check_excluded_arguments(std::ranges::view auto arguments) const -> void
+            static auto check_excluded_arguments(std::ranges::view auto arguments) -> void
             {
                 auto const filter = [](auto const & arg) { return arg.is_present() && arg.is_mutually_exclusive(); };
 
@@ -471,7 +471,7 @@ namespace argparse
                 }
             }
 
-            auto check_missing_arguments(std::ranges::view auto arguments) const -> void
+            static auto check_missing_arguments(std::ranges::view auto arguments) -> void
             {
                 auto error_message = OptString();
 
@@ -494,7 +494,7 @@ namespace argparse
                 }
             }
 
-            auto get_parameters(std::ranges::view auto arguments) const -> Parameters
+            static auto get_parameters(std::ranges::view auto arguments) -> Parameters
             {
                 auto result = Parameters();
 
@@ -1045,7 +1045,7 @@ namespace argparse
                         return get_dest_name();
                     }
 
-                    auto get_consumable(Tokens & tokens) const
+                    static auto get_consumable(Tokens & tokens)
                     {
                         return tokens
                             | std::views::drop_while([](auto const & token)
@@ -1430,14 +1430,14 @@ namespace argparse
                         }
                     }
 
-                    auto get_consumable(Tokens & tokens) const
+                    static auto get_consumable(Tokens & tokens)
                     {
                         return tokens
                             | std::views::drop_while([](auto const & token) { return token.m_consumed; })
                             | std::views::take_while([](auto const & token) { return token.m_token != "--"; });
                     }
 
-                    auto get_consumable_args(auto it, std::ranges::view auto consumable) const
+                    static auto get_consumable_args(auto it, std::ranges::view auto consumable)
                     {
                         return std::ranges::subrange(std::ranges::next(it), consumable.end())
                             | std::views::take_while([](auto const & token)
@@ -1558,7 +1558,7 @@ namespace argparse
             class Formatter
             {
                 public:
-                    auto format_usage(std::ranges::view auto arguments, OptString const & usage, OptString const & prog) const -> std::string
+                    static auto format_usage(std::ranges::view auto arguments, OptString const & usage, OptString const & prog) -> std::string
                     {
                         if (usage)
                         {
@@ -1568,7 +1568,7 @@ namespace argparse
                         return std::format("usage: {}{}{}", *prog, format_usage_optionals(arguments), format_usage_positionals(arguments));
                     }
 
-                    auto format_help(std::ranges::view auto arguments, OptString const & prog, OptString const & usage, OptString const & description, OptString const & epilog) const -> std::string
+                    static auto format_help(std::ranges::view auto arguments, OptString const & prog, OptString const & usage, OptString const & description, OptString const & epilog) -> std::string
                     {
                         auto message = format_usage(arguments, usage, prog);
                         auto positionals = format_help_positionals(arguments, prog);
@@ -1597,13 +1597,13 @@ namespace argparse
                         return message;
                     }
 
-                    auto format_version(OptString const & version, OptString const & prog) const -> std::string
+                    static auto format_version(OptString const & version, OptString const & prog) -> std::string
                     {
                         return replace_prog(*version, prog);
                     }
 
                 private:
-                    auto format_usage_positionals(std::ranges::view auto arguments) const -> std::string
+                    static auto format_usage_positionals(std::ranges::view auto arguments) -> std::string
                     {
                         auto usage_text = std::string();
 
@@ -1624,7 +1624,7 @@ namespace argparse
                         return usage_text;
                     }
 
-                    auto format_usage_optionals(std::ranges::view auto arguments) const -> std::string
+                    static auto format_usage_optionals(std::ranges::view auto arguments) -> std::string
                     {
                         auto usage_text = std::string();
 
@@ -1679,7 +1679,7 @@ namespace argparse
                         return usage_text;
                     }
 
-                    auto format_help_positionals(std::ranges::view auto arguments, OptString const & prog) const -> std::string
+                    static auto format_help_positionals(std::ranges::view auto arguments, OptString const & prog) -> std::string
                     {
                         auto help_text = std::string();
 
@@ -1700,7 +1700,7 @@ namespace argparse
                         return help_text;
                     }
 
-                    auto format_help_optionals(std::ranges::view auto arguments, OptString const & prog) const -> std::string
+                    static auto format_help_optionals(std::ranges::view auto arguments, OptString const & prog) -> std::string
                     {
                         auto help_text = std::string();
 
@@ -1733,7 +1733,7 @@ namespace argparse
                         return help_text;
                     }
 
-                    auto format(Formattable const & argument) const -> std::string
+                    static auto format(Formattable const & argument) -> std::string
                     {
                         if (!argument.expects_argument())
                         {
@@ -1750,14 +1750,14 @@ namespace argparse
                         }
                     }
 
-                    auto format_arg(Formattable const & argument) const -> std::string
+                    static auto format_arg(Formattable const & argument) -> std::string
                     {
                         return argument.has_choices()
                             ? "{" + argument.get_joined_choices(",") + "}"
                             : argument.get_metavar_name();
                     }
 
-                    auto format_nargs(Formattable const & argument) const -> std::string
+                    static auto format_nargs(Formattable const & argument) -> std::string
                     {
                         auto result = std::string();
                         auto const formatted_arg = format_arg(argument);
@@ -1785,7 +1785,7 @@ namespace argparse
                         return result;
                     }
 
-                    auto help_string_separation(std::size_t help_line_length) const -> std::string_view
+                    static auto help_string_separation(std::size_t help_line_length) -> std::string_view
                     {
                         constexpr auto fill = std::string_view("\n                        ");
                         return help_line_length < 23
