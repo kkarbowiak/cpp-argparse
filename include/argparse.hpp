@@ -1755,10 +1755,7 @@ namespace argparse
 
                         if (argument.has_nargs_number())
                         {
-                            for (auto n = 0uz; n < argument.get_nargs_number(); n++)
-                            {
-                                result += " " + formatted_arg;
-                            }
+                            result += std::ranges::fold_left(std::views::repeat(" " + formatted_arg, argument.get_nargs_number()), std::string(), std::plus());
                         }
                         else
                         {
