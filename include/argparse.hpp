@@ -497,10 +497,10 @@ namespace argparse
             {
                 auto result = Parameters();
 
-                for (auto const & argument : arguments)
-                {
-                    result.insert(argument.get_dest_name(), argument.get_value());
-                }
+                std::ranges::for_each(
+                    arguments,
+                    [&](auto const & argument) { result.insert(argument.get_dest_name(), argument.get_value()); }
+                );
 
                 return result;
             }
