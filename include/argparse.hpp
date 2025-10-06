@@ -426,11 +426,10 @@ namespace argparse
 
             static auto parse_positional_arguments(std::ranges::view auto arguments, Tokens & tokens) -> void
             {
-                for (auto & argument : arguments
-                    | std::views::filter(&Argument::is_positional))
-                {
-                    argument.parse_tokens(tokens);
-                }
+                std::ranges::for_each(
+                    arguments | std::views::filter(&Argument::is_positional),
+                    [&](auto & argument) { argument.parse_tokens(tokens); }
+                );
             }
 
             static auto consume_pseudo_arguments(Tokens & tokens) -> void
