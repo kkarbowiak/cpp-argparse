@@ -434,11 +434,11 @@ namespace argparse
 
             static auto consume_pseudo_arguments(Tokens & tokens) -> void
             {
-                for (auto & token : tokens
-                    | std::views::filter([](auto const & t) { return t.m_token == "--"; }))
-                {
-                    token.m_consumed = true;
-                }
+                std::ranges::for_each(
+                    tokens
+                        | std::views::filter([](auto const & token) { return token.m_token == "--"; }),
+                    [](auto & token) { token.m_consumed = true; }
+                );
             }
 
             static auto check_unrecognised_arguments(Tokens const & tokens) -> void
