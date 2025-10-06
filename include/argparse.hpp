@@ -471,18 +471,21 @@ namespace argparse
             {
                 auto error_message = OptString();
 
-                for (auto const & argument : arguments
-                    | std::views::filter([](auto const & arg) { return arg.is_required() && !arg.has_value(); }))
-                {
-                    if (!error_message)
-                    {
-                        error_message = "the following arguments are required: " + argument.get_joined_names();
-                    }
-                    else
-                    {
-                        *error_message += " " + argument.get_joined_names();
-                    }
-                }
+                std::ranges::for_each(
+                    arguments
+                        | std::views::filter([](auto const & argument) { return argument.is_required() && !argument.has_value(); }),
+                    [&](auto const & argument)
+                        {
+                            if (!error_message)
+                            {
+                                error_message = "the following arguments are required: " + argument.get_joined_names();
+                            }
+                            else
+                            {
+                                *error_message += " " + argument.get_joined_names();
+                            }
+                        }
+                );
 
                 if (error_message)
                 {
