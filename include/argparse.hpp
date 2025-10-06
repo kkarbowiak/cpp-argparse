@@ -1687,19 +1687,21 @@ namespace argparse
                     {
                         auto help_text = std::string();
 
-                        for (auto const & argument : arguments
-                            | std::views::filter(&Formattable::is_positional))
-                        {
-                            auto help_line = "  " + format_arg(argument);
+                        std::ranges::for_each(
+                            arguments | std::views::filter(&Formattable::is_positional),
+                            [&](auto const & argument)
+                                {
+                                    auto help_line = "  " + format_arg(argument);
 
-                            if (auto const & help = argument.get_help(); !help.empty())
-                            {
-                                help_line += help_string_separation(help_line.size());
-                                help_line += replace_prog(help, prog);
-                            }
+                                    if (auto const & help = argument.get_help(); !help.empty())
+                                    {
+                                        help_line += help_string_separation(help_line.size());
+                                        help_line += replace_prog(help, prog);
+                                    }
 
-                            help_text += '\n' + help_line;
-                        }
+                                    help_text += '\n' + help_line;
+                                }
+                        );
 
                         return help_text;
                     }
