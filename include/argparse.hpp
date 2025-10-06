@@ -790,11 +790,14 @@ namespace argparse
                     {
                         auto result = std::vector<std::any>();
                         auto consumed = std::vector<Token *>();
-                        for (auto & token : tokens)
-                        {
-                            result.push_back(process_token(token.m_token));
-                            consumed.push_back(&token);
-                        }
+                        std::ranges::for_each(
+                            tokens,
+                            [&](auto & token)
+                                {
+                                    result.push_back(process_token(token.m_token));
+                                    consumed.push_back(&token);
+                                }
+                        );
                         std::ranges::for_each(consumed, [](auto token) { token->m_consumed = true; });
                         return result;
                     }
