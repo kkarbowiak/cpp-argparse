@@ -411,11 +411,11 @@ namespace argparse
 
             static auto parse_optional_arguments(std::ranges::view auto arguments, Tokens & tokens) -> void
             {
-                for (auto & argument : arguments
-                    | std::views::filter([](auto const & arg) { return !arg.is_positional() && arg.expects_argument(); }))
-                {
-                    argument.parse_tokens(tokens);
-                }
+                std::ranges::for_each(
+                    arguments
+                        | std::views::filter([](auto const & argument) { return !argument.is_positional() && argument.expects_argument(); }),
+                    [&](auto & argument) { argument.parse_tokens(tokens); }
+                );
 
                 for (auto & argument : arguments
                     | std::views::filter([](auto const & arg) { return !arg.is_positional() && !arg.expects_argument(); }))
