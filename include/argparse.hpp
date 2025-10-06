@@ -1874,7 +1874,7 @@ namespace argparse
 
                         if (argument.has_nargs_number())
                         {
-                            for (auto n = 0u; n < argument.get_nargs_number(); n++)
+                            for (auto n = 0uz; n < argument.get_nargs_number(); n++)
                             {
                                 result += " " + formatted_arg;
                             }
