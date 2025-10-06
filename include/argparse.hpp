@@ -1364,12 +1364,12 @@ namespace argparse
 
                     auto get_name_for_dest() const -> std::string
                     {
-                        for (auto const & name : get_names())
+                        if (auto const it = std::ranges::find_if(
+                                get_names(),
+                                [](auto const & name) { return name.starts_with("--"); });
+                            it != get_names().end())
                         {
-                            if (name.starts_with("--"))
-                            {
-                                return name.substr(2);
-                            }
+                            return it->substr(2);
                         }
 
                         return get_name().substr(1);
