@@ -1609,19 +1609,21 @@ namespace argparse
                     {
                         auto usage_text = std::string();
 
-                        for (auto const & argument : arguments
-                            | std::views::filter(&Formattable::is_positional))
-                        {
-                            if (argument.has_nargs())
-                            {
-                                usage_text += format_nargs(argument);
-                            }
-                            else
-                            {
-                                usage_text += " ";
-                                usage_text += format_arg(argument);
-                            }
-                        }
+                        std::ranges::for_each(
+                            arguments | std::views::filter(&Formattable::is_positional),
+                            [&](auto const & argument)
+                                {
+                                    if (argument.has_nargs())
+                                    {
+                                        usage_text += format_nargs(argument);
+                                    }
+                                    else
+                                    {
+                                        usage_text += " ";
+                                        usage_text += format_arg(argument);
+                                    }
+                                }
+                        );
 
                         return usage_text;
                     }
