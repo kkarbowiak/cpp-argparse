@@ -400,11 +400,10 @@ namespace argparse
                     strings | std::views::take(1),
                     [&](auto const & string) { result += string; }
                 );
-                for (auto const & string : strings | std::views::drop(1))
-                {
-                    result += separator;
-                    result += string;
-                }
+                std::ranges::for_each(
+                    strings | std::views::drop(1),
+                    [&](auto const & string) { result += separator; result += string; }
+                );
 
                 return result;
             }
