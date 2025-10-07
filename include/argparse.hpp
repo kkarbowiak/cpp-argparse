@@ -1255,13 +1255,13 @@ namespace argparse
                         {
                             case zero_or_one:
                             {
-                                if (tokens.empty())
+                                if (!tokens.empty())
                                 {
-                                    m_value = get_const();
+                                    m_value = consume_token(tokens.front());
                                 }
                                 else
                                 {
-                                    m_value = consume_token(tokens.front());
+                                    m_value = get_const();
                                 }
                                 break;
                             }
