@@ -1273,11 +1273,14 @@ namespace argparse
                             case one_or_more:
                             {
                                 auto const values = consume_tokens(tokens);
-                                if (values.empty())
+                                if (!values.empty())
+                                {
+                                    m_value = get_transformed(values);
+                                }
+                                else
                                 {
                                     throw parsing_error(std::format("argument {}: expected at least one argument", get_joined_names()));
                                 }
-                                m_value = get_transformed(values);
                                 break;
                             }
                         }
