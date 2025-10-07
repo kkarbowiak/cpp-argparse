@@ -60,11 +60,29 @@ jobs:
   clang-sanitisers:
     name: "clang-sanitisers"
     runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        type: [Debug, Release]
     steps:
       - uses: actions/checkout@v5
 
       - name: CMake configure
-        run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS=-fsanitize=address,undefined,alignment,array-bounds -DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address,undefined,alignment,array-bounds
+        run: cmake -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.type }} -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS=-fsanitize=address,undefined,alignment,array-bounds -DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address,undefined,alignment,array-bounds
+
+      - name: CMake build
+        run: cmake --build build --parallel --target run-unit-test
+
+  gcc-sanitisers:
+    name: "gcc-sanitisers"
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        type: [Debug, Release]
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: CMake configure
+        run: cmake -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.type }} -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_CXX_FLAGS=-fsanitize=address,undefined,leak -DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address,undefined,leak
 
       - name: CMake build
         run: cmake --build build --parallel --target run-unit-test
@@ -72,11 +90,14 @@ jobs:
   msvc-sanitisers:
     name: "msvc-sanitisers"
     runs-on: windows-latest
+    strategy:
+      matrix:
+        type: [Debug, Release]
     steps:
       - uses: actions/checkout@v5
 
       - name: CMake configure
-        run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_CXX_FLAGS="/fsanitize=address /EHsc"
+        run: cmake -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.type }} -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_CXX_FLAGS="/fsanitize=address /EHsc"
 
       - name: CMake build
         run: cmake --build build --parallel --target run-unit-test
