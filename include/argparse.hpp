@@ -1272,8 +1272,7 @@ namespace argparse
                             }
                             case one_or_more:
                             {
-                                auto const values = consume_tokens(tokens);
-                                if (!values.empty())
+                                if (auto const values = consume_tokens(tokens); !values.empty())
                                 {
                                     m_value = get_transformed(values);
                                 }
