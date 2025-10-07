@@ -837,14 +837,14 @@ namespace argparse
                     std::function<std::string()> m_name_for_error;
             };
 
-            class ArgumentCommonBase : public Argument, public Formattable
+            class ArgumentBase : public Argument, public Formattable
             {
                 public:
-                    explicit ArgumentCommonBase(Options options)
+                    explicit ArgumentBase(Options options)
                       : m_impl(std::move(options), [this]() { return this->get_name_for_error(); })
                     {
                     }
-                    virtual ~ArgumentCommonBase() = default;
+                    virtual ~ArgumentBase() = default;
 
                     auto get_name() const -> std::string const & override
                     {
@@ -863,12 +863,12 @@ namespace argparse
 
                     auto is_mutually_exclusive_with(Argument const & other) const -> bool override
                     {
-                        return m_impl.is_mutually_exclusive_with(static_cast<ArgumentCommonBase const &>(other).m_impl);
+                        return m_impl.is_mutually_exclusive_with(static_cast<ArgumentBase const &>(other).m_impl);
                     }
 
                     auto is_mutually_exclusive_with(Formattable const & other) const -> bool override
                     {
-                        return m_impl.is_mutually_exclusive_with(static_cast<ArgumentCommonBase const &>(other).m_impl);
+                        return m_impl.is_mutually_exclusive_with(static_cast<ArgumentBase const &>(other).m_impl);
                     }
 
                     auto expects_argument() const -> bool override
@@ -1002,7 +1002,7 @@ namespace argparse
                     ArgumentCommonImpl m_impl;
             };
 
-            class PositionalArgument final : public ArgumentCommonBase
+            class PositionalArgument final : public ArgumentBase
             {
                 private:
                     auto parse_arguments_option(std::ranges::view auto tokens) -> void
@@ -1078,7 +1078,7 @@ namespace argparse
 
                 public:
                     explicit PositionalArgument(Options options)
-                      : ArgumentCommonBase(std::move(options))
+                      : ArgumentBase(std::move(options))
                     {
                     }
 
@@ -1151,7 +1151,7 @@ namespace argparse
                     std::any m_value;
             };
 
-            class OptionalArgument final : public ArgumentCommonBase
+            class OptionalArgument final : public ArgumentBase
             {
                 private:
                     auto perform_action(std::string const & value, std::ranges::view auto tokens) -> void
@@ -1459,7 +1459,7 @@ namespace argparse
 
                 public:
                     explicit OptionalArgument(Options options)
-                      : ArgumentCommonBase(std::move(options))
+                      : ArgumentBase(std::move(options))
                     {
                     }
 
@@ -1551,7 +1551,7 @@ namespace argparse
                     }
             };
 
-            using ArgumentUptr = std::unique_ptr<ArgumentCommonBase>;
+            using ArgumentUptr = std::unique_ptr<ArgumentBase>;
             using ArgumentUptrs = std::vector<ArgumentUptr>;
 
             class Formatter
