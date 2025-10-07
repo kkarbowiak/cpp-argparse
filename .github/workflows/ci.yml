@@ -75,11 +75,14 @@ jobs:
   msvc-sanitisers:
     name: "msvc-sanitisers"
     runs-on: windows-latest
+    strategy:
+      matrix:
+        type: [Debug, Release]
     steps:
       - uses: actions/checkout@v5
 
       - name: CMake configure
-        run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_CXX_FLAGS="/fsanitize=address /EHsc"
+        run: cmake -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.type }} -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_CXX_FLAGS="/fsanitize=address /EHsc"
 
       - name: CMake build
         run: cmake --build build --parallel --target run-unit-test
