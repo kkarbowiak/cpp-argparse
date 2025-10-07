@@ -652,10 +652,10 @@ namespace argparse
                 std::unique_ptr<TypeHandler> type_handler = std::make_unique<TypeHandlerT<std::string>>();
             };
 
-            class ArgumentCommonImpl
+            class ArgumentImpl
             {
                 public:
-                    ArgumentCommonImpl(Options options, std::function<std::string()> name_for_error)
+                    ArgumentImpl(Options options, std::function<std::string()> name_for_error)
                       : m_options(std::move(options))
                       , m_name_for_error(name_for_error)
                     {
@@ -701,7 +701,7 @@ namespace argparse
                         return m_options.mutually_exclusive_group != nullptr;
                     }
 
-                    auto is_mutually_exclusive_with(ArgumentCommonImpl const & other) const -> bool
+                    auto is_mutually_exclusive_with(ArgumentImpl const & other) const -> bool
                     {
                         return (m_options.mutually_exclusive_group != nullptr) && (m_options.mutually_exclusive_group == other.m_options.mutually_exclusive_group);
                     }
@@ -999,7 +999,7 @@ namespace argparse
                     }
 
                 private:
-                    ArgumentCommonImpl m_impl;
+                    ArgumentImpl m_impl;
             };
 
             class PositionalArgument final : public ArgumentBase
