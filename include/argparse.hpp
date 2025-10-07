@@ -1255,13 +1255,13 @@ namespace argparse
                         {
                             case zero_or_one:
                             {
-                                if (tokens.empty())
+                                if (!tokens.empty())
                                 {
-                                    m_value = get_const();
+                                    m_value = consume_token(tokens.front());
                                 }
                                 else
                                 {
-                                    m_value = consume_token(tokens.front());
+                                    m_value = get_const();
                                 }
                                 break;
                             }
@@ -1272,12 +1272,14 @@ namespace argparse
                             }
                             case one_or_more:
                             {
-                                auto const values = consume_tokens(tokens);
-                                if (values.empty())
+                                if (auto const values = consume_tokens(tokens); !values.empty())
+                                {
+                                    m_value = get_transformed(values);
+                                }
+                                else
                                 {
                                     throw parsing_error(std::format("argument {}: expected at least one argument", get_joined_names()));
                                 }
-                                m_value = get_transformed(values);
                                 break;
                             }
                         }
