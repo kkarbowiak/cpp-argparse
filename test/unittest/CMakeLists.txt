@@ -25,7 +25,7 @@ target_link_libraries(unittest PRIVATE
     cpp-argparse
     doctest)
 
-target_compile_features(unittest PRIVATE cxx_std_20)
+target_compile_features(unittest PRIVATE cxx_std_23)
 target_compile_options(unittest PRIVATE
     $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
         -Wall -Wextra -Wmisleading-indentation -Wunused
