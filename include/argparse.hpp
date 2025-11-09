@@ -1561,9 +1561,8 @@ namespace argparse
                                     }
                                     else
                                     {
-                                        auto const prefix = it->m_token.substr(0, pos);
                                         auto const value = it->m_token.substr(pos);
-                                        it->m_token = prefix;
+                                        it->m_token.resize(pos);
                                         return value;
                                     }
                                 }
