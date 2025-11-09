@@ -396,50 +396,48 @@ namespace argparse
             {
                 auto result = std::string();
 
-                for (auto const & string : strings | std::views::take(1))
-                {
-                    result += string;
-                }
-                for (auto const & string : strings | std::views::drop(1))
-                {
-                    result += separator;
-                    result += string;
-                }
+                std::ranges::for_each(
+                    strings | std::views::take(1),
+                    [&](auto const & string) { result += string; }
+                );
+                std::ranges::for_each(
+                    strings | std::views::drop(1),
+                    [&](auto const & string) { result += separator; result += string; }
+                );
 
                 return result;
             }
 
             static auto parse_optional_arguments(std::ranges::view auto arguments, Tokens & tokens) -> void
             {
-                for (auto & argument : arguments
-                    | std::views::filter([](auto const & arg) { return !arg.is_positional() && arg.expects_argument(); }))
-                {
-                    argument.parse_tokens(tokens);
-                }
+                std::ranges::for_each(
+                    arguments
+                        | std::views::filter([](auto const & argument) { return !argument.is_positional() && argument.expects_argument(); }),
+                    [&](auto & argument) { argument.parse_tokens(tokens); }
+                );
 
-                for (auto & argument : arguments
-                    | std::views::filter([](auto const & arg) { return !arg.is_positional() && !arg.expects_argument(); }))
-                {
-                    argument.parse_tokens(tokens);
-                }
+                std::ranges::for_each(
+                    arguments
+                        | std::views::filter([](auto const & argument) { return !argument.is_positional() && !argument.expects_argument(); }),
+                    [&](auto & argument) { argument.parse_tokens(tokens); }
+                );
             }
 
             static auto parse_positional_arguments(std::ranges::view auto arguments, Tokens & tokens) -> void
             {
-                for (auto & argument : arguments
-                    | std::views::filter(&Argument::is_positional))
-                {
-                    argument.parse_tokens(tokens);
-                }
+                std::ranges::for_each(
+                    arguments | std::views::filter(&Argument::is_positional),
+                    [&](auto & argument) { argument.parse_tokens(tokens); }
+                );
             }
 
             static auto consume_pseudo_arguments(Tokens & tokens) -> void
             {
-                for (auto & token : tokens
-                    | std::views::filter([](auto const & t) { return t.m_token == "--"; }))
-                {
-                    token.m_consumed = true;
-                }
+                std::ranges::for_each(
+                    tokens
+                        | std::views::filter([](auto const & token) { return token.m_token == "--"; }),
+                    [](auto & token) { token.m_consumed = true; }
+                );
             }
 
             static auto check_unrecognised_arguments(Tokens const & tokens) -> void
@@ -472,18 +470,21 @@ namespace argparse
             {
                 auto error_message = OptString();
 
-                for (auto const & argument : arguments
-                    | std::views::filter([](auto const & arg) { return arg.is_required() && !arg.has_value(); }))
-                {
-                    if (!error_message)
-                    {
-                        error_message = "the following arguments are required: " + argument.get_joined_names();
-                    }
-                    else
-                    {
-                        *error_message += " " + argument.get_joined_names();
-                    }
-                }
+                std::ranges::for_each(
+                    arguments
+                        | std::views::filter([](auto const & argument) { return argument.is_required() && !argument.has_value(); }),
+                    [&](auto const & argument)
+                        {
+                            if (!error_message)
+                            {
+                                error_message = "the following arguments are required: " + argument.get_joined_names();
+                            }
+                            else
+                            {
+                                *error_message += " " + argument.get_joined_names();
+                            }
+                        }
+                );
 
                 if (error_message)
                 {
@@ -495,10 +496,10 @@ namespace argparse
             {
                 auto result = Parameters();
 
-                for (auto const & argument : arguments)
-                {
-                    result.insert(argument.get_dest_name(), argument.get_value());
-                }
+                std::ranges::for_each(
+                    arguments,
+                    [&](auto const & argument) { result.insert(argument.get_dest_name(), argument.get_value()); }
+                );
 
                 return result;
             }
@@ -788,11 +789,14 @@ namespace argparse
                     {
                         auto result = std::vector<std::any>();
                         auto consumed = std::vector<Token *>();
-                        for (auto & token : tokens)
-                        {
-                            result.push_back(process_token(token.m_token));
-                            consumed.push_back(&token);
-                        }
+                        std::ranges::for_each(
+                            tokens,
+                            [&](auto & token)
+                                {
+                                    result.push_back(process_token(token.m_token));
+                                    consumed.push_back(&token);
+                                }
+                        );
                         std::ranges::for_each(consumed, [](auto token) { token->m_consumed = true; });
                         return result;
                     }
@@ -1361,12 +1365,12 @@ namespace argparse
 
                     auto get_name_for_dest() const -> std::string
                     {
-                        for (auto const & name : get_names())
+                        if (auto const it = std::ranges::find_if(
+                                get_names(),
+                                [](auto const & name) { return name.starts_with("--"); });
+                            it != get_names().end())
                         {
-                            if (name.starts_with("--"))
-                            {
-                                return name.substr(2);
-                            }
+                            return it->substr(2);
                         }
 
                         return get_name().substr(1);
@@ -1606,19 +1610,21 @@ namespace argparse
                     {
                         auto usage_text = std::string();
 
-                        for (auto const & argument : arguments
-                            | std::views::filter(&Formattable::is_positional))
-                        {
-                            if (argument.has_nargs())
-                            {
-                                usage_text += format_nargs(argument);
-                            }
-                            else
-                            {
-                                usage_text += " ";
-                                usage_text += format_arg(argument);
-                            }
-                        }
+                        std::ranges::for_each(
+                            arguments | std::views::filter(&Formattable::is_positional),
+                            [&](auto const & argument)
+                                {
+                                    if (argument.has_nargs())
+                                    {
+                                        usage_text += format_nargs(argument);
+                                    }
+                                    else
+                                    {
+                                        usage_text += " ";
+                                        usage_text += format_arg(argument);
+                                    }
+                                }
+                        );
 
                         return usage_text;
                     }
@@ -1682,19 +1688,21 @@ namespace argparse
                     {
                         auto help_text = std::string();
 
-                        for (auto const & argument : arguments
-                            | std::views::filter(&Formattable::is_positional))
-                        {
-                            auto help_line = "  " + format_arg(argument);
+                        std::ranges::for_each(
+                            arguments | std::views::filter(&Formattable::is_positional),
+                            [&](auto const & argument)
+                                {
+                                    auto help_line = "  " + format_arg(argument);
 
-                            if (auto const & help = argument.get_help(); !help.empty())
-                            {
-                                help_line += help_string_separation(help_line.size());
-                                help_line += replace_prog(help, prog);
-                            }
+                                    if (auto const & help = argument.get_help(); !help.empty())
+                                    {
+                                        help_line += help_string_separation(help_line.size());
+                                        help_line += replace_prog(help, prog);
+                                    }
 
-                            help_text += '\n' + help_line;
-                        }
+                                    help_text += '\n' + help_line;
+                                }
+                        );
 
                         return help_text;
                     }
