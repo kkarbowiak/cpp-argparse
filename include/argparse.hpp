@@ -916,7 +916,6 @@ namespace argparse
                         return m_impl.get_nargs_option();
                     }
 
-                protected:
                     auto get_default() const -> std::any const &
                     {
                         return m_impl.get_default();
