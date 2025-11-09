@@ -1537,9 +1537,8 @@ namespace argparse
                         {
                             if (auto const pos = arg.m_token.find('='); pos != std::string::npos)
                             {
-                                auto const value = arg.m_token.substr(pos + 1);
                                 it->m_consumed = true;
-                                return value;
+                                return arg.m_token.substr(pos + 1);
                             }
                             else
                             {
