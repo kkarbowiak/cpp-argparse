@@ -1198,6 +1198,33 @@ namespace argparse
                     std::any & m_value;
             };
 
+            class HelpAction
+            {
+                public:
+                    explicit HelpAction(std::any & value)
+                      : m_value(value)
+                    {
+                    }
+
+                    auto perform(std::string const & /* value */, std::ranges::view auto /* tokens */) const -> void
+                    {
+                        m_value = true;
+                        throw HelpRequested();
+                    }
+
+                    auto check_errors(std::string const & /* value */, std::ranges::view auto /* tokens */) const -> void
+                    {
+                    }
+
+                    auto assign_non_present_value() const -> void
+                    {
+                        m_value = false;
+                    }
+
+                private:
+                    std::any & m_value;
+            };
+
             class PositionalArgument final : public ArgumentBase
             {
                 private:
