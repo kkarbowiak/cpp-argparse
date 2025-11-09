@@ -1102,6 +1102,38 @@ namespace argparse
                     std::any & m_value;
             };
 
+            class StoreConstAction
+            {
+                public:
+                    StoreConstAction(ArgumentBase & base, std::any & value)
+                      : m_base(base)
+                      , m_value(value)
+                    {
+                    }
+
+                    auto perform(std::string const & /* value */, std::ranges::view auto /* tokens */) const -> void
+                    {
+                        m_value = m_base.get_const();
+                    }
+
+                    auto check_errors(std::string const & value, std::ranges::view auto /* tokens */) const -> void
+                    {
+                        if (!value.empty())
+                        {
+                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", m_base.get_joined_names(), value));
+                        }
+                    }
+
+                    auto assign_non_present_value() const -> void
+                    {
+                        m_value = m_base.get_default();
+                    }
+
+                private:
+                    ArgumentBase & m_base;
+                    std::any & m_value;
+            };
+
             class PositionalArgument final : public ArgumentBase
             {
                 private:
