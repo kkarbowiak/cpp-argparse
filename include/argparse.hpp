@@ -1036,7 +1036,7 @@ namespace argparse
                         }
                     }
 
-                    auto check_errors(std::string const & value, std::ranges::view auto tokens) const -> void
+                    auto check_errors(std::string_view value, std::ranges::view auto tokens) const -> void
                     {
                         if (!m_base.has_nargs() && value.empty() && tokens.empty())
                         {
@@ -1116,7 +1116,7 @@ namespace argparse
                         m_value = m_base.get_const();
                     }
 
-                    auto check_errors(std::string const & value, std::ranges::view auto /* tokens */) const -> void
+                    auto check_errors(std::string_view value, std::ranges::view auto /* tokens */) const -> void
                     {
                         if (!value.empty())
                         {
@@ -1148,7 +1148,7 @@ namespace argparse
                         m_value = true;
                     }
 
-                    auto check_errors(std::string const & value, std::ranges::view auto /* tokens */) const -> void
+                    auto check_errors(std::string_view value, std::ranges::view auto /* tokens */) const -> void
                     {
                         if (!value.empty())
                         {
@@ -1180,7 +1180,7 @@ namespace argparse
                         m_value = false;
                     }
 
-                    auto check_errors(std::string const & value, std::ranges::view auto /* tokens */) const -> void
+                    auto check_errors(std::string_view value, std::ranges::view auto /* tokens */) const -> void
                     {
                         if (!value.empty())
                         {
@@ -1212,7 +1212,7 @@ namespace argparse
                         throw HelpRequested();
                     }
 
-                    auto check_errors(std::string const & /* value */, std::ranges::view auto /* tokens */) const -> void
+                    auto check_errors(std::string_view /* value */, std::ranges::view auto /* tokens */) const -> void
                     {
                     }
 
@@ -1239,7 +1239,7 @@ namespace argparse
                         throw VersionRequested();
                     }
 
-                    auto check_errors(std::string const & /* value */, std::ranges::view auto /* tokens */) const -> void
+                    auto check_errors(std::string_view /* value */, std::ranges::view auto /* tokens */) const -> void
                     {
                     }
 
@@ -1273,7 +1273,7 @@ namespace argparse
                         }
                     }
 
-                    auto check_errors(std::string const & value, std::ranges::view auto /* tokens */) const -> void
+                    auto check_errors(std::string_view value, std::ranges::view auto /* tokens */) const -> void
                     {
                         if (!value.empty())
                         {
@@ -1331,7 +1331,7 @@ namespace argparse
                         }
                     }
 
-                    auto check_errors(std::string const & value, std::ranges::view auto tokens) const -> void
+                    auto check_errors(std::string_view value, std::ranges::view auto tokens) const -> void
                     {
                         if (value.empty() && tokens.empty())
                         {
@@ -1599,7 +1599,7 @@ namespace argparse
                         return get_joined_names();
                     }
 
-                    auto check_errors(std::string const & value, std::ranges::view auto tokens) const -> void
+                    auto check_errors(std::string_view value, std::ranges::view auto tokens) const -> void
                     {
                         std::visit([&](auto const & action) { action.check_errors(value, tokens); }, m_action);
                     }
