@@ -1408,7 +1408,7 @@ namespace argparse
                         }
                     }
 
-                    auto assing_non_present_value() -> void
+                    auto assign_non_present_value() -> void
                     {
                         switch (get_action())
                         {
@@ -1493,7 +1493,7 @@ namespace argparse
 
                         if (!m_present)
                         {
-                            assing_non_present_value();
+                            assign_non_present_value();
                         }
                     }
 
