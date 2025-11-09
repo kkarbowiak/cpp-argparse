@@ -1801,13 +1801,40 @@ namespace argparse
                                 });
                     }
 
+                    auto create_action() -> std::variant<StoreAction, StoreConstAction, StoreTrueAction, StoreFalseAction, HelpAction, VersionAction, CountAction, AppendAction>
+                    {
+                        switch (get_action())
+                        {
+                            case store:
+                                return StoreAction(*this, m_value);
+                            case store_true:
+                                return StoreTrueAction(*this, m_value);
+                            case store_false:
+                                return StoreFalseAction(*this, m_value);
+                            case store_const:
+                                return StoreConstAction(*this, m_value);
+                            case help:
+                                return HelpAction(m_value);
+                            case version:
+                                return VersionAction(m_value);
+                            case count:
+                                return CountAction(*this, m_value);
+                            case append:
+                                return AppendAction(*this, m_value);
+                            default:
+                                return StoreAction(*this, m_value);
+                        }
+                    }
+
                 private:
                     std::any m_value;
                     bool m_present = false;
+                    std::variant<StoreAction, StoreConstAction, StoreTrueAction, StoreFalseAction, HelpAction, VersionAction, CountAction, AppendAction> m_action;
 
                 public:
                     explicit OptionalArgument(Options options)
                       : ArgumentBase(std::move(options))
+                      , m_action(create_action())
                     {
                     }
 
