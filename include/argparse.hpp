@@ -1606,23 +1606,7 @@ namespace argparse
 
                     auto assign_non_present_value() -> void
                     {
-                        switch (get_action())
-                        {
-                            case store_true:
-                            case help:
-                            case version:
-                                m_value = false;
-                                break;
-                            case store_false:
-                                m_value = true;
-                                break;
-                            case store:
-                            case store_const:
-                            case count:
-                            case append:
-                                m_value = get_default();
-                                break;
-                        }
+                        std::visit([&](auto const & action) { action.assign_non_present_value(); }, m_action);
                     }
 
                     static auto get_consumable(Tokens & tokens)
