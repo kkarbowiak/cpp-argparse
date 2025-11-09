@@ -1292,6 +1292,64 @@ namespace argparse
                     std::any m_default;
             };
 
+            class AppendAction
+            {
+                public:
+                    AppendAction(ArgumentBase & base, std::any & value)
+                      : m_base(base)
+                      , m_value(value)
+                    {
+                    }
+
+                    auto perform(std::string const & value, std::ranges::view auto tokens) const -> void
+                    {
+                        if (value.empty())
+                        {
+                            if (!m_value.has_value())
+                            {
+                                auto const values = m_base.consume_tokens(tokens | std::views::take(1));
+                                m_value = m_base.get_transformed(values);
+                            }
+                            else
+                            {
+                                auto const val = m_base.consume_token(tokens.front());
+                                m_base.append_value(val, m_value);
+                            }
+                        }
+                        else
+                        {
+                            if (!m_value.has_value())
+                            {
+                                auto const values = m_base.consume_tokens(std::views::single(Token{value}));
+                                m_value = m_base.get_transformed(values);
+                            }
+                            else
+                            {
+                                auto const val = m_base.process_token(value);
+                                m_base.append_value(val, m_value);
+                            }
+                        }
+                    }
+
+                    auto check_errors(std::string const & value, std::ranges::view auto tokens) const -> void
+                    {
+                        if (value.empty() && tokens.empty())
+                        {
+                            throw parsing_error(std::format("argument {}: expected one argument", m_base.get_joined_names()));
+                        }
+                    }
+
+                    auto assign_non_present_value() const -> void
+                    {
+                        m_value = m_base.get_default();
+                    }
+
+                private:
+                    ArgumentBase & m_base;
+                    std::any & m_value;
+                    std::any m_default;
+            };
+
             class PositionalArgument final : public ArgumentBase
             {
                 private:
