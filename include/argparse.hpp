@@ -1001,6 +1001,107 @@ namespace argparse
                     ArgumentImpl m_impl;
             };
 
+            class StoreAction
+            {
+                public:
+                    StoreAction(ArgumentBase & base, std::any & value)
+                      : m_base(base)
+                      , m_value(value)
+                    {
+                    }
+
+                    auto perform(std::string const & value, std::ranges::view auto tokens) const -> void
+                    {
+                        if (m_base.has_nargs())
+                        {
+                            if (m_base.has_nargs_number())
+                            {
+                                parse_arguments_number(tokens);
+                            }
+                            else
+                            {
+                                parse_arguments_option(tokens);
+                            }
+                        }
+                        else
+                        {
+                            if (value.empty())
+                            {
+                                m_value = m_base.consume_token(tokens.front());
+                            }
+                            else
+                            {
+                                m_value = m_base.process_token(value);
+                            }
+                        }
+                    }
+
+                    auto check_errors(std::string const & value, std::ranges::view auto tokens) const -> void
+                    {
+                        if (!m_base.has_nargs() && value.empty() && tokens.empty())
+                        {
+                            throw parsing_error(std::format("argument {}: expected one argument", m_base.get_joined_names()));
+                        }
+                    }
+
+                    auto assign_non_present_value() const -> void
+                    {
+                        m_value = m_base.get_default();
+                    }
+
+                private:
+                    auto parse_arguments_number(std::ranges::view auto tokens) const -> void
+                    {
+                        auto const nargs_number = m_base.get_nargs_number();
+                        auto const values = m_base.consume_tokens(tokens | std::views::take(nargs_number));
+                        if (values.size() < nargs_number)
+                        {
+                            throw parsing_error(std::format("argument {}: expected {} argument{}", m_base.get_joined_names(), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
+                        }
+                        m_value = m_base.get_transformed(values);
+                    }
+
+                    auto parse_arguments_option(std::ranges::view auto tokens) const -> void
+                    {
+                        switch (m_base.get_nargs_option())
+                        {
+                            case zero_or_one:
+                            {
+                                if (!tokens.empty())
+                                {
+                                    m_value = m_base.consume_token(tokens.front());
+                                }
+                                else
+                                {
+                                    m_value = m_base.get_const();
+                                }
+                                break;
+                            }
+                            case zero_or_more:
+                            {
+                                m_value = m_base.parse_arguments(tokens);
+                                break;
+                            }
+                            case one_or_more:
+                            {
+                                if (auto const values = m_base.consume_tokens(tokens); !values.empty())
+                                {
+                                    m_value = m_base.get_transformed(values);
+                                }
+                                else
+                                {
+                                    throw parsing_error(std::format("argument {}: expected at least one argument", m_base.get_joined_names()));
+                                }
+                                break;
+                            }
+                        }
+                    }
+
+                private:
+                    ArgumentBase & m_base;
+                    std::any & m_value;
+            };
+
             class PositionalArgument final : public ArgumentBase
             {
                 private:
