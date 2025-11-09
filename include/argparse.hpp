@@ -1601,33 +1601,7 @@ namespace argparse
 
                     auto check_errors(std::string const & value, std::ranges::view auto tokens) const -> void
                     {
-                        switch (get_action())
-                        {
-                            case store:
-                                if (!has_nargs() && value.empty() && tokens.empty())
-                                {
-                                    throw parsing_error(std::format("argument {}: expected one argument", get_joined_names()));
-                                }
-                                break;
-                            case store_true:
-                            case store_false:
-                            case store_const:
-                            case count:
-                                if (!value.empty())
-                                {
-                                    throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", get_joined_names(), value));
-                                }
-                                break;
-                            case append:
-                                if (value.empty() && tokens.empty())
-                                {
-                                    throw parsing_error(std::format("argument {}: expected one argument", get_joined_names()));
-                                }
-                                break;
-                            case help:
-                            case version:
-                                break;
-                        }
+                        std::visit([&](auto const & action) { action.check_errors(value, tokens); }, m_action);
                     }
 
                     auto assign_non_present_value() -> void
