@@ -1036,7 +1036,7 @@ namespace argparse
                         }
                     }
 
-                    auto check_errors(std::string const & value, std::ranges::view auto tokens) const -> void
+                    auto check_errors(std::string_view value, std::ranges::view auto tokens) const -> void
                     {
                         if (!m_base.has_nargs() && value.empty() && tokens.empty())
                         {
@@ -1116,7 +1116,7 @@ namespace argparse
                         m_value = m_base.get_const();
                     }
 
-                    auto check_errors(std::string const & value, std::ranges::view auto /* tokens */) const -> void
+                    auto check_errors(std::string_view value, std::ranges::view auto /* tokens */) const -> void
                     {
                         if (!value.empty())
                         {
@@ -1148,7 +1148,7 @@ namespace argparse
                         m_value = true;
                     }
 
-                    auto check_errors(std::string const & value, std::ranges::view auto /* tokens */) const -> void
+                    auto check_errors(std::string_view value, std::ranges::view auto /* tokens */) const -> void
                     {
                         if (!value.empty())
                         {
@@ -1180,7 +1180,7 @@ namespace argparse
                         m_value = false;
                     }
 
-                    auto check_errors(std::string const & value, std::ranges::view auto /* tokens */) const -> void
+                    auto check_errors(std::string_view value, std::ranges::view auto /* tokens */) const -> void
                     {
                         if (!value.empty())
                         {
@@ -1212,7 +1212,7 @@ namespace argparse
                         throw HelpRequested();
                     }
 
-                    auto check_errors(std::string const & /* value */, std::ranges::view auto /* tokens */) const -> void
+                    auto check_errors(std::string_view /* value */, std::ranges::view auto /* tokens */) const -> void
                     {
                     }
 
@@ -1239,7 +1239,7 @@ namespace argparse
                         throw VersionRequested();
                     }
 
-                    auto check_errors(std::string const & /* value */, std::ranges::view auto /* tokens */) const -> void
+                    auto check_errors(std::string_view /* value */, std::ranges::view auto /* tokens */) const -> void
                     {
                     }
 
@@ -1273,7 +1273,7 @@ namespace argparse
                         }
                     }
 
-                    auto check_errors(std::string const & value, std::ranges::view auto /* tokens */) const -> void
+                    auto check_errors(std::string_view value, std::ranges::view auto /* tokens */) const -> void
                     {
                         if (!value.empty())
                         {
@@ -1331,7 +1331,7 @@ namespace argparse
                         }
                     }
 
-                    auto check_errors(std::string const & value, std::ranges::view auto tokens) const -> void
+                    auto check_errors(std::string_view value, std::ranges::view auto tokens) const -> void
                     {
                         if (value.empty() && tokens.empty())
                         {
@@ -1533,38 +1533,36 @@ namespace argparse
 
                     auto consume_name(auto it, std::string_view name) const -> std::string
                     {
-                        if (auto const & arg = *it; arg.m_token.starts_with("--"))
+                        if (auto & arg = *it; arg.m_token.starts_with("--"))
                         {
                             if (auto const pos = arg.m_token.find('='); pos != std::string::npos)
                             {
-                                auto const value = arg.m_token.substr(pos + 1);
-                                it->m_consumed = true;
-                                return value;
+                                arg.m_consumed = true;
+                                return arg.m_token.substr(pos + 1);
                             }
                             else
                             {
-                                it->m_consumed = true;
+                                arg.m_consumed = true;
                                 return "";
                             }
                         }
                         else
                         {
-                            if (it->m_token.size() != 2)
+                            if (arg.m_token.size() != 2)
                             {
-                                auto const pos = it->m_token.find(name[1]);
-                                it->m_token.erase(pos, 1);
+                                auto const pos = arg.m_token.find(name[1]);
+                                arg.m_token.erase(pos, 1);
                                 if (expects_argument())
                                 {
                                     if (pos == 1)
                                     {
-                                        it->m_consumed = true;
-                                        return it->m_token.substr(pos);
+                                        arg.m_consumed = true;
+                                        return arg.m_token.substr(pos);
                                     }
                                     else
                                     {
-                                        auto const prefix = it->m_token.substr(0, pos);
-                                        auto const value = it->m_token.substr(pos);
-                                        it->m_token = prefix;
+                                        auto const value = arg.m_token.substr(pos);
+                                        arg.m_token.resize(pos);
                                         return value;
                                     }
                                 }
@@ -1575,7 +1573,7 @@ namespace argparse
                             }
                             else
                             {
-                                it->m_consumed = true;
+                                arg.m_consumed = true;
                                 return "";
                             }
                         }
@@ -1599,7 +1597,7 @@ namespace argparse
                         return get_joined_names();
                     }
 
-                    auto check_errors(std::string const & value, std::ranges::view auto tokens) const -> void
+                    auto check_errors(std::string_view value, std::ranges::view auto tokens) const -> void
                     {
                         std::visit([&](auto const & action) { action.check_errors(value, tokens); }, m_action);
                     }
