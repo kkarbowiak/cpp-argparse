@@ -1553,7 +1553,7 @@ namespace argparse
                                 });
                     }
 
-                    auto create_action() -> std::variant<StoreAction, StoreConstAction, StoreTrueAction, StoreFalseAction, HelpAction, VersionAction, CountAction, AppendAction>
+                    auto create_action() const -> std::variant<StoreAction, StoreConstAction, StoreTrueAction, StoreFalseAction, HelpAction, VersionAction, CountAction, AppendAction>
                     {
                         switch (get_action())
                         {
