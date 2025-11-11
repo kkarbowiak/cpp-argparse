@@ -761,7 +761,7 @@ namespace argparse
                         return join(m_options.choices | std::views::transform([&](auto const & choice) { return m_options.type_handler->to_string(choice); }), separator);
                     }
 
-                    auto parse_arguments(std::ranges::view auto tokens) -> std::any
+                    auto parse_arguments(std::ranges::view auto tokens) const -> std::any
                     {
                         auto const values = consume_tokens(tokens);
                         return m_options.type_handler->transform(values);
@@ -946,7 +946,7 @@ namespace argparse
                         return m_impl.get_action();
                     }
 
-                    auto parse_arguments(std::ranges::view auto tokens) -> std::any
+                    auto parse_arguments(std::ranges::view auto tokens) const -> std::any
                     {
                         return m_impl.parse_arguments(tokens);
                     }
