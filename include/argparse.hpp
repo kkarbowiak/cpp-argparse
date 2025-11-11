@@ -1482,9 +1482,9 @@ namespace argparse
                                 return CountAction();
                             case append:
                                 return AppendAction();
-                            default:
-                                return StoreAction();
                         }
+
+                        std::unreachable();
                     }
 
                 private:
