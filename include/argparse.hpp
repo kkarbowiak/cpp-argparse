@@ -1044,7 +1044,7 @@ namespace argparse
                         }
                     }
 
-                    auto assign_non_present_value(ArgumentBase & base, std::any & value) const -> void
+                    auto assign_non_present_value(ArgumentBase const & base, std::any & value) const -> void
                     {
                         value = base.get_default();
                     }
@@ -1124,7 +1124,7 @@ namespace argparse
                         }
                     }
 
-                    auto assign_non_present_value(ArgumentBase & base, std::any & value) const -> void
+                    auto assign_non_present_value(ArgumentBase const & base, std::any & value) const -> void
                     {
                         value = base.get_default();
                     }
@@ -1156,7 +1156,7 @@ namespace argparse
                         }
                     }
 
-                    auto assign_non_present_value(ArgumentBase & /* base */, std::any & value) const -> void
+                    auto assign_non_present_value(ArgumentBase const & /* base */, std::any & value) const -> void
                     {
                         value = false;
                     }
@@ -1188,7 +1188,7 @@ namespace argparse
                         }
                     }
 
-                    auto assign_non_present_value(ArgumentBase & /* base */, std::any & value) const -> void
+                    auto assign_non_present_value(ArgumentBase const & /* base */, std::any & value) const -> void
                     {
                         value = true;
                     }
@@ -1216,7 +1216,7 @@ namespace argparse
                     {
                     }
 
-                    auto assign_non_present_value(ArgumentBase & /* base */, std::any & value) const -> void
+                    auto assign_non_present_value(ArgumentBase const & /* base */, std::any & value) const -> void
                     {
                         value = false;
                     }
@@ -1243,7 +1243,7 @@ namespace argparse
                     {
                     }
 
-                    auto assign_non_present_value(ArgumentBase & /* base */, std::any & value) const -> void
+                    auto assign_non_present_value(ArgumentBase const & /* base */, std::any & value) const -> void
                     {
                         value = false;
                     }
@@ -1281,7 +1281,7 @@ namespace argparse
                         }
                     }
 
-                    auto assign_non_present_value(ArgumentBase & base, std::any & value) const -> void
+                    auto assign_non_present_value(ArgumentBase const & base, std::any & value) const -> void
                     {
                         value = base.get_default();
                     }
@@ -1338,7 +1338,7 @@ namespace argparse
                         }
                     }
 
-                    auto assign_non_present_value(ArgumentBase & base, std::any & value) const -> void
+                    auto assign_non_present_value(ArgumentBase const & base, std::any & value) const -> void
                     {
                         value = base.get_default();
                     }
