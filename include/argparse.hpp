@@ -1044,9 +1044,9 @@ namespace argparse
                         }
                     }
 
-                    auto assign_non_present_value() const -> void
+                    auto assign_non_present_value(ArgumentBase & base, std::any & value) const -> void
                     {
-                        m_value = m_base.get_default();
+                        value = base.get_default();
                     }
 
                 private:
@@ -1124,9 +1124,9 @@ namespace argparse
                         }
                     }
 
-                    auto assign_non_present_value() const -> void
+                    auto assign_non_present_value(ArgumentBase & base, std::any & value) const -> void
                     {
-                        m_value = m_base.get_default();
+                        value = base.get_default();
                     }
 
                 private:
@@ -1156,9 +1156,9 @@ namespace argparse
                         }
                     }
 
-                    auto assign_non_present_value() const -> void
+                    auto assign_non_present_value(ArgumentBase & /* base */, std::any & value) const -> void
                     {
-                        m_value = false;
+                        value = false;
                     }
 
                 private:
@@ -1188,9 +1188,9 @@ namespace argparse
                         }
                     }
 
-                    auto assign_non_present_value() const -> void
+                    auto assign_non_present_value(ArgumentBase & /* base */, std::any & value) const -> void
                     {
-                        m_value = true;
+                        value = true;
                     }
 
                 private:
@@ -1216,9 +1216,9 @@ namespace argparse
                     {
                     }
 
-                    auto assign_non_present_value() const -> void
+                    auto assign_non_present_value(ArgumentBase & /* base */, std::any & value) const -> void
                     {
-                        m_value = false;
+                        value = false;
                     }
 
                 private:
@@ -1243,9 +1243,9 @@ namespace argparse
                     {
                     }
 
-                    auto assign_non_present_value() const -> void
+                    auto assign_non_present_value(ArgumentBase & /* base */, std::any & value) const -> void
                     {
-                        m_value = false;
+                        value = false;
                     }
 
                 private:
@@ -1281,9 +1281,9 @@ namespace argparse
                         }
                     }
 
-                    auto assign_non_present_value() const -> void
+                    auto assign_non_present_value(ArgumentBase & base, std::any & value) const -> void
                     {
-                        m_value = m_base.get_default();
+                        value = base.get_default();
                     }
 
                 private:
@@ -1338,9 +1338,9 @@ namespace argparse
                         }
                     }
 
-                    auto assign_non_present_value() const -> void
+                    auto assign_non_present_value(ArgumentBase & base, std::any & value) const -> void
                     {
-                        m_value = m_base.get_default();
+                        value = base.get_default();
                     }
 
                 private:
@@ -1602,7 +1602,7 @@ namespace argparse
 
                     auto assign_non_present_value() -> void
                     {
-                        std::visit([&](auto const & action) { action.assign_non_present_value(); }, m_action);
+                        std::visit([&](auto const & action) { action.assign_non_present_value(*this, m_value); }, m_action);
                     }
 
                     static auto get_consumable(Tokens & tokens)
