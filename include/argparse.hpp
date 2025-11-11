@@ -655,7 +655,7 @@ namespace argparse
             class ArgumentImpl
             {
                 public:
-                    ArgumentImpl(Options options)
+                    explicit ArgumentImpl(Options options)
                       : m_options(std::move(options))
                     {
                     }
