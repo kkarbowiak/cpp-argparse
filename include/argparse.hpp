@@ -655,9 +655,8 @@ namespace argparse
             class ArgumentImpl
             {
                 public:
-                    ArgumentImpl(Options options, std::function<std::string()> name_for_error)
+                    ArgumentImpl(Options options)
                       : m_options(std::move(options))
-                      , m_name_for_error(name_for_error)
                     {
                     }
 
@@ -761,36 +760,36 @@ namespace argparse
                         return join(m_options.choices | std::views::transform([&](auto const & choice) { return m_options.type_handler->to_string(choice); }), separator);
                     }
 
-                    auto parse_arguments(std::ranges::view auto tokens) const -> std::any
+                    auto parse_arguments(std::ranges::view auto tokens, std::function<std::string()> name_for_error) const -> std::any
                     {
-                        auto const values = consume_tokens(tokens);
+                        auto const values = consume_tokens(tokens, name_for_error);
                         return m_options.type_handler->transform(values);
                     }
 
-                    auto consume_token(Token & token) const -> std::any
+                    auto consume_token(Token & token, std::function<std::string()> name_for_error) const -> std::any
                     {
                         token.m_consumed = true;
-                        return process_token(token.m_token);
+                        return process_token(token.m_token, name_for_error);
                     }
 
-                    auto process_token(std::string const & token) const -> std::any
+                    auto process_token(std::string const & token, std::function<std::string()> name_for_error) const -> std::any
                     {
                         auto const value = m_options.type_handler->from_string(token);
                         if (!value.has_value())
                         {
-                            throw parsing_error(std::format("argument {}: invalid value: '{}'", m_name_for_error(), token));
+                            throw parsing_error(std::format("argument {}: invalid value: '{}'", name_for_error(), token));
                         }
                         check_choices(value);
                         return value;
                     }
 
-                    auto consume_tokens(std::ranges::view auto tokens) const -> std::vector<std::any>
+                    auto consume_tokens(std::ranges::view auto tokens, std::function<std::string()> name_for_error) const -> std::vector<std::any>
                     {
                         auto result = std::vector<std::any>();
                         auto consumed = std::vector<Token *>();
                         for (auto & token : tokens)
                         {
-                            result.push_back(process_token(token.m_token));
+                            result.push_back(process_token(token.m_token, name_for_error));
                             consumed.push_back(&token);
                         }
                         std::ranges::for_each(consumed, [](auto token) { token->m_consumed = true; });
@@ -834,14 +833,13 @@ namespace argparse
 
                 private:
                     Options m_options;
-                    std::function<std::string()> m_name_for_error;
             };
 
             class ArgumentBase : public Argument, public Formattable
             {
                 public:
                     explicit ArgumentBase(Options options)
-                      : m_impl(std::move(options), [this]() { return this->get_name_for_error(); })
+                      : m_impl(std::move(options))
                     {
                     }
                     virtual ~ArgumentBase() = default;
@@ -946,24 +944,24 @@ namespace argparse
                         return m_impl.get_action();
                     }
 
-                    auto parse_arguments(std::ranges::view auto tokens) const -> std::any
+                    auto parse_arguments(std::ranges::view auto tokens, std::function<std::string()> name_for_error) const -> std::any
                     {
-                        return m_impl.parse_arguments(tokens);
+                        return m_impl.parse_arguments(tokens, name_for_error);
                     }
 
-                    auto consume_token(Token & token) const -> std::any
+                    auto consume_token(Token & token, std::function<std::string()> name_for_error) const -> std::any
                     {
-                        return m_impl.consume_token(token);
+                        return m_impl.consume_token(token, name_for_error);
                     }
 
-                    auto process_token(std::string const & token) const -> std::any
+                    auto process_token(std::string const & token, std::function<std::string()> name_for_error) const -> std::any
                     {
-                        return m_impl.process_token(token);
+                        return m_impl.process_token(token, name_for_error);
                     }
 
-                    auto consume_tokens(std::ranges::view auto tokens) const -> std::vector<std::any>
+                    auto consume_tokens(std::ranges::view auto tokens, std::function<std::string()> name_for_error) const -> std::vector<std::any>
                     {
-                        return m_impl.consume_tokens(tokens);
+                        return m_impl.consume_tokens(tokens, name_for_error);
                     }
 
                     auto check_choices(std::any const & value) const -> void
@@ -986,8 +984,6 @@ namespace argparse
                         m_impl.append_value(value, values);
                     }
 
-                    virtual auto get_name_for_error() const -> std::string = 0;
-
                     static auto is_negative_number(std::string const & token) -> bool
                     {
                         if (auto const parsed = from_string<double>(token); parsed.has_value())
@@ -1004,28 +1000,28 @@ namespace argparse
             class StoreAction
             {
                 public:
-                    auto perform(ArgumentBase const & base, std::any & value, std::string const & val, std::ranges::view auto tokens) const -> void
+                    auto perform(ArgumentBase const & base, std::any & value, std::function<std::string()> name_for_error, std::string const & val, std::ranges::view auto tokens) const -> void
                     {
                         if (base.has_nargs())
                         {
                             if (base.has_nargs_number())
                             {
-                                parse_arguments_number(base, value, tokens);
+                                parse_arguments_number(base, value, name_for_error, tokens);
                             }
                             else
                             {
-                                parse_arguments_option(base, value, tokens);
+                                parse_arguments_option(base, value, name_for_error, tokens);
                             }
                         }
                         else
                         {
                             if (val.empty())
                             {
-                                value = base.consume_token(tokens.front());
+                                value = base.consume_token(tokens.front(), name_for_error);
                             }
                             else
                             {
-                                value = base.process_token(val);
+                                value = base.process_token(val, name_for_error);
                             }
                         }
                     }
@@ -1044,10 +1040,10 @@ namespace argparse
                     }
 
                 private:
-                    auto parse_arguments_number(ArgumentBase const & base, std::any & value, std::ranges::view auto tokens) const -> void
+                    auto parse_arguments_number(ArgumentBase const & base, std::any & value, std::function<std::string()> name_for_error, std::ranges::view auto tokens) const -> void
                     {
                         auto const nargs_number = base.get_nargs_number();
-                        auto const values = base.consume_tokens(tokens | std::views::take(nargs_number));
+                        auto const values = base.consume_tokens(tokens | std::views::take(nargs_number), name_for_error);
                         if (values.size() < nargs_number)
                         {
                             throw parsing_error(std::format("argument {}: expected {} argument{}", base.get_joined_names(), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
@@ -1055,7 +1051,7 @@ namespace argparse
                         value = base.get_transformed(values);
                     }
 
-                    auto parse_arguments_option(ArgumentBase const & base, std::any & value, std::ranges::view auto tokens) const -> void
+                    auto parse_arguments_option(ArgumentBase const & base, std::any & value, std::function<std::string()> name_for_error, std::ranges::view auto tokens) const -> void
                     {
                         switch (base.get_nargs_option())
                         {
@@ -1063,7 +1059,7 @@ namespace argparse
                             {
                                 if (!tokens.empty())
                                 {
-                                    value = base.consume_token(tokens.front());
+                                    value = base.consume_token(tokens.front(), name_for_error);
                                 }
                                 else
                                 {
@@ -1073,12 +1069,12 @@ namespace argparse
                             }
                             case zero_or_more:
                             {
-                                value = base.parse_arguments(tokens);
+                                value = base.parse_arguments(tokens, name_for_error);
                                 break;
                             }
                             case one_or_more:
                             {
-                                if (auto const values = base.consume_tokens(tokens); !values.empty())
+                                if (auto const values = base.consume_tokens(tokens, name_for_error); !values.empty())
                                 {
                                     value = base.get_transformed(values);
                                 }
@@ -1095,7 +1091,7 @@ namespace argparse
             class StoreConstAction
             {
                 public:
-                    auto perform(ArgumentBase const & base, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
+                    auto perform(ArgumentBase const & base, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
                         value = base.get_const();
                     }
@@ -1117,7 +1113,7 @@ namespace argparse
             class StoreTrueAction
             {
                 public:
-                    auto perform(ArgumentBase const & /* base */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
+                    auto perform(ArgumentBase const & /* base */, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
                         value = true;
                     }
@@ -1139,7 +1135,7 @@ namespace argparse
             class StoreFalseAction
             {
                 public:
-                    auto perform(ArgumentBase const & /* base */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
+                    auto perform(ArgumentBase const & /* base */, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
                         value = false;
                     }
@@ -1161,7 +1157,7 @@ namespace argparse
             class HelpAction
             {
                 public:
-                    auto perform(ArgumentBase const & /* base */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
+                    auto perform(ArgumentBase const & /* base */, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
                         value = true;
                         throw HelpRequested();
@@ -1180,7 +1176,7 @@ namespace argparse
             class VersionAction
             {
                 public:
-                    auto perform(ArgumentBase const & /* base */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
+                    auto perform(ArgumentBase const & /* base */, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
                         value = true;
                         throw VersionRequested();
@@ -1199,7 +1195,7 @@ namespace argparse
             class CountAction
             {
                 public:
-                    auto perform(ArgumentBase const & /* base */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
+                    auto perform(ArgumentBase const & /* base */, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
                         if (!value.has_value())
                         {
@@ -1228,18 +1224,18 @@ namespace argparse
             class AppendAction
             {
                 public:
-                    auto perform(ArgumentBase const & base, std::any & value, std::string const & val, std::ranges::view auto tokens) const -> void
+                    auto perform(ArgumentBase const & base, std::any & value, std::function<std::string()> name_for_error, std::string const & val, std::ranges::view auto tokens) const -> void
                     {
                         if (val.empty())
                         {
                             if (!value.has_value())
                             {
-                                auto const values = base.consume_tokens(tokens | std::views::take(1));
+                                auto const values = base.consume_tokens(tokens | std::views::take(1), name_for_error);
                                 value = base.get_transformed(values);
                             }
                             else
                             {
-                                auto const v = base.consume_token(tokens.front());
+                                auto const v = base.consume_token(tokens.front(), name_for_error);
                                 base.append_value(v, value);
                             }
                         }
@@ -1247,12 +1243,12 @@ namespace argparse
                         {
                             if (!value.has_value())
                             {
-                                auto const values = base.consume_tokens(std::views::single(Token{val}));
+                                auto const values = base.consume_tokens(std::views::single(Token{val}), name_for_error);
                                 value = base.get_transformed(values);
                             }
                             else
                             {
-                                auto const v = base.process_token(val);
+                                auto const v = base.process_token(val, name_for_error);
                                 base.append_value(v, value);
                             }
                         }
@@ -1283,7 +1279,7 @@ namespace argparse
                             {
                                 if (!tokens.empty())
                                 {
-                                    m_value = consume_token(tokens.front());
+                                    m_value = consume_token(tokens.front(), get_name_for_error());
                                 }
                                 else
                                 {
@@ -1293,12 +1289,12 @@ namespace argparse
                             }
                             case zero_or_more:
                             {
-                                m_value = parse_arguments(tokens);
+                                m_value = parse_arguments(tokens, get_name_for_error());
                                 break;
                             }
                             case one_or_more:
                             {
-                                if (auto const values = consume_tokens(tokens); !values.empty())
+                                if (auto const values = consume_tokens(tokens, get_name_for_error()); !values.empty())
                                 {
                                     m_value = get_transformed(values);
                                 }
@@ -1307,9 +1303,9 @@ namespace argparse
                         }
                     }
 
-                    auto get_name_for_error() const -> std::string override
+                    auto get_name_for_error() const -> std::function<std::string()>
                     {
-                        return get_dest_name();
+                        return [&]() { return get_dest_name(); };
                     }
 
                     static auto get_consumable(Tokens & tokens)
@@ -1360,7 +1356,7 @@ namespace argparse
                         {
                             if (has_nargs_number())
                             {
-                                m_value = parse_arguments(consumable | std::views::take(get_nargs_number()));
+                                m_value = parse_arguments(consumable | std::views::take(get_nargs_number()), get_name_for_error());
                             }
                             else
                             {
@@ -1371,7 +1367,7 @@ namespace argparse
                         {
                             if (!consumable.empty())
                             {
-                                m_value = consume_token(consumable.front());
+                                m_value = consume_token(consumable.front(), get_name_for_error());
                             }
                         }
                     }
@@ -1426,7 +1422,7 @@ namespace argparse
                 private:
                     auto perform_action(std::string const & value, std::ranges::view auto tokens) -> void
                     {
-                        std::visit([&](auto const & action) { action.perform(*this, m_value, value, tokens); }, m_action);
+                        std::visit([&](auto const & action) { action.perform(*this, m_value, get_name_for_error(), value, tokens); }, m_action);
                     }
 
                     auto has_arg(auto it) const -> std::string_view
@@ -1514,9 +1510,9 @@ namespace argparse
                         return get_name().substr(1);
                     }
 
-                    auto get_name_for_error() const -> std::string override
+                    auto get_name_for_error() const -> std::function<std::string()>
                     {
-                        return get_joined_names();
+                        return [&]() { return get_joined_names(); };
                     }
 
                     auto check_errors(std::string_view value, std::ranges::view auto tokens) const -> void
