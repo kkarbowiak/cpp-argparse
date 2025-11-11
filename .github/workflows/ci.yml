@@ -143,7 +143,7 @@ jobs:
 
       - name: Generate coverage
         run: |
-          lcov --directory build --capture --output-file coverage.info --ignore-errors mismatch
+          lcov --directory build --capture --gcov-tool gcov-14 --output-file coverage.info --ignore-errors mismatch
           lcov --list coverage.info
           lcov --extract coverage.info --output-file argparse.info *argparse.hpp
           lcov --list argparse.info
