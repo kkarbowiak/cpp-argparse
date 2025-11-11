@@ -1035,11 +1035,11 @@ namespace argparse
                         }
                     }
 
-                    auto check_errors(ArgumentBase const & base, std::string_view value, std::ranges::view auto tokens) const -> void
+                    auto check_errors(ArgumentImpl const & impl, std::string_view value, std::ranges::view auto tokens) const -> void
                     {
-                        if (!base.has_nargs() && value.empty() && tokens.empty())
+                        if (!impl.has_nargs() && value.empty() && tokens.empty())
                         {
-                            throw parsing_error(std::format("argument {}: expected one argument", base.get_joined_names()));
+                            throw parsing_error(std::format("argument {}: expected one argument", impl.get_joined_names()));
                         }
                     }
 
@@ -1105,11 +1105,11 @@ namespace argparse
                         value = base.get_const();
                     }
 
-                    auto check_errors(ArgumentBase const & base, std::string_view value, std::ranges::view auto /* tokens */) const -> void
+                    auto check_errors(ArgumentImpl const & impl, std::string_view value, std::ranges::view auto /* tokens */) const -> void
                     {
                         if (!value.empty())
                         {
-                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", base.get_joined_names(), value));
+                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", impl.get_joined_names(), value));
                         }
                     }
 
@@ -1127,11 +1127,11 @@ namespace argparse
                         value = true;
                     }
 
-                    auto check_errors(ArgumentBase const & base, std::string_view value, std::ranges::view auto /* tokens */) const -> void
+                    auto check_errors(ArgumentImpl const & impl, std::string_view value, std::ranges::view auto /* tokens */) const -> void
                     {
                         if (!value.empty())
                         {
-                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", base.get_joined_names(), value));
+                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", impl.get_joined_names(), value));
                         }
                     }
 
@@ -1149,11 +1149,11 @@ namespace argparse
                         value = false;
                     }
 
-                    auto check_errors(ArgumentBase const & base, std::string_view value, std::ranges::view auto /* tokens */) const -> void
+                    auto check_errors(ArgumentImpl const & impl, std::string_view value, std::ranges::view auto /* tokens */) const -> void
                     {
                         if (!value.empty())
                         {
-                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", base.get_joined_names(), value));
+                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", impl.get_joined_names(), value));
                         }
                     }
 
@@ -1172,7 +1172,7 @@ namespace argparse
                         throw HelpRequested();
                     }
 
-                    auto check_errors(ArgumentBase const & /* base */, std::string_view /* value */, std::ranges::view auto /* tokens */) const -> void
+                    auto check_errors(ArgumentImpl const & /* impl */, std::string_view /* value */, std::ranges::view auto /* tokens */) const -> void
                     {
                     }
 
@@ -1191,7 +1191,7 @@ namespace argparse
                         throw VersionRequested();
                     }
 
-                    auto check_errors(ArgumentBase const & /* base */, std::string_view /* value */, std::ranges::view auto /* tokens */) const -> void
+                    auto check_errors(ArgumentImpl const & /* impl */, std::string_view /* value */, std::ranges::view auto /* tokens */) const -> void
                     {
                     }
 
@@ -1216,11 +1216,11 @@ namespace argparse
                         }
                     }
 
-                    auto check_errors(ArgumentBase const & base, std::string_view value, std::ranges::view auto /* tokens */) const -> void
+                    auto check_errors(ArgumentImpl const & impl, std::string_view value, std::ranges::view auto /* tokens */) const -> void
                     {
                         if (!value.empty())
                         {
-                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", base.get_joined_names(), value));
+                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", impl.get_joined_names(), value));
                         }
                     }
 
@@ -1263,11 +1263,11 @@ namespace argparse
                         }
                     }
 
-                    auto check_errors(ArgumentBase const & base, std::string_view value, std::ranges::view auto tokens) const -> void
+                    auto check_errors(ArgumentImpl const & impl, std::string_view value, std::ranges::view auto tokens) const -> void
                     {
                         if (value.empty() && tokens.empty())
                         {
-                            throw parsing_error(std::format("argument {}: expected one argument", base.get_joined_names()));
+                            throw parsing_error(std::format("argument {}: expected one argument", impl.get_joined_names()));
                         }
                     }
 
@@ -1530,7 +1530,7 @@ namespace argparse
 
                     auto check_errors(std::string_view value, std::ranges::view auto tokens) const -> void
                     {
-                        std::visit([&](auto const & action) { action.check_errors(*this, value, tokens); }, m_action);
+                        std::visit([&](auto const & action) { action.check_errors(get_impl(), value, tokens); }, m_action);
                     }
 
                     auto assign_non_present_value() -> void
