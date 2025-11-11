@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-15, ubuntu-24.04, windows-latest]
+        os: [ubuntu-24.04, windows-latest]
         type: [Debug, Release]
         compiler: [cl, clang++, g++-14]
         exclude:
@@ -38,6 +38,18 @@ jobs:
       - name: CMake build
         if: runner.os != 'macOS'
         run: cmake --build build --parallel
+
+  macos:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: CMake configure
+        run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=clang++-18
+
+      - name: CMake build
+        run: cmake --build build
+
 
   clangtidy:
     if: false # disable as it takes way too much time
