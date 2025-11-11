@@ -997,6 +997,11 @@ namespace argparse
                         return false;
                     }
 
+                    auto get_impl() const -> ArgumentImpl const &
+                    {
+                        return m_impl;
+                    }
+
                 private:
                     ArgumentImpl m_impl;
             };
@@ -1038,9 +1043,9 @@ namespace argparse
                         }
                     }
 
-                    auto assign_non_present_value(ArgumentBase const & base, std::any & value) const -> void
+                    auto assign_non_present_value(ArgumentImpl const & impl, std::any & value) const -> void
                     {
-                        value = base.get_default();
+                        value = impl.get_default();
                     }
 
                 private:
@@ -1108,9 +1113,9 @@ namespace argparse
                         }
                     }
 
-                    auto assign_non_present_value(ArgumentBase const & base, std::any & value) const -> void
+                    auto assign_non_present_value(ArgumentImpl const & impl, std::any & value) const -> void
                     {
-                        value = base.get_default();
+                        value = impl.get_default();
                     }
             };
 
@@ -1130,7 +1135,7 @@ namespace argparse
                         }
                     }
 
-                    auto assign_non_present_value(ArgumentBase const & /* base */, std::any & value) const -> void
+                    auto assign_non_present_value(ArgumentImpl const & /* impl */, std::any & value) const -> void
                     {
                         value = false;
                     }
@@ -1152,7 +1157,7 @@ namespace argparse
                         }
                     }
 
-                    auto assign_non_present_value(ArgumentBase const & /* base */, std::any & value) const -> void
+                    auto assign_non_present_value(ArgumentImpl const & /* impl */, std::any & value) const -> void
                     {
                         value = true;
                     }
@@ -1171,7 +1176,7 @@ namespace argparse
                     {
                     }
 
-                    auto assign_non_present_value(ArgumentBase const & /* base */, std::any & value) const -> void
+                    auto assign_non_present_value(ArgumentImpl const & /* impl */, std::any & value) const -> void
                     {
                         value = false;
                     }
@@ -1190,7 +1195,7 @@ namespace argparse
                     {
                     }
 
-                    auto assign_non_present_value(ArgumentBase const & /* base */, std::any & value) const -> void
+                    auto assign_non_present_value(ArgumentImpl const & /* impl */, std::any & value) const -> void
                     {
                         value = false;
                     }
@@ -1219,9 +1224,9 @@ namespace argparse
                         }
                     }
 
-                    auto assign_non_present_value(ArgumentBase const & base, std::any & value) const -> void
+                    auto assign_non_present_value(ArgumentImpl const & impl, std::any & value) const -> void
                     {
-                        value = base.get_default();
+                        value = impl.get_default();
                     }
             };
 
@@ -1266,9 +1271,9 @@ namespace argparse
                         }
                     }
 
-                    auto assign_non_present_value(ArgumentBase const & base, std::any & value) const -> void
+                    auto assign_non_present_value(ArgumentImpl const & impl, std::any & value) const -> void
                     {
-                        value = base.get_default();
+                        value = impl.get_default();
                     }
             };
 
@@ -1530,7 +1535,7 @@ namespace argparse
 
                     auto assign_non_present_value() -> void
                     {
-                        std::visit([&](auto const & action) { action.assign_non_present_value(*this, m_value); }, m_action);
+                        std::visit([&](auto const & action) { action.assign_non_present_value(get_impl(), m_value); }, m_action);
                     }
 
                     static auto get_consumable(Tokens & tokens)
