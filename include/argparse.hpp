@@ -1869,12 +1869,11 @@ namespace argparse
 
                     static auto format_nargs(Formattable const & argument) -> std::string
                     {
-                        auto result = std::string();
                         auto const formatted_arg = format_arg(argument);
 
                         if (argument.has_nargs_number())
                         {
-                            result += std::ranges::fold_left(std::views::repeat(" " + formatted_arg, argument.get_nargs_number()), std::string(), std::plus());
+                            return std::ranges::fold_left(std::views::repeat(" " + formatted_arg, argument.get_nargs_number()), std::string(), std::plus());
                         }
                         else
                         {
@@ -1887,9 +1886,9 @@ namespace argparse
                                 case one_or_more:
                                     return std::format(" {0} [{0} ...]", formatted_arg);
                             }
-                        }
 
-                        return result;
+                            std::unreachable();
+                        }
                     }
 
                     static auto help_string_separation(std::size_t help_line_length) -> std::string_view
