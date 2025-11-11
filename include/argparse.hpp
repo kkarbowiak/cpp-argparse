@@ -1010,28 +1010,28 @@ namespace argparse
                     {
                     }
 
-                    auto perform(std::string const & value, std::ranges::view auto tokens) const -> void
+                    auto perform(ArgumentBase const & base, std::any & value, std::string const & val, std::ranges::view auto tokens) const -> void
                     {
-                        if (m_base.has_nargs())
+                        if (base.has_nargs())
                         {
-                            if (m_base.has_nargs_number())
+                            if (base.has_nargs_number())
                             {
-                                parse_arguments_number(tokens);
+                                parse_arguments_number(base, value, tokens);
                             }
                             else
                             {
-                                parse_arguments_option(tokens);
+                                parse_arguments_option(base, value, tokens);
                             }
                         }
                         else
                         {
-                            if (value.empty())
+                            if (val.empty())
                             {
-                                m_value = m_base.consume_token(tokens.front());
+                                value = base.consume_token(tokens.front());
                             }
                             else
                             {
-                                m_value = m_base.process_token(value);
+                                value = base.process_token(val);
                             }
                         }
                     }
@@ -1050,47 +1050,47 @@ namespace argparse
                     }
 
                 private:
-                    auto parse_arguments_number(std::ranges::view auto tokens) const -> void
+                    auto parse_arguments_number(ArgumentBase const & base, std::any & value, std::ranges::view auto tokens) const -> void
                     {
                         auto const nargs_number = m_base.get_nargs_number();
-                        auto const values = m_base.consume_tokens(tokens | std::views::take(nargs_number));
+                        auto const values = base.consume_tokens(tokens | std::views::take(nargs_number));
                         if (values.size() < nargs_number)
                         {
-                            throw parsing_error(std::format("argument {}: expected {} argument{}", m_base.get_joined_names(), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
+                            throw parsing_error(std::format("argument {}: expected {} argument{}", base.get_joined_names(), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
                         }
-                        m_value = m_base.get_transformed(values);
+                        value = base.get_transformed(values);
                     }
 
-                    auto parse_arguments_option(std::ranges::view auto tokens) const -> void
+                    auto parse_arguments_option(ArgumentBase const & base, std::any & value, std::ranges::view auto tokens) const -> void
                     {
-                        switch (m_base.get_nargs_option())
+                        switch (base.get_nargs_option())
                         {
                             case zero_or_one:
                             {
                                 if (!tokens.empty())
                                 {
-                                    m_value = m_base.consume_token(tokens.front());
+                                    value = base.consume_token(tokens.front());
                                 }
                                 else
                                 {
-                                    m_value = m_base.get_const();
+                                    value = base.get_const();
                                 }
                                 break;
                             }
                             case zero_or_more:
                             {
-                                m_value = m_base.parse_arguments(tokens);
+                                value = base.parse_arguments(tokens);
                                 break;
                             }
                             case one_or_more:
                             {
-                                if (auto const values = m_base.consume_tokens(tokens); !values.empty())
+                                if (auto const values = base.consume_tokens(tokens); !values.empty())
                                 {
-                                    m_value = m_base.get_transformed(values);
+                                    value = base.get_transformed(values);
                                 }
                                 else
                                 {
-                                    throw parsing_error(std::format("argument {}: expected at least one argument", m_base.get_joined_names()));
+                                    throw parsing_error(std::format("argument {}: expected at least one argument", base.get_joined_names()));
                                 }
                                 break;
                             }
@@ -1111,9 +1111,9 @@ namespace argparse
                     {
                     }
 
-                    auto perform(std::string const & /* value */, std::ranges::view auto /* tokens */) const -> void
+                    auto perform(ArgumentBase const & base, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
-                        m_value = m_base.get_const();
+                        value = base.get_const();
                     }
 
                     auto check_errors(ArgumentBase const & base, std::string_view value, std::ranges::view auto /* tokens */) const -> void
@@ -1143,9 +1143,9 @@ namespace argparse
                     {
                     }
 
-                    auto perform(std::string const & /* value */, std::ranges::view auto /* tokens */) const -> void
+                    auto perform(ArgumentBase const & /* base */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
-                        m_value = true;
+                        value = true;
                     }
 
                     auto check_errors(ArgumentBase const & base, std::string_view value, std::ranges::view auto /* tokens */) const -> void
@@ -1175,9 +1175,9 @@ namespace argparse
                     {
                     }
 
-                    auto perform(std::string const & /* value */, std::ranges::view auto /* tokens */) const -> void
+                    auto perform(ArgumentBase const & /* base */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
-                        m_value = false;
+                        value = false;
                     }
 
                     auto check_errors(ArgumentBase const & base, std::string_view value, std::ranges::view auto /* tokens */) const -> void
@@ -1206,9 +1206,9 @@ namespace argparse
                     {
                     }
 
-                    auto perform(std::string const & /* value */, std::ranges::view auto /* tokens */) const -> void
+                    auto perform(ArgumentBase const & /* base */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
-                        m_value = true;
+                        value = true;
                         throw HelpRequested();
                     }
 
@@ -1233,9 +1233,9 @@ namespace argparse
                     {
                     }
 
-                    auto perform(std::string const & /* value */, std::ranges::view auto /* tokens */) const -> void
+                    auto perform(ArgumentBase const & /* base */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
-                        m_value = true;
+                        value = true;
                         throw VersionRequested();
                     }
 
@@ -1261,15 +1261,15 @@ namespace argparse
                     {
                     }
 
-                    auto perform(std::string const & /* value */, std::ranges::view auto /* tokens */) const -> void
+                    auto perform(ArgumentBase const & /* base */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
-                        if (!m_value.has_value())
+                        if (!value.has_value())
                         {
-                            m_value = 1;
+                            value = 1;
                         }
                         else
                         {
-                            ++std::any_cast<int &>(m_value);
+                            ++std::any_cast<int &>(value);
                         }
                     }
 
@@ -1300,32 +1300,32 @@ namespace argparse
                     {
                     }
 
-                    auto perform(std::string const & value, std::ranges::view auto tokens) const -> void
+                    auto perform(ArgumentBase const & base, std::any & value, std::string const & val, std::ranges::view auto tokens) const -> void
                     {
-                        if (value.empty())
+                        if (val.empty())
                         {
-                            if (!m_value.has_value())
+                            if (!value.has_value())
                             {
-                                auto const values = m_base.consume_tokens(tokens | std::views::take(1));
-                                m_value = m_base.get_transformed(values);
+                                auto const values = base.consume_tokens(tokens | std::views::take(1));
+                                value = base.get_transformed(values);
                             }
                             else
                             {
-                                auto const val = m_base.consume_token(tokens.front());
-                                m_base.append_value(val, m_value);
+                                auto const v = base.consume_token(tokens.front());
+                                base.append_value(v, value);
                             }
                         }
                         else
                         {
                             if (!m_value.has_value())
                             {
-                                auto const values = m_base.consume_tokens(std::views::single(Token{value}));
-                                m_value = m_base.get_transformed(values);
+                                auto const values = base.consume_tokens(std::views::single(Token{val}));
+                                value = base.get_transformed(values);
                             }
                             else
                             {
-                                auto const val = m_base.process_token(value);
-                                m_base.append_value(val, m_value);
+                                auto const v = base.process_token(val);
+                                base.append_value(v, value);
                             }
                         }
                     }
@@ -1502,7 +1502,7 @@ namespace argparse
                 private:
                     auto perform_action(std::string const & value, std::ranges::view auto tokens) -> void
                     {
-                        std::visit([&](auto const & action) { action.perform(value, tokens); }, m_action);
+                        std::visit([&](auto const & action) { action.perform(*this, m_value, value, tokens); }, m_action);
                     }
 
                     auto has_arg(auto it) const -> std::string_view
