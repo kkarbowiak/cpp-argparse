@@ -1686,8 +1686,8 @@ namespace argparse
                     }
             };
 
-            using ArgumentUptr = std::unique_ptr<ArgumentBase>;
-            using ArgumentUptrs = std::vector<ArgumentUptr>;
+            using ArgumentVariant = std::variant<PositionalArgument, OptionalArgument>;
+            using Arguments = std::vector<ArgumentVariant>;
 
             class Formatter
             {
@@ -1931,7 +1931,7 @@ namespace argparse
             class MutuallyExclusiveGroup
             {
                 public:
-                    MutuallyExclusiveGroup(ArgumentUptrs & arguments, OptString & version)
+                    MutuallyExclusiveGroup(Arguments & arguments, OptString & version)
                       : m_arguments(arguments)
                       , m_version(version)
                     {
@@ -1944,14 +1944,14 @@ namespace argparse
                     }
 
                 private:
-                    ArgumentUptrs & m_arguments;
+                    Arguments & m_arguments;
                     OptString & m_version;
             };
 
             class ArgumentBuilder
             {
                 public:
-                    ArgumentBuilder(ArgumentUptrs & arguments, OptString & version, std::vector<std::string> names, MutuallyExclusiveGroup const * group = nullptr)
+                    ArgumentBuilder(Arguments & arguments, OptString & version, std::vector<std::string> names, MutuallyExclusiveGroup const * group = nullptr)
                       : m_arguments(arguments)
                       , m_version(version)
                     {
@@ -1968,11 +1968,11 @@ namespace argparse
 
                         if (is_positional())
                         {
-                            m_arguments.push_back(std::make_unique<PositionalArgument>(std::move(m_options)));
+                            m_arguments.push_back(PositionalArgument(std::move(m_options)));
                         }
                         else
                         {
-                            m_arguments.push_back(std::make_unique<OptionalArgument>(std::move(m_options)));
+                            m_arguments.push_back(OptionalArgument(std::move(m_options)));
                         }
                     }
 
@@ -2069,22 +2069,22 @@ namespace argparse
                     }
 
                 private:
-                    ArgumentUptrs & m_arguments;
+                    Arguments & m_arguments;
                     OptString & m_version;
                     Options m_options;
             };
 
-            static auto cast_to_argument(ArgumentUptr const & up) -> Argument &
+            static auto cast_to_argument(ArgumentVariant & av) -> Argument &
             {
-                return *up;
+                return std::visit([](auto & argument) -> Argument & { return argument; } , av);
             }
 
-            static auto cast_to_formattable(ArgumentUptr const & up) -> Formattable const &
+            static auto cast_to_formattable(ArgumentVariant const & av) -> Formattable const &
             {
-                return *up;
+                return std::visit([](auto & argument) -> Formattable const & { return argument; } , av);
             }
 
-            ArgumentUptrs m_arguments;
+            Arguments m_arguments;
             OptString m_prog;
             OptString m_usage;
             OptString m_description;
