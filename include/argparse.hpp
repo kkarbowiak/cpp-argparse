@@ -844,6 +844,10 @@ namespace argparse
                     }
                     virtual ~ArgumentBase() = default;
 
+                    ArgumentBase(ArgumentBase && other) noexcept = default;
+
+                    ArgumentBase & operator=(ArgumentBase && other) noexcept = default;
+
                     auto get_name() const -> std::string const & override
                     {
                         return m_impl.get_name();
@@ -1348,6 +1352,10 @@ namespace argparse
                     {
                     }
 
+                    PositionalArgument(PositionalArgument && other) noexcept = default;
+
+                    PositionalArgument & operator=(PositionalArgument && other) noexcept = default;
+
                     auto parse_tokens(Tokens & tokens) -> void override
                     {
                         auto consumable = get_consumable(tokens);
@@ -1585,6 +1593,10 @@ namespace argparse
                       , m_action(create_action())
                     {
                     }
+
+                    OptionalArgument(OptionalArgument && other) noexcept = default;
+
+                    OptionalArgument & operator=(OptionalArgument && other) noexcept = default;
 
                     auto parse_tokens(Tokens & tokens) -> void override
                     {
