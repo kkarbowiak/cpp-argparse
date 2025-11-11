@@ -1004,12 +1004,6 @@ namespace argparse
             class StoreAction
             {
                 public:
-                    StoreAction(ArgumentBase & base, std::any & value)
-                      : m_base(base)
-                      , m_value(value)
-                    {
-                    }
-
                     auto perform(ArgumentBase const & base, std::any & value, std::string const & val, std::ranges::view auto tokens) const -> void
                     {
                         if (base.has_nargs())
@@ -1096,21 +1090,11 @@ namespace argparse
                             }
                         }
                     }
-
-                private:
-                    ArgumentBase & m_base;
-                    std::any & m_value;
             };
 
             class StoreConstAction
             {
                 public:
-                    StoreConstAction(ArgumentBase & base, std::any & value)
-                      : m_base(base)
-                      , m_value(value)
-                    {
-                    }
-
                     auto perform(ArgumentBase const & base, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
                         value = base.get_const();
@@ -1128,21 +1112,11 @@ namespace argparse
                     {
                         value = base.get_default();
                     }
-
-                private:
-                    ArgumentBase & m_base;
-                    std::any & m_value;
             };
 
             class StoreTrueAction
             {
                 public:
-                    StoreTrueAction(ArgumentBase & base, std::any & value)
-                      : m_base(base)
-                      , m_value(value)
-                    {
-                    }
-
                     auto perform(ArgumentBase const & /* base */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
                         value = true;
@@ -1160,21 +1134,11 @@ namespace argparse
                     {
                         value = false;
                     }
-
-                private:
-                    ArgumentBase & m_base;
-                    std::any & m_value;
             };
 
             class StoreFalseAction
             {
                 public:
-                    StoreFalseAction(ArgumentBase & base, std::any & value)
-                      : m_base(base)
-                      , m_value(value)
-                    {
-                    }
-
                     auto perform(ArgumentBase const & /* base */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
                         value = false;
@@ -1192,20 +1156,11 @@ namespace argparse
                     {
                         value = true;
                     }
-
-                private:
-                    ArgumentBase & m_base;
-                    std::any & m_value;
             };
 
             class HelpAction
             {
                 public:
-                    explicit HelpAction(std::any & value)
-                      : m_value(value)
-                    {
-                    }
-
                     auto perform(ArgumentBase const & /* base */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
                         value = true;
@@ -1220,19 +1175,11 @@ namespace argparse
                     {
                         value = false;
                     }
-
-                private:
-                    std::any & m_value;
             };
 
             class VersionAction
             {
                 public:
-                    explicit VersionAction(std::any & value)
-                      : m_value(value)
-                    {
-                    }
-
                     auto perform(ArgumentBase const & /* base */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
                         value = true;
@@ -1247,20 +1194,11 @@ namespace argparse
                     {
                         value = false;
                     }
-
-                private:
-                    std::any & m_value;
             };
 
             class CountAction
             {
                 public:
-                    CountAction(ArgumentBase & base, std::any & value)
-                      : m_base(base)
-                      , m_value(value)
-                    {
-                    }
-
                     auto perform(ArgumentBase const & /* base */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
                         if (!value.has_value())
@@ -1285,21 +1223,11 @@ namespace argparse
                     {
                         value = base.get_default();
                     }
-
-                private:
-                    ArgumentBase & m_base;
-                    std::any & m_value;
             };
 
             class AppendAction
             {
                 public:
-                    AppendAction(ArgumentBase & base, std::any & value)
-                      : m_base(base)
-                      , m_value(value)
-                    {
-                    }
-
                     auto perform(ArgumentBase const & base, std::any & value, std::string const & val, std::ranges::view auto tokens) const -> void
                     {
                         if (val.empty())
@@ -1342,10 +1270,6 @@ namespace argparse
                     {
                         value = base.get_default();
                     }
-
-                private:
-                    ArgumentBase & m_base;
-                    std::any & m_value;
             };
 
             class PositionalArgument final : public ArgumentBase
@@ -1634,23 +1558,23 @@ namespace argparse
                         switch (get_action())
                         {
                             case store:
-                                return StoreAction(*this, m_value);
+                                return StoreAction();
                             case store_true:
-                                return StoreTrueAction(*this, m_value);
+                                return StoreTrueAction();
                             case store_false:
-                                return StoreFalseAction(*this, m_value);
+                                return StoreFalseAction();
                             case store_const:
-                                return StoreConstAction(*this, m_value);
+                                return StoreConstAction();
                             case help:
-                                return HelpAction(m_value);
+                                return HelpAction();
                             case version:
-                                return VersionAction(m_value);
+                                return VersionAction();
                             case count:
-                                return CountAction(*this, m_value);
+                                return CountAction();
                             case append:
-                                return AppendAction(*this, m_value);
+                                return AppendAction();
                             default:
-                                return StoreAction(*this, m_value);
+                                return StoreAction();
                         }
                     }
 
