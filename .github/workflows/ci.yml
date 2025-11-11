@@ -18,7 +18,7 @@ jobs:
           - os: macos-15
             compiler: cl
           - os: macos-15
-            compiler: g++-14
+            compiler: clang++
           - os: ubuntu-24.04
             compiler: cl
           - os: windows-latest
