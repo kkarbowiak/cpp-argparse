@@ -14,10 +14,10 @@
 #include <any>
 #include <format>
 #include <functional>
-#include <iostream>
 #include <map>
 #include <memory>
 #include <optional>
+#include <print>
 #include <ranges>
 #include <sstream>
 #include <stdexcept>
@@ -25,6 +25,7 @@
 #include <string_view>
 #include <type_traits>
 #include <typeinfo>
+#include <utility>
 #include <variant>
 #include <vector>
 #include <cstdlib>
@@ -91,12 +92,12 @@ namespace argparse
 
     inline auto operator|(Handle lhs, Handle rhs) -> Handle
     {
-        return static_cast<Handle>(static_cast<int>(lhs) | static_cast<int>(rhs));
+        return static_cast<Handle>(std::to_underlying(lhs) | std::to_underlying(rhs));
     }
 
     inline auto operator&(Handle lhs, Handle rhs) -> int
     {
-        return static_cast<int>(lhs) & static_cast<int>(rhs);
+        return std::to_underlying(lhs) & std::to_underlying(rhs);
     }
 
     template<typename T>
@@ -256,7 +257,7 @@ namespace argparse
                 {
                     if (m_handle & Handle::help)
                     {
-                        std::cout << format_help() << std::endl;
+                        std::println("{}", format_help());
                         std::exit(EXIT_SUCCESS);
                     }
 
@@ -266,7 +267,7 @@ namespace argparse
                 {
                     if (m_handle & Handle::version)
                     {
-                        std::cout << format_version() << std::endl;
+                        std::println("{}", format_version());
                         std::exit(EXIT_SUCCESS);
                     }
 
@@ -276,8 +277,8 @@ namespace argparse
                 {
                     if (m_handle & Handle::errors)
                     {
-                        std::cout << e.what() << '\n';
-                        std::cout << format_help() << std::endl;
+                        std::println("{}", e.what());
+                        std::println("{}", format_help());
                         std::exit(EXIT_FAILURE);
                     }
 
@@ -394,19 +395,8 @@ namespace argparse
 
             static auto join(std::ranges::view auto strings, std::string_view separator) -> std::string
             {
-                auto result = std::string();
-
-                for (auto const & string : strings | std::views::take(1))
-                {
-                    result += string;
-                }
-                for (auto const & string : strings | std::views::drop(1))
-                {
-                    result += separator;
-                    result += string;
-                }
-
-                return result;
+                auto const joined = std::ranges::fold_left_first(strings, [=](auto l, auto const & r) { l += separator; l += r; return std::move(l); });
+                return joined.value_or(std::string());
             }
 
             static auto parse_optional_arguments(std::ranges::view auto arguments, Tokens & tokens) -> void
@@ -578,9 +568,10 @@ namespace argparse
 
                     auto transform(std::vector<std::any> const & values) const -> std::any override
                     {
-                        auto const transformation = values
-                            | std::views::transform([](auto const & value) { return std::any_cast<T>(value); });
-                        return std::any(std::vector(transformation.begin(), transformation.end()));
+                        return std::any(
+                            values
+                            | std::views::transform([](auto const & value) { return std::any_cast<T>(value); })
+                            | std::ranges::to<std::vector>());
                     }
 
                     auto append(std::any const & value, std::any & values) const -> void override
@@ -1353,7 +1344,7 @@ namespace argparse
                         {
                             if (name[1] != '-')
                             {
-                                if (it->m_token.starts_with("-") && !it->m_token.starts_with("--") && it->m_token.find(name[1]) != std::string::npos)
+                                if (it->m_token.starts_with("-") && !it->m_token.starts_with("--") && it->m_token.contains(name[1]))
                                 {
                                     return name;
                                 }
@@ -1883,10 +1874,7 @@ namespace argparse
 
                         if (argument.has_nargs_number())
                         {
-                            for (auto n = 0u; n < argument.get_nargs_number(); n++)
-                            {
-                                result += " " + formatted_arg;
-                            }
+                            result += std::ranges::fold_left(std::views::repeat(" " + formatted_arg, argument.get_nargs_number()), std::string(), std::plus());
                         }
                         else
                         {
