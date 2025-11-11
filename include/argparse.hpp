@@ -1052,7 +1052,7 @@ namespace argparse
                 private:
                     auto parse_arguments_number(ArgumentBase const & base, std::any & value, std::ranges::view auto tokens) const -> void
                     {
-                        auto const nargs_number = m_base.get_nargs_number();
+                        auto const nargs_number = base.get_nargs_number();
                         auto const values = base.consume_tokens(tokens | std::views::take(nargs_number));
                         if (values.size() < nargs_number)
                         {
@@ -1317,7 +1317,7 @@ namespace argparse
                         }
                         else
                         {
-                            if (!m_value.has_value())
+                            if (!value.has_value())
                             {
                                 auto const values = base.consume_tokens(std::views::single(Token{val}));
                                 value = base.get_transformed(values);
