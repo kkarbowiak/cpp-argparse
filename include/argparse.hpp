@@ -831,163 +831,6 @@ namespace argparse
                         m_options.type_handler->append(value, values);
                     }
 
-                private:
-                    Options m_options;
-            };
-
-            class ArgumentBase : public Argument, public Formattable
-            {
-                public:
-                    explicit ArgumentBase(Options options)
-                      : m_impl(std::move(options))
-                    {
-                    }
-                    virtual ~ArgumentBase() = default;
-
-                    ArgumentBase(ArgumentBase && other) noexcept = default;
-
-                    ArgumentBase & operator=(ArgumentBase && other) noexcept = default;
-
-                    auto get_name() const -> std::string const & override
-                    {
-                        return m_impl.get_name();
-                    }
-
-                    auto get_names() const -> std::vector<std::string> const & override
-                    {
-                        return m_impl.get_names();
-                    }
-
-                    auto is_mutually_exclusive() const -> bool override
-                    {
-                        return m_impl.is_mutually_exclusive();
-                    }
-
-                    auto is_mutually_exclusive_with(Argument const & other) const -> bool override
-                    {
-                        return m_impl.is_mutually_exclusive_with(static_cast<ArgumentBase const &>(other).m_impl);
-                    }
-
-                    auto is_mutually_exclusive_with(Formattable const & other) const -> bool override
-                    {
-                        return m_impl.is_mutually_exclusive_with(static_cast<ArgumentBase const &>(other).m_impl);
-                    }
-
-                    auto expects_argument() const -> bool override
-                    {
-                        return m_impl.expects_argument();
-                    }
-
-                    auto get_joined_names() const -> std::string override
-                    {
-                        return m_impl.get_joined_names();
-                    }
-
-                    auto get_help() const -> std::string const & override
-                    {
-                        return m_impl.get_help();
-                    }
-
-                    auto has_nargs() const -> bool override
-                    {
-                        return m_impl.has_nargs();
-                    }
-
-                    auto has_nargs_number() const -> bool override
-                    {
-                        return m_impl.has_nargs_number();
-                    }
-
-                    auto has_choices() const -> bool override
-                    {
-                        return m_impl.has_choices();
-                    }
-
-                    auto get_joined_choices(std::string_view separator) const -> std::string override
-                    {
-                        return m_impl.get_joined_choices(separator);
-                    }
-
-                    auto get_nargs_number() const -> std::size_t override
-                    {
-                        return m_impl.get_nargs_number();
-                    }
-
-                    auto get_nargs_option() const -> Nargs override
-                    {
-                        return m_impl.get_nargs_option();
-                    }
-
-                    auto get_default() const -> std::any const &
-                    {
-                        return m_impl.get_default();
-                    }
-
-                    auto get_const() const -> std::any const &
-                    {
-                        return m_impl.get_const();
-                    }
-
-                    auto get_metavar() const -> std::string const &
-                    {
-                        return m_impl.get_metavar();
-                    }
-
-                    auto get_dest() const -> std::string const &
-                    {
-                        return m_impl.get_dest();
-                    }
-
-                    auto get_required() const -> bool
-                    {
-                        return m_impl.get_required();
-                    }
-
-                    auto get_action() const -> Action
-                    {
-                        return m_impl.get_action();
-                    }
-
-                    auto parse_arguments(std::ranges::view auto tokens, std::function<std::string()> name_for_error) const -> std::any
-                    {
-                        return m_impl.parse_arguments(tokens, name_for_error);
-                    }
-
-                    auto consume_token(Token & token, std::function<std::string()> name_for_error) const -> std::any
-                    {
-                        return m_impl.consume_token(token, name_for_error);
-                    }
-
-                    auto process_token(std::string const & token, std::function<std::string()> name_for_error) const -> std::any
-                    {
-                        return m_impl.process_token(token, name_for_error);
-                    }
-
-                    auto consume_tokens(std::ranges::view auto tokens, std::function<std::string()> name_for_error) const -> std::vector<std::any>
-                    {
-                        return m_impl.consume_tokens(tokens, name_for_error);
-                    }
-
-                    auto check_choices(std::any const & value) const -> void
-                    {
-                        m_impl.check_choices(value);
-                    }
-
-                    auto get_transformed(std::vector<std::any> const & values) const -> std::any
-                    {
-                        return m_impl.get_transformed(values);
-                    }
-
-                    auto get_size(std::any const & value) const -> std::size_t
-                    {
-                        return m_impl.get_size(value);
-                    }
-
-                    auto append_value(std::any const & value, std::any & values) const -> void
-                    {
-                        m_impl.append_value(value, values);
-                    }
-
                     static auto is_negative_number(std::string const & token) -> bool
                     {
                         if (auto const parsed = from_string<double>(token); parsed.has_value())
@@ -997,13 +840,8 @@ namespace argparse
                         return false;
                     }
 
-                    auto get_impl() const -> ArgumentImpl const &
-                    {
-                        return m_impl;
-                    }
-
                 private:
-                    ArgumentImpl m_impl;
+                    Options m_options;
             };
 
             class StoreAction
@@ -1277,7 +1115,7 @@ namespace argparse
                     }
             };
 
-            class PositionalArgument final : public ArgumentBase
+            class PositionalArgument final : public Argument, public Formattable
             {
                 private:
                     auto parse_arguments_option(std::ranges::view auto tokens) -> void
@@ -1288,24 +1126,24 @@ namespace argparse
                             {
                                 if (!tokens.empty())
                                 {
-                                    m_value = consume_token(tokens.front(), get_name_for_error());
+                                    m_value = m_impl.consume_token(tokens.front(), get_name_for_error());
                                 }
                                 else
                                 {
-                                    m_value = get_default();
+                                    m_value = m_impl.get_default();
                                 }
                                 break;
                             }
                             case zero_or_more:
                             {
-                                m_value = parse_arguments(tokens, get_name_for_error());
+                                m_value = m_impl.parse_arguments(tokens, get_name_for_error());
                                 break;
                             }
                             case one_or_more:
                             {
-                                if (auto const values = consume_tokens(tokens, get_name_for_error()); !values.empty())
+                                if (auto const values = m_impl.consume_tokens(tokens, get_name_for_error()); !values.empty())
                                 {
-                                    m_value = get_transformed(values);
+                                    m_value = m_impl.get_transformed(values);
                                 }
                                 break;
                             }
@@ -1343,7 +1181,7 @@ namespace argparse
                                     {
                                         return true;
                                     }
-                                    if (is_negative_number(token.m_token))
+                                    if (ArgumentImpl::is_negative_number(token.m_token))
                                     {
                                         return true;
                                     }
@@ -1353,7 +1191,7 @@ namespace argparse
 
                 public:
                     explicit PositionalArgument(Options options)
-                      : ArgumentBase(std::move(options))
+                      : m_impl(std::move(options))
                     {
                     }
 
@@ -1369,7 +1207,7 @@ namespace argparse
                         {
                             if (has_nargs_number())
                             {
-                                m_value = parse_arguments(consumable | std::views::take(get_nargs_number()), get_name_for_error());
+                                m_value = m_impl.parse_arguments(consumable | std::views::take(get_nargs_number()), get_name_for_error());
                             }
                             else
                             {
@@ -1380,29 +1218,29 @@ namespace argparse
                         {
                             if (!consumable.empty())
                             {
-                                m_value = consume_token(consumable.front(), get_name_for_error());
+                                m_value = m_impl.consume_token(consumable.front(), get_name_for_error());
                             }
                         }
                     }
 
                     auto get_dest_name() const -> std::string override
                     {
-                        return get_dest().empty()
+                        return m_impl.get_dest().empty()
                             ? get_name()
-                            : get_dest();
+                            : m_impl.get_dest();
                     }
 
                     auto get_metavar_name() const -> std::string override
                     {
-                        return get_metavar().empty()
+                        return m_impl.get_metavar().empty()
                             ? get_name()
-                            : get_metavar();
+                            : m_impl.get_metavar();
                     }
 
                     auto has_value() const -> bool override
                     {
                         return has_nargs() && has_nargs_number()
-                            ? get_size(m_value) == get_nargs_number()
+                            ? m_impl.get_size(m_value) == get_nargs_number()
                             : m_value.has_value();
                     }
 
@@ -1426,16 +1264,87 @@ namespace argparse
                         return false;
                     }
 
+                    auto is_mutually_exclusive() const -> bool override
+                    {
+                        return m_impl.is_mutually_exclusive();
+                    }
+
+                    auto is_mutually_exclusive_with(Argument const & other) const -> bool override
+                    {
+                        return m_impl.is_mutually_exclusive_with(static_cast<PositionalArgument const &>(other).m_impl);
+                    }
+
+                    auto is_mutually_exclusive_with(Formattable const & other) const -> bool override
+                    {
+                        return m_impl.is_mutually_exclusive_with(static_cast<PositionalArgument const &>(other).m_impl);
+                    }
+
+                    auto expects_argument() const -> bool override
+                    {
+                        return m_impl.expects_argument();
+                    }
+
+                    auto get_joined_names() const -> std::string override
+                    {
+                        return m_impl.get_joined_names();
+                    }
+
+                    auto get_name() const -> std::string const & override
+                    {
+                        return m_impl.get_name();
+                    }
+
+                    auto get_names() const -> std::vector<std::string> const & override
+                    {
+                        return m_impl.get_names();
+                    }
+
+                    auto get_help() const -> std::string const & override
+                    {
+                        return m_impl.get_help();
+                    }
+
+                    auto has_nargs() const -> bool override
+                    {
+                        return m_impl.has_nargs();
+                    }
+
+                    auto has_nargs_number() const -> bool override
+                    {
+                        return m_impl.has_nargs_number();
+                    }
+
+                    auto has_choices() const -> bool override
+                    {
+                        return m_impl.has_choices();
+                    }
+
+                    auto get_joined_choices(std::string_view separator) const -> std::string override
+                    {
+                        return m_impl.get_joined_choices(separator);
+                    }
+
+                    auto get_nargs_number() const -> std::size_t override
+                    {
+                        return m_impl.get_nargs_number();
+                    }
+
+                    auto get_nargs_option() const -> Nargs override
+                    {
+                        return m_impl.get_nargs_option();
+                    }
+
                 private:
+                    ArgumentImpl m_impl;
                     std::any m_value;
             };
 
-            class OptionalArgument final : public ArgumentBase
+            class OptionalArgument final : public Argument, public Formattable
             {
                 private:
                     auto perform_action(std::string const & value, std::ranges::view auto tokens) -> void
                     {
-                        std::visit([&](auto const & action) { action.perform(get_impl(), m_value, get_name_for_error(), value, tokens); }, m_action);
+                        std::visit([&](auto const & action) { action.perform(m_impl, m_value, get_name_for_error(), value, tokens); }, m_action);
                     }
 
                     auto has_arg(auto it) const -> std::string_view
@@ -1530,12 +1439,12 @@ namespace argparse
 
                     auto check_errors(std::string_view value, std::ranges::view auto tokens) const -> void
                     {
-                        std::visit([&](auto const & action) { action.check_errors(get_impl(), value, tokens); }, m_action);
+                        std::visit([&](auto const & action) { action.check_errors(m_impl, value, tokens); }, m_action);
                     }
 
                     auto assign_non_present_value() -> void
                     {
-                        std::visit([&](auto const & action) { action.assign_non_present_value(get_impl(), m_value); }, m_action);
+                        std::visit([&](auto const & action) { action.assign_non_present_value(m_impl, m_value); }, m_action);
                     }
 
                     static auto get_consumable(Tokens & tokens)
@@ -1554,7 +1463,7 @@ namespace argparse
                                     {
                                         return true;
                                     }
-                                    if (is_negative_number(token.m_token))
+                                    if (ArgumentImpl::is_negative_number(token.m_token))
                                     {
                                         return true;
                                     }
@@ -1564,7 +1473,7 @@ namespace argparse
 
                     auto create_action() const -> std::variant<StoreAction, StoreConstAction, StoreTrueAction, StoreFalseAction, HelpAction, VersionAction, CountAction, AppendAction>
                     {
-                        switch (get_action())
+                        switch (m_impl.get_action())
                         {
                             case store:
                                 return StoreAction();
@@ -1588,13 +1497,14 @@ namespace argparse
                     }
 
                 private:
+                    ArgumentImpl m_impl;
                     std::any m_value;
                     bool m_present = false;
                     std::variant<StoreAction, StoreConstAction, StoreTrueAction, StoreFalseAction, HelpAction, VersionAction, CountAction, AppendAction> m_action;
 
                 public:
                     explicit OptionalArgument(Options options)
-                      : ArgumentBase(std::move(options))
+                      : m_impl(std::move(options))
                       , m_action(create_action())
                     {
                     }
@@ -1639,9 +1549,9 @@ namespace argparse
 
                     auto get_dest_name() const -> std::string override
                     {
-                        if (!get_dest().empty())
+                        if (!m_impl.get_dest().empty())
                         {
-                            return get_dest();
+                            return m_impl.get_dest();
                         }
 
                         auto dest = get_name_for_dest();
@@ -1653,9 +1563,9 @@ namespace argparse
 
                     auto get_metavar_name() const -> std::string override
                     {
-                        if (!get_metavar().empty())
+                        if (!m_impl.get_metavar().empty())
                         {
-                            return get_metavar();
+                            return m_impl.get_metavar();
                         }
 
                         auto metavar = get_dest_name();
@@ -1677,7 +1587,7 @@ namespace argparse
 
                     auto is_required() const -> bool override
                     {
-                        return get_required();
+                        return m_impl.get_required();
                     }
 
                     auto is_positional() const -> bool override
@@ -1688,6 +1598,76 @@ namespace argparse
                     auto is_present() const -> bool override
                     {
                         return m_present;
+                    }
+
+                    auto is_mutually_exclusive() const -> bool override
+                    {
+                        return m_impl.is_mutually_exclusive();
+                    }
+
+                    auto is_mutually_exclusive_with(Argument const & other) const -> bool override
+                    {
+                        return m_impl.is_mutually_exclusive_with(static_cast<OptionalArgument const &>(other).m_impl);
+                    }
+
+                    auto is_mutually_exclusive_with(Formattable const & other) const -> bool override
+                    {
+                        return m_impl.is_mutually_exclusive_with(static_cast<OptionalArgument const &>(other).m_impl);
+                    }
+
+                    auto expects_argument() const -> bool override
+                    {
+                        return m_impl.expects_argument();
+                    }
+
+                    auto get_joined_names() const -> std::string override
+                    {
+                        return m_impl.get_joined_names();
+                    }
+
+                    auto get_name() const -> std::string const & override
+                    {
+                        return m_impl.get_name();
+                    }
+
+                    auto get_names() const -> std::vector<std::string> const & override
+                    {
+                        return m_impl.get_names();
+                    }
+
+                    auto get_help() const -> std::string const & override
+                    {
+                        return m_impl.get_help();
+                    }
+
+                    auto has_nargs() const -> bool override
+                    {
+                        return m_impl.has_nargs();
+                    }
+
+                    auto has_nargs_number() const -> bool override
+                    {
+                        return m_impl.has_nargs_number();
+                    }
+
+                    auto has_choices() const -> bool override
+                    {
+                        return m_impl.has_choices();
+                    }
+
+                    auto get_joined_choices(std::string_view separator) const -> std::string override
+                    {
+                        return m_impl.get_joined_choices(separator);
+                    }
+
+                    auto get_nargs_number() const -> std::size_t override
+                    {
+                        return m_impl.get_nargs_number();
+                    }
+
+                    auto get_nargs_option() const -> Nargs override
+                    {
+                        return m_impl.get_nargs_option();
                     }
             };
 
