@@ -1289,7 +1289,6 @@ namespace argparse
                 private:
                     ArgumentBase & m_base;
                     std::any & m_value;
-                    std::any m_default;
             };
 
             class AppendAction
@@ -1347,7 +1346,6 @@ namespace argparse
                 private:
                     ArgumentBase & m_base;
                     std::any & m_value;
-                    std::any m_default;
             };
 
             class PositionalArgument final : public ArgumentBase
