@@ -1510,12 +1510,12 @@ namespace argparse
                     std::any m_value;
             };
 
-            class OptionalArgument final : public ArgumentBase
+            class OptionalArgument final : public Argument, public Formattable
             {
                 private:
                     auto perform_action(std::string const & value, std::ranges::view auto tokens) -> void
                     {
-                        std::visit([&](auto const & action) { action.perform(get_impl(), m_value, get_name_for_error(), value, tokens); }, m_action);
+                        std::visit([&](auto const & action) { action.perform(m_impl, m_value, get_name_for_error(), value, tokens); }, m_action);
                     }
 
                     auto has_arg(auto it) const -> std::string_view
@@ -1610,12 +1610,12 @@ namespace argparse
 
                     auto check_errors(std::string_view value, std::ranges::view auto tokens) const -> void
                     {
-                        std::visit([&](auto const & action) { action.check_errors(get_impl(), value, tokens); }, m_action);
+                        std::visit([&](auto const & action) { action.check_errors(m_impl, value, tokens); }, m_action);
                     }
 
                     auto assign_non_present_value() -> void
                     {
-                        std::visit([&](auto const & action) { action.assign_non_present_value(get_impl(), m_value); }, m_action);
+                        std::visit([&](auto const & action) { action.assign_non_present_value(m_impl, m_value); }, m_action);
                     }
 
                     static auto get_consumable(Tokens & tokens)
@@ -1634,7 +1634,7 @@ namespace argparse
                                     {
                                         return true;
                                     }
-                                    if (is_negative_number(token.m_token))
+                                    if (ArgumentImpl::is_negative_number(token.m_token))
                                     {
                                         return true;
                                     }
@@ -1644,7 +1644,7 @@ namespace argparse
 
                     auto create_action() const -> std::variant<StoreAction, StoreConstAction, StoreTrueAction, StoreFalseAction, HelpAction, VersionAction, CountAction, AppendAction>
                     {
-                        switch (get_action())
+                        switch (m_impl.get_action())
                         {
                             case store:
                                 return StoreAction();
@@ -1668,13 +1668,14 @@ namespace argparse
                     }
 
                 private:
+                    ArgumentImpl m_impl;
                     std::any m_value;
                     bool m_present = false;
                     std::variant<StoreAction, StoreConstAction, StoreTrueAction, StoreFalseAction, HelpAction, VersionAction, CountAction, AppendAction> m_action;
 
                 public:
                     explicit OptionalArgument(Options options)
-                      : ArgumentBase(std::move(options))
+                      : m_impl(std::move(options))
                       , m_action(create_action())
                     {
                     }
@@ -1719,9 +1720,9 @@ namespace argparse
 
                     auto get_dest_name() const -> std::string override
                     {
-                        if (!get_dest().empty())
+                        if (!m_impl.get_dest().empty())
                         {
-                            return get_dest();
+                            return m_impl.get_dest();
                         }
 
                         auto dest = get_name_for_dest();
@@ -1733,9 +1734,9 @@ namespace argparse
 
                     auto get_metavar_name() const -> std::string override
                     {
-                        if (!get_metavar().empty())
+                        if (!m_impl.get_metavar().empty())
                         {
-                            return get_metavar();
+                            return m_impl.get_metavar();
                         }
 
                         auto metavar = get_dest_name();
@@ -1757,7 +1758,7 @@ namespace argparse
 
                     auto is_required() const -> bool override
                     {
-                        return get_required();
+                        return m_impl.get_required();
                     }
 
                     auto is_positional() const -> bool override
@@ -1768,6 +1769,76 @@ namespace argparse
                     auto is_present() const -> bool override
                     {
                         return m_present;
+                    }
+
+                    auto is_mutually_exclusive() const -> bool override
+                    {
+                        return m_impl.is_mutually_exclusive();
+                    }
+
+                    auto is_mutually_exclusive_with(Argument const & other) const -> bool override
+                    {
+                        return m_impl.is_mutually_exclusive_with(static_cast<OptionalArgument const &>(other).m_impl);
+                    }
+
+                    auto is_mutually_exclusive_with(Formattable const & other) const -> bool override
+                    {
+                        return m_impl.is_mutually_exclusive_with(static_cast<OptionalArgument const &>(other).m_impl);
+                    }
+
+                    auto expects_argument() const -> bool override
+                    {
+                        return m_impl.expects_argument();
+                    }
+
+                    auto get_joined_names() const -> std::string override
+                    {
+                        return m_impl.get_joined_names();
+                    }
+
+                    auto get_name() const -> std::string const & override
+                    {
+                        return m_impl.get_name();
+                    }
+
+                    auto get_names() const -> std::vector<std::string> const & override
+                    {
+                        return m_impl.get_names();
+                    }
+
+                    auto get_help() const -> std::string const & override
+                    {
+                        return m_impl.get_help();
+                    }
+
+                    auto has_nargs() const -> bool override
+                    {
+                        return m_impl.has_nargs();
+                    }
+
+                    auto has_nargs_number() const -> bool override
+                    {
+                        return m_impl.has_nargs_number();
+                    }
+
+                    auto has_choices() const -> bool override
+                    {
+                        return m_impl.has_choices();
+                    }
+
+                    auto get_joined_choices(std::string_view separator) const -> std::string override
+                    {
+                        return m_impl.get_joined_choices(separator);
+                    }
+
+                    auto get_nargs_number() const -> std::size_t override
+                    {
+                        return m_impl.get_nargs_number();
+                    }
+
+                    auto get_nargs_option() const -> Nargs override
+                    {
+                        return m_impl.get_nargs_option();
                     }
             };
 
