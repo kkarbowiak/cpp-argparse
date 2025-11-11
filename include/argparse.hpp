@@ -761,7 +761,7 @@ namespace argparse
                         return join(m_options.choices | std::views::transform([&](auto const & choice) { return m_options.type_handler->to_string(choice); }), separator);
                     }
 
-                    auto parse_arguments(std::ranges::view auto tokens) -> std::any
+                    auto parse_arguments(std::ranges::view auto tokens) const -> std::any
                     {
                         auto const values = consume_tokens(tokens);
                         return m_options.type_handler->transform(values);
@@ -946,7 +946,7 @@ namespace argparse
                         return m_impl.get_action();
                     }
 
-                    auto parse_arguments(std::ranges::view auto tokens) -> std::any
+                    auto parse_arguments(std::ranges::view auto tokens) const -> std::any
                     {
                         return m_impl.parse_arguments(tokens);
                     }
@@ -1004,348 +1004,272 @@ namespace argparse
             class StoreAction
             {
                 public:
-                    StoreAction(ArgumentBase & base, std::any & value)
-                      : m_base(base)
-                      , m_value(value)
+                    auto perform(ArgumentBase const & base, std::any & value, std::string const & val, std::ranges::view auto tokens) const -> void
                     {
-                    }
-
-                    auto perform(std::string const & value, std::ranges::view auto tokens) const -> void
-                    {
-                        if (m_base.has_nargs())
+                        if (base.has_nargs())
                         {
-                            if (m_base.has_nargs_number())
+                            if (base.has_nargs_number())
                             {
-                                parse_arguments_number(tokens);
+                                parse_arguments_number(base, value, tokens);
                             }
                             else
                             {
-                                parse_arguments_option(tokens);
+                                parse_arguments_option(base, value, tokens);
                             }
                         }
                         else
                         {
-                            if (value.empty())
+                            if (val.empty())
                             {
-                                m_value = m_base.consume_token(tokens.front());
+                                value = base.consume_token(tokens.front());
                             }
                             else
                             {
-                                m_value = m_base.process_token(value);
+                                value = base.process_token(val);
                             }
                         }
                     }
 
-                    auto check_errors(std::string_view value, std::ranges::view auto tokens) const -> void
+                    auto check_errors(ArgumentBase const & base, std::string_view value, std::ranges::view auto tokens) const -> void
                     {
-                        if (!m_base.has_nargs() && value.empty() && tokens.empty())
+                        if (!base.has_nargs() && value.empty() && tokens.empty())
                         {
-                            throw parsing_error(std::format("argument {}: expected one argument", m_base.get_joined_names()));
+                            throw parsing_error(std::format("argument {}: expected one argument", base.get_joined_names()));
                         }
                     }
 
-                    auto assign_non_present_value() const -> void
+                    auto assign_non_present_value(ArgumentBase const & base, std::any & value) const -> void
                     {
-                        m_value = m_base.get_default();
+                        value = base.get_default();
                     }
 
                 private:
-                    auto parse_arguments_number(std::ranges::view auto tokens) const -> void
+                    auto parse_arguments_number(ArgumentBase const & base, std::any & value, std::ranges::view auto tokens) const -> void
                     {
-                        auto const nargs_number = m_base.get_nargs_number();
-                        auto const values = m_base.consume_tokens(tokens | std::views::take(nargs_number));
+                        auto const nargs_number = base.get_nargs_number();
+                        auto const values = base.consume_tokens(tokens | std::views::take(nargs_number));
                         if (values.size() < nargs_number)
                         {
-                            throw parsing_error(std::format("argument {}: expected {} argument{}", m_base.get_joined_names(), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
+                            throw parsing_error(std::format("argument {}: expected {} argument{}", base.get_joined_names(), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
                         }
-                        m_value = m_base.get_transformed(values);
+                        value = base.get_transformed(values);
                     }
 
-                    auto parse_arguments_option(std::ranges::view auto tokens) const -> void
+                    auto parse_arguments_option(ArgumentBase const & base, std::any & value, std::ranges::view auto tokens) const -> void
                     {
-                        switch (m_base.get_nargs_option())
+                        switch (base.get_nargs_option())
                         {
                             case zero_or_one:
                             {
                                 if (!tokens.empty())
                                 {
-                                    m_value = m_base.consume_token(tokens.front());
+                                    value = base.consume_token(tokens.front());
                                 }
                                 else
                                 {
-                                    m_value = m_base.get_const();
+                                    value = base.get_const();
                                 }
                                 break;
                             }
                             case zero_or_more:
                             {
-                                m_value = m_base.parse_arguments(tokens);
+                                value = base.parse_arguments(tokens);
                                 break;
                             }
                             case one_or_more:
                             {
-                                if (auto const values = m_base.consume_tokens(tokens); !values.empty())
+                                if (auto const values = base.consume_tokens(tokens); !values.empty())
                                 {
-                                    m_value = m_base.get_transformed(values);
+                                    value = base.get_transformed(values);
                                 }
                                 else
                                 {
-                                    throw parsing_error(std::format("argument {}: expected at least one argument", m_base.get_joined_names()));
+                                    throw parsing_error(std::format("argument {}: expected at least one argument", base.get_joined_names()));
                                 }
                                 break;
                             }
                         }
                     }
-
-                private:
-                    ArgumentBase & m_base;
-                    std::any & m_value;
             };
 
             class StoreConstAction
             {
                 public:
-                    StoreConstAction(ArgumentBase & base, std::any & value)
-                      : m_base(base)
-                      , m_value(value)
+                    auto perform(ArgumentBase const & base, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
+                        value = base.get_const();
                     }
 
-                    auto perform(std::string const & /* value */, std::ranges::view auto /* tokens */) const -> void
-                    {
-                        m_value = m_base.get_const();
-                    }
-
-                    auto check_errors(std::string_view value, std::ranges::view auto /* tokens */) const -> void
+                    auto check_errors(ArgumentBase const & base, std::string_view value, std::ranges::view auto /* tokens */) const -> void
                     {
                         if (!value.empty())
                         {
-                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", m_base.get_joined_names(), value));
+                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", base.get_joined_names(), value));
                         }
                     }
 
-                    auto assign_non_present_value() const -> void
+                    auto assign_non_present_value(ArgumentBase const & base, std::any & value) const -> void
                     {
-                        m_value = m_base.get_default();
+                        value = base.get_default();
                     }
-
-                private:
-                    ArgumentBase & m_base;
-                    std::any & m_value;
             };
 
             class StoreTrueAction
             {
                 public:
-                    StoreTrueAction(ArgumentBase & base, std::any & value)
-                      : m_base(base)
-                      , m_value(value)
+                    auto perform(ArgumentBase const & /* base */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
+                        value = true;
                     }
 
-                    auto perform(std::string const & /* value */, std::ranges::view auto /* tokens */) const -> void
-                    {
-                        m_value = true;
-                    }
-
-                    auto check_errors(std::string_view value, std::ranges::view auto /* tokens */) const -> void
+                    auto check_errors(ArgumentBase const & base, std::string_view value, std::ranges::view auto /* tokens */) const -> void
                     {
                         if (!value.empty())
                         {
-                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", m_base.get_joined_names(), value));
+                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", base.get_joined_names(), value));
                         }
                     }
 
-                    auto assign_non_present_value() const -> void
+                    auto assign_non_present_value(ArgumentBase const & /* base */, std::any & value) const -> void
                     {
-                        m_value = false;
+                        value = false;
                     }
-
-                private:
-                    ArgumentBase & m_base;
-                    std::any & m_value;
             };
 
             class StoreFalseAction
             {
                 public:
-                    StoreFalseAction(ArgumentBase & base, std::any & value)
-                      : m_base(base)
-                      , m_value(value)
+                    auto perform(ArgumentBase const & /* base */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
+                        value = false;
                     }
 
-                    auto perform(std::string const & /* value */, std::ranges::view auto /* tokens */) const -> void
-                    {
-                        m_value = false;
-                    }
-
-                    auto check_errors(std::string_view value, std::ranges::view auto /* tokens */) const -> void
+                    auto check_errors(ArgumentBase const & base, std::string_view value, std::ranges::view auto /* tokens */) const -> void
                     {
                         if (!value.empty())
                         {
-                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", m_base.get_joined_names(), value));
+                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", base.get_joined_names(), value));
                         }
                     }
 
-                    auto assign_non_present_value() const -> void
+                    auto assign_non_present_value(ArgumentBase const & /* base */, std::any & value) const -> void
                     {
-                        m_value = true;
+                        value = true;
                     }
-
-                private:
-                    ArgumentBase & m_base;
-                    std::any & m_value;
             };
 
             class HelpAction
             {
                 public:
-                    explicit HelpAction(std::any & value)
-                      : m_value(value)
+                    auto perform(ArgumentBase const & /* base */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
-                    }
-
-                    auto perform(std::string const & /* value */, std::ranges::view auto /* tokens */) const -> void
-                    {
-                        m_value = true;
+                        value = true;
                         throw HelpRequested();
                     }
 
-                    auto check_errors(std::string_view /* value */, std::ranges::view auto /* tokens */) const -> void
+                    auto check_errors(ArgumentBase const & /* base */, std::string_view /* value */, std::ranges::view auto /* tokens */) const -> void
                     {
                     }
 
-                    auto assign_non_present_value() const -> void
+                    auto assign_non_present_value(ArgumentBase const & /* base */, std::any & value) const -> void
                     {
-                        m_value = false;
+                        value = false;
                     }
-
-                private:
-                    std::any & m_value;
             };
 
             class VersionAction
             {
                 public:
-                    explicit VersionAction(std::any & value)
-                      : m_value(value)
+                    auto perform(ArgumentBase const & /* base */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
-                    }
-
-                    auto perform(std::string const & /* value */, std::ranges::view auto /* tokens */) const -> void
-                    {
-                        m_value = true;
+                        value = true;
                         throw VersionRequested();
                     }
 
-                    auto check_errors(std::string_view /* value */, std::ranges::view auto /* tokens */) const -> void
+                    auto check_errors(ArgumentBase const & /* base */, std::string_view /* value */, std::ranges::view auto /* tokens */) const -> void
                     {
                     }
 
-                    auto assign_non_present_value() const -> void
+                    auto assign_non_present_value(ArgumentBase const & /* base */, std::any & value) const -> void
                     {
-                        m_value = false;
+                        value = false;
                     }
-
-                private:
-                    std::any & m_value;
             };
 
             class CountAction
             {
                 public:
-                    CountAction(ArgumentBase & base, std::any & value)
-                      : m_base(base)
-                      , m_value(value)
+                    auto perform(ArgumentBase const & /* base */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
-                    }
-
-                    auto perform(std::string const & /* value */, std::ranges::view auto /* tokens */) const -> void
-                    {
-                        if (!m_value.has_value())
+                        if (!value.has_value())
                         {
-                            m_value = 1;
+                            value = 1;
                         }
                         else
                         {
-                            ++std::any_cast<int &>(m_value);
+                            ++std::any_cast<int &>(value);
                         }
                     }
 
-                    auto check_errors(std::string_view value, std::ranges::view auto /* tokens */) const -> void
+                    auto check_errors(ArgumentBase const & base, std::string_view value, std::ranges::view auto /* tokens */) const -> void
                     {
                         if (!value.empty())
                         {
-                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", m_base.get_joined_names(), value));
+                            throw parsing_error(std::format("argument {}: ignored explicit argument '{}'", base.get_joined_names(), value));
                         }
                     }
 
-                    auto assign_non_present_value() const -> void
+                    auto assign_non_present_value(ArgumentBase const & base, std::any & value) const -> void
                     {
-                        m_value = m_base.get_default();
+                        value = base.get_default();
                     }
-
-                private:
-                    ArgumentBase & m_base;
-                    std::any & m_value;
             };
 
             class AppendAction
             {
                 public:
-                    AppendAction(ArgumentBase & base, std::any & value)
-                      : m_base(base)
-                      , m_value(value)
+                    auto perform(ArgumentBase const & base, std::any & value, std::string const & val, std::ranges::view auto tokens) const -> void
                     {
-                    }
-
-                    auto perform(std::string const & value, std::ranges::view auto tokens) const -> void
-                    {
-                        if (value.empty())
+                        if (val.empty())
                         {
-                            if (!m_value.has_value())
+                            if (!value.has_value())
                             {
-                                auto const values = m_base.consume_tokens(tokens | std::views::take(1));
-                                m_value = m_base.get_transformed(values);
+                                auto const values = base.consume_tokens(tokens | std::views::take(1));
+                                value = base.get_transformed(values);
                             }
                             else
                             {
-                                auto const val = m_base.consume_token(tokens.front());
-                                m_base.append_value(val, m_value);
+                                auto const v = base.consume_token(tokens.front());
+                                base.append_value(v, value);
                             }
                         }
                         else
                         {
-                            if (!m_value.has_value())
+                            if (!value.has_value())
                             {
-                                auto const values = m_base.consume_tokens(std::views::single(Token{value}));
-                                m_value = m_base.get_transformed(values);
+                                auto const values = base.consume_tokens(std::views::single(Token{val}));
+                                value = base.get_transformed(values);
                             }
                             else
                             {
-                                auto const val = m_base.process_token(value);
-                                m_base.append_value(val, m_value);
+                                auto const v = base.process_token(val);
+                                base.append_value(v, value);
                             }
                         }
                     }
 
-                    auto check_errors(std::string_view value, std::ranges::view auto tokens) const -> void
+                    auto check_errors(ArgumentBase const & base, std::string_view value, std::ranges::view auto tokens) const -> void
                     {
                         if (value.empty() && tokens.empty())
                         {
-                            throw parsing_error(std::format("argument {}: expected one argument", m_base.get_joined_names()));
+                            throw parsing_error(std::format("argument {}: expected one argument", base.get_joined_names()));
                         }
                     }
 
-                    auto assign_non_present_value() const -> void
+                    auto assign_non_present_value(ArgumentBase const & base, std::any & value) const -> void
                     {
-                        m_value = m_base.get_default();
+                        value = base.get_default();
                     }
-
-                private:
-                    ArgumentBase & m_base;
-                    std::any & m_value;
             };
 
             class PositionalArgument final : public ArgumentBase
@@ -1502,7 +1426,7 @@ namespace argparse
                 private:
                     auto perform_action(std::string const & value, std::ranges::view auto tokens) -> void
                     {
-                        std::visit([&](auto const & action) { action.perform(value, tokens); }, m_action);
+                        std::visit([&](auto const & action) { action.perform(*this, m_value, value, tokens); }, m_action);
                     }
 
                     auto has_arg(auto it) const -> std::string_view
@@ -1597,12 +1521,12 @@ namespace argparse
 
                     auto check_errors(std::string_view value, std::ranges::view auto tokens) const -> void
                     {
-                        std::visit([&](auto const & action) { action.check_errors(value, tokens); }, m_action);
+                        std::visit([&](auto const & action) { action.check_errors(*this, value, tokens); }, m_action);
                     }
 
                     auto assign_non_present_value() -> void
                     {
-                        std::visit([&](auto const & action) { action.assign_non_present_value(); }, m_action);
+                        std::visit([&](auto const & action) { action.assign_non_present_value(*this, m_value); }, m_action);
                     }
 
                     static auto get_consumable(Tokens & tokens)
@@ -1634,23 +1558,23 @@ namespace argparse
                         switch (get_action())
                         {
                             case store:
-                                return StoreAction(*this, m_value);
+                                return StoreAction();
                             case store_true:
-                                return StoreTrueAction(*this, m_value);
+                                return StoreTrueAction();
                             case store_false:
-                                return StoreFalseAction(*this, m_value);
+                                return StoreFalseAction();
                             case store_const:
-                                return StoreConstAction(*this, m_value);
+                                return StoreConstAction();
                             case help:
-                                return HelpAction(m_value);
+                                return HelpAction();
                             case version:
-                                return VersionAction(m_value);
+                                return VersionAction();
                             case count:
-                                return CountAction(*this, m_value);
+                                return CountAction();
                             case append:
-                                return AppendAction(*this, m_value);
+                                return AppendAction();
                             default:
-                                return StoreAction(*this, m_value);
+                                return StoreAction();
                         }
                     }
 
