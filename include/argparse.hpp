@@ -831,6 +831,15 @@ namespace argparse
                         m_options.type_handler->append(value, values);
                     }
 
+                    static auto is_negative_number(std::string const & token) -> bool
+                    {
+                        if (auto const parsed = from_string<double>(token); parsed.has_value())
+                        {
+                            return true;
+                        }
+                        return false;
+                    }
+
                 private:
                     Options m_options;
             };
@@ -1277,7 +1286,7 @@ namespace argparse
                     }
             };
 
-            class PositionalArgument final : public ArgumentBase
+            class PositionalArgument final : public Argument, public Formattable
             {
                 private:
                     auto parse_arguments_option(std::ranges::view auto tokens) -> void
@@ -1288,24 +1297,24 @@ namespace argparse
                             {
                                 if (!tokens.empty())
                                 {
-                                    m_value = consume_token(tokens.front(), get_name_for_error());
+                                    m_value = m_impl.consume_token(tokens.front(), get_name_for_error());
                                 }
                                 else
                                 {
-                                    m_value = get_default();
+                                    m_value = m_impl.get_default();
                                 }
                                 break;
                             }
                             case zero_or_more:
                             {
-                                m_value = parse_arguments(tokens, get_name_for_error());
+                                m_value = m_impl.parse_arguments(tokens, get_name_for_error());
                                 break;
                             }
                             case one_or_more:
                             {
-                                if (auto const values = consume_tokens(tokens, get_name_for_error()); !values.empty())
+                                if (auto const values = m_impl.consume_tokens(tokens, get_name_for_error()); !values.empty())
                                 {
-                                    m_value = get_transformed(values);
+                                    m_value = m_impl.get_transformed(values);
                                 }
                                 break;
                             }
@@ -1343,7 +1352,7 @@ namespace argparse
                                     {
                                         return true;
                                     }
-                                    if (is_negative_number(token.m_token))
+                                    if (ArgumentImpl::is_negative_number(token.m_token))
                                     {
                                         return true;
                                     }
@@ -1353,7 +1362,7 @@ namespace argparse
 
                 public:
                     explicit PositionalArgument(Options options)
-                      : ArgumentBase(std::move(options))
+                      : m_impl(std::move(options))
                     {
                     }
 
@@ -1369,7 +1378,7 @@ namespace argparse
                         {
                             if (has_nargs_number())
                             {
-                                m_value = parse_arguments(consumable | std::views::take(get_nargs_number()), get_name_for_error());
+                                m_value = m_impl.parse_arguments(consumable | std::views::take(get_nargs_number()), get_name_for_error());
                             }
                             else
                             {
@@ -1380,29 +1389,29 @@ namespace argparse
                         {
                             if (!consumable.empty())
                             {
-                                m_value = consume_token(consumable.front(), get_name_for_error());
+                                m_value = m_impl.consume_token(consumable.front(), get_name_for_error());
                             }
                         }
                     }
 
                     auto get_dest_name() const -> std::string override
                     {
-                        return get_dest().empty()
+                        return m_impl.get_dest().empty()
                             ? get_name()
-                            : get_dest();
+                            : m_impl.get_dest();
                     }
 
                     auto get_metavar_name() const -> std::string override
                     {
-                        return get_metavar().empty()
+                        return m_impl.get_metavar().empty()
                             ? get_name()
-                            : get_metavar();
+                            : m_impl.get_metavar();
                     }
 
                     auto has_value() const -> bool override
                     {
                         return has_nargs() && has_nargs_number()
-                            ? get_size(m_value) == get_nargs_number()
+                            ? m_impl.get_size(m_value) == get_nargs_number()
                             : m_value.has_value();
                     }
 
@@ -1426,7 +1435,78 @@ namespace argparse
                         return false;
                     }
 
+                    auto is_mutually_exclusive() const -> bool override
+                    {
+                        return m_impl.is_mutually_exclusive();
+                    }
+
+                    auto is_mutually_exclusive_with(Argument const & other) const -> bool override
+                    {
+                        return m_impl.is_mutually_exclusive_with(static_cast<PositionalArgument const &>(other).m_impl);
+                    }
+
+                    auto is_mutually_exclusive_with(Formattable const & other) const -> bool override
+                    {
+                        return m_impl.is_mutually_exclusive_with(static_cast<PositionalArgument const &>(other).m_impl);
+                    }
+
+                    auto expects_argument() const -> bool override
+                    {
+                        return m_impl.expects_argument();
+                    }
+
+                    auto get_joined_names() const -> std::string override
+                    {
+                        return m_impl.get_joined_names();
+                    }
+
+                    auto get_name() const -> std::string const & override
+                    {
+                        return m_impl.get_name();
+                    }
+
+                    auto get_names() const -> std::vector<std::string> const & override
+                    {
+                        return m_impl.get_names();
+                    }
+
+                    auto get_help() const -> std::string const & override
+                    {
+                        return m_impl.get_help();
+                    }
+
+                    auto has_nargs() const -> bool override
+                    {
+                        return m_impl.has_nargs();
+                    }
+
+                    auto has_nargs_number() const -> bool override
+                    {
+                        return m_impl.has_nargs_number();
+                    }
+
+                    auto has_choices() const -> bool override
+                    {
+                        return m_impl.has_choices();
+                    }
+
+                    auto get_joined_choices(std::string_view separator) const -> std::string override
+                    {
+                        return m_impl.get_joined_choices(separator);
+                    }
+
+                    auto get_nargs_number() const -> std::size_t override
+                    {
+                        return m_impl.get_nargs_number();
+                    }
+
+                    auto get_nargs_option() const -> Nargs override
+                    {
+                        return m_impl.get_nargs_option();
+                    }
+
                 private:
+                    ArgumentImpl m_impl;
                     std::any m_value;
             };
 
