@@ -1009,28 +1009,28 @@ namespace argparse
             class StoreAction
             {
                 public:
-                    auto perform(ArgumentBase const & base, std::any & value, std::function<std::string()> name_for_error, std::string const & val, std::ranges::view auto tokens) const -> void
+                    auto perform(ArgumentImpl const & impl, std::any & value, std::function<std::string()> name_for_error, std::string const & val, std::ranges::view auto tokens) const -> void
                     {
-                        if (base.has_nargs())
+                        if (impl.has_nargs())
                         {
-                            if (base.has_nargs_number())
+                            if (impl.has_nargs_number())
                             {
-                                parse_arguments_number(base, value, name_for_error, tokens);
+                                parse_arguments_number(impl, value, name_for_error, tokens);
                             }
                             else
                             {
-                                parse_arguments_option(base, value, name_for_error, tokens);
+                                parse_arguments_option(impl, value, name_for_error, tokens);
                             }
                         }
                         else
                         {
                             if (val.empty())
                             {
-                                value = base.consume_token(tokens.front(), name_for_error);
+                                value = impl.consume_token(tokens.front(), name_for_error);
                             }
                             else
                             {
-                                value = base.process_token(val, name_for_error);
+                                value = impl.process_token(val, name_for_error);
                             }
                         }
                     }
@@ -1049,47 +1049,47 @@ namespace argparse
                     }
 
                 private:
-                    auto parse_arguments_number(ArgumentBase const & base, std::any & value, std::function<std::string()> name_for_error, std::ranges::view auto tokens) const -> void
+                    auto parse_arguments_number(ArgumentImpl const & impl, std::any & value, std::function<std::string()> name_for_error, std::ranges::view auto tokens) const -> void
                     {
-                        auto const nargs_number = base.get_nargs_number();
-                        auto const values = base.consume_tokens(tokens | std::views::take(nargs_number), name_for_error);
+                        auto const nargs_number = impl.get_nargs_number();
+                        auto const values = impl.consume_tokens(tokens | std::views::take(nargs_number), name_for_error);
                         if (values.size() < nargs_number)
                         {
-                            throw parsing_error(std::format("argument {}: expected {} argument{}", base.get_joined_names(), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
+                            throw parsing_error(std::format("argument {}: expected {} argument{}", impl.get_joined_names(), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
                         }
-                        value = base.get_transformed(values);
+                        value = impl.get_transformed(values);
                     }
 
-                    auto parse_arguments_option(ArgumentBase const & base, std::any & value, std::function<std::string()> name_for_error, std::ranges::view auto tokens) const -> void
+                    auto parse_arguments_option(ArgumentImpl const & impl, std::any & value, std::function<std::string()> name_for_error, std::ranges::view auto tokens) const -> void
                     {
-                        switch (base.get_nargs_option())
+                        switch (impl.get_nargs_option())
                         {
                             case zero_or_one:
                             {
                                 if (!tokens.empty())
                                 {
-                                    value = base.consume_token(tokens.front(), name_for_error);
+                                    value = impl.consume_token(tokens.front(), name_for_error);
                                 }
                                 else
                                 {
-                                    value = base.get_const();
+                                    value = impl.get_const();
                                 }
                                 break;
                             }
                             case zero_or_more:
                             {
-                                value = base.parse_arguments(tokens, name_for_error);
+                                value = impl.parse_arguments(tokens, name_for_error);
                                 break;
                             }
                             case one_or_more:
                             {
-                                if (auto const values = base.consume_tokens(tokens, name_for_error); !values.empty())
+                                if (auto const values = impl.consume_tokens(tokens, name_for_error); !values.empty())
                                 {
-                                    value = base.get_transformed(values);
+                                    value = impl.get_transformed(values);
                                 }
                                 else
                                 {
-                                    throw parsing_error(std::format("argument {}: expected at least one argument", base.get_joined_names()));
+                                    throw parsing_error(std::format("argument {}: expected at least one argument", impl.get_joined_names()));
                                 }
                                 break;
                             }
@@ -1100,9 +1100,9 @@ namespace argparse
             class StoreConstAction
             {
                 public:
-                    auto perform(ArgumentBase const & base, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
+                    auto perform(ArgumentImpl const & impl, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
-                        value = base.get_const();
+                        value = impl.get_const();
                     }
 
                     auto check_errors(ArgumentImpl const & impl, std::string_view value, std::ranges::view auto /* tokens */) const -> void
@@ -1122,7 +1122,7 @@ namespace argparse
             class StoreTrueAction
             {
                 public:
-                    auto perform(ArgumentBase const & /* base */, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
+                    auto perform(ArgumentImpl const & /* impl */, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
                         value = true;
                     }
@@ -1144,7 +1144,7 @@ namespace argparse
             class StoreFalseAction
             {
                 public:
-                    auto perform(ArgumentBase const & /* base */, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
+                    auto perform(ArgumentImpl const & /* impl */, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
                         value = false;
                     }
@@ -1166,7 +1166,7 @@ namespace argparse
             class HelpAction
             {
                 public:
-                    auto perform(ArgumentBase const & /* base */, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
+                    auto perform(ArgumentImpl const & /* impl */, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
                         value = true;
                         throw HelpRequested();
@@ -1185,7 +1185,7 @@ namespace argparse
             class VersionAction
             {
                 public:
-                    auto perform(ArgumentBase const & /* base */, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
+                    auto perform(ArgumentImpl const & /* impl */, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
                         value = true;
                         throw VersionRequested();
@@ -1204,7 +1204,7 @@ namespace argparse
             class CountAction
             {
                 public:
-                    auto perform(ArgumentBase const & /* base */, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
+                    auto perform(ArgumentImpl const & /* impl */, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
                         if (!value.has_value())
                         {
@@ -1233,32 +1233,32 @@ namespace argparse
             class AppendAction
             {
                 public:
-                    auto perform(ArgumentBase const & base, std::any & value, std::function<std::string()> name_for_error, std::string const & val, std::ranges::view auto tokens) const -> void
+                    auto perform(ArgumentImpl const & impl, std::any & value, std::function<std::string()> name_for_error, std::string const & val, std::ranges::view auto tokens) const -> void
                     {
                         if (val.empty())
                         {
                             if (!value.has_value())
                             {
-                                auto const values = base.consume_tokens(tokens | std::views::take(1), name_for_error);
-                                value = base.get_transformed(values);
+                                auto const values = impl.consume_tokens(tokens | std::views::take(1), name_for_error);
+                                value = impl.get_transformed(values);
                             }
                             else
                             {
-                                auto const v = base.consume_token(tokens.front(), name_for_error);
-                                base.append_value(v, value);
+                                auto const v = impl.consume_token(tokens.front(), name_for_error);
+                                impl.append_value(v, value);
                             }
                         }
                         else
                         {
                             if (!value.has_value())
                             {
-                                auto const values = base.consume_tokens(std::views::single(Token{val}), name_for_error);
-                                value = base.get_transformed(values);
+                                auto const values = impl.consume_tokens(std::views::single(Token{val}), name_for_error);
+                                value = impl.get_transformed(values);
                             }
                             else
                             {
-                                auto const v = base.process_token(val, name_for_error);
-                                base.append_value(v, value);
+                                auto const v = impl.process_token(val, name_for_error);
+                                impl.append_value(v, value);
                             }
                         }
                     }
@@ -1435,7 +1435,7 @@ namespace argparse
                 private:
                     auto perform_action(std::string const & value, std::ranges::view auto tokens) -> void
                     {
-                        std::visit([&](auto const & action) { action.perform(*this, m_value, get_name_for_error(), value, tokens); }, m_action);
+                        std::visit([&](auto const & action) { action.perform(get_impl(), m_value, get_name_for_error(), value, tokens); }, m_action);
                     }
 
                     auto has_arg(auto it) const -> std::string_view
