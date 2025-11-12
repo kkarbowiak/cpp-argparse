@@ -701,11 +701,6 @@ namespace argparse
                         return m_options.action == store || m_options.action == append;
                     }
 
-                    auto has_version_action() const -> bool
-                    {
-                        return m_options.action == version;
-                    }
-
                     auto get_help() const -> std::string const &
                     {
                         return m_options.help;
