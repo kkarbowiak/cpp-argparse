@@ -1378,23 +1378,22 @@ namespace argparse
                             {
                                 auto const pos = token.m_token.find(name[1]);
                                 token.m_token.erase(pos, 1);
-                                if (expects_argument())
+
+                                if (!expects_argument())
                                 {
-                                    if (pos == 1)
-                                    {
-                                        token.m_consumed = true;
-                                        return token.m_token.substr(pos);
-                                    }
-                                    else
-                                    {
-                                        auto const value = token.m_token.substr(pos);
-                                        token.m_token.resize(pos);
-                                        return value;
-                                    }
+                                    return "";
+                                }
+
+                                if (pos == 1)
+                                {
+                                    token.m_consumed = true;
+                                    return token.m_token.substr(pos);
                                 }
                                 else
                                 {
-                                    return "";
+                                    auto const value = token.m_token.substr(pos);
+                                    token.m_token.resize(pos);
+                                    return value;
                                 }
                             }
                             else
