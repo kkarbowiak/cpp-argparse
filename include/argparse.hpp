@@ -1361,49 +1361,44 @@ namespace argparse
 
                     auto consume_name(auto it, std::string_view name) const -> std::string
                     {
-                        if (auto & token = *it; token.m_token.starts_with("--"))
+                        auto & token = *it;
+
+                        if (token.m_token.starts_with("--"))
                         {
+                            token.m_consumed = true;
+
                             if (auto const pos = token.m_token.find('='); pos != std::string::npos)
                             {
-                                token.m_consumed = true;
                                 return token.m_token.substr(pos + 1);
                             }
-                            else
-                            {
-                                token.m_consumed = true;
-                                return "";
-                            }
+
+                            return "";
+                        }
+
+                        if (token.m_token.size() == 2)
+                        {
+                            token.m_consumed = true;
+                            return "";
+                        }
+
+                        auto const pos = token.m_token.find(name[1]);
+                        token.m_token.erase(pos, 1);
+
+                        if (!expects_argument())
+                        {
+                            return "";
+                        }
+
+                        if (pos == 1)
+                        {
+                            token.m_consumed = true;
+                            return token.m_token.substr(pos);
                         }
                         else
                         {
-                            if (token.m_token.size() != 2)
-                            {
-                                auto const pos = token.m_token.find(name[1]);
-                                token.m_token.erase(pos, 1);
-                                if (expects_argument())
-                                {
-                                    if (pos == 1)
-                                    {
-                                        token.m_consumed = true;
-                                        return token.m_token.substr(pos);
-                                    }
-                                    else
-                                    {
-                                        auto const value = token.m_token.substr(pos);
-                                        token.m_token.resize(pos);
-                                        return value;
-                                    }
-                                }
-                                else
-                                {
-                                    return "";
-                                }
-                            }
-                            else
-                            {
-                                token.m_consumed = true;
-                                return "";
-                            }
+                            auto const value = token.m_token.substr(pos);
+                            token.m_token.resize(pos);
+                            return value;
                         }
                     }
 
