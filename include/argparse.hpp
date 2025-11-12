@@ -1812,7 +1812,7 @@ namespace argparse
                         auto help_text = std::string();
 
                         for (auto const & argument : arguments
-                            | std::views::filter([](auto const & a) { return !a.is_positional(); }))
+                            | std::views::filter([](auto const & argument) { return !argument.is_positional(); }))
                         {
                             auto help_line = std::string("  ");
                             auto const formatted_arg = format(argument);
