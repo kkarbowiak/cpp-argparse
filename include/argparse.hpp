@@ -1108,7 +1108,7 @@ namespace argparse
             class PositionalArgument final : public Argument, public Formattable
             {
                 private:
-                    auto parse_arguments_option(std::ranges::view auto tokens) -> void
+                    auto parse_arguments_option(std::ranges::view auto tokens) -> std::any
                     {
                         switch (get_nargs_option())
                         {
@@ -1116,28 +1116,31 @@ namespace argparse
                             {
                                 if (!tokens.empty())
                                 {
-                                    m_value = m_impl.consume_token(tokens.front(), get_name_for_error());
+                                    return m_impl.consume_token(tokens.front(), get_name_for_error());
                                 }
                                 else
                                 {
-                                    m_value = m_impl.get_default();
+                                    return m_impl.get_default();
                                 }
-                                break;
                             }
                             case zero_or_more:
                             {
-                                m_value = m_impl.parse_arguments(tokens, get_name_for_error());
-                                break;
+                                return m_impl.parse_arguments(tokens, get_name_for_error());
                             }
                             case one_or_more:
                             {
                                 if (auto const values = m_impl.consume_tokens(tokens, get_name_for_error()); !values.empty())
                                 {
-                                    m_value = m_impl.get_transformed(values);
+                                    return m_impl.get_transformed(values);
                                 }
-                                break;
+                                else
+                                {
+                                    return std::any();
+                                }
                             }
                         }
+
+                        std::unreachable();
                     }
 
                     auto get_name_for_error() const -> std::function<std::string()>
@@ -1201,7 +1204,7 @@ namespace argparse
                             }
                             else
                             {
-                                parse_arguments_option(consumable);
+                                m_value = parse_arguments_option(consumable);
                             }
                         }
                         else
