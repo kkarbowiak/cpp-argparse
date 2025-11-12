@@ -1361,36 +1361,36 @@ namespace argparse
 
                     auto consume_name(auto it, std::string_view name) const -> std::string
                     {
-                        if (auto & arg = *it; arg.m_token.starts_with("--"))
+                        if (auto & token = *it; token.m_token.starts_with("--"))
                         {
-                            if (auto const pos = arg.m_token.find('='); pos != std::string::npos)
+                            if (auto const pos = token.m_token.find('='); pos != std::string::npos)
                             {
-                                arg.m_consumed = true;
-                                return arg.m_token.substr(pos + 1);
+                                token.m_consumed = true;
+                                return token.m_token.substr(pos + 1);
                             }
                             else
                             {
-                                arg.m_consumed = true;
+                                token.m_consumed = true;
                                 return "";
                             }
                         }
                         else
                         {
-                            if (arg.m_token.size() != 2)
+                            if (token.m_token.size() != 2)
                             {
-                                auto const pos = arg.m_token.find(name[1]);
-                                arg.m_token.erase(pos, 1);
+                                auto const pos = token.m_token.find(name[1]);
+                                token.m_token.erase(pos, 1);
                                 if (expects_argument())
                                 {
                                     if (pos == 1)
                                     {
-                                        arg.m_consumed = true;
-                                        return arg.m_token.substr(pos);
+                                        token.m_consumed = true;
+                                        return token.m_token.substr(pos);
                                     }
                                     else
                                     {
-                                        auto const value = arg.m_token.substr(pos);
-                                        arg.m_token.resize(pos);
+                                        auto const value = token.m_token.substr(pos);
+                                        token.m_token.resize(pos);
                                         return value;
                                     }
                                 }
@@ -1401,7 +1401,7 @@ namespace argparse
                             }
                             else
                             {
-                                arg.m_consumed = true;
+                                token.m_consumed = true;
                                 return "";
                             }
                         }
