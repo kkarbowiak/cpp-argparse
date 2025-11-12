@@ -3,7 +3,7 @@
 [![Build argparse](https://github.com/kkarbowiak/cpp-argparse/actions/workflows/ci.yml/badge.svg)](https://github.com/kkarbowiak/cpp-argparse/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/github/v/tag/kkarbowiak/cpp-argparse?sort=semver)](https://github.com/kkarbowiak/cpp-argparse/releases)
 [![Codecov](https://codecov.io/gh/kkarbowiak/cpp-argparse/branch/master/graph/badge.svg)](https://codecov.io/gh/kkarbowiak/cpp-argparse)
-![Standard](https://img.shields.io/badge/C%2B%2B-20-blue)
+![Standard](https://img.shields.io/badge/C%2B%2B-23-blue)
 [![License](https://img.shields.io/github/license/kkarbowiak/cpp-argparse)](https://github.com/kkarbowiak/cpp-argparse/blob/master/LICENSE.md)
 
 ## Overview
