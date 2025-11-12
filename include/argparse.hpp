@@ -844,7 +844,7 @@ namespace argparse
                         {
                             if (impl.has_nargs_number())
                             {
-                                parse_arguments_number(impl, value, name_for_error, tokens);
+                                value = parse_arguments_number(impl, name_for_error, tokens);
                             }
                             else
                             {
@@ -878,7 +878,7 @@ namespace argparse
                     }
 
                 private:
-                    auto parse_arguments_number(ArgumentImpl const & impl, std::any & value, std::function<std::string()> name_for_error, std::ranges::view auto tokens) const -> void
+                    auto parse_arguments_number(ArgumentImpl const & impl, std::function<std::string()> name_for_error, std::ranges::view auto tokens) const -> std::any
                     {
                         auto const nargs_number = impl.get_nargs_number();
                         auto const values = impl.consume_tokens(tokens | std::views::take(nargs_number), name_for_error);
@@ -886,7 +886,7 @@ namespace argparse
                         {
                             throw parsing_error(std::format("argument {}: expected {} argument{}", impl.get_joined_names(), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
                         }
-                        value = impl.get_transformed(values);
+                        return impl.get_transformed(values);
                     }
 
                     auto parse_arguments_option(ArgumentImpl const & impl, std::any & value, std::function<std::string()> name_for_error, std::ranges::view auto tokens) const -> void
