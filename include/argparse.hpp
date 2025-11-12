@@ -402,13 +402,13 @@ namespace argparse
             static auto parse_optional_arguments(std::ranges::view auto arguments, Tokens & tokens) -> void
             {
                 for (auto & argument : arguments
-                    | std::views::filter([](auto const & arg) { return !arg.is_positional() && arg.expects_argument(); }))
+                    | std::views::filter([](auto const & argument) { return !argument.is_positional() && argument.expects_argument(); }))
                 {
                     argument.parse_tokens(tokens);
                 }
 
                 for (auto & argument : arguments
-                    | std::views::filter([](auto const & arg) { return !arg.is_positional() && !arg.expects_argument(); }))
+                    | std::views::filter([](auto const & argument) { return !argument.is_positional() && !argument.expects_argument(); }))
                 {
                     argument.parse_tokens(tokens);
                 }
@@ -444,7 +444,7 @@ namespace argparse
 
             static auto check_excluded_arguments(std::ranges::view auto arguments) -> void
             {
-                auto const filter = [](auto const & arg) { return arg.is_present() && arg.is_mutually_exclusive(); };
+                auto const filter = [](auto const & argument) { return argument.is_present() && argument.is_mutually_exclusive(); };
 
                 for (auto const & argument1 : arguments | std::views::filter(filter))
                 {
@@ -463,7 +463,7 @@ namespace argparse
                 auto error_message = OptString();
 
                 for (auto const & argument : arguments
-                    | std::views::filter([](auto const & arg) { return arg.is_required() && !arg.has_value(); }))
+                    | std::views::filter([](auto const & argument) { return argument.is_required() && !argument.has_value(); }))
                 {
                     if (!error_message)
                     {
@@ -1735,7 +1735,7 @@ namespace argparse
                     {
                         auto usage_text = std::string();
 
-                        auto non_positionals = arguments | std::views::filter([](auto const & arg) { return !arg.is_positional(); });
+                        auto non_positionals = arguments | std::views::filter([](auto const & argument) { return !argument.is_positional(); });
 
                         for (auto it = non_positionals.begin(); it != non_positionals.end(); ++it)
                         {
