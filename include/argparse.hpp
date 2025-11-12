@@ -1363,14 +1363,14 @@ namespace argparse
                     {
                         if (auto & token = *it; token.m_token.starts_with("--"))
                         {
+                            token.m_consumed = true;
+
                             if (auto const pos = token.m_token.find('='); pos != std::string::npos)
                             {
-                                token.m_consumed = true;
                                 return token.m_token.substr(pos + 1);
                             }
                             else
                             {
-                                token.m_consumed = true;
                                 return "";
                             }
                         }
