@@ -844,11 +844,11 @@ namespace argparse
                         {
                             if (impl.has_nargs_number())
                             {
-                                parse_arguments_number(impl, value, name_for_error, tokens);
+                                value = parse_arguments_number(impl, name_for_error, tokens);
                             }
                             else
                             {
-                                parse_arguments_option(impl, value, name_for_error, tokens);
+                                value = parse_arguments_option(impl, name_for_error, tokens);
                             }
                         }
                         else
@@ -878,7 +878,7 @@ namespace argparse
                     }
 
                 private:
-                    auto parse_arguments_number(ArgumentImpl const & impl, std::any & value, std::function<std::string()> name_for_error, std::ranges::view auto tokens) const -> void
+                    auto parse_arguments_number(ArgumentImpl const & impl, std::function<std::string()> name_for_error, std::ranges::view auto tokens) const -> std::any
                     {
                         auto const nargs_number = impl.get_nargs_number();
                         auto const values = impl.consume_tokens(tokens | std::views::take(nargs_number), name_for_error);
@@ -886,10 +886,10 @@ namespace argparse
                         {
                             throw parsing_error(std::format("argument {}: expected {} argument{}", impl.get_joined_names(), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
                         }
-                        value = impl.get_transformed(values);
+                        return impl.get_transformed(values);
                     }
 
-                    auto parse_arguments_option(ArgumentImpl const & impl, std::any & value, std::function<std::string()> name_for_error, std::ranges::view auto tokens) const -> void
+                    auto parse_arguments_option(ArgumentImpl const & impl, std::function<std::string()> name_for_error, std::ranges::view auto tokens) const -> std::any
                     {
                         switch (impl.get_nargs_option())
                         {
@@ -897,32 +897,31 @@ namespace argparse
                             {
                                 if (!tokens.empty())
                                 {
-                                    value = impl.consume_token(tokens.front(), name_for_error);
+                                    return impl.consume_token(tokens.front(), name_for_error);
                                 }
                                 else
                                 {
-                                    value = impl.get_const();
+                                    return impl.get_const();
                                 }
-                                break;
                             }
                             case zero_or_more:
                             {
-                                value = impl.parse_arguments(tokens, name_for_error);
-                                break;
+                                return impl.parse_arguments(tokens, name_for_error);
                             }
                             case one_or_more:
                             {
                                 if (auto const values = impl.consume_tokens(tokens, name_for_error); !values.empty())
                                 {
-                                    value = impl.get_transformed(values);
+                                    return impl.get_transformed(values);
                                 }
                                 else
                                 {
                                     throw parsing_error(std::format("argument {}: expected at least one argument", impl.get_joined_names()));
                                 }
-                                break;
                             }
                         }
+
+                        std::unreachable();
                     }
             };
 
@@ -1109,7 +1108,7 @@ namespace argparse
             class PositionalArgument final : public Argument, public Formattable
             {
                 private:
-                    auto parse_arguments_option(std::ranges::view auto tokens) -> void
+                    auto parse_arguments_option(std::ranges::view auto tokens) -> std::any
                     {
                         switch (get_nargs_option())
                         {
@@ -1117,28 +1116,31 @@ namespace argparse
                             {
                                 if (!tokens.empty())
                                 {
-                                    m_value = m_impl.consume_token(tokens.front(), get_name_for_error());
+                                    return m_impl.consume_token(tokens.front(), get_name_for_error());
                                 }
                                 else
                                 {
-                                    m_value = m_impl.get_default();
+                                    return m_impl.get_default();
                                 }
-                                break;
                             }
                             case zero_or_more:
                             {
-                                m_value = m_impl.parse_arguments(tokens, get_name_for_error());
-                                break;
+                                return m_impl.parse_arguments(tokens, get_name_for_error());
                             }
                             case one_or_more:
                             {
                                 if (auto const values = m_impl.consume_tokens(tokens, get_name_for_error()); !values.empty())
                                 {
-                                    m_value = m_impl.get_transformed(values);
+                                    return m_impl.get_transformed(values);
                                 }
-                                break;
+                                else
+                                {
+                                    return std::any();
+                                }
                             }
                         }
+
+                        std::unreachable();
                     }
 
                     auto get_name_for_error() const -> std::function<std::string()>
@@ -1202,7 +1204,7 @@ namespace argparse
                             }
                             else
                             {
-                                parse_arguments_option(consumable);
+                                m_value = parse_arguments_option(consumable);
                             }
                         }
                         else
