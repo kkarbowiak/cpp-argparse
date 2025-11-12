@@ -848,7 +848,7 @@ namespace argparse
                             }
                             else
                             {
-                                parse_arguments_option(impl, value, name_for_error, tokens);
+                                value = parse_arguments_option(impl, name_for_error, tokens);
                             }
                         }
                         else
@@ -889,7 +889,7 @@ namespace argparse
                         return impl.get_transformed(values);
                     }
 
-                    auto parse_arguments_option(ArgumentImpl const & impl, std::any & value, std::function<std::string()> name_for_error, std::ranges::view auto tokens) const -> void
+                    auto parse_arguments_option(ArgumentImpl const & impl, std::function<std::string()> name_for_error, std::ranges::view auto tokens) const -> std::any
                     {
                         switch (impl.get_nargs_option())
                         {
@@ -897,32 +897,31 @@ namespace argparse
                             {
                                 if (!tokens.empty())
                                 {
-                                    value = impl.consume_token(tokens.front(), name_for_error);
+                                    return impl.consume_token(tokens.front(), name_for_error);
                                 }
                                 else
                                 {
-                                    value = impl.get_const();
+                                    return impl.get_const();
                                 }
-                                break;
                             }
                             case zero_or_more:
                             {
-                                value = impl.parse_arguments(tokens, name_for_error);
-                                break;
+                                return impl.parse_arguments(tokens, name_for_error);
                             }
                             case one_or_more:
                             {
                                 if (auto const values = impl.consume_tokens(tokens, name_for_error); !values.empty())
                                 {
-                                    value = impl.get_transformed(values);
+                                    return impl.get_transformed(values);
                                 }
                                 else
                                 {
                                     throw parsing_error(std::format("argument {}: expected at least one argument", impl.get_joined_names()));
                                 }
-                                break;
                             }
                         }
+
+                        std::unreachable();
                     }
             };
 
