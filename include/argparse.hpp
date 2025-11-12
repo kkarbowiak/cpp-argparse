@@ -1369,10 +1369,8 @@ namespace argparse
                             {
                                 return token.m_token.substr(pos + 1);
                             }
-                            else
-                            {
-                                return "";
-                            }
+
+                            return "";
                         }
                         else
                         {
