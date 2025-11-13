@@ -746,7 +746,7 @@ namespace argparse
                         return join(m_options.choices | std::views::transform([&](auto const & choice) { return m_options.type_handler->to_string(choice); }), separator);
                     }
 
-                    auto parse_arguments(std::ranges::view auto tokens, std::function<std::string()> /* name_for_error */) const -> std::any
+                    auto parse_arguments(std::ranges::view auto tokens) const -> std::any
                     {
                         auto const values = consume_tokens(tokens);
                         return m_options.type_handler->transform(values);
@@ -884,7 +884,7 @@ namespace argparse
                         return impl.get_transformed(values);
                     }
 
-                    auto parse_arguments_option(ArgumentImpl const & impl, std::function<std::string()> name_for_error, std::ranges::view auto tokens) const -> std::any
+                    auto parse_arguments_option(ArgumentImpl const & impl, std::function<std::string()> /* name_for_error */, std::ranges::view auto tokens) const -> std::any
                     {
                         switch (impl.get_nargs_option())
                         {
@@ -901,7 +901,7 @@ namespace argparse
                             }
                             case zero_or_more:
                             {
-                                return impl.parse_arguments(tokens, name_for_error);
+                                return impl.parse_arguments(tokens);
                             }
                             case one_or_more:
                             {
@@ -1120,7 +1120,7 @@ namespace argparse
                             }
                             case zero_or_more:
                             {
-                                return m_impl.parse_arguments(tokens, get_name_for_error());
+                                return m_impl.parse_arguments(tokens);
                             }
                             case one_or_more:
                             {
@@ -1195,7 +1195,7 @@ namespace argparse
                         {
                             if (has_nargs_number())
                             {
-                                m_value = m_impl.parse_arguments(consumable | std::views::take(get_nargs_number()), get_name_for_error());
+                                m_value = m_impl.parse_arguments(consumable | std::views::take(get_nargs_number()));
                             }
                             else
                             {
