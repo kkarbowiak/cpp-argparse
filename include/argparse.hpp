@@ -1962,7 +1962,7 @@ namespace argparse
                     {
                         if (is_positional())
                         {
-                            throw "";
+                            throw option_error("'dest' is an invalid argument for positionals");
                         }
                         m_options.dest = std::move(dest);
                         return *this;
