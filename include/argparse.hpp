@@ -1213,9 +1213,7 @@ namespace argparse
 
                     auto get_dest_name() const -> std::string override
                     {
-                        return m_impl.get_dest().empty()
-                            ? get_name()
-                            : m_impl.get_dest();
+                        return get_name();
                     }
 
                     auto get_metavar_name() const -> std::string override
@@ -1960,6 +1958,10 @@ namespace argparse
 
                     auto dest(std::string dest) -> ArgumentBuilder &
                     {
+                        if (is_positional())
+                        {
+                            throw option_error("'dest' is an invalid argument for positionals");
+                        }
                         m_options.dest = std::move(dest);
                         return *this;
                     }

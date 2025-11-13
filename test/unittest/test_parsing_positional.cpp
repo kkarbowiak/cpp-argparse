@@ -129,16 +129,6 @@ TEST_CASE("The resulting attribute name for positional argument is based on its 
     CHECK(args.get("foo"));
 }
 
-TEST_CASE("The resulting attribute name for positional argument is based on dest parameter")
-{
-    auto parser = argparse::ArgumentParser();
-    parser.add_argument("foo").dest("bar");
-
-    auto const args = parser.parse_args(2, cstr_arr{"prog", "val"});
-
-    CHECK(args.get("bar"));
-}
-
 TEST_CASE_TEMPLATE("Parsing a positional argument with choices set accepts one of the values", T, char, signed char, unsigned char, short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int, float, double, long double, std::string, foo::Custom)
 {
     auto parser = argparse::ArgumentParser().handle(argparse::Handle::none);

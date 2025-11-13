@@ -313,6 +313,20 @@ TEST_CASE("ArgumentParser replaces '{prog}' with program name in usage text")
     CHECK(parser.format_help() == "usage: program [options]"s);
 }
 
+TEST_CASE("Adding a positional argument with dest option set results in error")
+{
+    auto parser = argparse::ArgumentParser();
+
+    CHECK_THROWS_WITH_AS(parser.add_argument("pos").dest("foo"), "'dest' is an invalid argument for positionals", argparse::option_error);
+}
+
+TEST_CASE("Adding an optional argument with dest option does not result in error")
+{
+    auto parser = argparse::ArgumentParser();
+
+    CHECK_NOTHROW(parser.add_argument("-o").dest("foo"));
+}
+
 TEST_CASE("Adding a positional argument with required option set results in error")
 {
     auto parser = argparse::ArgumentParser();
