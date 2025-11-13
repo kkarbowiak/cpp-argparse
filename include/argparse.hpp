@@ -752,7 +752,7 @@ namespace argparse
                         return m_options.type_handler->transform(values);
                     }
 
-                    auto consume_token(Token & token, std::function<std::string()> /* name_for_error */) const -> std::any
+                    auto consume_token(Token & token) const -> std::any
                     {
                         token.m_consumed = true;
                         return process_token(token.m_token);
@@ -850,7 +850,7 @@ namespace argparse
                         {
                             if (val.empty())
                             {
-                                value = impl.consume_token(tokens.front(), name_for_error);
+                                value = impl.consume_token(tokens.front());
                             }
                             else
                             {
@@ -892,7 +892,7 @@ namespace argparse
                             {
                                 if (!tokens.empty())
                                 {
-                                    return impl.consume_token(tokens.front(), name_for_error);
+                                    return impl.consume_token(tokens.front());
                                 }
                                 else
                                 {
@@ -1067,7 +1067,7 @@ namespace argparse
                             }
                             else
                             {
-                                auto const v = impl.consume_token(tokens.front(), name_for_error);
+                                auto const v = impl.consume_token(tokens.front());
                                 impl.append_value(v, value);
                             }
                         }
@@ -1111,7 +1111,7 @@ namespace argparse
                             {
                                 if (!tokens.empty())
                                 {
-                                    return m_impl.consume_token(tokens.front(), get_name_for_error());
+                                    return m_impl.consume_token(tokens.front());
                                 }
                                 else
                                 {
@@ -1206,7 +1206,7 @@ namespace argparse
                         {
                             if (!consumable.empty())
                             {
-                                m_value = m_impl.consume_token(consumable.front(), get_name_for_error());
+                                m_value = m_impl.consume_token(consumable.front());
                             }
                         }
                     }
