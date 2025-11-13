@@ -1464,11 +1464,6 @@ namespace argparse
                                 });
                     }
 
-                    auto create_action() const -> std::variant<StoreAction, StoreConstAction, StoreTrueAction, StoreFalseAction, HelpAction, VersionAction, CountAction, AppendAction>
-                    {
-                        return m_impl.get_action();
-                    }
-
                 private:
                     ArgumentImpl m_impl;
                     std::any m_value;
@@ -1478,7 +1473,7 @@ namespace argparse
                 public:
                     explicit OptionalArgument(Options options)
                       : m_impl(std::move(options))
-                      , m_action(create_action())
+                      , m_action(m_impl.get_action())
                     {
                     }
 
