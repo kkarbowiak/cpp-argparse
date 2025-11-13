@@ -752,13 +752,13 @@ namespace argparse
                         return m_options.type_handler->transform(values);
                     }
 
-                    auto consume_token(Token & token, std::function<std::string()> name_for_error) const -> std::any
+                    auto consume_token(Token & token, std::function<std::string()> /* name_for_error */) const -> std::any
                     {
                         token.m_consumed = true;
-                        return process_token(token.m_token, name_for_error);
+                        return process_token(token.m_token);
                     }
 
-                    auto process_token(std::string const & token, std::function<std::string()> /* name_for_error */) const -> std::any
+                    auto process_token(std::string const & token) const -> std::any
                     {
                         auto const value = m_options.type_handler->from_string(token);
                         if (!value.has_value())
@@ -769,13 +769,13 @@ namespace argparse
                         return value;
                     }
 
-                    auto consume_tokens(std::ranges::view auto tokens, std::function<std::string()> name_for_error) const -> std::vector<std::any>
+                    auto consume_tokens(std::ranges::view auto tokens, std::function<std::string()> /* name_for_error */) const -> std::vector<std::any>
                     {
                         auto result = std::vector<std::any>();
                         auto consumed = std::vector<Token *>();
                         for (auto & token : tokens)
                         {
-                            result.push_back(process_token(token.m_token, name_for_error));
+                            result.push_back(process_token(token.m_token));
                             consumed.push_back(&token);
                         }
                         std::ranges::for_each(consumed, [](auto token) { token->m_consumed = true; });
@@ -854,7 +854,7 @@ namespace argparse
                             }
                             else
                             {
-                                value = impl.process_token(val, name_for_error);
+                                value = impl.process_token(val);
                             }
                         }
                     }
@@ -1080,7 +1080,7 @@ namespace argparse
                             }
                             else
                             {
-                                auto const v = impl.process_token(val, name_for_error);
+                                auto const v = impl.process_token(val);
                                 impl.append_value(v, value);
                             }
                         }
