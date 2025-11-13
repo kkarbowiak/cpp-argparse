@@ -746,9 +746,9 @@ namespace argparse
                         return join(m_options.choices | std::views::transform([&](auto const & choice) { return m_options.type_handler->to_string(choice); }), separator);
                     }
 
-                    auto parse_arguments(std::ranges::view auto tokens, std::function<std::string()> name_for_error) const -> std::any
+                    auto parse_arguments(std::ranges::view auto tokens, std::function<std::string()> /* name_for_error */) const -> std::any
                     {
-                        auto const values = consume_tokens(tokens, name_for_error);
+                        auto const values = consume_tokens(tokens);
                         return m_options.type_handler->transform(values);
                     }
 
@@ -769,7 +769,7 @@ namespace argparse
                         return value;
                     }
 
-                    auto consume_tokens(std::ranges::view auto tokens, std::function<std::string()> /* name_for_error */) const -> std::vector<std::any>
+                    auto consume_tokens(std::ranges::view auto tokens) const -> std::vector<std::any>
                     {
                         auto result = std::vector<std::any>();
                         auto consumed = std::vector<Token *>();
@@ -873,10 +873,10 @@ namespace argparse
                     }
 
                 private:
-                    auto parse_arguments_number(ArgumentImpl const & impl, std::function<std::string()> name_for_error, std::ranges::view auto tokens) const -> std::any
+                    auto parse_arguments_number(ArgumentImpl const & impl, std::function<std::string()> /* name_for_error */, std::ranges::view auto tokens) const -> std::any
                     {
                         auto const nargs_number = impl.get_nargs_number();
-                        auto const values = impl.consume_tokens(tokens | std::views::take(nargs_number), name_for_error);
+                        auto const values = impl.consume_tokens(tokens | std::views::take(nargs_number));
                         if (values.size() < nargs_number)
                         {
                             throw parsing_error(std::format("argument {}: expected {} argument{}", impl.get_joined_names(), std::to_string(nargs_number), nargs_number > 1 ? "s" : ""));
@@ -905,7 +905,7 @@ namespace argparse
                             }
                             case one_or_more:
                             {
-                                if (auto const values = impl.consume_tokens(tokens, name_for_error); !values.empty())
+                                if (auto const values = impl.consume_tokens(tokens); !values.empty())
                                 {
                                     return impl.get_transformed(values);
                                 }
@@ -1056,13 +1056,13 @@ namespace argparse
             class AppendAction
             {
                 public:
-                    auto perform(ArgumentImpl const & impl, std::any & value, std::function<std::string()> name_for_error, std::string const & val, std::ranges::view auto tokens) const -> void
+                    auto perform(ArgumentImpl const & impl, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & val, std::ranges::view auto tokens) const -> void
                     {
                         if (val.empty())
                         {
                             if (!value.has_value())
                             {
-                                auto const values = impl.consume_tokens(tokens | std::views::take(1), name_for_error);
+                                auto const values = impl.consume_tokens(tokens | std::views::take(1));
                                 value = impl.get_transformed(values);
                             }
                             else
@@ -1075,7 +1075,7 @@ namespace argparse
                         {
                             if (!value.has_value())
                             {
-                                auto const values = impl.consume_tokens(std::views::single(Token{val}), name_for_error);
+                                auto const values = impl.consume_tokens(std::views::single(Token{val}));
                                 value = impl.get_transformed(values);
                             }
                             else
@@ -1124,7 +1124,7 @@ namespace argparse
                             }
                             case one_or_more:
                             {
-                                if (auto const values = m_impl.consume_tokens(tokens, get_name_for_error()); !values.empty())
+                                if (auto const values = m_impl.consume_tokens(tokens); !values.empty())
                                 {
                                     return m_impl.get_transformed(values);
                                 }
