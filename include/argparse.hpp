@@ -1960,6 +1960,10 @@ namespace argparse
 
                     auto dest(std::string dest) -> ArgumentBuilder &
                     {
+                        if (is_positional())
+                        {
+                            throw "";
+                        }
                         m_options.dest = std::move(dest);
                         return *this;
                     }
