@@ -1138,11 +1138,6 @@ namespace argparse
                         std::unreachable();
                     }
 
-                    auto get_name_for_error() const -> std::function<std::string()>
-                    {
-                        return [&]() { return get_dest_name(); };
-                    }
-
                     static auto get_consumable(Tokens & tokens)
                     {
                         return tokens
