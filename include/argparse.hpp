@@ -1408,11 +1408,6 @@ namespace argparse
                         return get_name().substr(1);
                     }
 
-                    auto get_name_for_error() const -> std::function<std::string()>
-                    {
-                        return [&]() { return get_joined_names(); };
-                    }
-
                     auto check_errors(std::string_view value, std::ranges::view auto tokens) const -> void
                     {
                         std::visit([&](auto const & action) { action.check_errors(m_impl, value, tokens); }, m_action);
