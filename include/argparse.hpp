@@ -1347,7 +1347,8 @@ namespace argparse
                 private:
                     auto perform_action(std::string const & value, std::ranges::view auto tokens) -> void
                     {
-                        std::visit([&](auto const & action) { action.perform(m_impl, m_value, value, tokens); }, m_action);
+                        auto const action = m_impl.get_action();
+                        std::visit([&](auto const & ac) { ac.perform(m_impl, m_value, value, tokens); }, action);
                     }
 
                     auto has_arg(auto it) const -> std::string_view
@@ -1432,12 +1433,14 @@ namespace argparse
 
                     auto check_errors(std::string_view value, std::ranges::view auto tokens) const -> void
                     {
-                        std::visit([&](auto const & action) { action.check_errors(m_impl, value, tokens); }, m_action);
+                        auto const action = m_impl.get_action();
+                        std::visit([&](auto const & ac) { ac.check_errors(m_impl, value, tokens); }, action);
                     }
 
                     auto assign_non_present_value() -> void
                     {
-                        std::visit([&](auto const & action) { action.assign_non_present_value(m_impl, m_value); }, m_action);
+                        auto const action = m_impl.get_action();
+                        std::visit([&](auto const & ac) { ac.assign_non_present_value(m_impl, m_value); }, action);
                     }
 
                     static auto get_consumable(Tokens & tokens)
@@ -1468,12 +1471,10 @@ namespace argparse
                     ArgumentImpl m_impl;
                     std::any m_value;
                     bool m_present = false;
-                    std::variant<StoreAction, StoreConstAction, StoreTrueAction, StoreFalseAction, HelpAction, VersionAction, CountAction, AppendAction> m_action;
 
                 public:
                     explicit OptionalArgument(Options options)
                       : m_impl(std::move(options))
-                      , m_action(m_impl.get_action())
                     {
                     }
 
