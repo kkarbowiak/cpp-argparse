@@ -833,7 +833,7 @@ namespace argparse
             class StoreAction
             {
                 public:
-                    auto perform(ArgumentImpl const & impl, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & val, std::ranges::view auto tokens) const -> void
+                    auto perform(ArgumentImpl const & impl, std::any & value, std::string const & val, std::ranges::view auto tokens) const -> void
                     {
                         if (impl.has_nargs())
                         {
@@ -923,7 +923,7 @@ namespace argparse
             class StoreConstAction
             {
                 public:
-                    auto perform(ArgumentImpl const & impl, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
+                    auto perform(ArgumentImpl const & impl, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
                         value = impl.get_const();
                     }
@@ -945,7 +945,7 @@ namespace argparse
             class StoreTrueAction
             {
                 public:
-                    auto perform(ArgumentImpl const & /* impl */, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
+                    auto perform(ArgumentImpl const & /* impl */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
                         value = true;
                     }
@@ -967,7 +967,7 @@ namespace argparse
             class StoreFalseAction
             {
                 public:
-                    auto perform(ArgumentImpl const & /* impl */, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
+                    auto perform(ArgumentImpl const & /* impl */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
                         value = false;
                     }
@@ -989,7 +989,7 @@ namespace argparse
             class HelpAction
             {
                 public:
-                    auto perform(ArgumentImpl const & /* impl */, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
+                    auto perform(ArgumentImpl const & /* impl */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
                         value = true;
                         throw HelpRequested();
@@ -1008,7 +1008,7 @@ namespace argparse
             class VersionAction
             {
                 public:
-                    auto perform(ArgumentImpl const & /* impl */, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
+                    auto perform(ArgumentImpl const & /* impl */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
                         value = true;
                         throw VersionRequested();
@@ -1027,7 +1027,7 @@ namespace argparse
             class CountAction
             {
                 public:
-                    auto perform(ArgumentImpl const & /* impl */, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
+                    auto perform(ArgumentImpl const & /* impl */, std::any & value, std::string const & /* val */, std::ranges::view auto /* tokens */) const -> void
                     {
                         if (!value.has_value())
                         {
@@ -1056,7 +1056,7 @@ namespace argparse
             class AppendAction
             {
                 public:
-                    auto perform(ArgumentImpl const & impl, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & val, std::ranges::view auto tokens) const -> void
+                    auto perform(ArgumentImpl const & impl, std::any & value, std::string const & val, std::ranges::view auto tokens) const -> void
                     {
                         if (val.empty())
                         {
@@ -1330,7 +1330,7 @@ namespace argparse
                 private:
                     auto perform_action(std::string const & value, std::ranges::view auto tokens) -> void
                     {
-                        std::visit([&](auto const & action) { action.perform(m_impl, m_value, get_name_for_error(), value, tokens); }, m_action);
+                        std::visit([&](auto const & action) { action.perform(m_impl, m_value, value, tokens); }, m_action);
                     }
 
                     auto has_arg(auto it) const -> std::string_view
