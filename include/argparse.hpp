@@ -833,7 +833,7 @@ namespace argparse
             class StoreAction
             {
                 public:
-                    auto perform(ArgumentImpl const & impl, std::any & value, std::function<std::string()> name_for_error, std::string const & val, std::ranges::view auto tokens) const -> void
+                    auto perform(ArgumentImpl const & impl, std::any & value, std::function<std::string()> /* name_for_error */, std::string const & val, std::ranges::view auto tokens) const -> void
                     {
                         if (impl.has_nargs())
                         {
@@ -843,7 +843,7 @@ namespace argparse
                             }
                             else
                             {
-                                value = parse_arguments_option(impl, name_for_error, tokens);
+                                value = parse_arguments_option(impl, tokens);
                             }
                         }
                         else
@@ -884,7 +884,7 @@ namespace argparse
                         return impl.get_transformed(values);
                     }
 
-                    auto parse_arguments_option(ArgumentImpl const & impl, std::function<std::string()> /* name_for_error */, std::ranges::view auto tokens) const -> std::any
+                    auto parse_arguments_option(ArgumentImpl const & impl, std::ranges::view auto tokens) const -> std::any
                     {
                         switch (impl.get_nargs_option())
                         {
