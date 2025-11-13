@@ -839,7 +839,7 @@ namespace argparse
                         {
                             if (impl.has_nargs_number())
                             {
-                                value = parse_arguments_number(impl, name_for_error, tokens);
+                                value = parse_arguments_number(impl, tokens);
                             }
                             else
                             {
@@ -873,7 +873,7 @@ namespace argparse
                     }
 
                 private:
-                    auto parse_arguments_number(ArgumentImpl const & impl, std::function<std::string()> /* name_for_error */, std::ranges::view auto tokens) const -> std::any
+                    auto parse_arguments_number(ArgumentImpl const & impl, std::ranges::view auto tokens) const -> std::any
                     {
                         auto const nargs_number = impl.get_nargs_number();
                         auto const values = impl.consume_tokens(tokens | std::views::take(nargs_number));
