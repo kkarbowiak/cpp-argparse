@@ -1920,11 +1920,11 @@ namespace argparse
 
                         if (is_positional())
                         {
-                            m_arguments.push_back(PositionalArgument(std::move(m_options)));
+                            m_arguments.emplace_back(PositionalArgument(std::move(m_options)));
                         }
                         else
                         {
-                            m_arguments.push_back(OptionalArgument(std::move(m_options)));
+                            m_arguments.emplace_back(OptionalArgument(std::move(m_options)));
                         }
                     }
 
