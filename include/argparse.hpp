@@ -1166,10 +1166,7 @@ namespace argparse
                     {
                         return tokens
                             | std::views::drop_while(&Token::m_consumed)
-                            | std::views::take_while([](auto const & token)
-                                {
-                                    return !token.m_consumed;
-                                })
+                            | std::views::take_while(std::not_fn(&Token::m_consumed))
                             | std::views::filter([past_pseudo_arg = false](auto const & token) mutable
                                 {
                                     if (past_pseudo_arg && (token.m_token != "--"))
