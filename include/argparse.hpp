@@ -1165,10 +1165,7 @@ namespace argparse
                     static auto get_consumable(Tokens & tokens)
                     {
                         return tokens
-                            | std::views::drop_while([](auto const & token)
-                                {
-                                    return token.m_consumed;
-                                })
+                            | std::views::drop_while(&Token::m_consumed)
                             | std::views::take_while([](auto const & token)
                                 {
                                     return !token.m_consumed;
