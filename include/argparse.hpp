@@ -2024,20 +2024,15 @@ namespace argparse
                     {
                         if (is_positional())
                         {
-                            if (m_options.nargs.has_value() &&
+                            return (m_options.nargs.has_value() &&
                                 std::holds_alternative<Nargs>(*m_options.nargs) &&
                                 (std::get<Nargs>(*m_options.nargs) == zero_or_one ||
-                                 std::get<Nargs>(*m_options.nargs) == zero_or_more))
-                            {
-                                return true;
-                            }
+                                 std::get<Nargs>(*m_options.nargs) == zero_or_more));
                         }
                         else
                         {
                             return !m_options.required;
                         }
-
-                        return false;
                     }
 
                 private:
