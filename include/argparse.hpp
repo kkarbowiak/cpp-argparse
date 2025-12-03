@@ -1712,7 +1712,7 @@ namespace argparse
                     {
                         auto usage_text = std::string();
 
-                        auto non_positionals = arguments | std::views::filter([](auto const & argument) { return !argument.is_positional(); });
+                        auto non_positionals = arguments | std::views::filter(std::not_fn(&Formattable::is_positional));
 
                         for (auto it = non_positionals.begin(); it != non_positionals.end(); ++it)
                         {
