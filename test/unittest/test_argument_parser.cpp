@@ -364,6 +364,7 @@ TEST_CASE("Adding a non-required positional argument to a mutually exclusive gro
     auto group = parser.add_mutually_exclusive_group();
 
     CHECK_NOTHROW(group.add_argument("pos").nargs(argparse::zero_or_one));
+    CHECK_NOTHROW(group.add_argument("pos").nargs(argparse::zero_or_more));
 }
 
 TEST_CASE("Adding an optional argument to a mutually exclusive group does not result in error")

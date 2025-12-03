@@ -1908,7 +1908,8 @@ namespace argparse
                         {
                             if (m_options.mutually_exclusive_group != nullptr
                                 && (!std::holds_alternative<Nargs>(*m_options.nargs)
-                                    || std::get<Nargs>(*m_options.nargs) != zero_or_one))
+                                    || (std::get<Nargs>(*m_options.nargs) != zero_or_one
+                                        && std::get<Nargs>(*m_options.nargs) != zero_or_more)))
                             {
                                 throw option_error("mutually exclusive arguments must be optional");
                             }
