@@ -1898,7 +1898,7 @@ namespace argparse
 
                         if (is_positional() && group != nullptr)
                         {
-                            throw 1;
+                            throw option_error("mutually exclusive arguments must be optional");
                         }
                     }
 
