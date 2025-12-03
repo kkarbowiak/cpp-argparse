@@ -1469,11 +1469,6 @@ namespace argparse
                                 });
                     }
 
-                private:
-                    ArgumentImpl m_impl;
-                    std::any m_value;
-                    bool m_present = false;
-
                 public:
                     explicit OptionalArgument(Options options)
                       : m_impl(std::move(options))
@@ -1640,6 +1635,11 @@ namespace argparse
                     {
                         return m_impl.get_nargs_option();
                     }
+
+                private:
+                    ArgumentImpl m_impl;
+                    std::any m_value;
+                    bool m_present = false;
             };
 
             using ArgumentVariant = std::variant<PositionalArgument, OptionalArgument>;
