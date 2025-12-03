@@ -1899,6 +1899,11 @@ namespace argparse
 
                     ~ArgumentBuilder() noexcept(false)
                     {
+                        if (m_options.mutually_exclusive_group != nullptr && !is_allowed_in_mutually_exclusive_group())
+                        {
+                            throw option_error("mutually exclusive arguments must be optional");
+                        }
+
                         if ((m_options.action == argparse::version) && m_options.help.empty())
                         {
                             m_options.help = "show program's version number and exit";
@@ -1906,25 +1911,10 @@ namespace argparse
 
                         if (is_positional())
                         {
-                            if (m_options.mutually_exclusive_group != nullptr
-                                && (!m_options.nargs.has_value()
-                                    || (!std::holds_alternative<Nargs>(*m_options.nargs)
-                                        || (std::get<Nargs>(*m_options.nargs) != zero_or_one
-                                            && std::get<Nargs>(*m_options.nargs) != zero_or_more))))
-                            {
-                                throw option_error("mutually exclusive arguments must be optional");
-                            }
-
                             m_arguments.emplace_back(PositionalArgument(std::move(m_options)));
                         }
                         else
                         {
-                            if (m_options.mutually_exclusive_group != nullptr
-                                && m_options.required)
-                            {
-                                throw option_error("mutually exclusive arguments must be optional");
-                            }
-
                             m_arguments.emplace_back(OptionalArgument(std::move(m_options)));
                         }
                     }
@@ -2023,6 +2013,29 @@ namespace argparse
                     auto is_positional() const -> bool
                     {
                         return !m_options.names.front().starts_with('-');
+                    }
+
+                    auto is_allowed_in_mutually_exclusive_group() const -> bool
+                    {
+                        if (is_positional())
+                        {
+                            if (m_options.nargs.has_value() &&
+                                std::holds_alternative<Nargs>(*m_options.nargs) &&
+                                (std::get<Nargs>(*m_options.nargs) == zero_or_one ||
+                                 std::get<Nargs>(*m_options.nargs) == zero_or_more))
+                            {
+                                return true;
+                            }
+                        }
+                        else
+                        {
+                            if (!m_options.required)
+                            {
+                                return true;
+                            }
+                        }
+
+                        return false;
                     }
 
                 private:
