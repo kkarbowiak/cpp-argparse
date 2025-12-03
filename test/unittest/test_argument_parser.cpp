@@ -375,6 +375,14 @@ TEST_CASE("Adding an optional argument to a mutually exclusive group does not re
     CHECK_NOTHROW(group.add_argument("-o"));
 }
 
+TEST_CASE("Adding a required optional argument to a mutually exclusive group results in error")
+{
+    auto parser = argparse::ArgumentParser();
+    auto group = parser.add_mutually_exclusive_group();
+
+    CHECK_THROWS(group.add_argument("-o").required(true));
+}
+
 TEST_CASE("Test combining Handle values")
 {
     CHECK((argparse::Handle::none | argparse::Handle::errors) == argparse::Handle::errors);

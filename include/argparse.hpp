@@ -1919,6 +1919,12 @@ namespace argparse
                         }
                         else
                         {
+                            if (m_options.mutually_exclusive_group != nullptr
+                                && m_options.required)
+                            {
+                                throw 1;
+                            }
+
                             m_arguments.emplace_back(OptionalArgument(std::move(m_options)));
                         }
                     }
