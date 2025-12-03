@@ -1895,14 +1895,9 @@ namespace argparse
                     {
                         m_options.names = std::move(names);
                         m_options.mutually_exclusive_group = group;
-
-                        if (is_positional() && group != nullptr)
-                        {
-                            throw option_error("mutually exclusive arguments must be optional");
-                        }
                     }
 
-                    ~ArgumentBuilder()
+                    ~ArgumentBuilder() noexcept(false)
                     {
                         if ((m_options.action == argparse::version) && m_options.help.empty())
                         {
@@ -1911,6 +1906,13 @@ namespace argparse
 
                         if (is_positional())
                         {
+                            if (m_options.mutually_exclusive_group != nullptr
+                                && (!std::holds_alternative<Nargs>(*m_options.nargs)
+                                    || std::get<Nargs>(*m_options.nargs) != zero_or_one))
+                            {
+                                throw option_error("mutually exclusive arguments must be optional");
+                            }
+
                             m_arguments.emplace_back(PositionalArgument(std::move(m_options)));
                         }
                         else
