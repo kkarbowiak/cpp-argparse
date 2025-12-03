@@ -1451,15 +1451,7 @@ namespace argparse
                         return std::ranges::subrange(std::ranges::next(it), consumable.end())
                             | std::views::take_while([](auto const & token)
                                 {
-                                    if (!token.m_token.starts_with("-"))
-                                    {
-                                        return true;
-                                    }
-                                    if (ArgumentImpl::is_negative_number(token.m_token))
-                                    {
-                                        return true;
-                                    }
-                                    return false;
+                                    return !token.m_token.starts_with("-") || ArgumentImpl::is_negative_number(token.m_token);
                                 });
                     }
 
