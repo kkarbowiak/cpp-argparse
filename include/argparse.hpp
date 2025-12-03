@@ -435,7 +435,7 @@ namespace argparse
             static auto check_unrecognised_arguments(Tokens const & tokens) -> void
             {
                 auto unconsumed = tokens
-                    | std::views::filter([](auto const & token) { return !token.m_consumed; });
+                    | std::views::filter(std::not_fn(&Token::m_consumed));
                 if (!unconsumed.empty())
                 {
                     throw parsing_error(std::format("unrecognised arguments: {}", join(unconsumed | std::views::transform(&Token::m_token), " ")));
