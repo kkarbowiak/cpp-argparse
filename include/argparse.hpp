@@ -812,6 +812,7 @@ namespace argparse
 
                     auto check_errors(ArgumentImpl const & /* impl */, std::string_view /* value */, std::ranges::view auto /* tokens */) const -> void
                     {
+                        // skip
                     }
 
                     auto assign_non_present_value(ArgumentImpl const & /* impl */, std::any & value) const -> void
@@ -831,6 +832,7 @@ namespace argparse
 
                     auto check_errors(ArgumentImpl const & /* impl */, std::string_view /* value */, std::ranges::view auto /* tokens */) const -> void
                     {
+                        // skip
                     }
 
                     auto assign_non_present_value(ArgumentImpl const & /* impl */, std::any & value) const -> void
@@ -1467,11 +1469,6 @@ namespace argparse
                                 });
                     }
 
-                private:
-                    ArgumentImpl m_impl;
-                    std::any m_value;
-                    bool m_present = false;
-
                 public:
                     explicit OptionalArgument(Options options)
                       : m_impl(std::move(options))
@@ -1518,9 +1515,9 @@ namespace argparse
 
                     auto get_dest_name() const -> std::string override
                     {
-                        if (!m_impl.get_dest().empty())
+                        if (auto const & dest = m_impl.get_dest(); !dest.empty())
                         {
-                            return m_impl.get_dest();
+                            return dest;
                         }
 
                         auto dest = get_name_for_dest();
@@ -1532,9 +1529,9 @@ namespace argparse
 
                     auto get_metavar_name() const -> std::string override
                     {
-                        if (!m_impl.get_metavar().empty())
+                        if (auto const & metavar = m_impl.get_metavar(); !metavar.empty())
                         {
-                            return m_impl.get_metavar();
+                            return metavar;
                         }
 
                         auto metavar = get_dest_name();
@@ -1638,6 +1635,11 @@ namespace argparse
                     {
                         return m_impl.get_nargs_option();
                     }
+
+                private:
+                    ArgumentImpl m_impl;
+                    std::any m_value;
+                    bool m_present = false;
             };
 
             using ArgumentVariant = std::variant<PositionalArgument, OptionalArgument>;
@@ -1918,11 +1920,11 @@ namespace argparse
 
                         if (is_positional())
                         {
-                            m_arguments.push_back(PositionalArgument(std::move(m_options)));
+                            m_arguments.emplace_back(PositionalArgument(std::move(m_options)));
                         }
                         else
                         {
-                            m_arguments.push_back(OptionalArgument(std::move(m_options)));
+                            m_arguments.emplace_back(OptionalArgument(std::move(m_options)));
                         }
                     }
 
