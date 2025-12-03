@@ -435,7 +435,7 @@ namespace argparse
             static auto check_unrecognised_arguments(Tokens const & tokens) -> void
             {
                 auto unconsumed = tokens
-                    | std::views::filter([](auto const & token) { return !token.m_consumed; });
+                    | std::views::filter(std::not_fn(&Token::m_consumed));
                 if (!unconsumed.empty())
                 {
                     throw parsing_error(std::format("unrecognised arguments: {}", join(unconsumed | std::views::transform(&Token::m_token), " ")));
@@ -1165,14 +1165,8 @@ namespace argparse
                     static auto get_consumable(Tokens & tokens)
                     {
                         return tokens
-                            | std::views::drop_while([](auto const & token)
-                                {
-                                    return token.m_consumed;
-                                })
-                            | std::views::take_while([](auto const & token)
-                                {
-                                    return !token.m_consumed;
-                                })
+                            | std::views::drop_while(&Token::m_consumed)
+                            | std::views::take_while(std::not_fn(&Token::m_consumed))
                             | std::views::filter([past_pseudo_arg = false](auto const & token) mutable
                                 {
                                     if (past_pseudo_arg && (token.m_token != "--"))
@@ -1448,7 +1442,7 @@ namespace argparse
                     static auto get_consumable(Tokens & tokens)
                     {
                         return tokens
-                            | std::views::drop_while([](auto const & token) { return token.m_consumed; })
+                            | std::views::drop_while(&Token::m_consumed)
                             | std::views::take_while([](auto const & token) { return token.m_token != "--"; });
                     }
 
@@ -1457,15 +1451,7 @@ namespace argparse
                         return std::ranges::subrange(std::ranges::next(it), consumable.end())
                             | std::views::take_while([](auto const & token)
                                 {
-                                    if (!token.m_token.starts_with("-"))
-                                    {
-                                        return true;
-                                    }
-                                    if (ArgumentImpl::is_negative_number(token.m_token))
-                                    {
-                                        return true;
-                                    }
-                                    return false;
+                                    return !token.m_token.starts_with("-") || ArgumentImpl::is_negative_number(token.m_token);
                                 });
                     }
 
@@ -1718,7 +1704,7 @@ namespace argparse
                     {
                         auto usage_text = std::string();
 
-                        auto non_positionals = arguments | std::views::filter([](auto const & argument) { return !argument.is_positional(); });
+                        auto non_positionals = arguments | std::views::filter(std::not_fn(&Formattable::is_positional));
 
                         for (auto it = non_positionals.begin(); it != non_positionals.end(); ++it)
                         {
@@ -1795,7 +1781,7 @@ namespace argparse
                         auto help_text = std::string();
 
                         for (auto const & argument : arguments
-                            | std::views::filter([](auto const & argument) { return !argument.is_positional(); }))
+                            | std::views::filter(std::not_fn(&Formattable::is_positional)))
                         {
                             auto help_line = std::string("  ");
                             auto const formatted_arg = format(argument);
