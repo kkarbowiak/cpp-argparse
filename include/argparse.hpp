@@ -812,6 +812,7 @@ namespace argparse
 
                     auto check_errors(ArgumentImpl const & /* impl */, std::string_view /* value */, std::ranges::view auto /* tokens */) const -> void
                     {
+                        // skip
                     }
 
                     auto assign_non_present_value(ArgumentImpl const & /* impl */, std::any & value) const -> void
@@ -831,6 +832,7 @@ namespace argparse
 
                     auto check_errors(ArgumentImpl const & /* impl */, std::string_view /* value */, std::ranges::view auto /* tokens */) const -> void
                     {
+                        // skip
                     }
 
                     auto assign_non_present_value(ArgumentImpl const & /* impl */, std::any & value) const -> void
