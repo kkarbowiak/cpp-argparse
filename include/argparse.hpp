@@ -2034,10 +2034,7 @@ namespace argparse
                         }
                         else
                         {
-                            if (!m_options.required)
-                            {
-                                return true;
-                            }
+                            return !m_options.required;
                         }
 
                         return false;
