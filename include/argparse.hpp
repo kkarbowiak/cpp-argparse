@@ -1899,7 +1899,7 @@ namespace argparse
 
                     ~ArgumentBuilder() noexcept(false)
                     {
-                        if (m_options.mutually_exclusive_group != nullptr && !is_allowed_in_mutually_exclusive_group())
+                        if (is_mutually_exclusive() && !is_allowed_in_mutually_exclusive_group())
                         {
                             throw option_error("mutually exclusive arguments must be optional");
                         }
@@ -2013,6 +2013,11 @@ namespace argparse
                     auto is_positional() const -> bool
                     {
                         return !m_options.names.front().starts_with('-');
+                    }
+
+                    auto is_mutually_exclusive() const -> bool
+                    {
+                        return m_options.mutually_exclusive_group != nullptr;
                     }
 
                     auto is_allowed_in_mutually_exclusive_group() const -> bool
