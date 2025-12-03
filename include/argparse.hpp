@@ -1895,6 +1895,11 @@ namespace argparse
                     {
                         m_options.names = std::move(names);
                         m_options.mutually_exclusive_group = group;
+
+                        if (is_positional() && group != nullptr)
+                        {
+                            throw 1;
+                        }
                     }
 
                     ~ArgumentBuilder()

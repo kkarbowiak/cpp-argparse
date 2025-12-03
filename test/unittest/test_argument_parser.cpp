@@ -350,6 +350,14 @@ TEST_CASE("ArgumentParser supports mutually exclusive groups")
     CHECK_NOTHROW(parser.add_mutually_exclusive_group());
 }
 
+TEST_CASE("Adding a positional argument to a mutually exclusive group results in error")
+{
+    auto parser = argparse::ArgumentParser();
+    auto group = parser.add_mutually_exclusive_group();
+
+    CHECK_THROWS(group.add_argument("pos"));
+}
+
 TEST_CASE("Adding an optional argument to a mutually exclusive group does not result in error")
 {
     auto parser = argparse::ArgumentParser();
