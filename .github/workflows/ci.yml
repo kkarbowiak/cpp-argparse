@@ -26,7 +26,7 @@ jobs:
           - os: windows-latest
             compiler: g++-14
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: CMake configure
         run: cmake -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.type }} -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
@@ -44,7 +44,7 @@ jobs:
     name: "clang-tidy"
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Install clang-tidy
         run: |
@@ -64,7 +64,7 @@ jobs:
       matrix:
         type: [Debug, Release]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: CMake configure
         run: cmake -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.type }} -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS=-fsanitize=address,undefined,alignment,array-bounds -DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address,undefined,alignment,array-bounds
@@ -79,7 +79,7 @@ jobs:
       matrix:
         type: [Debug, Release]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: CMake configure
         run: cmake -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.type }} -DCMAKE_C_COMPILER=gcc-14 -DCMAKE_CXX_COMPILER=g++-14 -DCMAKE_CXX_FLAGS=-fsanitize=address,undefined,leak -DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address,undefined,leak
@@ -94,7 +94,7 @@ jobs:
       matrix:
         type: [Debug, Release]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: CMake configure
         run: cmake -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.type }} -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_CXX_FLAGS="/fsanitize=address /EHsc"
@@ -106,7 +106,7 @@ jobs:
     name: "Valgrind"
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Install Valgrind
         run: |
@@ -128,7 +128,7 @@ jobs:
     env:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Install lcov
         run: |
