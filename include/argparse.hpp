@@ -2024,15 +2024,29 @@ namespace argparse
                     {
                         if (is_positional())
                         {
-                            return (m_options.nargs.has_value() &&
-                                std::holds_alternative<Nargs>(*m_options.nargs) &&
-                                (std::get<Nargs>(*m_options.nargs) == zero_or_one ||
-                                 std::get<Nargs>(*m_options.nargs) == zero_or_more));
+                            return is_optional_by_nargs_option();
                         }
                         else
                         {
                             return !m_options.required;
                         }
+                    }
+
+                    auto is_optional_by_nargs_option() const -> bool
+                    {
+                        if (!m_options.nargs.has_value())
+                        {
+                            return false;
+                        }
+
+                        if (!std::holds_alternative<Nargs>(*m_options.nargs))
+                        {
+                            return false;
+                        }
+
+                        auto const nargs = std::get<Nargs>(*m_options.nargs);
+
+                        return nargs == zero_or_one || nargs == zero_or_more;
                     }
 
                 private:
