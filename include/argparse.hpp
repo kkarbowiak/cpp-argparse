@@ -1922,7 +1922,7 @@ namespace argparse
                             if (m_options.mutually_exclusive_group != nullptr
                                 && m_options.required)
                             {
-                                throw 1;
+                                throw option_error("mutually exclusive arguments must be optional");
                             }
 
                             m_arguments.emplace_back(OptionalArgument(std::move(m_options)));

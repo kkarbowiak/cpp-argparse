@@ -380,7 +380,7 @@ TEST_CASE("Adding a required optional argument to a mutually exclusive group res
     auto parser = argparse::ArgumentParser();
     auto group = parser.add_mutually_exclusive_group();
 
-    CHECK_THROWS(group.add_argument("-o").required(true));
+    CHECK_THROWS_WITH_AS(group.add_argument("-o").required(true), "mutually exclusive arguments must be optional", argparse::option_error);
 }
 
 TEST_CASE("Test combining Handle values")
