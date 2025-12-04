@@ -1179,11 +1179,8 @@ namespace argparse
                                     {
                                         return true;
                                     }
-                                    if (ArgumentImpl::is_negative_number(token.m_token))
-                                    {
-                                        return true;
-                                    }
-                                    return false;
+
+                                    return ArgumentImpl::is_negative_number(token.m_token);
                                 });
                     }
 
