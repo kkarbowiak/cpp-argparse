@@ -1113,11 +1113,8 @@ namespace argparse
 
                     static auto is_negative_number(std::string const & token) -> bool
                     {
-                        if (auto const parsed = from_string<double>(token); parsed.has_value())
-                        {
-                            return true;
-                        }
-                        return false;
+                        auto const parsed = from_string<double>(token);
+                        return parsed.has_value();
                     }
 
                 private:
