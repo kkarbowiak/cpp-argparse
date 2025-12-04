@@ -356,6 +356,7 @@ TEST_CASE("Adding a positional argument to a mutually exclusive group results in
     auto group = parser.add_mutually_exclusive_group();
 
     CHECK_THROWS_WITH_AS(group.add_argument("pos"), "mutually exclusive arguments must be optional", argparse::option_error);
+    CHECK_THROWS_WITH_AS(group.add_argument("pos").nargs(2), "mutually exclusive arguments must be optional", argparse::option_error);
 }
 
 TEST_CASE("Adding a non-required positional argument to a mutually exclusive group does not result in error")
